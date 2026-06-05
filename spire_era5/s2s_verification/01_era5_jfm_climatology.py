@@ -47,11 +47,13 @@ climo_src = WB2Climatology(climatology_zarr_store=CLIMO_STORE, verbose=True)
 da = climo_src(times_6h.to_list(), VARIABLES)
 # da coords: time=360, variable=3, lat=721, lon=1440
 
-# ── crop to India domain ─────────────────────────────────────────────────────
+# ── crop to India domain (WB2 lat is DESCENDING: 90 → -90) ──────────────────
 da_india = da.sel(
-    lat=slice(LAT_MIN, LAT_MAX),
+    lat=slice(LAT_MAX, LAT_MIN),   # descending → slice(50, 0)
     lon=slice(LON_MIN, LON_MAX),
 )
+# flip lat to ascending so output is consistent
+da_india = da_india.isel(lat=slice(None, None, -1))
 print(f"India domain shape after crop: {da_india.shape}")
 
 # ── daily mean (average four 6-hourly steps per day) ────────────────────────

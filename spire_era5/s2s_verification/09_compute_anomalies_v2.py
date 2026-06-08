@@ -11,8 +11,10 @@ to be identically ZERO. Here we subtract a proper external climatology instead.
 Two physically-matched variants are produced:
 
   VARIANT "mean"  (mean-vs-mean):
-    Spire air_temperature (daily mean)  −  WB2 1990-2019 mean-T2m DOY climo
-    ERA5  daily-mean T2m                −  WB2 1990-2019 mean-T2m DOY climo
+    Spire air_temperature (daily mean)  −  ERA5 1991-2020 daily-mean-T2m DOY climo
+    ERA5  daily-mean T2m                −  ERA5 1991-2020 daily-mean-T2m DOY climo
+    (was WB2 00-UTC climo — a diurnal-sampling artifact that added a spurious
+     ~+5 K offset; now uses a proper daily-mean climo from ARCO hourly data.)
 
   VARIANT "max"  (max-vs-max):
     Spire air_temperature_max (daily max) −  ERA5 Tmax DOY climo (computed here)
@@ -41,9 +43,10 @@ from arraylake import Client
 from earth2studio.data import WB2Climatology
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
-OUTPUT_FILE   = "weekly_anomalies_v2.nc"
-TMAX_CLIMO_NC = "era5_tmax_climo_india.nc"
-CLIMO_YEARS   = range(1991, 2021)        # 1991-2020 (30 yr) for ERA5 Tmax climo
+OUTPUT_FILE    = "weekly_anomalies_v2.nc"
+TMAX_CLIMO_NC  = "era5_tmax_climo_india.nc"
+TMEAN_CLIMO_NC = "era5_tmean_climo_india.nc"
+CLIMO_YEARS    = range(1991, 2021)       # 1991-2020 (30 yr) for ERA5 T2m climo
 
 LAT_MIN, LAT_MAX =  0.0, 50.0
 LON_MIN, LON_MAX = 55.0, 105.0
@@ -88,60 +91,81 @@ ds_era5 = xr.open_zarr(
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STEP 1 — ERA5 Tmax climatology (daily max of hourly T2m, DOY mean over 1991-2020)
-#          Cached to disk. This is the expensive part.
+# STEP 1 — ERA5 daily-Tmax AND daily-Tmean DOY climatologies (1991-2020).
+#          Both built from the SAME hourly fetch so the mean- and max-variant
+#          baselines are methodologically identical. Cached to disk.
+#
+#          NB: the mean variant must NOT use the WB2 climatology directly — that
+#          store is 6-hourly and, queried at 00 UTC (≈05:30 IST, daily minimum),
+#          is ~5 K too cold for India, which inflated the mean-T2m anomaly. This
+#          daily-mean climatology removes that diurnal-sampling artifact.
 # ══════════════════════════════════════════════════════════════════════════════
 doys_needed = sorted(set(all_dates.day_of_year.values.tolist()))
 
-if os.path.exists(TMAX_CLIMO_NC):
-    print(f"Loading cached ERA5 Tmax climo ← {TMAX_CLIMO_NC}")
-    tmax_climo_ds = xr.open_dataset(TMAX_CLIMO_NC)
-    era5_tmax_climo_by_doy = {
-        int(d): tmax_climo_ds["tmax_climo"].sel(doy=int(d)).values
-        for d in doys_needed
-    }
-else:
-    print(f"Computing ERA5 Tmax climatology for {len(doys_needed)} DOYs "
-          f"over {CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1} (heavy, one-time) …")
+def _load_climo(path, varname):
+    cds = xr.open_dataset(path)
+    return {int(d): cds[varname].sel(doy=int(d)).values for d in doys_needed}
+
+def _save_climo(path, by_doy, varname, desc):
+    doy_arr = np.array(sorted(by_doy.keys()))
+    stack   = np.stack([by_doy[int(d)] for d in doy_arr])
+    xr.Dataset(
+        {varname: (["doy", "latitude", "longitude"], stack)},
+        coords={"doy": doy_arr, "latitude": spire_lat, "longitude": spire_lon},
+        attrs={"description": desc},
+    ).to_netcdf(path)
+    print(f"  cached → {path}")
+
+need_max  = not os.path.exists(TMAX_CLIMO_NC)
+need_mean = not os.path.exists(TMEAN_CLIMO_NC)
+
+if need_max or need_mean:
+    print(f"Computing ERA5 climatologies for {len(doys_needed)} DOYs over "
+          f"{CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1} "
+          f"(max={need_max}, mean={need_mean}; heavy, one-time) …")
     da_t2m_full = ds_era5["2m_temperature"].sel(
         latitude=slice(LAT_MAX + 1, LAT_MIN - 1),
         longitude=slice(LON_MIN - 1, LON_MAX + 1),
     )
-    # EFFICIENT: fetch each climo year's full DOY-window ONCE, daily-max via
-    # resample, then accumulate per-DOY. Far fewer, larger reads than DOY×year.
+    # EFFICIENT: fetch each climo year's full DOY-window ONCE; daily max & mean
+    # via resample from the same hourly read; accumulate per-DOY.
     doy_min, doy_max = min(doys_needed), max(doys_needed)
-    accum = {int(d): np.zeros((len(spire_lat), len(spire_lon)), np.float64)
-             for d in doys_needed}
+    zero = lambda: {int(d): np.zeros((len(spire_lat), len(spire_lon)), np.float64)
+                    for d in doys_needed}
+    accum_max, accum_mean = zero(), zero()
     count = {int(d): 0 for d in doys_needed}
     for yi, yr in enumerate(CLIMO_YEARS):
         d0 = pd.Timestamp(f"{yr}-01-01") + pd.Timedelta(doy_min - 1, "D")
         d1 = pd.Timestamp(f"{yr}-01-01") + pd.Timedelta(doy_max - 1, "D")
         hourly = da_t2m_full.sel(time=slice(f"{d0.date()}T00:00",
-                                            f"{d1.date()}T23:00"))
-        daily_max = (hourly.resample(time="1D").max("time").compute() - 273.15)
-        daily_max = daily_max.interp(latitude=spire_lat, longitude=spire_lon,
-                                     method="linear")
-        dm_doy = pd.DatetimeIndex(daily_max["time"].values).day_of_year
+                                            f"{d1.date()}T23:00")).compute()
+        rs = hourly.resample(time="1D")
+        daily_max  = (rs.max("time")  - 273.15).interp(
+            latitude=spire_lat, longitude=spire_lon, method="linear") if need_max else None
+        daily_mean = (rs.mean("time") - 273.15).interp(
+            latitude=spire_lat, longitude=spire_lon, method="linear") if need_mean else None
+        ref = daily_max if need_max else daily_mean
+        dm_doy = pd.DatetimeIndex(ref["time"].values).day_of_year
         for k, doy in enumerate(dm_doy):
             doy = int(doy)
-            if doy in accum:
-                accum[doy] += daily_max.isel(time=k).values
+            if doy in count:
+                if need_max:  accum_max[doy]  += daily_max.isel(time=k).values
+                if need_mean: accum_mean[doy] += daily_mean.isel(time=k).values
                 count[doy] += 1
         print(f"  year {yr} done ({yi+1}/{len(list(CLIMO_YEARS))})", flush=True)
-    era5_tmax_climo_by_doy = {
-        d: (accum[d] / max(count[d], 1)).astype(np.float32) for d in accum
-    }
 
-    # Save cache
-    doy_arr = np.array(sorted(era5_tmax_climo_by_doy.keys()))
-    stack   = np.stack([era5_tmax_climo_by_doy[int(d)] for d in doy_arr])
-    xr.Dataset(
-        {"tmax_climo": (["doy", "latitude", "longitude"], stack)},
-        coords={"doy": doy_arr, "latitude": spire_lat, "longitude": spire_lon},
-        attrs={"description": f"ERA5 daily-Tmax DOY climatology "
-                              f"{CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1}, India 0.5°"},
-    ).to_netcdf(TMAX_CLIMO_NC)
-    print(f"  cached → {TMAX_CLIMO_NC}")
+    if need_max:
+        bd = {d: (accum_max[d] / max(count[d], 1)).astype(np.float32) for d in count}
+        _save_climo(TMAX_CLIMO_NC, bd, "tmax_climo",
+                    f"ERA5 daily-Tmax DOY climatology {CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1}, India 0.5°")
+    if need_mean:
+        bd = {d: (accum_mean[d] / max(count[d], 1)).astype(np.float32) for d in count}
+        _save_climo(TMEAN_CLIMO_NC, bd, "tmean_climo",
+                    f"ERA5 daily-mean-T2m DOY climatology {CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1}, India 0.5°")
+
+era5_tmax_climo_by_doy  = _load_climo(TMAX_CLIMO_NC,  "tmax_climo")
+era5_tmean_climo_by_doy = _load_climo(TMEAN_CLIMO_NC, "tmean_climo")
+print(f"ERA5 Tmax & Tmean DOY climatologies ready ({len(doys_needed)} DOYs).")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 2 — WB2 mean-T2m / Z500 / precip climatology (DOY), cached in memory
@@ -231,10 +255,11 @@ for i, init_date in enumerate(init_times):
         vdates = pd.date_range(init_date + pd.Timedelta(d0, "D"),
                                init_date + pd.Timedelta(d1, "D"))
 
-        # MEAN variant — Spire mean vs WB2 mean climo; ERA5 mean vs WB2 mean climo
-        wb2_mean = climo_win(wb2_t2m_by_doy, vdates)
-        out["spire_t2m_mean_anom"][i, wk_idx] = sp_t2m_mean[wk].isel(reference_time=i).values - wb2_mean
-        out["era5_t2m_mean_anom"][i, wk_idx]  = era5_win(era5_t2m_mean_daily, vdates) - wb2_mean
+        # MEAN variant — Spire mean & ERA5 mean both vs ERA5 daily-mean DOY climo
+        # (NOT WB2 00-UTC — that diurnal-sampling artifact inflated this by ~5 K)
+        tmean_clim = climo_win(era5_tmean_climo_by_doy, vdates)
+        out["spire_t2m_mean_anom"][i, wk_idx] = sp_t2m_mean[wk].isel(reference_time=i).values - tmean_clim
+        out["era5_t2m_mean_anom"][i, wk_idx]  = era5_win(era5_t2m_mean_daily, vdates) - tmean_clim
 
         # MAX variant — Spire max vs ERA5 Tmax climo; ERA5 max vs ERA5 Tmax climo
         tmax_clim = climo_win(era5_tmax_climo_by_doy, vdates)
@@ -270,7 +295,7 @@ ds_out = xr.Dataset({
     "era5_z500_anom":      mk(out["era5_z500_anom"],      "ERA5 Z500 anomaly",    "gpm"),
 }, attrs={
     "description": "Weekly-mean anomalies v2 — consistent baselines, Spire JFM 2026 vs ERA5",
-    "mean_variant": "Spire air_temperature & ERA5 mean-T2m both vs WB2 1990-2019 mean climo",
+    "mean_variant": f"Spire air_temperature & ERA5 mean-T2m both vs ERA5 {CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1} daily-mean-T2m DOY climo",
     "max_variant":  f"Spire air_temperature_max & ERA5 max-T2m both vs ERA5 {CLIMO_YEARS.start}-{CLIMO_YEARS.stop-1} Tmax DOY climo",
     "domain": f"lat {LAT_MIN}-{LAT_MAX}N lon {LON_MIN}-{LON_MAX}E 0.5deg",
 })

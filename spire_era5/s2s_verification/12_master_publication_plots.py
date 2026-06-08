@@ -157,8 +157,6 @@ def base_map(ax, data, cmap, norm, title="", letter=None, corner=None,
                        transform=PROJ, rasterized=True, shading="auto")
     ax.add_feature(cfeature.COASTLINE.with_scale("50m"),
                    linewidth=0.75, edgecolor="k", zorder=4)
-    ax.add_feature(cfeature.BORDERS.with_scale("50m"),
-                   linewidth=0.35, edgecolor="0.4", zorder=4, linestyle=":")
     ax.set_extent(EXTNT, crs=PROJ)
     gl = ax.gridlines(crs=PROJ, linewidth=0.25, color="gray",
                       linestyle=":", alpha=0.5, zorder=3)

@@ -499,41 +499,47 @@ for vname, var_key in [('OLR', 'spire_olr_anom'), ('U850', 'spire_u850_anom'), (
     acc_all[vname] = np.array(sv)
     print(f"  {vname} (proxy): W1={sv[0]:.3f} W6={sv[5]:.3f}")
 
-# Build matrix
-all_vars = ['T2m-mean', 'T2m-max', 'Precip', 'Z500', 'OLR', 'U850', 'U200']
-acc_matrix = np.array([acc_all[v] for v in all_vars])
+# Build matrices — kept STRICTLY separate so the MJO-variable internal-consistency
+# proxy can never be mistaken for verified skill against ERA5.
+acc_vars = ['T2m-mean', 'T2m-max', 'Precip', 'Z500']   # real ACC vs ERA5
+con_vars = ['OLR', 'U850', 'U200']                     # init-pair correlation (NOT skill)
+acc_matrix = np.array([acc_all[v] for v in acc_vars])
+con_matrix = np.array([acc_all[v] for v in con_vars])
 
-fig, ax = plt.subplots(figsize=(8, 5))
+fig, (axA, axB) = plt.subplots(
+    2, 1, figsize=(8, 6.2),
+    gridspec_kw={'height_ratios': [4, 3], 'hspace': 0.45})
 
-cmap = plt.cm.RdYlGn
-norm = mcolors.TwoSlopeNorm(vmin=-0.3, vcenter=0.3, vmax=1.0)
-im = ax.imshow(acc_matrix, cmap=cmap, norm=norm, aspect='auto')
-
-for i in range(len(all_vars)):
+# ── (a) Verified skill: ACC vs ERA5 ──
+normA = mcolors.TwoSlopeNorm(vmin=-0.3, vcenter=0.3, vmax=1.0)
+imA = axA.imshow(acc_matrix, cmap=plt.cm.RdYlGn, norm=normA, aspect='auto')
+for i in range(len(acc_vars)):
     for j in range(n_weeks):
         val = acc_matrix[i, j]
-        color = 'white' if (val < 0.1 or val > 0.85) else 'black'
-        suffix = '' if i < 4 else '*'
-        ax.text(j, i, f'{val:.2f}{suffix}', ha='center', va='center',
-                fontsize=10, fontweight='bold', color=color)
+        axA.text(j, i, f'{val:.2f}', ha='center', va='center', fontsize=10,
+                 fontweight='bold', color='white' if (val < 0.1 or val > 0.85) else 'black')
+axA.set_xticks(range(n_weeks)); axA.set_xticklabels([f'W{w}' for w in weeks])
+axA.set_yticks(range(len(acc_vars))); axA.set_yticklabels(acc_vars)
+axA.set_title('(a) Verified skill — ACC vs ERA5 ground truth', fontweight='bold', fontsize=11)
+fig.colorbar(imA, ax=axA, label='ACC (r)', shrink=0.9, pad=0.02)
 
-ax.set_xticks(range(n_weeks))
-ax.set_xticklabels([f'W{w}' for w in weeks])
-ax.set_yticks(range(len(all_vars)))
-ax.set_yticklabels(all_vars)
-ax.set_xlabel('Forecast Lead Week')
+# ── (b) Forecast internal consistency (NOT a skill score; no obs reference) ──
+imB = axB.imshow(con_matrix, cmap=plt.cm.Purples, vmin=0, vmax=1.0, aspect='auto')
+for i in range(len(con_vars)):
+    for j in range(n_weeks):
+        val = con_matrix[i, j]
+        axB.text(j, i, f'{val:.2f}', ha='center', va='center', fontsize=10,
+                 fontweight='bold', color='white' if val > 0.6 else 'black')
+axB.set_xticks(range(n_weeks)); axB.set_xticklabels([f'W{w}' for w in weeks])
+axB.set_yticks(range(len(con_vars))); axB.set_yticklabels(con_vars)
+axB.set_xlabel('Forecast Lead Week')
+axB.set_title('(b) MJO-variable forecast internal consistency\n'
+              '(init-pair pattern correlation — NOT verified against observations)',
+              fontweight='bold', fontsize=10)
+fig.colorbar(imB, ax=axB, label='init-pair r', shrink=0.9, pad=0.02)
 
-ax.axhline(3.5, color='white', lw=3)
-ax.text(n_weeks + 0.1, 1.5, 'ACC\n(vs ERA5)', fontsize=8, va='center', ha='left',
-        color='0.4', fontstyle='italic')
-ax.text(n_weeks + 0.1, 5.0, 'Init-pair\ncorrelation*', fontsize=8, va='center', ha='left',
-        color='0.4', fontstyle='italic')
-
-plt.colorbar(im, ax=ax, label='Skill Metric', shrink=0.8, pad=0.22)
-
-ax.set_title('Spire AI-S2S | Extended Verification Scorecard\nIndia-mean — JFM 2026 (90 inits)',
-             fontweight='bold', pad=12)
-fig.tight_layout()
+fig.suptitle('Spire AI-S2S | Extended Scorecard — India-mean, JFM 2026 (90 inits)',
+             fontweight='bold', y=0.99)
 savefig(fig, 'fig17_extended_scorecard')
 
 # ====================================================================

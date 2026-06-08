@@ -209,7 +209,6 @@ for col, ph in enumerate(top_phases):
         ax = axes[row, col]
         ax.set_extent([55, 105, 0, 50], crs=proj)
         ax.add_feature(coastline)
-        ax.add_feature(borders)
 
         composite = data_dict[ph]
 

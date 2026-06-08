@@ -9,13 +9,16 @@ phase-space plots) for the Spire AI-S2S paper.
 Shows Spire AI-S2S 42-day forecast RMM trajectories vs observed RMM for two
 selected initialisation dates with active MJO during JFM 2026.
 
-Method:
+Method (WH04-consistent):
   1. Load equatorial Hovmöller data (OLR, U850, U200) from Spire forecasts.
-  2. Remove the "climatology" (mean across all 90 inits for each lead step).
+  2. Remove the seasonal mean (mean across all 90 inits for each lead step).
   3. Interpolate from 0.5° → 1° to match Wheeler–Hendon EOF resolution.
-  4. Normalise anomalies by standard deviation of each field.
-  5. Project normalised anomalies onto combined EOF1/EOF2 to get RMM1/RMM2.
-  6. Plot forecast trajectory vs observed trajectory in RMM phase space.
+  4. Normalise each field by its WH04 SCALAR normalisation factor
+     (OLR 15.1, U850 1.81, U200 4.81 — one value per field, as in WH04).
+  5. Project normalised anomalies onto combined EOF1/EOF2 to get raw PCs.
+  6. Scale PCs onto the observed RMM scale by least-squares matching forecast
+     lead-day-1 to the verifying analysis RMM (day-1 ≈ analysis, verifiable).
+  7. Plot forecast trajectory vs observed trajectory in RMM phase space.
 
 Author : Ayush Raj
 Created: 2026-06-06
@@ -129,21 +132,19 @@ u200_1deg = u200_anom[:, :, idx_1deg]
 lons_selected = hov_lon[idx_1deg]
 assert np.allclose(lons_selected, eof_lon), "Longitude grids do not align!"
 
-# Step 3: Normalise anomalies per gridpoint
-olr_std_gp  = np.nanstd(olr_1deg,  axis=(0, 1), keepdims=True)
-u850_std_gp = np.nanstd(u850_1deg, axis=(0, 1), keepdims=True)
-u200_std_gp = np.nanstd(u200_1deg, axis=(0, 1), keepdims=True)
+# Step 3: Normalise each field by its WH04 SCALAR normalisation factor (one value
+# per variable, exactly as Wheeler & Hendon 2004 — NOT per gridpoint). These are
+# the standard normalisation factors the EOF basis was built with; using a
+# per-longitude std (the previous approach) distorts the projection and inflates
+# amplitudes.
+NF_OLR, NF_U850, NF_U200 = 15.1, 1.81, 4.81   # W/m², m/s, m/s
 
-olr_std_gp[olr_std_gp   < 1e-6] = 1.0
-u850_std_gp[u850_std_gp < 1e-6] = 1.0
-u200_std_gp[u200_std_gp < 1e-6] = 1.0
+olr_norm  = olr_1deg  / NF_OLR
+u850_norm = u850_1deg / NF_U850
+u200_norm = u200_1deg / NF_U200
 
-olr_norm  = olr_1deg  / olr_std_gp
-u850_norm = u850_1deg / u850_std_gp
-u200_norm = u200_1deg / u200_std_gp
-
-print(f"  Per-gridpoint normalisation — OLR std range: "
-      f"[{olr_std_gp.min():.3f}, {olr_std_gp.max():.3f}]")
+print(f"  WH04 scalar normalisation factors — OLR={NF_OLR}, "
+      f"U850={NF_U850}, U200={NF_U200}")
 
 # Step 4: Project onto EOFs → raw RMM1, RMM2 for all (init, step)
 n_inits = olr_norm.shape[0]
@@ -164,14 +165,35 @@ for i in range(n_inits):
         rmm1_raw[i, s] = np.dot(combined, eof1_combined)
         rmm2_raw[i, s] = np.dot(combined, eof2_combined)
 
-# Step 5: Normalise projected RMM to unit-variance scale
-rmm1_sigma = np.nanstd(rmm1_raw)
-rmm2_sigma = np.nanstd(rmm2_raw)
-print(f"  Projection stds — RMM1: {rmm1_sigma:.3f}, RMM2: {rmm2_sigma:.3f}")
+# Step 5: Put the forecast PCs on the OBSERVED RMM scale.
+# WH04 normalises the PCs by the standard deviation of the *observed* PCs over the
+# training period. We don't have those training PCs, but we DO have the official
+# observed RMM (rmm.74toRealtime.txt). Since the forecast at lead day 1 should
+# match the verifying analysis, we determine a single scale per PC by least-squares
+# matching forecast-day-1 to observed RMM at the init date (regression through the
+# origin over all inits). This anchors the forecast to the observed RMM scale and
+# is verifiable (day-1 forecast ≈ analysis).
+obs_init1 = np.array([
+    float(rmm_jfm.loc[pd.Timestamp(d), 'RMM1'])
+    if pd.Timestamp(d) in rmm_jfm.index else np.nan for d in init_times])
+obs_init2 = np.array([
+    float(rmm_jfm.loc[pd.Timestamp(d), 'RMM2'])
+    if pd.Timestamp(d) in rmm_jfm.index else np.nan for d in init_times])
 
-rmm1_fcst = rmm1_raw / rmm1_sigma
-rmm2_fcst = rmm2_raw / rmm2_sigma
+_m = np.isfinite(obs_init1) & np.isfinite(rmm1_raw[:, 0])
+scale1 = np.nansum(obs_init1[_m] * rmm1_raw[_m, 0]) / np.nansum(rmm1_raw[_m, 0] ** 2)
+scale2 = np.nansum(obs_init2[_m] * rmm2_raw[_m, 0]) / np.nansum(rmm2_raw[_m, 0] ** 2)
+print(f"  Day-1 calibration scales — RMM1: {scale1:.3f}, RMM2: {scale2:.3f}")
 
+rmm1_fcst = rmm1_raw * scale1
+rmm2_fcst = rmm2_raw * scale2
+
+# Verify day-1 agreement with the analysis (sanity)
+_d1 = np.hypot(rmm1_fcst[_m, 0] - obs_init1[_m], rmm2_fcst[_m, 0] - obs_init2[_m])
+_c1 = np.corrcoef(rmm1_fcst[_m, 0], obs_init1[_m])[0, 1]
+_c2 = np.corrcoef(rmm2_fcst[_m, 0], obs_init2[_m])[0, 1]
+print(f"  Day-1 vs analysis — mean |Δ|={np.nanmean(_d1):.2f}, "
+      f"corr RMM1={_c1:.2f}, RMM2={_c2:.2f}")
 print(f"  Forecast RMM range — RMM1: [{np.nanmin(rmm1_fcst):.2f}, {np.nanmax(rmm1_fcst):.2f}], "
       f"RMM2: [{np.nanmin(rmm2_fcst):.2f}, {np.nanmax(rmm2_fcst):.2f}]")
 

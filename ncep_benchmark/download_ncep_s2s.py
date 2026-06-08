@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-download_ecmwf_s2s.py
-=====================
-This script retrieves the ECMWF operational S2S (subseasonal-to-seasonal)
+download_ncep_s2s.py
+====================
+This script retrieves the NCEP operational S2S (subseasonal-to-seasonal)
 forecast data to serve as a physics-based benchmark against Spire forecasts.
 
 It uses the new ECMWF Data Store (ECDS) API (cdsapi >= 0.7.7) and queries the
-standard "s2s-forecasts" dataset.
+standard "s2s-forecasts" dataset with origin="ncep".
 
 Configurations:
-  - Init Dates : Mondays & Thursdays in JFM 2026 (matching Spire's inits).
+  - Init Dates : Mondays & Thursdays in JFM 2026 (matching Spire's and ECMWF's inits).
   - Target Grid: 1.5° x 1.5° (standard S2S resolution).
   - Bounding Box: India domain (0–50°N, 55–105°E).
   - Variables:
@@ -41,8 +41,8 @@ INIT_DATES = [d for d in all_days if d.weekday() in (0, 3)]   # Mon=0, Thu=3
 AREA = [50, 55, 0, 105]       # [North, West, South, East]
 GRID = [1.5, 1.5]             # 1.5 degree resolution
 
-# Forecast lead times (1 to 46 days, step of 24h)
-STEPS = [str(h) for h in range(24, 1105, 24)]
+# Forecast lead times for NCEP (1 to 44 days, step of 24h)
+STEPS = [str(h) for h in range(24, 1057, 24)]
 
 # Initialize CDS API client
 client = cdsapi.Client()
@@ -63,7 +63,7 @@ def retrieve_surface_forecast(date: pd.Timestamp, ftype: str):
 
     print(f"  [DOWNLOADING] {target_file.name} ...")
     request = {
-        "origin": "ecmwf",
+        "origin": "ncep",
         "forecast_type": "control_forecast" if ftype == "cf" else "perturbed_forecast",
         "level_type": "single_level",
         "variable": ["2t", "mx2t6", "mn2t6", "tp"],
@@ -93,7 +93,7 @@ def retrieve_pressure_level_forecast(date: pd.Timestamp, ftype: str):
 
     print(f"  [DOWNLOADING] {target_file.name} ...")
     request = {
-        "origin": "ecmwf",
+        "origin": "ncep",
         "forecast_type": "control_forecast" if ftype == "cf" else "perturbed_forecast",
         "level_type": "pressure",
         "variable": "gh",
@@ -113,7 +113,7 @@ def retrieve_pressure_level_forecast(date: pd.Timestamp, ftype: str):
 
 def main():
     print("=" * 65)
-    print("ECMWF S2S Data Download Tool (ECDS API Version)")
+    print("NCEP S2S Data Download Tool (ECDS API Version)")
     print(f"Target Directory : {OUT_DIR}")
     print(f"Total Init Dates : {len(INIT_DATES)}")
     print(f"India Box Bounds : {AREA}")

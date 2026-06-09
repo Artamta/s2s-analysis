@@ -39,10 +39,26 @@ os.makedirs(FIG_DIR, exist_ok=True)
 LON0, LON1 = 66.5, 100.0
 LAT0, LAT1 =  6.0,  38.0
 
-# ── Colormap (same as existing figures) ────────────────────────────────────
+# ── Colormap — matched to IMD ERFS operational bulletin ────────────────────
+# Levels: [-20, -15, -10, -5, -2, 2, 5, 10, 15, 20]  →  9 interior bins
+# With extend='both' → 11 total color bins (1 under + 9 interior + 1 over)
 anom_levels = [-20, -15, -10, -5, -2, 2, 5, 10, 15, 20]
-anom_cmap   = plt.get_cmap('RdYlBu', len(anom_levels) + 2)
-anom_norm   = mcolors.BoundaryNorm(anom_levels, anom_cmap.N, extend='both')
+_imd_bin_colors = [
+    # 11 bins total: under, 9 interior, over
+    (0.600, 0.000, 0.000),   # < −20   very dark red  (under)
+    (0.839, 0.047, 0.000),   # −20→−15 dark red
+    (1.000, 0.322, 0.000),   # −15→−10 red-orange
+    (1.000, 0.557, 0.114),   # −10→ −5 orange
+    (1.000, 0.792, 0.349),   #  −5→ −2 light orange
+    (1.000, 0.957, 0.647),   #  −2→ +2 pale yellow / near-white
+    (0.784, 0.784, 0.914),   #  +2→ +5 lavender
+    (0.549, 0.549, 0.749),   #  +5→+10 medium blue-lavender
+    (0.396, 0.396, 0.647),   # +10→+15 medium blue
+    (0.235, 0.235, 0.529),   # +15→+20 dark blue
+    (0.000, 0.000, 0.180),   # > +20   near-black navy (over)
+]
+anom_cmap = mcolors.ListedColormap(_imd_bin_colors, name='imd_erfs')
+anom_norm = mcolors.BoundaryNorm(anom_levels, anom_cmap.N, extend='both')
 
 # ── Load ERA5 2021 ─────────────────────────────────────────────────────────
 print("Loading ERA5 2021 daily tp …")
@@ -135,30 +151,101 @@ CASES = {
     },
 }
 
-# ── Map decoration (rows 1-2) ──────────────────────────────────────────────
-def decorate(ax, title, title_color):
+# (IMD-matched colormap is defined above with anom_levels, anom_cmap, anom_norm)
+
+# ── Map decoration ─────────────────────────────────────────────────────────
+def decorate(ax, title, title_color, row=0, col=0, n_map_rows=2):
+    """Decorate a map subplot. Gridline labels shown only on edges."""
     ax.set_extent([LON0, LON1, LAT0, LAT1], crs=ccrs.PlateCarree())
     ax.add_feature(
         cfeature.NaturalEarthFeature('physical', 'coastline', '10m',
                                      edgecolor='black', facecolor='none'),
-        linewidth=0.8, zorder=4)
+        linewidth=1.0, zorder=4)
     ax.add_feature(
         cfeature.NaturalEarthFeature('cultural', 'admin_1_states_provinces', '10m',
                                      edgecolor='black', facecolor='none'),
-        linewidth=0.4, zorder=4)
+        linewidth=0.5, zorder=4)
     gl = ax.gridlines(draw_labels=True, linewidth=0.3, color='gray',
                       alpha=0.5, linestyle=':')
-    gl.top_labels = False; gl.right_labels = False
-    gl.xlabel_style = {'size': 7, 'weight': 'bold'}
-    gl.ylabel_style = {'size': 7, 'weight': 'bold'}
-    ax.set_title(title, fontsize=8.5, color=title_color, fontweight='bold', pad=3)
+    gl.top_labels   = False
+    gl.right_labels = False
+    gl.left_labels  = (col == 0)
+    gl.bottom_labels = (row == n_map_rows - 1)
+    gl.xlabel_style = {'size': 8, 'weight': 'bold'}
+    gl.ylabel_style = {'size': 8, 'weight': 'bold'}
+    ax.set_title(title, fontsize=10, color=title_color, fontweight='bold', pad=4)
+
+
+# ── IMD panel cropping helper ──────────────────────────────────────────────
+def crop_imd_quadrants(img_full):
+    """
+    Given the full IMD ERFS PNG, return a list of 4 individual week panels
+    (Wk1, Wk2, Wk3, Wk4) cropped from the anomaly (right) half.
+
+    IMD bulletin layout (right half, after title trim):
+      rows   0–129 : Wk1 (left) | Wk2 (right)   ← top row
+      rows 130–140 : white gap / week label strip
+      rows 141–276 : Wk3 (left) | Wk4 (right)   ← bottom row
+      rows 277–280 : white gap
+      rows 281–295 : internal colorbar (discard)
+      rows 296+    : white padding (discard)
+
+    Vertical split at col ~140.
+    """
+    h, w = img_full.shape[:2]
+    anom  = img_full[:, w // 2:]               # right half
+    body  = anom[int(h * 0.07):, :]            # trim title bar
+    bh, bw = body.shape[:2]
+
+    # Find the horizontal midpoint by looking for white gap rows
+    row_mean = np.mean(body, axis=(1, 2))
+    mid_col  = bw // 2
+
+    # Top row panels: rows 0 to first white gap
+    top_end = 0
+    for r in range(bh // 2 - 5, bh // 2 + 20):
+        if row_mean[r] > 0.99:
+            top_end = r
+            break
+    if top_end == 0:
+        top_end = bh // 2 - 5
+
+    # Bottom row panels: after the white gap to before the colorbar
+    bot_start = top_end
+    for r in range(top_end, min(top_end + 30, bh)):
+        if row_mean[r] < 0.97:
+            bot_start = r
+            break
+
+    # Bottom row ends before the colorbar/white footer
+    bot_end = bh
+    for r in range(bh - 1, bh // 2, -1):
+        if row_mean[r] < 0.97:
+            bot_end = r + 1
+            break
+    # Exclude internal colorbar — find where bottom maps end
+    # The maps end ~row 276, colorbar starts ~281
+    map_bot_end = bot_end
+    for r in range(bot_start + 10, bot_end):
+        if row_mean[r] > 0.99:
+            map_bot_end = r
+            break
+
+    panels = [
+        body[:top_end,          :mid_col],   # Wk1: top-left
+        body[:top_end,          mid_col:],   # Wk2: top-right
+        body[bot_start:map_bot_end, :mid_col],   # Wk3: bottom-left
+        body[bot_start:map_bot_end, mid_col:],   # Wk4: bottom-right
+    ]
+    return panels
+
 
 # ── Figure maker ───────────────────────────────────────────────────────────
 def make_triple(ic):
     cfg   = CASES[ic]
     weeks = cfg["weeks"]
 
-    # ── compute arrays ────────────────────────────────────────────────
+    # ── compute arrays (UNCHANGED) ────────────────────────────────────
     fuxi_anoms = []
     era5_anoms = []
     fuxi_lats = fuxi_lons = None
@@ -195,100 +282,105 @@ def make_triple(ic):
         fuxi_anoms.append(anom_f)
         era5_anoms.append(anom_e_on_fuxi)
 
-    # ── load & crop IMD PNG ───────────────────────────────────────────
-    imd_path = cfg["imd_png"]
-    img      = imread(imd_path)
-    h, w     = img.shape[:2]
-    print(f"\n{ic} IMD PNG: shape={img.shape}  h={h} w={w}")
-    img_anom = img[:, w//2:]               # right half = anomaly
-    img_anom = img_anom[int(h*0.07):, :]  # trim title bar
-    print(f"  cropped anomaly panel: {img_anom.shape}")
+    # ── Crop individual IMD panels ────────────────────────────────────
+    imd_panels = crop_imd_quadrants(imread(cfg["imd_png"]))
+    print(f"\n{ic} IMD: cropped {len(imd_panels)} individual week panels")
+    for i, p in enumerate(imd_panels):
+        print(f"  Wk{i+1}: {p.shape}")
 
-    # ── build figure ──────────────────────────────────────────────────
-    fig = plt.figure(figsize=(20, 20))
-    fig.suptitle(cfg["title"], fontsize=13, fontweight='bold', y=0.975)
-    fig.text(0.5, 0.955,
+    # ── Build 3×4 figure ──────────────────────────────────────────────
+    fig = plt.figure(figsize=(16, 15))
+    fig.suptitle(cfg["title"], fontsize=14, fontweight='bold', y=0.985)
+    fig.text(0.5, 0.965,
              "ERA5 regridded from native 0.25° to 1.5° for direct comparison with FuXi-S2S",
-             ha='center', fontsize=9, style='italic', color='dimgray')
+             ha='center', fontsize=9.5, style='italic', color='dimgray')
 
-    # GridSpec for rows 0-1 only (maps); row 2 (IMD image) placed manually below
-    gs = gridspec.GridSpec(2, 4, figure=fig,
-                           hspace=0.28, wspace=0.08,
-                           top=0.93, bottom=0.46,
-                           left=0.07, right=0.97)
+    gs = gridspec.GridSpec(3, 4, figure=fig,
+                           hspace=0.25, wspace=0.08,
+                           top=0.94, bottom=0.08,
+                           left=0.08, right=0.97)
 
     row_meta = [
-        ("FuXi Anomaly\n(normalised, 1.5°)",       fuxi_anoms, 'darkgreen'),
-        ("ERA5 Observed\n(regridded to 1.5°)",      era5_anoms, 'darkblue'),
+        ("FuXi Anomaly\n(normalised, 1.5°)",  fuxi_anoms, 'darkgreen'),
+        ("ERA5 Observed\n(regridded to 1.5°)", era5_anoms, 'darkblue'),
     ]
 
     im = None
-    row_axes = []   # row_axes[row][col]
+    all_axes = []     # flat list for panel-letter labelling
+    panel_idx = 0
 
-    for row, (row_lbl, arrays, col) in enumerate(row_meta):
-        this_row = []
+    # ── Rows 0–1: FuXi and ERA5 map panels ───────────────────────────
+    for row, (row_lbl, arrays, color) in enumerate(row_meta):
+        first_ax = None
         for c, (arr, wk) in enumerate(zip(arrays, weeks)):
             ax = fig.add_subplot(gs[row, c], projection=ccrs.PlateCarree())
-            this_row.append(ax)
+            all_axes.append(ax)
             im = ax.pcolormesh(fuxi_lons, fuxi_lats, arr,
                                cmap=anom_cmap, norm=anom_norm,
                                transform=ccrs.PlateCarree(), shading='auto')
-            decorate(ax, f"({wk['label']})", col)
-        row_axes.append(this_row)
+            decorate(ax, f"({wk['label']})", color, row=row, col=c, n_map_rows=2)
 
-        # row label: attach to the first-column axis (already created, no duplicate)
-        this_row[0].text(-0.22, 0.5, row_lbl,
-                         transform=this_row[0].transAxes,
-                         fontsize=9, color=col, fontweight='bold',
-                         va='center', ha='center', rotation=90)
+            # Panel letter
+            ax.text(0.03, 0.95, f"({chr(97 + panel_idx)})",
+                    transform=ax.transAxes, fontsize=11, fontweight='bold',
+                    va='top', ha='left',
+                    bbox=dict(boxstyle='round,pad=0.15', fc='white', ec='none', alpha=0.8))
+            panel_idx += 1
+            if first_ax is None:
+                first_ax = ax
 
-    # ── Row 3: IMD image — left-aligned with grid, natural aspect ────
-    # Image is nearly square (279×306). At figsize(20,20) we can show it large.
-    # Left-align with gs.left=0.07 so it lines up with the map columns.
-    ih, iw   = img_anom.shape[:2]
-    img_disp_h = 0.36                        # 0.36 × 20" = 7.2" tall
-    img_disp_w = img_disp_h * (iw / ih)     # preserve aspect → 0.328 × 20" = 6.56" wide
-    img_left   = 0.07                        # left-aligned with the map grid
-    img_bottom = 0.05
+        # Row label on the left
+        first_ax.text(-0.20, 0.5, row_lbl,
+                      transform=first_ax.transAxes,
+                      fontsize=10, color=color, fontweight='bold',
+                      va='center', ha='center', rotation=90)
 
-    ax_imd = fig.add_axes([img_left, img_bottom, img_disp_w, img_disp_h])
-    ax_imd.imshow(img_anom, aspect='auto', interpolation='lanczos')
-    ax_imd.axis('off')
+    # ── Row 2: IMD ERFS panels (cropped from bulletin PNG) ────────────
+    imd_first_ax = None
+    for c in range(4):
+        ax = fig.add_subplot(gs[2, c])
+        all_axes.append(ax)
+        ax.imshow(imd_panels[c], aspect='equal', interpolation='lanczos')
+        ax.set_xticks([]); ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_linewidth(0.8)
+            spine.set_edgecolor('gray')
+        ax.set_title(f"({weeks[c]['label']})", fontsize=10, color='darkred',
+                     fontweight='bold', pad=4)
 
-    # Row label to the left of the image axis
-    ax_imd.text(-0.12, 0.5,
-                "IMD ERFS\n(operational bulletin)",
-                transform=ax_imd.transAxes,
-                fontsize=9, color='darkred', fontweight='bold',
-                va='center', ha='center', rotation=90)
+        # Panel letter
+        ax.text(0.03, 0.95, f"({chr(97 + panel_idx)})",
+                transform=ax.transAxes, fontsize=11, fontweight='bold',
+                va='top', ha='left',
+                bbox=dict(boxstyle='round,pad=0.15', fc='white', ec='none', alpha=0.8))
+        panel_idx += 1
+        if imd_first_ax is None:
+            imd_first_ax = ax
 
-    # Caption below the image
-    ax_imd.text(0.5, -0.07,
-                "IMD ERFS from operational extended range forecast bulletin "
-                "(Pattanaik et al., 2019);  "
-                "gridded forecast data unavailable.  "
-                "Colorbar scale: −20 to +20 mm/day.",
-                transform=ax_imd.transAxes,
-                fontsize=7.5, style='italic', color='dimgray',
-                ha='center', va='top')
+    # Row label
+    imd_first_ax.text(-0.20, 0.5, "IMD ERFS\n(operational bulletin)",
+                      transform=imd_first_ax.transAxes,
+                      fontsize=10, color='darkred', fontweight='bold',
+                      va='center', ha='center', rotation=90)
 
-    # ── Shared colourbar below row 1 (maps), above IMD image ─────────
-    r0c0 = row_axes[0][0].get_position()
-    r1c3 = row_axes[1][3].get_position()
-    cbar_left   = r0c0.x0
-    cbar_width  = r1c3.x1 - r0c0.x0
-    cbar_bottom = r1c3.y0 - 0.045
-    cax = fig.add_axes([cbar_left, cbar_bottom, cbar_width, 0.017])
+    # ── Shared colorbar below all three rows ──────────────────────────
+    cax = fig.add_axes([0.15, 0.035, 0.70, 0.018])
     cb  = fig.colorbar(im, cax=cax, orientation='horizontal', extend='both')
-    cb.set_label('mm/day', fontsize=9)
+    cb.set_label('mm/day', fontsize=10, labelpad=3)
     cb.set_ticks(anom_levels)
-    cb.ax.tick_params(labelsize=8)
+    cb.ax.tick_params(labelsize=9)
 
-    fig.savefig(cfg["outfile"], dpi=200, bbox_inches='tight')
+    # ── Caption ───────────────────────────────────────────────────────
+    fig.text(0.5, 0.005,
+             "IMD ERFS panels cropped from operational extended range forecast bulletin "
+             "(Pattanaik et al., 2019); gridded forecast data unavailable.",
+             ha='center', fontsize=8, style='italic', color='dimgray')
+
+    fig.savefig(cfg["outfile"], dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"  ✓ Saved: {cfg['outfile']}")
 
-# ── Run IC0707 first, then stop ────────────────────────────────────────────
+# ── Run both cases ─────────────────────────────────────────────────────────
 make_triple("IC0707")
 make_triple("IC0825")
 print("\nBoth figures done.")

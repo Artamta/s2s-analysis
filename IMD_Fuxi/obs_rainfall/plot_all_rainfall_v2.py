@@ -56,14 +56,11 @@ anom_norm   = mcolors.BoundaryNorm(anom_levels, anom_cmap.N, extend='both')
 # ── Map decoration ─────────────────────────────────────────────────────────
 def decorate(ax, title, row):
     ax.set_extent([LON0, LON1, LAT0, LAT1], crs=ccrs.PlateCarree())
+    # Coastline only — no political borders, no disputed regions
     ax.add_feature(
-        cfeature.NaturalEarthFeature('cultural', 'admin_0_countries', '10m',
+        cfeature.NaturalEarthFeature('physical', 'coastline', '10m',
                                      edgecolor='black', facecolor='none'),
         linewidth=0.8, zorder=4)
-    ax.add_feature(
-        cfeature.NaturalEarthFeature('cultural', 'admin_1_states_provinces', '10m',
-                                     edgecolor='black', facecolor='none'),
-        linewidth=0.4, zorder=4)
     gl = ax.gridlines(draw_labels=True, linewidth=0.3, color='gray',
                       alpha=0.6, linestyle=':')
     gl.top_labels   = False
@@ -257,16 +254,6 @@ def interp_clim_to_fuxi(clim_arr, obs_lats, obs_lons, fuxi_lats, fuxi_lons):
     return interp((gg_lat, gg_lon))
 
 
-# ── FuXi colormaps (raw scale: values ~0-5 mm/day) ────────────────────────
-fuxi_act_levels  = [0, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0]
-fuxi_act_cmap    = plt.get_cmap('YlGn', len(fuxi_act_levels))
-fuxi_act_norm    = mcolors.BoundaryNorm(fuxi_act_levels, fuxi_act_cmap.N, extend='max')
-
-fuxi_anom_levels = [-3, -2, -1, -0.5, -0.2, 0.2, 0.5, 1.0, 2.0, 3.0]
-fuxi_anom_cmap   = plt.get_cmap('RdYlBu', len(fuxi_anom_levels) + 2)
-fuxi_anom_norm   = mcolors.BoundaryNorm(fuxi_anom_levels, fuxi_anom_cmap.N, extend='both')
-
-
 # ── MAIN LOOP ──────────────────────────────────────────────────────────────
 for ic, cfg in CASES.items():
     weeks     = cfg["weeks"]
@@ -301,39 +288,16 @@ for ic, cfg in CASES.items():
         anom_label = "Rainfall Anomaly (mm/day)",
     )
 
-    # ── 2. FuXi raw figure ─────────────────────────────────────────────
-    print(f"=== {ic}: FuXi raw figure ===")
-    fuxi_acts  = []
-    fuxi_anoms = []
+    # ── 2. Load FuXi weekly arrays (needed for normalised figure) ─────
+    fuxi_acts   = []
     fuxi_lats_c = fuxi_lons_c = None
 
-    for wk_i, (d_s, d_e) in enumerate(cfg["fuxi_days"]):
+    for d_s, d_e in cfg["fuxi_days"]:
         act_f, f_lats, f_lons = load_fuxi_weekly(
             fuxi_dir, d_s, d_e, LAT0, LAT1, LON0, LON1)
         fuxi_lats_c = f_lats
         fuxi_lons_c = f_lons
         fuxi_acts.append(act_f)
-
-        clim_f = clims[wk_i]
-        if clim_f is not None:
-            clim_interp = interp_clim_to_fuxi(clim_f, lats_obs, lons_obs, f_lats, f_lons)
-            fuxi_anoms.append(act_f - clim_interp)
-        else:
-            fuxi_anoms.append(np.zeros_like(act_f))
-
-    make_2x4_figure(
-        fuxi_acts, fuxi_anoms, fuxi_lats_c, fuxi_lons_c, week_lbls,
-        suptitle   = f"FuXi-S2S Forecast Rainfall (mm/day)  |  IC: 2021{ic[2:]}  [raw model output]",
-        outfile    = os.path.join(FIG_DIR, f"fig_fuxi_raw_{ic}.png"),
-        act_label  = "FuXi Actual Rainfall (mm/day) — raw",
-        anom_label = "FuXi Rainfall Anomaly (mm/day) — raw",
-        act_lvls   = fuxi_act_levels,
-        act_c      = fuxi_act_cmap,
-        act_n      = fuxi_act_norm,
-        anom_lvls  = fuxi_anom_levels,
-        anom_c     = fuxi_anom_cmap,
-        anom_n     = fuxi_anom_norm,
-    )
 
     # ── 3. FuXi normalised figure ─────────────────────────────────────
     print(f"=== {ic}: FuXi normalised figure ===")
@@ -366,4 +330,4 @@ for ic, cfg in CASES.items():
         anom_label = "FuXi Rainfall Anomaly (mm/day) — normalised",
     )
 
-print("\nAll 6 figures done.")
+print("\nAll 4 figures done.")

@@ -330,4 +330,73 @@ for ic, cfg in CASES.items():
         anom_label = "FuXi Rainfall Anomaly (mm/day) — normalised",
     )
 
+    # ── 4. Comparison figure: FuXi anom / ERA5 anom / difference ─────────
+    print(f"=== {ic}: comparison figure ===")
+
+    # FuXi anomaly is on the 1.5° FuXi grid; ERA5 anomaly is on 0.25° obs grid.
+    # Interpolate ERA5 anomaly UP to FuXi grid so all three rows share one grid.
+    anom_obs_on_fuxi = [
+        interp_clim_to_fuxi(a, lats_obs, lons_obs, fuxi_lats_c, fuxi_lons_c)
+        for a in anom_obs
+    ]
+    diff_anoms = [f - e for f, e in zip(fuxi_norm_anoms, anom_obs_on_fuxi)]
+
+    row_data = [fuxi_norm_anoms, anom_obs_on_fuxi, diff_anoms]
+    row_labels = [
+        "FuXi Anomaly (normalised)",
+        "ERA5 Observed Anomaly",
+        "Difference: FuXi − ERA5",
+    ]
+    row_colors = ['darkgreen', 'darkblue', 'purple']
+
+    fig, axes = plt.subplots(
+        3, 4, figsize=(18, 13),
+        subplot_kw={'projection': ccrs.PlateCarree()},
+    )
+    fig.subplots_adjust(hspace=0.22, wspace=0.08, top=0.92, bottom=0.08,
+                        left=0.06, right=0.97)
+
+    im = None
+    for row, arrays in enumerate(row_data):
+        for col, (arr, lbl) in enumerate(zip(arrays, week_lbls)):
+            ax = axes[row, col]
+            im = ax.pcolormesh(fuxi_lons_c, fuxi_lats_c, arr,
+                               cmap=anom_cmap, norm=anom_norm,
+                               transform=ccrs.PlateCarree(), shading='auto')
+            ax.set_extent([LON0, LON1, LAT0, LAT1], crs=ccrs.PlateCarree())
+            ax.add_feature(
+                cfeature.NaturalEarthFeature('physical', 'coastline', '10m',
+                                             edgecolor='black', facecolor='none'),
+                linewidth=0.8, zorder=4)
+            gl = ax.gridlines(draw_labels=True, linewidth=0.3, color='gray',
+                              alpha=0.6, linestyle=':')
+            gl.top_labels = False; gl.right_labels = False
+            gl.xlabel_style = {'size': 7, 'weight': 'bold'}
+            gl.ylabel_style = {'size': 7, 'weight': 'bold'}
+            title_col = 'dimgray' if row == 0 else ('darkblue' if row == 1 else 'purple')
+            ax.set_title(f"({lbl})", fontsize=8.5, color=title_col,
+                         fontweight='bold', pad=3)
+
+        axes[row, 0].text(-0.20, 0.5, row_labels[row],
+                          transform=axes[row, 0].transAxes,
+                          fontsize=9, color=row_colors[row], fontweight='bold',
+                          va='center', rotation=90)
+
+    fig.suptitle(
+        f"FuXi vs ERA5 Rainfall Anomaly (mm/day)  |  IC: 2021{ic[2:]}",
+        fontsize=12, fontweight='bold', y=0.96)
+
+    # One shared colourbar spanning all columns, below row 2
+    p0 = axes[2, 0].get_position(); p3 = axes[2, 3].get_position()
+    cax = fig.add_axes([p0.x0, p0.y0 - 0.05, p3.x1 - p0.x0, 0.018])
+    cb  = fig.colorbar(im, cax=cax, orientation='horizontal', extend='both')
+    cb.set_label('mm/day', fontsize=9)
+    cb.set_ticks(anom_levels)
+    cb.ax.tick_params(labelsize=8)
+
+    outfile = os.path.join(FIG_DIR, f"fig_comparison_{ic}.png")
+    fig.savefig(outfile, dpi=200, bbox_inches='tight')
+    plt.close(fig)
+    print(f"  ✓ Saved: {outfile}")
+
 print("\nAll 4 figures done.")

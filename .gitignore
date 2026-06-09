@@ -3,3 +3,4 @@
 *.zarr
 *.nc
 *.
+*.grib

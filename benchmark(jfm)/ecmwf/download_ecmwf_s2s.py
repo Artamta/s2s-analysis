@@ -30,12 +30,12 @@ import cdsapi
 
 # ── CONFIGURATION ────────────────────────────────────────────────────────────
 # Setup self-contained data output directory
-OUT_DIR = Path(__file__).resolve().parent / "data"
+OUT_DIR = Path("/storage/raj.ayush/benchmark(jfm)/ecmwf/data")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Generate forecast initialization dates (Mondays & Thursdays in JFM 2026)
+# Generate forecast initialization dates (Thursdays only in JFM 2026 matching Spire/FuXi)
 all_days = pd.date_range("2026-01-01", "2026-03-31", freq="D")
-INIT_DATES = [d for d in all_days if d.weekday() in (0, 3)]   # Mon=0, Thu=3
+INIT_DATES = [d for d in all_days if d.weekday() == 3]   # Thu=3
 
 # Grid coordinates and regional box (India domain)
 AREA = [50, 55, 0, 105]       # [North, West, South, East]

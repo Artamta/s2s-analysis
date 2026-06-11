@@ -506,12 +506,11 @@ flagged. Geopotential height, which carries no such accumulation
 ambiguity, is verified with the full set: pattern correlation, RMSE,
 and mean bias.
 
-For the spatial skill maps (Fig.~\ref{fig:spatial_acc}), the temporal
-ACC at each grid point is the correlation, across the $T=13$
-initializations, between forecast and observed weekly anomalies. With
-so few samples these maps are necessarily noisy; they are interpreted
-qualitatively, with significance assessed by \ph{a two-sided
-bootstrap / $t$-test at the 5\% level, indicated by stippling}.
+For the spatial skill maps (Fig.~\ref{fig:spatial_pcc}), the local
+temporal pattern correlation at each grid point is the correlation,
+across the $T=13$ initializations, between forecast and observed weekly
+Z500 anomalies. With so few samples these maps are necessarily noisy and
+are interpreted qualitatively.
 
 \subsection{Reference forecasts}\label{sec:baselines}
 
@@ -520,8 +519,7 @@ Two reference forecasts contextualize all scores: (i)~climatology
 and the anomaly RMSE equals the observed anomaly standard deviation;
 and (ii)~persistence, defined as the observed anomaly of the week
 immediately preceding initialization, applied at all leads.
-\ph{Confirm inclusion of both baselines in Figs.~\ref{fig:acc_lead}
-and \ref{fig:rmse_lead}; recommended.}
+The persistence baseline is shown in Fig.~\ref{fig:mme}.
 
 \subsection{Uncertainty estimation}\label{sec:uncertainty}
 
@@ -687,16 +685,95 @@ Tables~\ref{tab:acc} and \ref{tab:rmse} summarize the scores.
   \end{tabular}
 \end{table}
 
+\subsection{Reference forecasts and the multi-model ensemble}
+\label{sec:mme}
+
+Figure~\ref{fig:mme} adds two references to the four systems: a
+persistence forecast (the observed weekly anomaly immediately preceding
+initialization, applied at all leads) and an equal-weight multi-model
+ensemble (MME; the mean of the four systems). For Z500, every system
+beats persistence by a wide margin---SPIRE attains PCC of 0.91 at week~1
+and remains above persistence at every lead through week~6 (e.g.\ 0.48
+versus 0.00 at week~3)---confirming that the circulation skill is
+genuine and not a restatement of low-frequency persistence. The MME is
+the strongest single product for Z500: its PCC matches the best
+individual system at every lead (0.93 at week~1, 0.67 at week~2) while
+achieving the lowest RMSE of any forecast, including a week-1 RMSE of
+8.1~m below ECMWF's 9.3~m. The PCC gain of the MME over the best single
+system is nonetheless small ($|\Delta\mathrm{PCC}|\leq0.04$ at weeks
+1--4), so with $T=13$ we frame the MME advantage as a robustness and
+error-reduction benefit rather than a large skill gain.
+
+For precipitation the picture is different. The MME precipitation PCC
+(0.40 at week~1) tracks the true-daily-total cluster rather than FuXi,
+because the equal-weight mean is dominated by the three systems on the
+true daily scale. Persistence precipitation PCC (0.37 at week~1, 0.22 at
+week~3) is comparable to or higher than that of SPIRE, ECMWF, and NCEP;
+however, persistence is computed from ERA5 against ERA5 and therefore
+shares the native scale of the reference, exactly as FuXi-S2S does
+(Section~\ref{sec:precip_skill}). We therefore do \emph{not} interpret
+this as the true-daily systems failing to beat persistence; rather, it
+reflects the same reference-consistency effect, and reinforces our
+decision to treat precipitation magnitudes cautiously.
+
+A complementary diagnostic is the ratio of forecast to observed
+anomaly spatial standard deviation (Section~\ref{sec:smoothing}). For
+Z500 this ratio falls for SPIRE from near unity at week~1 to about 0.5
+by week~4, indicating that its ensemble mean is progressively smoother
+than the observed field, which partly accounts for its low RMSE; FuXi-S2S
+shows the opposite, with a ratio rising above 1.4, consistent with its
+larger RMSE growth, while ECMWF and NCEP remain near 0.8--1.1. RMSE
+differences between systems should be read in this light.
+
+\subsection{Spatial distribution of skill}\label{sec:spatial_skill}
+
+Figure~\ref{fig:spatial_pcc} maps the local temporal anomaly correlation
+of Z500 (computed across the 13 initializations at each grid point) for
+week~2. \ph{Describe the north--south gradient evident in the maps: high
+correlation over northern India and the western-disturbance corridor,
+decreasing toward the peninsula, and the close similarity of the SPIRE,
+ECMWF, and MME patterns. With 13 samples per grid point these maps are
+indicative.}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig06_mme_persistence.pdf}
+  \caption{Weekly skill horizon including the equal-weight multi-model
+  ensemble (MME, black) and the persistence baseline (grey dotted),
+  for (a)~precipitation PCC, (b)~Z500 PCC, and (c)~Z500 RMSE, over
+  Indian land points, JFM 2026. Shading on the MME is the bootstrap
+  95\% CI over the 13 initializations.}
+  \label{fig:mme}
+\end{figure}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig07_spatial_pcc_z500.pdf}
+  \caption{Local temporal anomaly correlation of Z500 at each grid
+  point, computed across the 13 JFM~2026 initializations, for week~2,
+  for each system and the MME. Ocean points are masked.}
+  \label{fig:spatial_pcc}
+\end{figure*}
+
 \subsection{Regional skill}\label{sec:regional_skill}
 
 Figure~\ref{fig:ranking} breaks pattern skill down by IMD homogeneous
 region (Northwest, Central, South Peninsula, East/Northeast India),
-averaged over weeks 1--4. \ph{Describe which regions are most and least
-predictable, and for which variable---for example, whether Z500 pattern
-skill is highest over the northwestern western-disturbance corridor and
-whether precipitation skill is lowest over the weakly forced peninsular
-interior. With four regions and 13 initializations these estimates are
-indicative rather than definitive.}
+averaged over weeks 1--4, and Fig.~\ref{fig:regional_horizon} (Appendix)
+shows the corresponding lead dependence. For Z500, SPIRE is the most or
+equal-most skillful system over Northwest (PCC 0.60, with ECMWF 0.58)
+and Central India (0.52, ECMWF 0.51), and remains competitive over the
+South Peninsula (0.56; ECMWF 0.60) and the East/Northeast (0.56; ECMWF
+and NCEP 0.59); circulation skill is thus high and spatially uniform
+across the subcontinent for SPIRE. For precipitation, the true-daily
+systems show modest skill only over the Northwest (SPIRE and ECMWF 0.13)
+and near-zero or negative pattern correlation elsewhere, consistent with
+western-disturbance forcing being the dominant source of organized,
+predictable winter precipitation over India; FuXi-S2S is positive in all
+regions, again reflecting its reference-consistency advantage rather
+than physical skill (Section~\ref{sec:precip_skill}). With four regions
+and 13 initializations these estimates are indicative rather than
+definitive.
 
 \subsection{Bias analysis}\label{sec:bias}
 
@@ -888,6 +965,38 @@ concentrated in [region]; (5) raw-precipitation biases were
 can provide \ph{competitive} subseasonal precipitation guidance for
 India, and they establish a reproducible real-time benchmark to be
 extended in subsequent seasons.
+
+% ===================================================================
+% APPENDIX
+% ===================================================================
+\appendix
+\section{Supplementary figures}\label{app:supp}
+
+Figure~\ref{fig:bias_maps} shows the spatial structure of the Z500 mean
+anomaly bias for week~2, complementing the domain-mean values in
+Section~\ref{sec:bias}. Figure~\ref{fig:regional_horizon} shows the
+lead dependence of pattern correlation within each IMD homogeneous
+region for both variables, complementing the weeks 1--4 scorecard of
+Fig.~\ref{fig:ranking}.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig08_spatial_bias_z500.pdf}
+  \caption{Z500 mean anomaly bias (forecast minus ERA5, m) at each grid
+  point for week~2, averaged over the 13 JFM~2026 initializations, for
+  each system. Ocean points are masked.}
+  \label{fig:bias_maps}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig09_regional_horizon.pdf}
+  \caption{Pattern correlation versus lead (weeks 1--6) for precipitation
+  (top row) and Z500 (bottom row) within each IMD homogeneous region
+  (columns), for the four systems, JFM~2026. Dotted line marks
+  PCC${=}0.5$.}
+  \label{fig:regional_horizon}
+\end{figure*}
 
 % ===================================================================
 % BACK MATTER

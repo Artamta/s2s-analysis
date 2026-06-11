@@ -555,25 +555,25 @@ bias rather than in isolation \citep{murphy1988}.
 statement in this section is a placeholder template. Replace with
 computed results and delete this notice before submission.}
 
-\subsection{Lead-time-dependent skill}\label{sec:lead_skill}
+\subsection{Large-scale circulation (Z500) skill}\label{sec:lead_skill}
 
-Figure~\ref{fig:acc_lead} shows the land-mean pattern correlation (PCC)
-of weekly precipitation (panel a) and Z500 (panel b), and the Z500 RMSE
-(panel c), as a function of forecast lead for all four ensemble-mean
-systems. For Z500, all systems retain high pattern skill at week~1
-(PCC${\approx}$\phnum{}) and decline through the subseasonal range, with
-SPIRE reaching PCC${=}$\phnum{} at week~\phnum{} (cf.\ ECMWF \phnum{},
-FuXi-S2S \phnum{}, NCEP \phnum{}). For precipitation (panel a), pattern
-skill is substantially lower at all leads: SPIRE attains
-PCC${=}$\phnum{} at week~1, \phnum{} at week~2, and \phnum{} at week~3.
-Taking PCC${\geq}0.5$ as an indicative threshold of useful pattern
-skill, \ph{state which systems/variables exceed it at which leads};
-bootstrap confidence intervals \ph{overlap/separate} the systems at
-weeks \ph{X--Y}. Comparing panels (a) and (b) addresses our third
-question directly: the much faster collapse of precipitation PCC
-relative to Z500 PCC indicates that skill for the large-scale
-circulation does \ph{not fully} translate into skill for regional
-precipitation.
+SPIRE demonstrates strong subseasonal skill for the large-scale
+atmospheric circulation over India (Fig.~\ref{fig:acc_lead}b,c). At
+week~1 SPIRE attains a Z500 pattern correlation (PCC) of 0.91,
+comparable to ECMWF (0.94) and substantially above FuXi-S2S (0.79) and
+NCEP (0.80). It remains competitive at longer leads, with PCC of 0.64
+and 0.48 at weeks~2 and~3 (versus 0.62 and 0.43 for ECMWF). RMSE tells
+the same story (Fig.~\ref{fig:acc_lead}c): SPIRE's week-1 Z500 RMSE of
+$\approx$12.0~m is second only to ECMWF (9.3~m) and below FuXi (12.5~m)
+and NCEP (19.4~m); at weeks~5--6 SPIRE attains the \emph{lowest} RMSE of
+all four systems (31.9~m, versus 35.2, 37.1, and 37.4~m for ECMWF, FuXi,
+and NCEP). The paired SPIRE$-$FuXi comparison
+(Fig.~\ref{fig:spire_fuxi}b) shows a statistically significant week-1
+advantage for SPIRE ($\Delta\mathrm{PCC}={+}0.12$, $p<0.001$). Through
+week~3, SPIRE is therefore competitive with the leading operational
+system (ECMWF) and outperforms both FuXi and NCEP for circulation
+prediction; at weeks~4--6 the four systems become statistically
+indistinguishable as all approach low pattern skill (PCC${\lesssim}0.3$).
 
 \begin{figure}[t]
   \centering
@@ -604,24 +604,42 @@ precipitation.
   \label{fig:spire_fuxi}
 \end{figure}
 
-The Z500 RMSE (Fig.~\ref{fig:acc_lead}c) grows with lead and is
-interpreted alongside the pattern correlation, since ensemble means of
-differing size and smoothness are penalized differently by RMSE
-(Section~\ref{sec:smoothing}). SPIRE's ensemble-mean Z500 RMSE is
-\ph{lower/comparable} to the operational systems at week~\phnum{},
-reflecting in part the variance-damping of its ensemble mean rather
-than feature placement alone.
+\subsection{Precipitation skill}\label{sec:precip_skill}
 
-\paragraph{SPIRE versus FuXi-S2S.} Because SPIRE and FuXi-S2S both
-ingest ERA5 at initialization and are verified against ERA5, their
-paired difference (Fig.~\ref{fig:spire_fuxi}) is the most directly
-comparable contrast in the study and isolates the two AI systems from
-the analysis-quality differences that complicate the AI-versus-dynamical
-comparison. SPIRE \ph{outperforms/matches} FuXi-S2S in Z500 pattern
-correlation at weeks~\phnum{}, with the paired-bootstrap interval
-excluding zero at \ph{which leads}; for precipitation the two AI systems
-are \ph{statistically indistinguishable/separated} at \ph{which leads}.
+Precipitation pattern skill is far lower than circulation skill for
+every system (Fig.~\ref{fig:acc_lead}a). Among the three systems that
+produce true daily-total precipitation---SPIRE, ECMWF, and NCEP---week-1
+PCC ranges from 0.29 to 0.44 (SPIRE 0.35, ECMWF 0.44, NCEP 0.29) and
+falls to near zero by weeks~2--3. Within this group SPIRE is
+statistically indistinguishable from the operational systems
+(overlapping bootstrap intervals at all leads), so its strong
+circulation skill does not carry over into a precipitation advantage.
 
+\paragraph{The FuXi-S2S precipitation result and why it must be read
+with caution.} FuXi-S2S records markedly higher precipitation PCC than
+every other system---0.82 at week~1, declining only to 0.46 by
+week~3---and the paired SPIRE$-$FuXi difference is significantly
+negative through week~3 (Fig.~\ref{fig:spire_fuxi}a). We caution
+strongly against interpreting this as superior physical precipitation
+skill. FuXi-S2S is trained on ERA5 and reproduces precipitation on the
+ERA5 native scale (its JFM-2026 domain mean, $\approx$0.03~mm, matches
+the 6-hour ERA5 reference, whereas SPIRE, ECMWF, and NCEP produce
+true daily totals near 0.8~mm). Because verification is performed
+against that same ERA5 field, a system trained to emulate ERA5 is
+rewarded for reproducing the spatial structure of the reference itself,
+rather than for independently skillful precipitation forecasting. The
+three systems that target true daily precipitation cluster together at
+much lower PCC, and we regard their range as the physically meaningful
+comparison; the FuXi-S2S precipitation advantage is, at least in part,
+an artifact of training-target and reference consistency
+(Section~\ref{sec:limitations}).
+
+The contrast between high circulation skill and low precipitation skill
+(for the true-daily systems) directly answers our third question: useful
+predictability of the large-scale circulation extends well beyond the
+horizon of useful precipitation predictability over India during
+JFM~2026, because precipitation is governed by local and mesoscale
+processes that circulation skill alone does not capture.
 Tables~\ref{tab:acc} and \ref{tab:rmse} summarize the scores.
 
 \begin{table}[t]

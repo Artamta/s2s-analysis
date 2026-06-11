@@ -80,11 +80,11 @@ When you return to your computer, follow this exact checklist:
 - **Precipitation (TP):** Total surface precipitation. Raw units vary (Meters vs mm). Our unified mathematical pipeline temporally differentiates and standardizes everything to **mm/day**.
 - **Geopotential (Z500 / GH):** Geopotential at 500 hPa. Unified to **m²/s²** *(Spire natively outputs geopotential height in meters, which we strictly convert by multiplying by standard gravity 9.80665)*.
 
-| Dataset | Type | Absolute Master Path | Resolution | Temporal Horizon | Members | Core Variables | Status |
+| Dataset | Type | Absolute Master Path | Resolution | Temporal Horizon | Members | Core Variables & Native Units | Status |
 |---|---|---|---|---|---|---|---|
-| **ERA5** | Ground Truth | `/storage/raj.ayush/s2s-forecast-data/era5/data/` | 1.5° x 1.5° | 135 continuous days | None | `t2m`, `tp`, `z` | 🟢 100% Intact |
-| **ECMWF** | Operational | `/storage/raj.ayush/s2s-forecast-data/ecmwf/data/` | 1.5° x 1.5° | 46 Days (24h steps) | 1 CF, 100 PF | `mx2t6`, `tp`, `gh` | 🟢 100% Intact |
-| **NCEP** | Operational | `/storage/raj.ayush/s2s-forecast-data/ncep/data/` | 1.5° x 1.5° | 44 Days (24h steps) | 1 CF, 15 PF | `mx2t6`, `tp`, `gh` | 🟢 100% Intact |
-| **FuXi** | AI Model | `/storage/raj.ayush/s2s-forecast-data/fuxi/output/` | 1.5° x 1.5° | 42 Days (Daily steps) | 11 Ensemble | `t2m`, `tp`, `z` | 🟢 100% Intact |
-| **SPIRE** | AI Model | `/storage/raj.ayush/s2s-forecast-data/spire/*.zarr` | 0.5° x 0.5° | 46 Days (Daily steps) | Ens. Mean / Std | `temperature`, `precipitation`, `geopotential` | 🟢 100% Intact |
+| **ERA5** | Ground Truth | `/storage/raj.ayush/s2s-forecast-data/era5/data/` | 1.5° x 1.5° | 135 continuous days | None | `t2m` (K), `tp` (meters), `z` (m²/s²) | 🟢 100% Intact |
+| **ECMWF** | Operational | `/storage/raj.ayush/s2s-forecast-data/ecmwf/data/` | 1.5° x 1.5° | 46 Days (24h steps) | 1 CF, 100 PF | `mx2t6` (K), `tp` (kg/m²), `gh` (gpm) | 🟢 100% Intact |
+| **NCEP** | Operational | `/storage/raj.ayush/s2s-forecast-data/ncep/data/` | 1.5° x 1.5° | 44 Days (24h steps) | 1 CF, 15 PF | `mx2t6` (K), `tp` (kg/m²), `gh` (gpm) | 🟢 100% Intact |
+| **FuXi** | AI Model | `/storage/raj.ayush/s2s-forecast-data/fuxi/output/` | 1.5° x 1.5° | 42 Days (Daily steps) | 11 Ensemble | `t2m` (K), `tp` (mm), `z` (m²/s²) | 🟢 100% Intact |
+| **SPIRE** | AI Model | `/storage/raj.ayush/s2s-forecast-data/spire/*.zarr` | 0.5° x 0.5° | 46 Days (Daily steps) | Ens. Mean / Std | `temp` (K), `precip` (kg/m²), `gh` (m) | 🟢 100% Intact |
 

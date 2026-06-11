@@ -66,7 +66,11 @@ def retrieve_surface_forecast(date: pd.Timestamp, ftype: str):
         "origin": "ecmwf",
         "forecast_type": "control_forecast" if ftype == "cf" else "perturbed_forecast",
         "level_type": "single_level",
-        "variable": ["2t", "mx2t6", "mn2t6", "tp"],
+        "variable": [
+            "maximum_2m_temperature_in_the_last_24_hours", 
+            "minimum_2m_temperature_in_the_last_24_hours", 
+            "total_precipitation"
+        ],
         "year": str(date.year),
         "month": f"{date.month:02d}",
         "day": f"{date.day:02d}",

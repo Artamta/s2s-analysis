@@ -221,16 +221,16 @@ def download_ecmwf_s2s(dates):
         # Loop through control forecast (cf) and perturbed forecast (pf)
         for ftype in ("cf", "pf"):
             # 1. Surface download
-            sfc_file = ECMWF_OUT_DIR / f"sfc_{ftype}_{init_date:%Y%m%d}.grib"
-            if sfc_file.exists() and sfc_file.stat().st_size > 0:
-                print(f"  [SKIPPED] {sfc_file.name} already exists.")
+            target_file = ECMWF_OUT_DIR / f"sfc_new_{ftype}_{init_date:%Y%m%d}.grib"
+            if target_file.exists() and target_file.stat().st_size > 0:
+                print(f"  [SKIPPED] {target_file.name} already exists.")
             else:
-                print(f"  [REQUESTING] {sfc_file.name} ...")
+                print(f"  [REQUESTING] {target_file.name} ...")
                 sfc_request = {
                     "origin": "ecmwf",
                     "forecast_type": "control_forecast" if ftype == "cf" else "perturbed_forecast",
                     "level_type": "single_level",
-                    "variable": ["2t", "mx2t6", "mn2t6", "tp"],
+                    "variable": ["167", "121", "122", "228"],
                     "year": str(init_date.year),
                     "month": f"{init_date.month:02d}",
                     "day": f"{init_date.day:02d}",
@@ -241,8 +241,8 @@ def download_ecmwf_s2s(dates):
                     "data_format": "grib"
                 }
                 try:
-                    client.retrieve("s2s-forecasts", sfc_request, str(sfc_file))
-                    print(f"  [SUCCESS] Saved {sfc_file.name}")
+                    client.retrieve("s2s-forecasts", sfc_request, str(target_file))
+                    print(f"  [SUCCESS] Saved {target_file.name}")
                 except Exception as e:
                     print(f"  [ERROR] Surface retrieve failed for {ftype} on {date_str}: {e}")
 

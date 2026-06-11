@@ -54,7 +54,7 @@ def retrieve_surface_forecast(date: pd.Timestamp, ftype: str):
       - 'cf' (Control Forecast)
       - 'pf' (Perturbed Forecast - all members)
     """
-    target_file = OUT_DIR / f"sfc_{ftype}_{date:%Y%m%d}.grib"
+    target_file = OUT_DIR / f"sfc_new_{ftype}_{date:%Y%m%d}.grib"
     
     # Auto-resume check: skip if file already exists and is non-empty
     if target_file.exists() and target_file.stat().st_size > 0:
@@ -66,7 +66,7 @@ def retrieve_surface_forecast(date: pd.Timestamp, ftype: str):
         "origin": "ncep",
         "forecast_type": "control_forecast" if ftype == "cf" else "perturbed_forecast",
         "level_type": "single_level",
-        "variable": ["2t", "mx2t6", "mn2t6", "tp"],
+        "variable": ["167", "228"],
         "year": str(date.year),
         "month": f"{date.month:02d}",
         "day": f"{date.day:02d}",

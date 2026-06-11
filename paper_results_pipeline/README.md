@@ -73,11 +73,18 @@ When you return to your computer, follow this exact checklist:
 
 ## 📊 100% Verified S2S Dataset Inventory
 
-| Dataset | Type | File Location (Storage) | Resolution | Temporal Horizon | Members | Variables Validated | Status |
+**Initialization Times:** All forecasts are identically initialized at **00:00 UTC** across **13 Weekly Dates** during Jan-Feb-Mar (JFM) 2026. The dates are: `2026-01-01, 2026-01-08, 2026-01-15, 2026-01-22, 2026-01-29, 2026-02-05, 2026-02-12, 2026-02-19, 2026-02-26, 2026-03-05, 2026-03-12, 2026-03-19, 2026-03-26`.
+
+**Validated Variables & Units:**
+- **Temperature (T2M / MX2T6):** 2-meter surface temperature. Natively verified in **Kelvin (K)**. *(Note: ECMWF & NCEP use Daily Max Temp `mx2t6` because instantaneous `t2m` is not archived by the S2S database >24h).*
+- **Precipitation (TP):** Total surface precipitation. Raw units vary (Meters vs mm). Our unified mathematical pipeline temporally differentiates and standardizes everything to **mm/day**.
+- **Geopotential (Z500 / GH):** Geopotential at 500 hPa. Unified to **m²/s²** *(Spire natively outputs geopotential height in meters, which we strictly convert by multiplying by standard gravity 9.80665)*.
+
+| Dataset | Type | Absolute Master Path | Resolution | Temporal Horizon | Members | Core Variables | Status |
 |---|---|---|---|---|---|---|---|
-| **ERA5** | Ground Truth | `era5/data/era5_[surface/pressure].grib` | 1.5° x 1.5° | 135 continuous days (JFM 2026) | None (Reanalysis) | `t2m`, `tp`, `z` | 🟢 100% Intact |
-| **ECMWF** | Operational S2S | `ecmwf/data/sfc_new_*.grib`, `pl_*.grib` | 1.5° x 1.5° | 46 Days (24h steps) | 1 CF, 100 PF | `mx2t6`, `mn2t6`, `tp`, `gh` | 🟢 100% Intact (Note: uses `mx2t6` as `t2m` is not archived >24h) |
-| **NCEP** | Operational S2S | `ncep/data/sfc_*.grib`, `pl_*.grib` | 1.5° x 1.5° | 44 Days (24h steps) | 1 CF, 15 PF | `mx2t6`, `mn2t6`, `tp`, `gh` | 🟢 100% Intact |
-| **FuXi** | AI Model | `fuxi-init-jfm-weekely/output/` | 1.5° x 1.5° | 42 Days (Daily continuous) | 11 Ensemble Members | 77 variables (inc. `t2m`, `tp`, `z`) | 🟢 100% Intact |
-| **SPIRE** | AI Model | `spire_hindcast_jfm.zarr` | 0.5° x 0.5° | 46 Days (Daily steps) | Pre-computed Ens. Mean | `temperature`, `precipitation_amount`, `geopotential` | 🟢 100% Intact |
+| **ERA5** | Ground Truth | `/storage/raj.ayush/s2s-forecast-data/era5/data/` | 1.5° x 1.5° | 135 continuous days | None | `t2m`, `tp`, `z` | 🟢 100% Intact |
+| **ECMWF** | Operational | `/storage/raj.ayush/s2s-forecast-data/ecmwf/data/` | 1.5° x 1.5° | 46 Days (24h steps) | 1 CF, 100 PF | `mx2t6`, `tp`, `gh` | 🟢 100% Intact |
+| **NCEP** | Operational | `/storage/raj.ayush/s2s-forecast-data/ncep/data/` | 1.5° x 1.5° | 44 Days (24h steps) | 1 CF, 15 PF | `mx2t6`, `tp`, `gh` | 🟢 100% Intact |
+| **FuXi** | AI Model | `/storage/raj.ayush/s2s-forecast-data/fuxi/output/` | 1.5° x 1.5° | 42 Days (Daily steps) | 11 Ensemble | `t2m`, `tp`, `z` | 🟢 100% Intact |
+| **SPIRE** | AI Model | `/storage/raj.ayush/s2s-forecast-data/spire/*.zarr` | 0.5° x 0.5° | 46 Days (Daily steps) | Ens. Mean / Std | `temperature`, `precipitation`, `geopotential` | 🟢 100% Intact |
 

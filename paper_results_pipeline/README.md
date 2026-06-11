@@ -78,6 +78,6 @@ When you return to your computer, follow this exact checklist:
 | **ERA5** | Ground Truth | `era5/data/era5_[surface/pressure].grib` | 1.5° x 1.5° | 135 continuous days (JFM 2026) | None (Reanalysis) | `t2m`, `tp`, `z` | 🟢 100% Intact |
 | **ECMWF** | Operational S2S | `ecmwf/data/sfc_new_*.grib`, `pl_*.grib` | 1.5° x 1.5° | 46 Days (24h steps) | 1 CF, 100 PF | `mx2t6`, `mn2t6`, `tp`, `gh` | 🟢 100% Intact (Note: uses `mx2t6` as `t2m` is not archived >24h) |
 | **NCEP** | Operational S2S | `ncep/data/sfc_*.grib`, `pl_*.grib` | 1.5° x 1.5° | 44 Days (24h steps) | 1 CF, 15 PF | `mx2t6`, `mn2t6`, `tp`, `gh` | 🟢 100% Intact |
-| **FuXi** | AI Model | `fuxi-init-jfm-weekely/output/` | 1.5° x 1.5° | 42 Days (Daily continuous) | Deterministic | 77 variables (inc. `t2m`, `tp`, `z`) | 🟢 100% Intact |
-| **SPIRE** | AI Model | `spire_hindcast_jfm.zarr` | 0.5° x 0.5° | 46 Days (Daily steps) | Deterministic (Ens Mean) | `temperature`, `precipitation_amount`, `geopotential` | 🟢 100% Intact |
+| **FuXi** | AI Model | `fuxi-init-jfm-weekely/output/` | 1.5° x 1.5° | 42 Days (Daily continuous) | 11 Ensemble Members | 77 variables (inc. `t2m`, `tp`, `z`) | 🟢 100% Intact |
+| **SPIRE** | AI Model | `spire_hindcast_jfm.zarr` | 0.5° x 0.5° | 46 Days (Daily steps) | Pre-computed Ens. Mean | `temperature`, `precipitation_amount`, `geopotential` | 🟢 100% Intact |
 

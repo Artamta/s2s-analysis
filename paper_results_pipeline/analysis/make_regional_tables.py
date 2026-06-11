@@ -20,6 +20,7 @@ except FileNotFoundError:
     pass
 df = pd.concat(frames, ignore_index=True)
 df['wk'] = df['week'].str.extract(r'(\d)').astype(int)
+df['crmse'] = np.sqrt(np.clip(df['rmse'] ** 2 - df['bias'] ** 2, 0, None))
 
 MODELS = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP']
 REG = ['northwest_india', 'central_india', 'south_peninsula', 'east_northeast_india']
@@ -31,14 +32,14 @@ FMT = {'TP': '{:.2f}', 'Z500': '{:.1f}', 'T2M': '{:.2f}'}
 def regional_table(metric, lower_better):
     lines = []
     for var in [v for v in ['TP', 'Z500', 'T2M'] if v in df.variable.unique()]:
+        # use bias-corrected RMSE for T2M (sub-daily cold-bias; see text)
+        col = 'crmse' if (metric == 'rmse' and var == 'T2M') else metric
+        fmt = '{:.2f}' if metric == 'pcc' else FMT[var]
         lines.append('\\midrule\n\\multicolumn{5}{l}{\\emph{' + VARL[var] + '}}\\\\')
         for rg in REG:
-            vals = {m: df[(df.variable == var) & (df.region == rg) & (df.model == m) & (df.wk <= 4)][metric].mean() for m in MODELS}
+            vals = {m: df[(df.variable == var) & (df.region == rg) & (df.model == m) & (df.wk <= 4)][col].mean() for m in MODELS}
             best = (min if lower_better else max)(vals, key=vals.get)
-            cells = []
-            for m in MODELS:
-                s = FMT[var].format(vals[m])
-                cells.append(f'\\textbf{{{s}}}' if m == best else s)
+            cells = [(f'\\textbf{{{fmt.format(vals[m])}}}' if m == best else fmt.format(vals[m])) for m in MODELS]
             lines.append(f'{REGL[rg]:<13} & ' + ' & '.join(cells) + ' \\\\')
     return '\n'.join(lines)
 
@@ -46,7 +47,8 @@ def regional_table(metric, lower_better):
 hdr = 'Region & SPIRE & FuXi-S2S & ECMWF & NCEP \\\\'
 rmse_tab = ('\\begin{table}[t]\\centering\n'
             '\\caption{Region-wise RMSE by IMD homogeneous region (weeks 1--4 mean, 13-init average). '
-            'Best system per region in bold.}\\label{tab:reg_rmse}\n'
+            'Best system per region in bold. Temperature uses the bias-corrected (centered) RMSE '
+            '(Section~\\ref{sec:t2m_skill}).}\\label{tab:reg_rmse}\n'
             '\\begin{tabular}{lcccc}\\toprule\n' + hdr + '\n' + regional_table('rmse', True) + '\n\\bottomrule\\end{tabular}\\end{table}')
 pcc_tab = ('\\begin{table}[t]\\centering\n'
            '\\caption{Region-wise pattern correlation (PCC) by IMD homogeneous region (weeks 1--4 mean, 13-init average). '

@@ -1,5 +1,5 @@
 \begin{table}[t]\centering
-\caption{Region-wise RMSE by IMD homogeneous region (weeks 1--4 mean, 13-init average). Best system per region in bold.}\label{tab:reg_rmse}
+\caption{Region-wise RMSE by IMD homogeneous region (weeks 1--4 mean, 13-init average). Best system per region in bold. Temperature uses the bias-corrected (centered) RMSE (Section~\ref{sec:t2m_skill}).}\label{tab:reg_rmse}
 \begin{tabular}{lcccc}\toprule
 Region & SPIRE & FuXi-S2S & ECMWF & NCEP \\
 \midrule
@@ -14,6 +14,12 @@ Northwest     & \textbf{22.8} & 38.4 & 23.2 & 33.8 \\
 Central       & 19.4 & 24.5 & \textbf{17.5} & 29.6 \\
 S. Peninsula  & 14.7 & 12.1 & \textbf{10.5} & 22.2 \\
 East/NE       & 18.4 & 23.6 & \textbf{16.2} & 30.4 \\
+\midrule
+\multicolumn{5}{l}{\emph{T2M (K)}}\\
+Northwest     & \textbf{1.64} & 3.12 & 3.33 & 4.14 \\
+Central       & \textbf{0.89} & 2.06 & 1.93 & 1.97 \\
+S. Peninsula  & \textbf{0.71} & 1.60 & 1.57 & 1.73 \\
+East/NE       & \textbf{1.30} & 3.36 & 3.39 & 3.32 \\
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[t]\centering
@@ -28,8 +34,14 @@ S. Peninsula  & \textbf{0.47} & 0.41 & 0.44 & 0.42 \\
 East/NE       & \textbf{0.67} & 0.39 & 0.53 & 0.51 \\
 \midrule
 \multicolumn{5}{l}{\emph{Z500 (m)}}\\
-Northwest     & \textbf{0.6} & 0.4 & 0.6 & 0.4 \\
-Central       & \textbf{0.5} & 0.4 & 0.5 & 0.5 \\
-S. Peninsula  & 0.6 & 0.4 & \textbf{0.6} & 0.4 \\
-East/NE       & 0.6 & 0.4 & 0.6 & \textbf{0.6} \\
+Northwest     & \textbf{0.60} & 0.39 & 0.58 & 0.44 \\
+Central       & \textbf{0.52} & 0.38 & 0.51 & 0.47 \\
+S. Peninsula  & 0.56 & 0.45 & \textbf{0.60} & 0.41 \\
+East/NE       & 0.56 & 0.45 & 0.59 & \textbf{0.59} \\
+\midrule
+\multicolumn{5}{l}{\emph{T2M (K)}}\\
+Northwest     & \textbf{0.50} & 0.25 & 0.19 & 0.09 \\
+Central       & \textbf{0.61} & 0.21 & 0.28 & 0.27 \\
+S. Peninsula  & \textbf{0.61} & 0.30 & 0.30 & 0.30 \\
+East/NE       & \textbf{0.49} & 0.13 & 0.12 & 0.07 \\
 \bottomrule\end{tabular}\end{table}

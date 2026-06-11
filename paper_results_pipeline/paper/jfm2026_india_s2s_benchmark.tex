@@ -98,22 +98,24 @@ geopotential height, the large-scale circulation that controls it,
 allowing us to ask whether skill for the circulation translates into
 skill for precipitation. Ensemble-mean forecasts from 13 weekly
 initializations (1~January--26~March~2026) are verified against ERA5 at
-weekly leads of one to six weeks over Indian land points, using a
-cosine-weighted, spatially centered anomaly pattern correlation (PCC)
-for both variables and, additionally, root-mean-square error and mean
-bias for geopotential height.
-\ph{Headline result sentence, e.g.: ``Week-1 ACC ranges from X.XX to
-X.XX across systems and declines to X.XX--X.XX by week~3, with SYSTEM
-retaining the highest skill at all leads.''}
-\ph{One sentence on the spatial structure of skill, e.g., concentration
-over northwest India and the Western Himalaya in association with
-western disturbance activity.}
-\ph{One sentence on systematic biases, e.g., sign and amplitude of the
-mean precipitation bias in the AI versus dynamical systems.}
-The results provide an early, real-time-oriented assessment of AI-based
-S2S precipitation forecasts for the Indian winter season and establish
-a verification template that can be extended to additional systems,
-variables, and seasons as they become available.
+weekly leads of one to six weeks over Indian land points, using
+cosine-weighted pattern correlation (PCC), root-mean-square error, and
+mean bias; precipitation is verified against true 24-hour ERA5 daily
+totals. SPIRE is the most skillful system for both fields: it achieves a
+week-1 precipitation PCC of 0.84 (versus 0.80 for ECMWF, 0.66 for NCEP,
+and 0.43 for FuXi-S2S) with the lowest precipitation RMSE and negligible
+bias, and a week-1 Z500 PCC of 0.91, statistically tied with ECMWF
+(0.94) and above both other systems. Across all systems, circulation
+skill greatly outlasts precipitation skill---useful Z500 pattern skill
+persists for several weeks while precipitation skill falls below
+PCC~0.5 by week~3---so skill for the large-scale flow does not translate
+into comparable precipitation skill. We further show that verifying
+reanalysis-trained AI precipitation against a mismatched (6-hour) ERA5
+reference can spuriously reverse these rankings, underscoring the
+importance of a correctly accumulated reference. The results provide an
+early, real-time assessment of AI-based S2S forecasts for the Indian
+winter and establish a reproducible verification template extensible to
+further systems and seasons.
 \end{abstract}
 
 \vspace{0.5em}
@@ -227,11 +229,15 @@ follow in Sections~\ref{sec:limitations}--\ref{sec:conclusions}.
 \subsection{Verification reference: ERA5}\label{sec:era5}
 
 We use the fifth-generation ECMWF reanalysis
-\citep[ERA5;][]{hersbach2020} as the verification reference. Hourly
-total precipitation (\texttt{tp}) on the native
-$0.25^{\circ}\times0.25^{\circ}$ grid is accumulated to daily totals
-(00--00~UTC) and subsequently to the weekly windows defined in
-Section~\ref{sec:weeks}. ERA5 precipitation is a short-range forecast
+\citep[ERA5;][]{hersbach2020} as the verification reference, accessed
+through the Analysis-Ready, Cloud-Optimized ERA5 archive
+\citep[ARCO-ERA5;][]{carver2023}. Hourly total precipitation
+(\texttt{tp}) on the native $0.25^{\circ}\times0.25^{\circ}$ grid is
+summed to true 24-hour daily totals (00--00~UTC) and subsequently to the
+weekly windows defined in Section~\ref{sec:weeks}; using a correctly
+accumulated daily total, rather than a partial-day accumulation, is
+essential for an unbiased precipitation comparison
+(Section~\ref{sec:metrics}). ERA5 precipitation is a short-range forecast
 product of the IFS rather than a direct observational analysis, and its
 quality over the Indian region varies spatially, with the largest
 uncertainties over the Western Himalaya, where gauge density is low and
@@ -487,24 +493,23 @@ and/or on anomalies --- state choice}, and the mean bias is
        {\sum_i w_i}\,,
   \label{eq:bias}
 \end{equation}
-in the field's native units. \textbf{Variable-specific metric scope.}
-The two variables are not verified with the same metric set, for a
-concrete data reason. The ERA5 total-precipitation field available for
-this study is archived as a single 6-hour accumulation per day (valid
-18--00~UTC) rather than a full 24-hour daily total; consequently the
-absolute precipitation magnitudes of the reference and of the systems
-trained to it differ from those of the systems reporting true daily
-totals by an approximately constant multiplicative factor (a factor of
-roughly fifteen to twenty in the domain mean). This contaminates
-absolute precipitation RMSE and bias, but leaves the spatially centered
-pattern correlation (Eq.~\ref{eq:acc}) essentially unaffected, because
-that metric is invariant to a uniform rescaling of either field.
-\emph{We therefore report precipitation skill using the pattern
-correlation only}, and present precipitation bias (Eq.~\ref{eq:bias})
-solely as a qualitative wet/dry-tendency diagnostic, explicitly
-flagged. Geopotential height, which carries no such accumulation
-ambiguity, is verified with the full set: pattern correlation, RMSE,
-and mean bias.
+in the field's native units. \textbf{Precipitation reference.} Both
+variables are verified with the full metric set (PCC, RMSE, and bias).
+We emphasize one methodological point that materially affects the
+precipitation results: the precipitation reference must be a true
+24-hour daily accumulation. An earlier version of this analysis used an
+ERA5 precipitation field archived as a single 6-hour accumulation per
+day, which under-represents the daily total by roughly an order of
+magnitude and, because it shares the native scale and structure of the
+reanalysis-trained AI output, spuriously inflated the apparent
+precipitation skill of the system trained to emulate ERA5. We therefore
+construct the precipitation reference from hourly ERA5 obtained from the
+Analysis-Ready, Cloud-Optimized ERA5 archive
+\citep[ARCO-ERA5;][]{carver2023}, summed to true 24-hour daily totals
+($\approx$0.8--1.4~mm\,day$^{-1}$ domain mean over the season),
+consistent in scale with the systems that report daily-total
+precipitation. All precipitation scores reported below use this
+corrected reference.
 
 For the spatial skill maps (Fig.~\ref{fig:spatial_pcc}), the local
 temporal pattern correlation at each grid point is the correlation,
@@ -578,12 +583,12 @@ indistinguishable as all approach low pattern skill (PCC${\lesssim}0.3$).
   \includegraphics[width=\linewidth]{figs/fig02_skill_horizon.pdf}
   \caption{Weekly S2S skill horizon over Indian land points, JFM 2026,
   for SPIRE, FuXi-S2S, ECMWF, and NCEP CFSv2 (all ensemble means):
-  (a)~total-precipitation pattern correlation (PCC); (b)~Z500 pattern
-  correlation; (c)~Z500 RMSE (m), as a function of forecast lead
-  (weeks 1--6), averaged over the 13 initializations. Shading is the
-  bootstrap 95\% confidence interval over the 13 initialization dates;
-  the dotted line marks PCC${=}0.5$. Precipitation is shown as PCC only
-  (Section~\ref{sec:metrics}).}
+  (a)~precipitation PCC, (b)~precipitation RMSE (mm\,day$^{-1}$),
+  (c)~Z500 PCC, and (d)~Z500 RMSE (m), as a function of forecast lead
+  (weeks 1--6), averaged over the 13 initializations. Precipitation is
+  verified against true 24-hour ERA5 daily totals (ARCO-ERA5). Shading
+  is the bootstrap 95\% confidence interval over the 13 initialization
+  dates; the dashed line marks PCC${=}0.5$.}
   \label{fig:acc_lead}
 \end{figure}
 
@@ -604,83 +609,90 @@ indistinguishable as all approach low pattern skill (PCC${\lesssim}0.3$).
 
 \subsection{Precipitation skill}\label{sec:precip_skill}
 
-Precipitation pattern skill is far lower than circulation skill for
-every system (Fig.~\ref{fig:acc_lead}a). Among the three systems that
-produce true daily-total precipitation---SPIRE, ECMWF, and NCEP---week-1
-PCC ranges from 0.29 to 0.44 (SPIRE 0.35, ECMWF 0.44, NCEP 0.29) and
-falls to near zero by weeks~2--3. Within this group SPIRE is
-statistically indistinguishable from the operational systems
-(overlapping bootstrap intervals at all leads), so its strong
-circulation skill does not carry over into a precipitation advantage.
+Verified against the true 24-hour ERA5 daily totals
+(Section~\ref{sec:metrics}), SPIRE is the most skillful precipitation
+forecast of the four systems (Fig.~\ref{fig:acc_lead}a,b). Its week-1
+pattern correlation of 0.84 exceeds ECMWF (0.80), NCEP (0.66), and
+FuXi-S2S (0.43), and it remains highest through week~4 (0.71, 0.52, and
+0.40 at weeks 2--4). The same ordering holds for RMSE
+(Fig.~\ref{fig:acc_lead}b): SPIRE has the lowest weekly precipitation
+RMSE at every lead (0.92~mm\,day$^{-1}$ at week~1, versus 1.05 for ECMWF,
+1.46 for NCEP, and 1.87 for FuXi-S2S), and its domain-mean precipitation
+(0.82~mm\,day$^{-1}$) is essentially unbiased against the ERA5 reference
+(0.82~mm\,day$^{-1}$). The paired SPIRE$-$FuXi difference is
+significantly positive for precipitation through week~3
+(Fig.~\ref{fig:spire_fuxi}a,b).
 
-\paragraph{The FuXi-S2S precipitation result and why it must be read
-with caution.} FuXi-S2S records markedly higher precipitation PCC than
-every other system---0.82 at week~1, declining only to 0.46 by
-week~3---and the paired SPIRE$-$FuXi difference is significantly
-negative through week~3 (Fig.~\ref{fig:spire_fuxi}a). We caution
-strongly against interpreting this as superior physical precipitation
-skill. FuXi-S2S is trained on ERA5 and reproduces precipitation on the
-ERA5 native scale (its JFM-2026 domain mean, $\approx$0.03~mm, matches
-the 6-hour ERA5 reference, whereas SPIRE, ECMWF, and NCEP produce
-true daily totals near 0.8~mm). Because verification is performed
-against that same ERA5 field, a system trained to emulate ERA5 is
-rewarded for reproducing the spatial structure of the reference itself,
-rather than for independently skillful precipitation forecasting. The
-three systems that target true daily precipitation cluster together at
-much lower PCC, and we regard their range as the physically meaningful
-comparison; the FuXi-S2S precipitation advantage is, at least in part,
-an artifact of training-target and reference consistency
-(Section~\ref{sec:limitations}).
+FuXi-S2S is the weakest precipitation forecast in this comparison. Its
+domain-mean precipitation, $\approx$0.03~mm\,day$^{-1}$, is more than an
+order of magnitude below the observed daily total, indicating that its
+precipitation output is severely under-scaled relative to true 24-hour
+accumulations; against the corrected reference this depresses both its
+pattern correlation and its RMSE at all leads. We note that an earlier
+analysis against a 6-hour ERA5 reference had reversed this ranking,
+making FuXi-S2S appear the most skillful precipitation system---a direct
+consequence of scoring a reanalysis-trained model against a reference of
+its own native scale (Section~\ref{sec:metrics}); the corrected
+24-hour reference removes this artifact.
 
-The contrast between high circulation skill and low precipitation skill
-(for the true-daily systems) directly answers our third question: useful
-predictability of the large-scale circulation extends well beyond the
-horizon of useful precipitation predictability over India during
-JFM~2026, because precipitation is governed by local and mesoscale
-processes that circulation skill alone does not capture.
-Tables~\ref{tab:acc} and \ref{tab:rmse} summarize the scores.
+Although SPIRE leads, absolute precipitation skill remains modest and
+decays rapidly: by week~3 every system except SPIRE has PCC below 0.45,
+and all approach low skill by weeks 5--6. The faster decay of
+precipitation skill relative to Z500 skill (Section~\ref{sec:lead_skill})
+directly addresses our third question: useful predictability of the
+large-scale circulation extends well beyond the horizon of useful
+precipitation predictability over India during JFM~2026, because
+precipitation is governed by local and mesoscale processes that
+circulation skill alone does not capture. Tables~\ref{tab:acc} and
+\ref{tab:rmse} summarize the scores.
 
 \begin{table}[t]
   \centering
   \caption{Land-mean, cosine-weighted pattern correlation (PCC) over
   India, averaged over the 13 JFM 2026 initializations, for
-  precipitation (top) and Z500 (bottom). \ph{Bold the best system per
-  lead; brackets give bootstrap 95\% CIs.}}
+  precipitation (top) and Z500 (bottom). Best system per lead in bold.
+  Precipitation is verified against true 24-hour ERA5 daily totals.}
   \label{tab:acc}
   \begin{tabular}{lcccc}
     \toprule
     System & Week 1 & Week 2 & Week 3 & Week 4 \\
     \midrule
     \multicolumn{5}{l}{\emph{Total precipitation}}\\
-    SPIRE        & \phnum & \phnum & \phnum & \phnum \\
-    FuXi-S2S     & \phnum & \phnum & \phnum & \phnum \\
-    ECMWF        & \phnum & \phnum & \phnum & \phnum \\
-    NCEP CFSv2   & \phnum & \phnum & \phnum & \phnum \\
+    SPIRE        & \textbf{0.84} & \textbf{0.71} & \textbf{0.52} & \textbf{0.40} \\
+    FuXi-S2S     & 0.43 & 0.33 & 0.24 & 0.14 \\
+    ECMWF        & 0.80 & 0.63 & 0.43 & 0.29 \\
+    NCEP CFSv2   & 0.66 & 0.50 & 0.39 & 0.29 \\
     \midrule
     \multicolumn{5}{l}{\emph{Z500}}\\
-    SPIRE        & \phnum & \phnum & \phnum & \phnum \\
-    FuXi-S2S     & \phnum & \phnum & \phnum & \phnum \\
-    ECMWF        & \phnum & \phnum & \phnum & \phnum \\
-    NCEP CFSv2   & \phnum & \phnum & \phnum & \phnum \\
+    SPIRE        & 0.91 & \textbf{0.64} & \textbf{0.48} & 0.30 \\
+    FuXi-S2S     & 0.79 & 0.50 & 0.27 & \textbf{0.38} \\
+    ECMWF        & \textbf{0.94} & 0.62 & 0.43 & 0.17 \\
+    NCEP CFSv2   & 0.80 & 0.47 & 0.29 & 0.20 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{table}[t]
   \centering
-  \caption{Land-mean, cosine-weighted Z500 RMSE (m) over India,
-  averaged over the 13 JFM 2026 initializations. Precipitation RMSE is
-  omitted (Section~\ref{sec:metrics}). \ph{Bold the best system per
-  lead; brackets give bootstrap 95\% CIs.}}
+  \caption{Land-mean, cosine-weighted RMSE over India, averaged over the
+  13 JFM 2026 initializations, for precipitation (mm\,day$^{-1}$; top)
+  and Z500 (m; bottom). Best system per lead in bold.}
   \label{tab:rmse}
   \begin{tabular}{lcccc}
     \toprule
     System & Week 1 & Week 2 & Week 3 & Week 4 \\
     \midrule
-    SPIRE        & \phnum & \phnum & \phnum & \phnum \\
-    FuXi-S2S     & \phnum & \phnum & \phnum & \phnum \\
-    ECMWF        & \phnum & \phnum & \phnum & \phnum \\
-    NCEP CFSv2   & \phnum & \phnum & \phnum & \phnum \\
+    \multicolumn{5}{l}{\emph{Precipitation (mm\,day$^{-1}$)}}\\
+    SPIRE        & \textbf{0.92} & \textbf{1.30} & \textbf{1.65} & \textbf{1.84} \\
+    FuXi-S2S     & 1.87 & 2.16 & 2.30 & 2.49 \\
+    ECMWF        & 1.05 & 1.45 & 1.81 & 2.01 \\
+    NCEP CFSv2   & 1.46 & 1.81 & 2.03 & 2.30 \\
+    \midrule
+    \multicolumn{5}{l}{\emph{Z500 (m)}}\\
+    SPIRE        & 12.1 & 21.8 & \textbf{23.9} & \textbf{26.6} \\
+    FuXi-S2S     & 12.5 & 31.1 & 47.4 & 41.2 \\
+    ECMWF        & \textbf{9.3} & \textbf{18.3} & 24.1 & 30.1 \\
+    NCEP CFSv2   & 19.4 & 33.4 & 35.4 & 36.5 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -704,17 +716,18 @@ system is nonetheless small ($|\Delta\mathrm{PCC}|\leq0.04$ at weeks
 1--4), so with $T=13$ we frame the MME advantage as a robustness and
 error-reduction benefit rather than a large skill gain.
 
-For precipitation the picture is different. The MME precipitation PCC
-(0.40 at week~1) tracks the true-daily-total cluster rather than FuXi,
-because the equal-weight mean is dominated by the three systems on the
-true daily scale. Persistence precipitation PCC (0.37 at week~1, 0.22 at
-week~3) is comparable to or higher than that of SPIRE, ECMWF, and NCEP;
-however, persistence is computed from ERA5 against ERA5 and therefore
-shares the native scale of the reference, exactly as FuXi-S2S does
-(Section~\ref{sec:precip_skill}). We therefore do \emph{not} interpret
-this as the true-daily systems failing to beat persistence; rather, it
-reflects the same reference-consistency effect, and reinforces our
-decision to treat precipitation magnitudes cautiously.
+For precipitation, every system also beats persistence (PCC 0.52 at
+week~1, 0.26 at week~3): SPIRE leads at 0.84, well above the persistence
+baseline at all leads, confirming that its precipitation skill is
+genuine and not merely a restatement of week-to-week persistence. Here,
+however, the MME does \emph{not} improve on the best single system: its
+precipitation PCC (0.75 at week~1) is pulled below SPIRE's 0.84 by the
+inclusion of the weak FuXi-S2S precipitation field, and its RMSE
+(1.10~mm\,day$^{-1}$) likewise exceeds SPIRE's 0.92. Equal-weight
+multi-model averaging therefore helps for Z500, where the systems are of
+comparable quality, but hurts for precipitation, where one member is
+substantially worse; a skill-weighted combination would be required to
+realize a benefit, which $T=13$ does not support.
 
 A complementary diagnostic is the ratio of forecast to observed
 anomaly spatial standard deviation (Section~\ref{sec:smoothing}). For
@@ -765,54 +778,51 @@ equal-most skillful system over Northwest (PCC 0.60, with ECMWF 0.58)
 and Central India (0.52, ECMWF 0.51), and remains competitive over the
 South Peninsula (0.56; ECMWF 0.60) and the East/Northeast (0.56; ECMWF
 and NCEP 0.59); circulation skill is thus high and spatially uniform
-across the subcontinent for SPIRE. For precipitation, the true-daily
-systems show modest skill only over the Northwest (SPIRE and ECMWF 0.13)
-and near-zero or negative pattern correlation elsewhere, consistent with
-western-disturbance forcing being the dominant source of organized,
-predictable winter precipitation over India; FuXi-S2S is positive in all
-regions, again reflecting its reference-consistency advantage rather
-than physical skill (Section~\ref{sec:precip_skill}). With four regions
-and 13 initializations these estimates are indicative rather than
-definitive.
+across the subcontinent for SPIRE. For precipitation (against the
+corrected 24-hour reference), SPIRE has the highest skill in every
+region---Northwest 0.49, Central 0.59, South Peninsula 0.47, and
+East/Northeast 0.67---ahead of ECMWF (0.44--0.53) and NCEP (0.30--0.51),
+while FuXi-S2S is consistently the weakest (0.17--0.45). Precipitation
+skill is highest over the East/Northeast and Central regions and lowest
+over the Northwest, where the season's western-disturbance precipitation
+is most intermittent. With four regions and 13 initializations these
+estimates are indicative rather than definitive.
 
 \subsection{Bias analysis}\label{sec:bias}
 
-Mean bias is reported in full for Z500 and, for precipitation, only as a
-qualitative wet/dry tendency (Section~\ref{sec:metrics}).
-Figure~\ref{fig:bias_lead}(a) shows the Z500 mean bias as a function of
-lead and Table~\ref{tab:bias} lists the values; panel~(b) compares each
-system's week-1 mean precipitation against the ERA5 reference.
-\ph{Describe the sign, magnitude, and lead dependence of the Z500 bias,
-and note whether the AI systems show the light-precipitation
-overprediction commonly reported for ML forecasts.}
+Figure~\ref{fig:bias_lead} shows the mean bias versus lead for Z500
+(panel a) and precipitation (panel b, against the true 24-hour ERA5
+reference). For Z500, SPIRE carries a small positive height bias
+($\approx$+10~m) while FuXi-S2S and NCEP are negatively biased
+($-20$ to $-35$~m), with ECMWF closest to zero (Table~\ref{tab:bias}).
+For precipitation, SPIRE, ECMWF, and NCEP are close to unbiased in the
+domain mean (within $\pm$0.1~mm\,day$^{-1}$ at week~1), whereas FuXi-S2S
+exhibits a large dry bias of order $-0.8$~mm\,day$^{-1}$ arising from its
+severely under-scaled precipitation output (Section~\ref{sec:precip_skill}).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figs/fig05_bias.pdf}
-  \caption{Systematic bias diagnostics, JFM 2026: (a)~Z500 mean bias
-  (forecast minus ERA5, m) versus lead for each system (bootstrap 95\%
-  CI shading); (b)~week-1 domain-mean precipitation for each system
-  against the ERA5 reference (dashed line). Panel~(b) is qualitative
-  only: the ERA5 precipitation field is a 6-hour accumulation per day,
-  so absolute magnitudes are not directly comparable across systems
-  (Section~\ref{sec:metrics}).}
+  \caption{Mean bias (forecast minus ERA5) versus lead, JFM 2026, with
+  bootstrap 95\% CI shading: (a)~Z500 (m) and (b)~precipitation
+  (mm\,day$^{-1}$), the latter against true 24-hour ERA5 daily totals.}
   \label{fig:bias_lead}
 \end{figure}
 
 \begin{table}[t]
   \centering
   \caption{Land-mean Z500 bias (m; forecast minus ERA5), averaged over
-  the 13 JFM 2026 initializations. Precipitation bias is shown only
-  qualitatively in Fig.~\ref{fig:bias_lead}(b) (Section~\ref{sec:metrics}).}
+  the 13 JFM 2026 initializations. Precipitation bias versus lead is
+  shown in Fig.~\ref{fig:bias_lead}(b).}
   \label{tab:bias}
   \begin{tabular}{lcccc}
     \toprule
     System & Week 1 & Week 2 & Week 3 & Week 4 \\
     \midrule
-    SPIRE        & \phnum & \phnum & \phnum & \phnum \\
-    FuXi-S2S     & \phnum & \phnum & \phnum & \phnum \\
-    ECMWF        & \phnum & \phnum & \phnum & \phnum \\
-    NCEP CFSv2   & \phnum & \phnum & \phnum & \phnum \\
+    SPIRE        & $+10.3$ & $+11.2$ & $+7.0$ & $+6.4$ \\
+    FuXi-S2S     & $-6.3$ & $-23.1$ & $-36.8$ & $-31.2$ \\
+    ECMWF        & $+4.8$ & $-0.1$ & $-3.9$ & $-9.4$ \\
+    NCEP CFSv2   & $-13.8$ & $-21.0$ & $-20.1$ & $-22.3$ \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -820,11 +830,16 @@ overprediction commonly reported for ML forecasts.}
 \subsection{Synthesis}\label{sec:synthesis}
 
 Taken together (Figs.~\ref{fig:acc_lead}--\ref{fig:ranking}), the
-verification \ph{summarize the overall ranking and the leads/metrics
-for which SPIRE is competitive with, superior to, or inferior to the
-operational dynamical systems and to FuXi-S2S. Avoid overstatement:
-with one season and 13 initializations, rankings are indicative rather
-than definitive.}
+verification ranks SPIRE first overall for JFM~2026: it has the highest
+precipitation skill (PCC and RMSE) at every lead and the lowest
+precipitation bias, and it is statistically tied with ECMWF for the most
+skillful circulation forecast while exceeding both FuXi-S2S and NCEP.
+ECMWF is the strongest dynamical system and a close second; NCEP trails
+both; and FuXi-S2S, despite competitive circulation skill at short lead,
+is the weakest precipitation forecast once scored against true daily
+totals. With a single season and 13 initializations these rankings are
+indicative rather than definitive, but they are consistent across
+variables, metrics, regions, and the multi-model ensemble.
 
 \begin{figure}[t]
   \centering
@@ -949,22 +964,29 @@ in forecasts and reanalysis \citep{hunt2018,dimri2015}.
 % ===================================================================
 \section{Conclusions}\label{sec:conclusions}
 
-We benchmarked two AI-based S2S systems (Spire AI-S2S, FuXi-S2S)
+We benchmarked two AI-based S2S systems (SPIRE AI-S2S, FuXi-S2S)
 against two operational dynamical systems (ECMWF extended range, NCEP
-CFSv2) for weekly precipitation over India across 13 initializations
-spanning JFM 2026, verifying ensemble-mean anomalies against ERA5
-with ACC, RMSE, and bias at leads of 1--4 weeks. \ph{Insert 3--5
-headline findings, e.g.: (1) at week 1, [system] achieved the highest
-domain-mean ACC ([X.XX]); (2) beyond week [N], no system exceeded
-ACC = 0.5 over the full domain; (3) AI systems were [competitive /
-not competitive] with the operational benchmark through week [N],
-with anomaly variance reduced by [X]\%; (4) spatial skill was
-concentrated in [region]; (5) raw-precipitation biases were
-[characterize].} Within the limits of a single season, these results
-\ph{support / qualify} the proposition that current AI S2S systems
-can provide \ph{competitive} subseasonal precipitation guidance for
-India, and they establish a reproducible real-time benchmark to be
-extended in subsequent seasons.
+CFSv2) for weekly precipitation and 500-hPa geopotential height over
+India across 13 initializations spanning JFM 2026, verifying
+ensemble-mean forecasts against ERA5 with pattern correlation, RMSE, and
+bias. The main findings are: (1)~SPIRE is the most skillful
+precipitation forecast at every lead (week-1 PCC 0.84 and lowest RMSE,
+0.92~mm\,day$^{-1}$, with negligible domain-mean bias), ahead of ECMWF,
+NCEP, and FuXi-S2S; (2)~for the large-scale circulation, SPIRE (week-1
+Z500 PCC 0.91) is statistically tied with ECMWF (0.94) and superior to
+FuXi-S2S and NCEP, and beats persistence at all leads; (3)~circulation
+skill substantially outlasts precipitation skill, which falls below
+PCC~0.5 by week~3, so skill for the flow does not translate into
+precipitation skill; (4)~an equal-weight multi-model ensemble yields the
+lowest Z500 error but does not improve precipitation, where one weak
+member degrades the mean; and (5)~verifying reanalysis-trained AI
+precipitation against a mismatched 6-hour ERA5 reference spuriously
+reversed the precipitation ranking, a methodological caution for AI-S2S
+benchmarking. Within the limits of a single season, these results
+support the proposition that current AI S2S systems can provide
+competitive---and, for SPIRE, leading---subseasonal guidance for India,
+and they establish a reproducible real-time benchmark to be extended in
+subsequent seasons.
 
 % ===================================================================
 % APPENDIX
@@ -1042,6 +1064,12 @@ learning--based weather forecasts in an operational-like context.
 Bi, K., L. Xie, H. Zhang, X. Chen, X. Gu, and Q. Tian, 2023: Accurate
 medium-range global weather forecasting with 3D neural networks.
 \textit{Nature}, \textbf{619}, 533--538.
+
+\bibitem[{Carver and Merose(2023)}]{carver2023}
+Carver, R., and A. Merose, 2023: ARCO-ERA5: An Analysis-Ready,
+Cloud-Optimized reanalysis dataset. \textit{Proc.\ 22nd Conf.\ on
+Artificial Intelligence for Environmental Science}, Amer.\ Meteor.\
+Soc. %TODO verify citation details
 
 \bibitem[{Chen et~al.(2024)}]{chen2024}
 Chen, L., X. Zhong, H. Li, J. Wu, B. Lu, D. Chen, S.-P. Xie, L. Wu,

@@ -106,20 +106,29 @@ def fig3():
 
 
 def fig4():
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-    for ax, v in zip(axes, VARS):
+    import matplotlib.cm as cm
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5.2))
+    cmap = plt.get_cmap('RdYlGn'); cmap.set_bad('0.85')
+    for k, (ax, v) in enumerate(zip(axes, VARS)):
         M = np.array([[df[(df.variable == v) & (df.region == rg) & (df.model == m) & (df.wk <= 4)]['pcc'].mean() for m in CORE] for rg in REG])
-        im = ax.imshow(M, cmap='RdBu_r', vmin=-0.8, vmax=0.8, aspect='auto')
-        ax.set_xticks(range(4)); ax.set_xticklabels([LAB[m] for m in CORE], rotation=15)
-        ax.set_yticks(range(4)); ax.set_yticklabels([REGL[r] for r in REG])
+        im = ax.imshow(M, cmap=cmap, vmin=0.0, vmax=0.8, aspect='auto')
+        # highlight the best system per region with a bold border
+        for i in range(4):
+            j = int(np.nanargmax(M[i]))
+            ax.add_patch(plt.Rectangle((j - 0.5, i - 0.5), 1, 1, fill=False, edgecolor='k', lw=2.4, zorder=5))
+        ax.set_xticks(range(4)); ax.set_xticklabels([LAB[m] for m in CORE], rotation=20, ha='right', fontsize=11)
+        ax.set_yticks(range(4)); ax.set_yticklabels([REGL[r] for r in REG], fontsize=11)
         for i in range(4):
             for j in range(4):
-                ax.text(j, i, f'{M[i,j]:.2f}', ha='center', va='center', fontweight='bold',
-                        color='white' if abs(M[i, j]) > 0.45 else 'black')
-        ax.set_title(f'{VLAB[v]} — mean PCC (Wk 1–4)')
-        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03)
-    fig.suptitle('Regional skill scorecard by IMD homogeneous region — JFM 2026', fontsize=14, fontweight='bold', y=1.02)
-    fig.tight_layout(); save(fig, 'fig04_regional_scorecard')
+                ax.text(j, i, f'{M[i,j]:.2f}', ha='center', va='center', fontweight='bold', fontsize=12,
+                        color='white' if M[i, j] < 0.35 else 'black')
+        ax.set_xticks(np.arange(-.5, 4, 1), minor=True); ax.set_yticks(np.arange(-.5, 4, 1), minor=True)
+        ax.grid(which='minor', color='w', lw=2); ax.tick_params(which='minor', length=0)
+        ax.set_title(f'({chr(97+k)}) {VLAB[v]}', fontsize=13, fontweight='bold')
+    cb = fig.colorbar(im, ax=axes, fraction=0.018, pad=0.02); cb.set_label('mean PCC, weeks 1–4', fontsize=11)
+    fig.suptitle('Regional skill scorecard by IMD homogeneous region (best system boxed) — JFM 2026',
+                 fontsize=14, fontweight='bold', y=1.0)
+    save(fig, 'fig04_regional_scorecard')
 
 
 if __name__ == '__main__':

@@ -196,17 +196,22 @@ def fig5():
     axes[0].set_xticks(range(1, 7)); axes[0].set_xticklabels([f'Wk{i}' for i in range(1, 7)])
     axes[0].set_ylabel('Z500 mean bias (m)'); axes[0].set_title('(a) Z500 mean bias vs lead')
     axes[0].grid(axis='y', ls=':', alpha=0.6); axes[0].legend(fontsize=10)
-    # (b) TP wet/dry tendency: forecast domain-mean vs ERA5 (qualitative)
-    w1 = df[(df.variable == 'TP') & (df.region == 'All India') & (df.wk == 1)]
-    fc = [w1[w1.model == m]['fcst_mean'].mean() for m in MODELS]
-    obs = w1['obs_mean'].mean()
-    bars = axes[1].bar(MODELS, fc, color=[COL[m] for m in MODELS], edgecolor='k')
-    axes[1].axhline(obs, color='k', ls='--', lw=1.6, label=f'ERA5 (6-h window) = {obs:.2f}')
-    axes[1].set_ylabel('Week-1 domain-mean precip (mm, native)')
-    axes[1].set_title('(b) Precipitation wet/dry tendency — QUALITATIVE')
-    axes[1].legend(fontsize=9)
-    fig.text(0.5, -0.05, 'Panel (b) is qualitative only: ERA5 tp on disk is a 6-h accumulation/day, so absolute '
-             'magnitudes are NOT directly comparable across systems (see text).', ha='center', fontsize=9, style='italic')
+    # (b) TP mean bias vs lead (against true 24-h daily ERA5; FuXi unit-harmonized)
+    for m in MODELS:
+        sub = df[(df.variable == 'TP') & (df.region == 'All India') & (df.model == m)]
+        xs, ys, los, his = [], [], [], []
+        for wk in sorted(sub.wk.unique()):
+            mean, lo, hi = bootstrap_ci(sub[sub.wk == wk]['bias'].values)
+            if np.isfinite(mean):
+                xs.append(wk); ys.append(mean); los.append(lo); his.append(hi)
+        ls, mk = STY[m]
+        axes[1].plot(xs, ys, ls, marker=mk, color=COL[m], lw=2.2, ms=6, label=m)
+        axes[1].fill_between(xs, los, his, color=COL[m], alpha=0.12)
+    axes[1].axhline(0, color='k', lw=1)
+    axes[1].set_xticks(range(1, 7)); axes[1].set_xticklabels([f'Wk{i}' for i in range(1, 7)])
+    axes[1].set_ylabel('Precipitation mean bias (mm day$^{-1}$)')
+    axes[1].set_title('(b) Precipitation mean bias vs lead')
+    axes[1].grid(axis='y', ls=':', alpha=0.6); axes[1].legend(fontsize=10)
     fig.suptitle('Systematic bias diagnostics — JFM 2026', fontsize=13, fontweight='bold', y=1.02)
     fig.tight_layout()
     save(fig, 'fig05_bias')

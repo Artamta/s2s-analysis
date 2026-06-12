@@ -104,7 +104,6 @@ def spatial_panel(fig, gs_or_axes, data, models, title, cmap, vmin, vmax, cbar_l
                            transform=proj, shading='auto') if proj else ax.pcolormesh(lon, lat, data[m], cmap=cmap, vmin=vmin, vmax=vmax, shading='auto')
         if proj:
             ax.add_feature(cfeature.COASTLINE, lw=0.5)
-            ax.add_feature(cfeature.BORDERS, lw=0.3, ls=':')
             ax.set_extent([65, 100, 5, 38], crs=proj)
         ax.set_title(m, fontsize=11)
         axes.append((ax, im))

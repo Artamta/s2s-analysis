@@ -888,6 +888,21 @@ skill ranking found in the aggregate scores
   \label{fig:case}
 \end{figure*}
 
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig11_scatter_density.pdf}
+  \caption{Point-by-point forecast--observation density scatter over India,
+  pooling all 13 initializations, six lead weeks, and land grid points
+  (rows: precipitation, Z500 anomaly, 2-m temperature; columns: SPIRE,
+  FuXi-S2S, ECMWF, NCEP). Colour encodes point density; the solid line is
+  the 1:1 reference. Each panel reports the coefficient of determination
+  ($R^2$), mean absolute error (MAE), and bias. SPIRE shows the tightest
+  alignment with ERA5 for precipitation and temperature and a small bias
+  throughout; FuXi-S2S precipitation is the most scattered once verified
+  against true daily totals.}
+  \label{fig:scatter}
+\end{figure*}
+
 \subsection{Synthesis}\label{sec:synthesis}
 
 Taken together (Figs.~\ref{fig:acc_lead}--\ref{fig:ranking}), the
@@ -900,7 +915,8 @@ both; and FuXi-S2S, despite competitive circulation skill at short lead,
 is the weakest precipitation forecast once scored against true daily
 totals. With a single season and 13 initializations these rankings are
 indicative rather than definitive, but they are consistent across
-variables, metrics, regions, and the multi-model ensemble.
+variables, metrics, regions, the multi-model ensemble, and the
+point-by-point forecast--observation scatter (Fig.~\ref{fig:scatter}).
 
 \begin{figure}[t]
   \centering

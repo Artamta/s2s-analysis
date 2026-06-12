@@ -74,7 +74,6 @@ def fig1():
         ax.add_feature(cfeature.LAND, facecolor='#e8e4d8')
         ax.add_feature(cfeature.OCEAN, facecolor='#cfe2f3')
         ax.add_feature(cfeature.COASTLINE, lw=0.6)
-        ax.add_feature(cfeature.BORDERS, lw=0.4, ls=':')
         boxes = {'Northwest': (68, 82, 22, 38, '#D55E00'), 'Central': (72, 89, 18, 28, '#009E73'),
                  'S. Peninsula': (72, 85, 8, 20, '#0072B2'), 'East/NE': (85, 98, 20, 30, '#CC79A7')}
         for name, (lo, hi, la, ha, c) in boxes.items():

@@ -48,7 +48,7 @@ for r, (rlab, fcd) in enumerate(rows):
         im = ax.pcolormesh(lon, lat, data, cmap='RdBu_r', vmin=-vmax, vmax=vmax, shading='auto',
                            transform=proj) if proj else ax.pcolormesh(lon, lat, data, cmap='RdBu_r', vmin=-vmax, vmax=vmax, shading='auto')
         if proj:
-            ax.add_feature(cfeature.COASTLINE, lw=0.5); ax.add_feature(cfeature.BORDERS, lw=0.3, ls=':')
+            ax.add_feature(cfeature.COASTLINE, lw=0.5)
             ax.set_extent([65, 100, 5, 38], crs=proj)
         if r == 0:
             ax.set_title(title, fontsize=12, fontweight='bold')

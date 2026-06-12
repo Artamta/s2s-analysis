@@ -32,6 +32,11 @@ REGL = {'northwest_india': 'Northwest', 'central_india': 'Central',
 plt.rcParams.update({'font.size': 11, 'axes.titlesize': 12, 'axes.labelweight': 'bold'})
 
 df = pd.read_csv(f'{ADIR}/skill_per_init_full.csv')
+# use the unit-corrected TP (true daily ERA5; FuXi mm/h->mm/day) instead of the
+# original 6-h-referenced TP, so the precipitation panel matches the rest of the paper
+df = df[df.variable != 'TP']
+tp_corr = pd.read_csv(f'{ADIR}/skill_tp_corrected.csv')
+df = pd.concat([df, tp_corr], ignore_index=True)
 df['wk'] = df['week'].str.extract(r'(\d)').astype(int)
 fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
 

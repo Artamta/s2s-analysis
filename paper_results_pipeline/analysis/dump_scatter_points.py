@@ -70,8 +70,11 @@ for ii, init in enumerate(init_dates):
         o_z = fields['z_obs'].isel(init=ii, week=wi).values
         for m in MODELS:
             a_tp = fields['tp_fcst'].sel(model=m).isel(init=ii, week=wi)
+            # FuXi-S2S tp is a mean rate (~mm h^-1); x24 -> mm day^-1 (unit
+            # harmonization; other systems already mm day^-1). PCC unaffected.
+            tp_fac = 24.0 if m == 'FuXi' else 1.0
             if o_tp is not None and not np.isnan(o_tp).all() and not np.isnan(a_tp).all():
-                add_pairs(store, f'TP_{m}', (a_tp + clim6).values, o_tp.values)
+                add_pairs(store, f'TP_{m}', ((a_tp + clim6) * tp_fac).values, o_tp.values)
             a_z = fields['z_fcst'].sel(model=m).isel(init=ii, week=wi).values
             if np.isfinite(a_z).any() and np.isfinite(o_z).any():
                 add_pairs(store, f'Z500_{m}', a_z, o_z)

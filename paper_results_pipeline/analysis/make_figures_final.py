@@ -33,6 +33,12 @@ REG_LABEL = {'northwest_india': 'Northwest', 'central_india': 'Central',
 plt.rcParams.update({'font.size': 11, 'axes.titlesize': 12, 'axes.labelweight': 'bold'})
 
 df = pd.read_csv(CSV)
+# use the unit-corrected TP (true daily ERA5; FuXi mm/h->mm/day) for any TP panel
+import os as _os
+_tpc = f'{_os.path.dirname(CSV)}/skill_tp_corrected.csv'
+if _os.path.exists(_tpc):
+    df = df[df.variable != 'TP']
+    df = pd.concat([df, pd.read_csv(_tpc)], ignore_index=True)
 df['wk'] = df['week'].str.extract(r'(\d)').astype(int)
 
 

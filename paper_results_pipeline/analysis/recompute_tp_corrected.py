@@ -94,11 +94,24 @@ for ii, init in enumerate(init_dates):
                                      obs_mean=float(orr.weighted(w).mean(['lat', 'lon']))))
                 except Exception:
                     pass
-        for m in MODELS:
+        # recover raw weekly-mean TP per base system, then rebuild MME from them.
+        # FuXi-S2S 'tp' is a mean precip RATE (~mm h^-1); x24 -> mm day^-1 (unit
+        # harmonization; the other systems are already mm day^-1). PCC is
+        # scale-invariant so FuXi's correlation is unchanged; only its RMSE/bias
+        # (and the MME that averages it) are corrected here.
+        FUXI_TP_FACTOR = 24.0
+        raws = {}
+        for m in ['SPIRE', 'FuXi', 'ECMWF', 'NCEP']:
             anom = fields['tp_fcst'].sel(model=m).isel(init=ii, week=wi)
             if np.isnan(anom).all():
                 continue
-            raw = anom + clim6  # recover raw model weekly-mean TP (mm/day true-daily scale)
+            raws[m] = (anom + clim6) * (FUXI_TP_FACTOR if m == 'FuXi' else 1.0)
+        if len(raws) >= 3:
+            raws['MME'] = sum(raws.values()) / len(raws)
+        for m in MODELS:
+            if m not in raws:
+                continue
+            raw = raws[m]
             for rg in REGION_BOUNDS:
                 fr, orr, cr = regional(raw, rg), regional(o, rg), regional(clim_daily, rg)
                 w = get_cosine_latitude_weights(fr.lat.values)

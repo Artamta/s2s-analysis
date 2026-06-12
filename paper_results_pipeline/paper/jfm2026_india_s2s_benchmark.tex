@@ -113,13 +113,16 @@ ECMWF (0.94) and above both other systems. Across all systems,
 circulation skill greatly outlasts precipitation skill---useful Z500
 pattern skill persists for several weeks while precipitation skill falls
 below PCC~0.5 by week~3---so skill for the large-scale flow does not
-translate into comparable precipitation skill. We further show that the
-verification of reanalysis-trained AI precipitation is highly sensitive
-to two reference choices: the accumulation window of the ERA5 truth (a
-mismatched 6-hour reference distorts the rankings) and the unit
-harmonization of model precipitation that is output as a mean rate rather
-than a daily total; both must be reconciled before anomaly-based skill
-scores are comparable. The results provide an
+translate into comparable precipitation skill. A probabilistic
+evaluation under a common Gaussian framework shows that SPIRE is also the
+best-calibrated system, with a spread-skill ratio closest to one and the
+highest continuous ranked probability skill score, whereas FuXi-S2S is
+markedly overconfident. We further show that the verification of
+reanalysis-trained AI precipitation is highly sensitive to two reference
+choices: the accumulation window of the ERA5 truth (a mismatched 6-hour
+reference distorts the rankings) and the unit harmonization of model
+precipitation that is output as a mean rate rather than a daily total;
+both must be reconciled before anomaly-based skill scores are comparable. The results provide an
 early, real-time assessment of AI-based S2S forecasts for the Indian
 winter and establish a reproducible verification template extensible to
 further systems and seasons.
@@ -596,6 +599,35 @@ deviation: all four systems markedly under-disperse precipitation
 precipitation RMSE is partly a smoothing artifact, so we interpret RMSE
 alongside PCC and bias rather than in isolation \citep{murphy1988}.
 
+\subsection{Probabilistic verification}\label{sec:prob_methods}
+
+Because the four systems carry very different ensemble information
+(SPIRE provides an ensemble mean and spread; FuXi-S2S, ECMWF, and NCEP
+provide 11, 100, and 15 members), we place them on a common footing by
+treating each as a Gaussian forecast with the ensemble mean $\mu$ and the
+ensemble spread (standard deviation) $\sigma$ at each grid point and lead
+\emph{day}. The continuous ranked probability score then has the
+closed form
+\begin{equation}
+  \mathrm{CRPS}(\mu,\sigma,y) = \sigma\!\left[\omega\,(2\Phi(\omega)-1)
+  + 2\phi(\omega) - \tfrac{1}{\sqrt{\pi}}\right],\quad \omega=\tfrac{y-\mu}{\sigma},
+  \label{eq:crps}
+\end{equation}
+with $y$ the observation and $\Phi,\phi$ the standard-normal CDF and PDF
+\citep{gneiting2007}. Scores are computed per day, then averaged over the
+land points and the days of each lead week. The skill score
+$\mathrm{CRPSS}=1-\mathrm{CRPS}/\mathrm{CRPS}_{\mathrm{clim}}$ is taken
+against a Gaussian climatological forecast built from the in-sample mean
+and standard deviation. Calibration is summarized by the spread-skill
+ratio $\mathrm{SSR}=\overline{\sigma}/\mathrm{RMSE}(\mu)$, which equals
+one for a perfectly reliable ensemble and is below one when the ensemble
+is overconfident. We also assess the reliability of two threshold events
+(a heavy-rain day, precipitation $>1$~mm\,day$^{-1}$, and a cold day, T2M
+below the climatological lower tercile) using the Gaussian exceedance
+probability. Computing all scores at the daily level makes the SPIRE
+spread (a daily ensemble standard deviation) directly comparable to the
+member spreads of the other systems.
+
 % ===================================================================
 % RESULTS
 % ===================================================================
@@ -916,6 +948,62 @@ rainfall (Section~\ref{sec:precip_skill}).
     \bottomrule
   \end{tabular}
 \end{table}
+
+\subsection{Probabilistic skill and ensemble calibration}\label{sec:prob}
+
+The deterministic scores use only the ensemble mean; the probabilistic
+verification (Section~\ref{sec:prob_methods}) asks whether each system's
+\emph{uncertainty} is trustworthy. By the continuous ranked probability
+skill score (Fig.~\ref{fig:crpss}), SPIRE is the most skillful
+probabilistic forecast for all three variables: its week-1 CRPSS is 0.57
+for precipitation, 0.47 for Z500, and 0.63 for temperature. ECMWF is a
+close competitor for precipitation (0.61) but trails for the other
+fields, while FuXi-S2S and NCEP fall to low or negative CRPSS by week~2,
+indicating ensembles that are, probabilistically, no better than
+climatology.
+
+The cause is calibration (Fig.~\ref{fig:ssr}). The spread-skill ratio of
+SPIRE is consistently the closest to one---reaching 0.7--1.1 for Z500 and
+0.8--0.95 for temperature---whereas FuXi-S2S is severely overconfident,
+with a week-1 spread-skill ratio of only 0.08 (precipitation), 0.14
+(Z500), and 0.03 (temperature): its ensemble spread is roughly an order
+of magnitude too small, so the verifying observation routinely falls
+outside its envelope (visible directly in the event spread bands,
+Figs.~\ref{fig:case_t2m} and \ref{fig:event_spread}). NCEP is likewise under-dispersed; ECMWF is
+moderately well calibrated for Z500 but overconfident for temperature.
+The reliability diagrams for a heavy-rain day and a cold day
+(Fig.~\ref{fig:reliability}, Appendix) tell the same story. We note that
+the very negative temperature CRPSS of the non-SPIRE systems is amplified
+by the sub-daily cold bias discussed in Section~\ref{sec:t2m_skill}: an
+overconfident ensemble centred several kelvin too cold is penalized
+heavily by the CRPS, so part of SPIRE's temperature advantage here
+reflects its daily-mean output matching the reference. For precipitation
+and Z500, which are unaffected by that sampling issue, the calibration
+ranking is a clean result: \emph{SPIRE is the best-calibrated system and
+FuXi-S2S the most overconfident}.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig15_crpss.pdf}
+  \caption{Continuous ranked probability skill score (CRPSS) versus lead
+  for precipitation (a), Z500 (b), and 2-m temperature (c), against a
+  Gaussian climatological reference, for the four systems over India,
+  JFM~2026. CRPSS${>}0$ beats climatology; the dashed line marks no
+  skill. Shading is the bootstrap 95\% CI over the 13 initializations.}
+  \label{fig:crpss}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig16_spread_skill.pdf}
+  \caption{Ensemble calibration: spread-skill ratio (ensemble spread
+  divided by ensemble-mean RMSE) versus lead, for precipitation (a),
+  Z500 (b), and 2-m temperature (c). The dashed line (ratio${=}1$) is
+  perfect calibration; values below one indicate an overconfident
+  (under-dispersed) ensemble. SPIRE is consistently closest to one;
+  FuXi-S2S is strongly overconfident.}
+  \label{fig:ssr}
+\end{figure*}
 
 \subsection{Case study: a strongly anomalous circulation week}
 \label{sec:case}
@@ -1380,6 +1468,31 @@ East/NE       & \textbf{0.49} & 0.13 & 0.12 & 0.07 \\
   \label{fig:gallery_precip}
 \end{figure*}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig17_reliability.pdf}
+  \caption{Reliability diagrams for two probabilistic event forecasts---a
+  heavy-rain day (precipitation $>1$~mm\,day$^{-1}$, left) and a cold day
+  (T2M below the climatological lower tercile, right)---pooling all
+  initializations, leads, and land points. Points on the diagonal are
+  perfectly reliable; points below the diagonal indicate
+  over-forecasting. Probabilities are the Gaussian exceedance
+  probabilities of Section~\ref{sec:prob_methods}.}
+  \label{fig:reliability}
+\end{figure}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig18_event_spread.pdf}
+  \caption{Ensemble spread for the most anomalous circulation event of
+  JFM~2026: the All-India area-averaged Z500 anomaly (top) and
+  precipitation anomaly (bottom) versus forecast day, for each system,
+  with the ERA5 observation (black), the ensemble mean (colour), and the
+  $\pm1\sigma$ ensemble spread (shaded). The very narrow FuXi-S2S band
+  illustrates the overconfidence quantified in Fig.~\ref{fig:ssr}.}
+  \label{fig:event_spread}
+\end{figure*}
+
 % ===================================================================
 % BACK MATTER
 % ===================================================================
@@ -1457,6 +1570,11 @@ T. Yasunari, and D.~R. Sikka, 2015: Western disturbances: A review.
 Domeisen, D.~I.~V., and Coauthors, 2022: Advances in the subseasonal
 prediction of extreme events: Relevant case studies across the globe.
 \textit{Bull. Amer. Meteor. Soc.}, \textbf{103}, E1473--E1501. %TODO verify pages
+
+\bibitem[{Gneiting and Raftery(2007)}]{gneiting2007}
+Gneiting, T., and A.~E. Raftery, 2007: Strictly proper scoring rules,
+prediction, and estimation. \textit{J. Amer. Statist. Assoc.},
+\textbf{102}, 359--378.
 
 \bibitem[{Hersbach et~al.(2020)}]{hersbach2020}
 Hersbach, H., and Coauthors, 2020: The ERA5 global reanalysis.

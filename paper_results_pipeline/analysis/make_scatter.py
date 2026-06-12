@@ -18,7 +18,7 @@ d = np.load(f'{ADIR}/scatter_points.npz')
 present_vars = [v for v in ['TP', 'Z500', 'T2M'] if f'{v}_SPIRE_fcst' in d.files]
 MODELS = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP']
 LAB = {'SPIRE': 'SPIRE', 'FuXi': 'FuXi-S2S', 'ECMWF': 'ECMWF', 'NCEP': 'NCEP'}
-VLAB = {'TP': 'Precipitation\n(mm day$^{-1}$)', 'Z500': 'Z500 anomaly\n(m)', 'T2M': 'T2M (K)'}
+VLAB = {'TP': 'Precip anomaly\n(mm day$^{-1}$)', 'Z500': 'Z500 anomaly\n(m)', 'T2M': 'T2M anomaly\n(K)'}
 plt.rcParams.update({'font.size': 11, 'axes.titlesize': 12.5, 'axes.titleweight': 'bold',
                      'axes.labelsize': 11, 'savefig.dpi': 300, 'figure.dpi': 110,
                      'font.family': 'DejaVu Sans'})
@@ -49,11 +49,10 @@ def robust_lim(var):
         if f'{var}_{m}_fcst' in d.files:
             vals.append(d[f'{var}_{m}_fcst']); vals.append(d[f'{var}_{m}_obs'])
     a = np.concatenate(vals)
-    lo, hi = np.nanpercentile(a, [0.2, 99.6])
-    if var == 'TP':
-        lo = 0.0
-    pad = 0.03 * (hi - lo)
-    return (float(lo), float(hi + pad))
+    lo, hi = np.nanpercentile(a, [0.4, 99.6])
+    # symmetric limits about zero for anomalies
+    m = max(abs(lo), abs(hi))
+    return (-m, m)
 
 
 nrow = len(present_vars)

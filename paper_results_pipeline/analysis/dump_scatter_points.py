@@ -48,6 +48,7 @@ store = {}
 era6 = xr.open_dataset(f'{DATA}/era5/data/era5_surface.grib', filter_by_keys={'shortName': 'tp'}, **OPEN)['tp'] * 1000.0
 clim6 = to_grid(era6.mean('time'))
 daily = xr.open_dataset(f'{ADIR}/era5_daily_tp.nc')['tp']
+clim_tp = to_grid(daily.mean('time'))  # true-daily TP climatology for anomalies
 fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
 init_dates = [str(x) for x in fields['init'].values]
 
@@ -74,7 +75,8 @@ for ii, init in enumerate(init_dates):
             # harmonization; other systems already mm day^-1). PCC unaffected.
             tp_fac = 24.0 if m == 'FuXi' else 1.0
             if o_tp is not None and not np.isnan(o_tp).all() and not np.isnan(a_tp).all():
-                add_pairs(store, f'TP_{m}', ((a_tp + clim6) * tp_fac).values, o_tp.values)
+                # anomaly = field - true-daily climatology (consistent with Z500/T2M)
+                add_pairs(store, f'TP_{m}', ((a_tp + clim6) * tp_fac - clim_tp).values, (o_tp - clim_tp).values)
             a_z = fields['z_fcst'].sel(model=m).isel(init=ii, week=wi).values
             if np.isfinite(a_z).any() and np.isfinite(o_z).any():
                 add_pairs(store, f'Z500_{m}', a_z, o_z)
@@ -82,6 +84,7 @@ print('TP + Z500 pooled (no reload)', flush=True)
 
 # ---------- T2M, reload raw ensembles ----------
 dailyT = xr.open_dataset(f'{ADIR}/era5_daily_t2m.nc')['t2m']
+clim_t2 = to_grid(dailyT.mean('time'))  # T2M climatology for anomalies
 
 
 def era_week_t(valid):
@@ -137,7 +140,8 @@ for init in init_dates:
                 f[nm] = to_grid(arr.isel(step=slice(ds_ - 1, de)).mean('step'))
         for m in MODELS:
             if m in f:
-                add_pairs(store, f'T2M_{m}', f[m].values, o.values)
+                # anomaly = field - T2M climatology (consistent with TP/Z500)
+                add_pairs(store, f'T2M_{m}', (f[m] - clim_t2).values, (o - clim_t2).values)
 print('T2M pooled (reloaded)', flush=True)
 
 out = {k: np.concatenate(v) for k, v in store.items()}

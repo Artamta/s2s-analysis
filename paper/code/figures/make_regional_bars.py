@@ -47,10 +47,10 @@ for r, v in enumerate(VARS):
             vals = [val(v, rg, m, col) for rg in REG]
             a.bar(x + (k - 1.5) * w, vals, w, color=COL[m], edgecolor='k', lw=0.4, label=LAB[m])
         a.set_xticks(x); a.set_xticklabels([REGL[rg] for rg in REG])
-        a.set_title(f'({chr(97 + 2 * r + c)}) {VLAB[v]} — {"PCC" if c == 0 else "RMSE"}')
         a.set_ylabel(lab); a.grid(axis='y', ls=':', alpha=0.5)
         if c == 0:
             a.axhline(0.5, color='0.3', ls='--', lw=1); a.set_ylim(0, 1.0)
+        # T2M RMSE panel is bias-corrected (centered) RMSE; see crmse above
         a.set_title(f'({chr(97 + 2 * r + c)}) {VLAB[v]} — {"PCC" if c == 0 else "RMSE (bias-corrected)" if v == "T2M" else "RMSE"}')
 ax[0, 0].legend(loc='upper right', ncol=2, fontsize=9)
 fig.suptitle('Region-wise skill by IMD homogeneous region (weeks 1–4 mean, 13-init average) — JFM 2026',

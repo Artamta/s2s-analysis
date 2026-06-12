@@ -1,0 +1,25 @@
+Requirement already satisfied: imdlib in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (0.1.21)
+Requirement already satisfied: matplotlib in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (3.10.9)
+Requirement already satisfied: numpy in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (2.4.6)
+Requirement already satisfied: pandas in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (3.0.3)
+Requirement already satisfied: six in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (1.17.0)
+Requirement already satisfied: python-dateutil in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (2.9.0.post0)
+Requirement already satisfied: pytz in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (2026.2)
+Requirement already satisfied: urllib3 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (2.7.0)
+Requirement already satisfied: scipy in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (1.17.1)
+Requirement already satisfied: xarray in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (2026.2.0)
+Requirement already satisfied: requests in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from imdlib) (2.34.2)
+Requirement already satisfied: contourpy>=1.0.1 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (4.63.0)
+Requirement already satisfied: kiwisolver>=1.3.1 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (1.5.0)
+Requirement already satisfied: packaging>=20.0 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (26.2)
+Requirement already satisfied: pillow>=8 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (12.2.0)
+Requirement already satisfied: pyparsing>=3 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from matplotlib->imdlib) (3.3.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from requests->imdlib) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from requests->imdlib) (3.17)
+Requirement already satisfied: certifi>=2023.5.7 in /home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages (from requests->imdlib) (2026.5.20)
+Downloading IMD rain for 2026-2026...
+Downloading: rain for year 2026
+Download Successful !!!
+Error downloading IMD data: Error in file reading,mismatch in size of data-length

@@ -1,0 +1,29 @@
+TP + Z500 pooled (no reload)
+=== T2M INIT 2026-01-01 ===
+=== T2M INIT 2026-01-08 ===
+=== T2M INIT 2026-01-15 ===
+=== T2M INIT 2026-01-22 ===
+=== T2M INIT 2026-01-29 ===
+=== T2M INIT 2026-02-05 ===
+=== T2M INIT 2026-02-12 ===
+=== T2M INIT 2026-02-19 ===
+=== T2M INIT 2026-02-26 ===
+=== T2M INIT 2026-03-05 ===
+=== T2M INIT 2026-03-12 ===
+=== T2M INIT 2026-03-19 ===
+=== T2M INIT 2026-03-26 ===
+T2M pooled (reloaded)
+WROTE scatter_points.npz with 24 arrays
+  TP    SPIRE  n=26208
+  TP    FuXi   n=26208
+  TP    ECMWF  n=26208
+  TP    NCEP   n=26208
+  Z500  SPIRE  n=26208
+  Z500  FuXi   n=26208
+  Z500  ECMWF  n=26208
+  Z500  NCEP   n=26208
+  T2M   SPIRE  n=26208
+  T2M   FuXi   n=26208
+  T2M   ECMWF  n=26208
+  T2M   NCEP   n=26208
+SCATTER_DUMP_DONE

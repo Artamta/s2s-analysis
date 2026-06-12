@@ -1,0 +1,45 @@
+Starting FuXi-S2S Inference Loop
+==================================================
+Make sure you are running this inside your 'fuxi_s2s' conda environment!
+==================================================
+
+>>> Processing forecast for 2026-01-01 <<<
+Success! 2026-01-01 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-01-08 <<<
+Success! 2026-01-08 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-01-15 <<<
+Success! 2026-01-15 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-01-22 <<<
+Success! 2026-01-22 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-01-29 <<<
+Success! 2026-01-29 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-02-05 <<<
+Success! 2026-02-05 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-02-12 <<<
+Success! 2026-02-12 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-02-19 <<<
+Success! 2026-02-19 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-02-26 <<<
+Success! 2026-02-26 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-03-05 <<<
+Success! 2026-03-05 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-03-12 <<<
+Success! 2026-03-12 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-03-19 <<<
+Success! 2026-03-19 is already 100% complete. Skipping...
+
+>>> Processing forecast for 2026-03-26 <<<
+Success! 2026-03-26 is already 100% complete. Skipping...
+
+All inferences complete!

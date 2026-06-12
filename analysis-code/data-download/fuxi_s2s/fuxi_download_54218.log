@@ -1,0 +1,2 @@
+/var/spool/slurm/slurmd/job54218/slurm_script: line 15: syntax error near unexpected token `('
+/var/spool/slurm/slurmd/job54218/slurm_script: line 15: `cd /home/raj.ayush/s2s/s2s_anlysis/benchmark(jfm)/fuxi_s2s/'

@@ -1,0 +1,28 @@
+=== INIT 2026-01-01 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-01-08 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-01-15 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-01-22 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-01-29 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-02-05 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-02-12 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-02-19 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-02-26 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-03-05 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-03-12 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-03-19 ===
+  loaded; computing weekly mu/sig
+=== INIT 2026-03-26 ===
+  loaded; computing weekly mu/sig
+WROTE prob_skill.csv, reliability.npz, prob_daily_regional.npz, prob_fields.nc
+PROB_FIELDS_DONE

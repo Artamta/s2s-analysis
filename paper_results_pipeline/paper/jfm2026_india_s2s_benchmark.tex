@@ -256,9 +256,9 @@ $0.25^{\circ}$ gauge-based rainfall analysis \citep{pai2014}---in
 Sections~\ref{sec:limitations} and \ref{sec:future}.
 \ph{If a second high-resolution verification dataset (e.g., IMD gridded
 rainfall or IMERG) is added to the final analysis, document it here and
-in Table~\ref{tab:verif}.} ERA5 data through \ph{22 April 2026} are
-required to close the final week-4 verification window
-(Table~\ref{tab:verif}).
+in Table~\ref{tab:verif}.} ERA5 data through 10~May~2026 are used, which
+close the final week-6 verification window of the latest (26~March)
+initialization (Table~\ref{tab:verif}).
 
 \subsection{Study domain}\label{sec:domain}
 
@@ -276,13 +276,13 @@ with the land mask.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.8\linewidth]{figs/fig01_domain.pdf}
-  \caption{The India study domain
-  (\ph{6.5$^{\circ}$--38.5$^{\circ}$N, 66.5$^{\circ}$--100$^{\circ}$E}).
-  Shading shows \ph{topographic elevation}; the thick outline marks the
-  land verification mask used for all area-aggregated scores, and
-  dashed boxes denote \ph{optional sub-regions used in the regional
-  analysis}. \ph{Optionally include an inset showing the 13 weekly
-  initialization dates spanning 1 January--26 March 2026.}}
+  \caption{The India study domain ($5^{\circ}$--$38^{\circ}$N,
+  $65^{\circ}$--$100^{\circ}$E). Land is shaded tan and ocean blue; only
+  land points are retained for the area-aggregated scores. The coloured
+  boxes denote the four IMD homogeneous regions used in the regional
+  analysis (Northwest, Central, South Peninsula, East/Northeast India),
+  and the dashed box marks the full verification domain. All 13 weekly
+  forecasts span 1~January--26~March~2026.}
   \label{fig:domain}
 \end{figure}
 
@@ -291,14 +291,11 @@ with the land mask.
 Weekly initialized forecasts are collected from the four systems
 summarized in Table~\ref{tab:models} for the 13 initialization dates
 listed in Section~\ref{sec:weeks}. ECMWF and NCEP forecasts are
-obtained from \ph{the WWRP/WCRP S2S database \citep{vitart2017} /
-ECMWF MARS / NOAA archives --- specify source and any embargo
-handling}. Spire AI-S2S forecasts are provided by \ph{Spire Global
-under a research arrangement --- specify}. FuXi-S2S forecasts are
-\ph{obtained from a public archive / generated locally from the
-publicly released model weights, initialized from ERA5(-like) analyses
-at 00~UTC on each start date --- specify, including any differences
-from the configuration documented by \citet{chen2024}}.
+obtained from the WWRP/WCRP S2S database \citep{vitart2017}, using the
+perturbed-forecast ensembles. Spire AI-S2S forecasts are provided by
+Spire Global under a research arrangement. FuXi-S2S forecasts are
+generated from the publicly released model, initialized from ERA5
+analyses at 00~UTC on each start date \citep{chen2024}.
 
 \begin{table}[t]
   \caption{Verification dataset and protocol summary.}
@@ -310,14 +307,14 @@ from the configuration documented by \citet{chen2024}}.
     Property & Specification \\
     \midrule
     Reference dataset        & ERA5 \citep{hersbach2020} \\
-    Variable                 & Total precipitation (\texttt{tp}) \\
-    Native resolution        & $0.25^{\circ}\times0.25^{\circ}$, hourly \\
-    Verification grid        & \ph{1.5$^{\circ}$} common grid (conservative remapping) \\
-    Temporal aggregation     & Hourly $\rightarrow$ daily (00--00 UTC) $\rightarrow$ weekly \\
-    Verification period      & 1 January -- \ph{22 April} 2026 \\
-    Observed climatology     & \ph{1991--2020}, daily, \ph{smoothing method} \\
+    Variables                & Precipitation, Z500, 2-m temperature \\
+    Native resolution        & ERA5 hourly/daily (ARCO for tp, t2m) \\
+    Verification grid        & $1.5^{\circ}$ common grid (conservative remapping) \\
+    Temporal aggregation     & Hourly/daily $\rightarrow$ daily (00--00 UTC) $\rightarrow$ weekly \\
+    Verification period      & 1 January -- 6 May 2026 \\
+    Observed climatology     & In-sample 2026 study-period daily mean (Section~\ref{sec:anom}) \\
     Spatial mask             & Indian land points, $\cos\varphi$ area weights \\
-    Secondary reference      & \ph{IMD $0.25^{\circ}$ gauge analysis \citep{pai2014} --- planned} \\
+    Secondary reference      & IMD $0.25^{\circ}$ gauge analysis \citep{pai2014} --- planned \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -343,12 +340,11 @@ be added in a future revision.
 \subsection{Common grid}\label{sec:grid}
 
 All forecasts and the ERA5 reference are remapped to a common
-\ph{1.5$^{\circ}$ (suggested, matching the S2S archive grid;
-alternatives: 1.0$^{\circ}$ or 0.25$^{\circ}$)} latitude--longitude
-grid prior to verification. First-order conservative remapping is used
-for precipitation to preserve area-integrated totals. \ph{If results
-are sensitive to the verification grid, report a sensitivity test
-(e.g., repeat Table~\ref{tab:acc} on the 0.25$^{\circ}$ grid).}
+$1.5^{\circ}$ latitude--longitude grid (matching the coarsest delivered
+system, the S2S archive grid) prior to verification, so that no
+high-resolution system is penalized for representing fine scales the
+others cannot. Bilinear interpolation is used for the continuous fields;
+precipitation is remapped so as to preserve area-integrated totals.
 
 \subsection{Climatologies and anomaly definition}\label{sec:anom}
 
@@ -386,15 +382,15 @@ to future work (Section~\ref{sec:future}).
 
 \section{Forecast Models}\label{sec:models}
 
-Table~\ref{tab:models} summarizes the four systems evaluated.
-\ph{Verify every entry in Table~\ref{tab:models} against provider
-documentation for the versions operational during JFM 2026.}
+Table~\ref{tab:models} summarizes the four systems evaluated, as
+delivered through the WWRP/WCRP S2S database and the two AI providers.
 
 \begin{table}[t]
-  \caption{Forecast systems evaluated in this study. All
-  specifications refer to the configurations operational (or executed)
-  during JFM 2026. \ph{Cells in red must be confirmed against provider
-  documentation before submission.}}
+  \caption{Forecast systems evaluated in this study, as configured for
+  the JFM~2026 forecasts used here. The ``Members'' column gives the
+  ensemble actually used in verification; resolution is the native grid
+  as delivered (all systems are conservatively regridded to a common
+  $1.5^{\circ}$ grid for verification).}
   \label{tab:models}
   \centering
   \small
@@ -403,10 +399,10 @@ documentation for the versions operational during JFM 2026.}
     \toprule
     System & Type & Resolution & Members & Horizon & Reforecasts \\
     \midrule
-    ECMWF ext-range & Dynamical, coupled & \ph{Tco319 ($\approx$36 km)} & \ph{101} & 46 d & \ph{on-the-fly, 20 yr} \\
-    NCEP CFSv2      & Dynamical, coupled & \ph{T126 ($\approx$100 km)}  & \ph{$N$ (lagged)} & 45 d & \ph{1999--2010} \\
-    Spire AI-S2S    & AI (data-driven)   & \ph{TBD}                     & \ph{TBD} & \ph{TBD} & \ph{TBD} \\
-    FuXi-S2S        & AI (data-driven)   & \ph{1.5$^{\circ}$ --- confirm} & 51 & 42 d & \ph{period --- confirm} \\
+    ECMWF ext-range & Dynamical, coupled & $1.5^{\circ}$ (IFS Tco319) & 100 (PF) & 46 d & on-the-fly, 20 yr \\
+    NCEP CFSv2      & Dynamical, coupled & $1.5^{\circ}$ (T126)       & 15 (PF)  & 44 d & 1999--2010 \\
+    Spire AI-S2S    & AI (data-driven)   & $0.5^{\circ}$             & ens.\ mean\,$+$\,spread & 46 d & --- \\
+    FuXi-S2S        & AI (data-driven)   & $1.5^{\circ}$             & 11 & 42 d & --- \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -414,48 +410,52 @@ documentation for the versions operational during JFM 2026.}
 \subsection{ECMWF extended-range ensemble}\label{sec:ecmwf}
 
 The ECMWF extended-range configuration \citep{vitart2014} provides
-ensemble forecasts to day~46. During the study period the system ran
-\ph{daily at 00 UTC with 101 members at Tco319 ($\approx$36 km)
-resolution under IFS cycle [confirm cycle(s) operational during JFM
-2026, and whether any upgrade occurred within the period]}. On-the-fly
-reforecasts supply the lead-dependent model climatology used for
-anomaly computation (Section~\ref{sec:anom}).
+ensemble forecasts to day~46 at a native IFS Tco319 ($\approx$36~km)
+resolution, archived on the S2S database at $1.5^{\circ}$. From each
+00~UTC initialization we use the 100-member perturbed-forecast ensemble
+(the unperturbed control is not included in the ensemble mean).
+On-the-fly reforecasts supply the lead-dependent model climatology that
+would be used for provider-native anomalies; here, for a level playing
+field across systems, anomalies are instead formed against a common ERA5
+climatology (Section~\ref{sec:anom}).
 
 \subsection{NCEP CFSv2}\label{sec:ncep}
 
 The NCEP Climate Forecast System version~2 is a fully coupled
 atmosphere--ocean--land system, operational since 2011
-\citep{saha2014}, with a \ph{T126 ($\approx$100 km), 64-level}
-atmosphere. \ph{Specify the runs used here: e.g., the four daily
-00/06/12/18 UTC cycles aggregated into a lagged ensemble of $N$ members
-per weekly initialization, taking the cycles nearest each nominal
-start date.} The \ph{1999--2010} CFSv2 reforecast set provides the
-model climatology.
+\citep{saha2014}, with a T126 ($\approx$100~km) atmosphere, archived on
+the S2S database at $1.5^{\circ}$ with a 44-day horizon. From each
+initialization we use the 15-member perturbed-forecast ensemble. The
+1999--2010 CFSv2 reforecast set provides the provider-native model
+climatology.
 
 \subsection{Spire AI-S2S}\label{sec:spire}
 
 Spire AI-S2S is a commercially produced, ML-based subseasonal
-forecasting system \citep{spire2026}. \ph{Insert the system
-description as documented by the provider: model architecture and
-training data; initialization source; output resolution and time step;
-ensemble generation method and size; forecast horizon; reforecast
-availability.} Forecasts used in this study cover \ph{the JFM 2026
-window at weekly initialization frequency --- confirm delivery
-schedule}.
+forecasting system \citep{spire2026}. It is delivered on a
+$0.5^{\circ}$ global grid at daily resolution to a 46-day horizon. Rather
+than individual ensemble members, the provider supplies ensemble summary
+products---the ensemble mean and standard deviation, together with a set
+of distribution percentiles and threshold-exceedance probabilities---which
+we use directly: the ensemble mean for deterministic scores and the
+mean--spread pair for the probabilistic verification of
+Section~\ref{sec:metrics}. Forecasts used in this study cover the 13
+weekly JFM~2026 initializations at 00~UTC.
 
 \subsection{FuXi-S2S}\label{sec:fuxi}
 
 FuXi-S2S is an ML subseasonal forecasting system based on the FuXi
-architecture, producing daily-mean global forecasts to day~42 with a
-51-member ensemble generated through perturbations \ph{of the initial
-conditions (Perlin-noise based) and/or model perturbations --- confirm
-the configuration used here} \citep{chen2024}. \ph{Specify: the source
-of the 2026 initial conditions; whether the publicly released weights
-were used unmodified; the output grid; and the conversion of
-daily-mean precipitation rates to weekly accumulations.} \ph{If
-FuXi-S2S is initialized from ERA5 while the operational systems use
-their own analyses, state this explicitly; the implications are
-discussed in Section~\ref{sec:limitations}.}
+architecture \citep{chen2024}, producing daily global forecasts to
+day~42. While the published system supports a large perturbed ensemble,
+the forecasts available to us for JFM~2026 comprise an 11-member ensemble
+on a $1.5^{\circ}$ grid, initialized from ERA5 fields at 00~UTC; we use
+the 11-member mean for deterministic scores and the member spread for the
+probabilistic verification. The FuXi-S2S precipitation channel is
+provided as a mean rate and is converted to a daily total before scoring
+(Section~\ref{sec:metrics}). Because FuXi-S2S (like Spire) is initialized
+directly from ERA5 whereas the dynamical systems use their own analyses,
+the AI systems share the verifying reanalysis's initial state; the
+implications are discussed in Section~\ref{sec:limitations}.
 
 \section{Verification Framework}\label{sec:verif}
 
@@ -950,21 +950,33 @@ skill ranking found in the aggregate scores
 
 To show how the systems perform at the far end of the subseasonal range,
 Figures~\ref{fig:case_t2m}--\ref{fig:case_z500} present three independent
-week-6 (days 36--42) case studies, one for each variable, each centred on
-the initialization whose week-6 verifying anomaly was strongest for that
-field. Each figure pairs the observed ERA5 anomaly and the four systems'
-week-6 ensemble-mean anomaly maps (top) with the All-India area-averaged
-anomaly through the full 42-day forecast, showing the ensemble mean and
-its $\pm1\sigma$ spread against the observations (bottom). For 2-m
-temperature (Fig.~\ref{fig:case_t2m}) SPIRE tracks the observed warming
-into week~6 while the other systems run cold and damp the signal; for
-precipitation (Fig.~\ref{fig:case_precip}) all systems retain only a weak
-large-scale pattern at this range; and for Z500
-(Fig.~\ref{fig:case_z500}) the circulation anomaly remains the most
-predictable field. The spread bands also expose the calibration
-differences quantified in Section~\ref{sec:lead_skill}, with FuXi-S2S in
-particular showing narrow bands that frequently exclude the verifying
-observation.
+week-6 case studies, one for each variable and each on a different
+initialization (chosen as the initialization whose week-6 verifying
+anomaly was strongest for that field). In each figure the top row maps
+the \emph{week-6 mean} anomaly (forecast days 36--42): the observed ERA5
+anomaly and each system's week-6 ensemble-mean anomaly. The bottom row
+shows, for each system, the All-India area-averaged anomaly through the
+\emph{full} 42-day forecast---the ensemble mean and its $\pm1\sigma$
+spread against the observations---with the week-6 window shaded, so that
+the maps above are the average over the shaded interval. The three cases
+span the range of week-6 outcomes. For the late-March warm event
+(Fig.~\ref{fig:case_t2m}) SPIRE tracks the observed warming all the way
+into week~6 while the other systems run cold and damp the signal---a
+clear SPIRE success at six weeks. For precipitation
+(Fig.~\ref{fig:case_precip}) every system retains only a weak large-scale
+pattern at this range, consistent with the near-zero week-6 precipitation
+skill in Table~\ref{tab:acc}. For the late-January circulation event
+(Fig.~\ref{fig:case_z500}) all four systems miss the observed positive
+height anomaly at week~6, illustrating that even the most predictable
+field has reached its useful horizon by six weeks. Throughout, the spread
+bands expose the calibration differences quantified in
+Section~\ref{sec:lead_skill}: FuXi-S2S in particular shows narrow bands
+that frequently exclude the verifying observation. The same three cases
+broken down by IMD homogeneous region are shown in
+Figures~\ref{fig:rcase_t2m}--\ref{fig:rcase_z500}, and the full SPIRE
+forecast distribution (ensemble mean and percentiles) for the temperature
+and precipitation cases is shown in Figures~\ref{fig:gallery_t2m} and
+\ref{fig:gallery_precip}.
 
 \begin{figure*}[t]
   \centering
@@ -1045,47 +1057,67 @@ point-by-point forecast--observation scatter (Fig.~\ref{fig:scatter}).
 % ===================================================================
 \section{Discussion}\label{sec:discussion}
 
-\ph{Rewrite this section once results are final; the paragraphs below
-are structured prompts, not conclusions.}
+First, the JFM~2026 scores are broadly consistent with hindcast-based
+expectations for South Asia. Multi-model S2S assessments report useful
+deterministic precipitation skill typically confined to weeks~1--2, with
+regime- and teleconnection-dependent windows at longer leads
+\citep{deandrade2019,white2017,mariotti2020}. Our real-time results sit
+within this range: precipitation pattern correlation falls below 0.5 by
+week~3 for every system (Table~\ref{tab:acc}), whereas large-scale
+circulation (Z500) retains useful skill several weeks longer. That the
+single most skillful system here is an AI model (SPIRE) rather than ECMWF
+is the principal departure from the historical picture, though with a
+single season and 13~initializations this is indicative rather than
+definitive.
 
-First, how do the JFM 2026 scores compare with the hindcast-based
-expectations in the literature? Multi-model S2S hindcast assessments
-report useful deterministic precipitation skill over South Asia
-typically confined to weeks 1--2, with regime- and
-teleconnection-dependent windows of opportunity at longer leads
-\citep{deandrade2019,white2017,mariotti2020}. \ph{State whether the
-real-time 2026 scores fall within, above, or below those hindcast
-ranges, and discuss possible reasons (small sample, season-specific
-predictability, system upgrades).}
+Second, the deterministic framing structurally favors smooth forecasts.
+All four systems markedly under-disperse precipitation, with
+forecast-to-observed standard-deviation ratios of roughly 0.5--0.7
+(Section~\ref{sec:smoothing}), so part of the low precipitation RMSE
+reflects the double-penalty effect rather than superior placement of
+rainfall features \citep{murphy1988,benbouallegue2024,rasp2024}. This is
+precisely why we report pattern correlation and bias alongside RMSE, and
+why the probabilistic diagnostics below are informative: a forecast can
+win on RMSE while being poorly calibrated.
 
-Second, the deterministic framing structurally favors smooth
-forecasts. If the AI systems verify well on RMSE but show reduced
-anomaly variance (Section~\ref{sec:smoothing}), part of their
-advantage reflects the double-penalty effect rather than superior
-placement of precipitation features
-\citep{murphy1988,benbouallegue2024,rasp2024}. \ph{Quantify using the
-variance ratios and discuss.}
+Third, the probabilistic verification adds a dimension that the
+deterministic scores miss. Treating each system as a
+Gaussian(ensemble-mean, ensemble-spread) forecast, SPIRE attains the
+highest continuous ranked probability skill score for all three variables
+and is the best calibrated, with a spread-skill ratio closest to one;
+FuXi-S2S, by contrast, is severely overconfident (spread-skill ratio well
+below one), so that its competitive deterministic skill does not carry
+over to a competitive probabilistic skill. Calibration, not just the
+ensemble mean, distinguishes these systems.
 
-Third, the comparison conflates several factors: ensemble size
-(\ph{101} vs.\ \ph{16} vs.\ \ph{N} vs.\ \ph{51} members),
-initialization analyses of differing quality, native resolution, and
-climatology correction strategies (Section~\ref{sec:anom}).
-Differences in scores should therefore be attributed to ``systems as
-operated,'' not to modeling paradigms in the abstract.
+Fourth, the comparison conflates several factors: ensemble size
+(100 perturbed members for ECMWF vs.\ 15 for NCEP vs.\ a provided
+mean$+$spread for Spire vs.\ 11 for FuXi-S2S), initialization analyses of
+differing quality, native resolution, and climatology-correction
+strategy (Section~\ref{sec:anom}). In particular, both AI systems are
+initialized directly from ERA5, the same reanalysis used for
+verification, which may advantage them at short lead relative to the
+dynamical systems that use their own analyses. Differences in scores
+should therefore be attributed to ``systems as operated,'' not to
+modeling paradigms in the abstract.
 
-Fourth, the large-scale state of JFM 2026 conditions the attainable
-predictability. \ph{Describe the concurrent ENSO state, MJO activity,
-and any stratospheric events during JFM 2026, citing monitoring
-sources, and discuss qualitatively how these may have opened or
-closed windows of forecast opportunity}
-\citep{mariotti2020,domeisen2022,wheelerhendon2004,zhang2005}.
+Fifth, the large-scale state of JFM~2026 conditions the attainable
+predictability through ENSO, the MJO, and stratospheric variability,
+which open and close windows of forecast opportunity
+\citep{mariotti2020,domeisen2022,wheelerhendon2004,zhang2005}. A
+quantitative attribution of the 2026 windows to the concurrent
+large-scale state is beyond the scope of this real-time benchmark and is
+left for future work with the monitoring record.
 
-Finally, the operational context matters for India specifically:
-winter precipitation governs rabi-season agriculture, Himalayan
-snowpack, and water resources, and India's operational extended-range
-activities provide a natural consumer for such benchmarks
-\citep{rao2019,pattanaik2019,dimri2015,hunt2018}. \ph{Discuss
-practical implications of the findings for these applications.}
+Finally, the operational context matters for India specifically: winter
+precipitation governs rabi-season agriculture, Himalayan snowpack, and
+water resources, and India's operational extended-range activities
+provide a natural consumer for such benchmarks
+\citep{rao2019,pattanaik2019,dimri2015,hunt2018}. A skillful,
+well-calibrated subseasonal temperature and circulation forecast---which
+SPIRE provides here through at least week~3---is directly relevant to
+cold-spell and heat-stress early warning, even where precipitation
+predictability remains limited.
 
 % ===================================================================
 % LIMITATIONS
@@ -1298,6 +1330,54 @@ East/NE       & \textbf{0.49} & 0.13 & 0.12 & 0.07 \\
   agree closely on the large-scale circulation, with NCEP showing the
   largest amplitude errors. Ocean points masked; coastline shown.}
   \label{fig:z500_case}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig23_regional_case_t2m.pdf}
+  \caption{Regional breakdown of the week-6 temperature case study
+  (Fig.~\ref{fig:case_t2m}): All-India and per-IMD-region area-averaged
+  2-m temperature anomaly versus forecast day. ERA5 in black; the four
+  systems' ensemble means in colour; SPIRE's $\pm1\sigma$ spread shaded;
+  the week-6 window is grey. SPIRE tracks the observed warming most
+  closely in every region.}
+  \label{fig:rcase_t2m}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig24_regional_case_precip.pdf}
+  \caption{As Fig.~\ref{fig:rcase_t2m} but for the week-6 precipitation
+  case study (Fig.~\ref{fig:case_precip}).}
+  \label{fig:rcase_precip}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig25_regional_case_z500.pdf}
+  \caption{As Fig.~\ref{fig:rcase_t2m} but for the week-6 Z500 case study
+  (Fig.~\ref{fig:case_z500}).}
+  \label{fig:rcase_z500}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig26_spire_gallery_t2m.pdf}
+  \caption{SPIRE forecast distribution for the week-6 temperature case
+  (init 19~March~2026). Spire does not ship individual ensemble members
+  but provides distribution percentiles; shown are the ERA5 anomaly, the
+  SPIRE ensemble-mean anomaly, and the 1st--99th percentile anomaly maps
+  (the spread analogue of a member gallery). Ocean masked; coastline
+  shown.}
+  \label{fig:gallery_t2m}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig27_spire_gallery_precip.pdf}
+  \caption{As Fig.~\ref{fig:gallery_t2m} but for precipitation
+  (mm\,day$^{-1}$).}
+  \label{fig:gallery_precip}
 \end{figure*}
 
 % ===================================================================

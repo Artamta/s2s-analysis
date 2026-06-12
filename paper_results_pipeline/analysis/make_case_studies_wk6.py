@@ -84,12 +84,16 @@ def panel_map(ax, data, vmax, cmap):
     return im
 
 
+USED = set()
+
+
 def make_case(v, fname, idx):
     mu_k, obs_k = KEYNC[v]
     clim = CLIMg[v].values
-    # pick init with strongest week-6 obs anomaly RMS
-    amp = [np.sqrt(np.nanmean((f[obs_k].isel(init=i, week=5).values - clim) ** 2)) for i in range(len(inits))]
-    istar = int(np.nanargmax(amp)); init_v = inits[istar]
+    # pick init with strongest week-6 obs anomaly RMS, excluding already-used inits
+    amp = np.array([np.sqrt(np.nanmean((f[obs_k].isel(init=i, week=5).values - clim) ** 2)) for i in range(len(inits))])
+    order = np.argsort(amp)[::-1]
+    istar = next(int(i) for i in order if i not in USED); USED.add(istar); init_v = inits[istar]
     vname, unit, cmap = VINFO[v]
     obs_an = f[obs_k].isel(init=istar, week=5).values - clim
     fcs = {m: f[mu_k].sel(model=m).isel(init=istar, week=5).values - clim for m in MODELS}
@@ -97,11 +101,12 @@ def make_case(v, fname, idx):
 
     fig = plt.figure(figsize=(17, 8.2))
     gs = GridSpec(2, 5, figure=fig, height_ratios=[1.15, 1.0], hspace=0.28, wspace=0.12)
-    # top: maps
+    # top: maps (week-6 average, i.e. forecast days 36-42)
     for c, (title, data) in enumerate([('ERA5 (obs)', obs_an)] + [(LAB[m], fcs[m]) for m in MODELS]):
         ax = fig.add_subplot(gs[0, c], projection=proj) if proj else fig.add_subplot(gs[0, c])
         im = panel_map(ax, data, vmax, cmap)
         ax.set_title(title, fontsize=12, fontweight='bold')
+    fig.text(0.5, 0.905, 'Week-6 mean anomaly (forecast days 36–42)', ha='center', fontsize=11, style='italic')
     cax = fig.add_axes([0.92, 0.56, 0.011, 0.32]); fig.colorbar(im, cax=cax, label=f'{vname} anomaly ({unit})')
     # bottom: per-model time series with spread
     days = np.arange(1, 43); obs_ts = obs_daily_ai(v, init_v)
@@ -117,9 +122,9 @@ def make_case(v, fname, idx):
         if c == 0:
             ax.set_ylabel(f'All-India anomaly ({unit})', fontweight='bold'); ax.legend(fontsize=8, loc='upper left')
     ax0 = fig.add_subplot(gs[1, 0]); ax0.axis('off')
-    ax0.text(0.5, 0.5, f'Area-averaged\n{vname} anomaly\nvs forecast day\n\n(grey band =\nweek-6 window)',
+    ax0.text(0.5, 0.5, f'All-India area-averaged\n{vname} anomaly\nover the FULL\n42-day forecast\n\n(grey band =\nweek-6 window,\ndays 36–42)',
              ha='center', va='center', fontsize=10, fontweight='bold', transform=ax0.transAxes)
-    fig.suptitle(f'Case study {idx}: {vname} — week-6 forecast, init {init_v} (ocean masked)',
+    fig.suptitle(f'Case study {idx} — {vname}: init {init_v}, verified at week-6 lead (ocean masked)',
                  fontsize=14, fontweight='bold', y=0.96)
     for ext in ('pdf', 'png'):
         fig.savefig(f'{FIGDIR}/{fname}.{ext}', bbox_inches='tight')

@@ -6,7 +6,7 @@
 *.grib
 __pycache__/
 *.pyc
-*.
+.*
 
 
 # --- large data & model weights (not stored in git; regenerate or download) ---

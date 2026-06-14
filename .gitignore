@@ -6,6 +6,8 @@
 *.grib
 __pycache__/
 *.pyc
+*.
+
 
 # --- large data & model weights (not stored in git; regenerate or download) ---
 analysis-code/data-download/fuxi_s2s/FuXi-S2S/

@@ -13,7 +13,7 @@ sys.path.append('/home/raj.ayush/s2s/s2s_anlysis/paper/code')
 from utils.verification_wmo import get_cosine_latitude_weights, calc_wmo_acc, calc_wmo_rmse, calc_wmo_bias
 from utils.verification_extra import get_land_mask, mask_land
 
-DATA='/storage/raj.ayush/s2s-forecast-data'; ADIR='/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis'
+DATA='/storage/raj.ayush/s2s-forecast-data'; ADIR='/home/raj.ayush/s2s/s2s_anlysis/paper/results'
 OPEN=dict(engine='cfgrib', backend_kwargs={'indexpath':''})
 init_dates=['2026-01-01','2026-01-08','2026-01-15','2026-01-22','2026-01-29','2026-02-05','2026-02-12','2026-02-19','2026-02-26','2026-03-05','2026-03-12','2026-03-19','2026-03-26']
 weeks=[('Week 1',1,7),('Week 2',8,14),('Week 3',15,21),('Week 4',22,28),('Week 5',29,35),('Week 6',36,42)]

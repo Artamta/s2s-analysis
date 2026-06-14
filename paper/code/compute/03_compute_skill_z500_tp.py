@@ -22,10 +22,12 @@ sys.path.append('/home/raj.ayush/s2s/s2s_anlysis/paper/code')
 from utils.verification_wmo import get_cosine_latitude_weights, calc_wmo_acc, calc_wmo_rmse, calc_wmo_bias
 from utils.verification_extra import get_land_mask, mask_land
 
-G = 9.80665
-DATA = '/storage/raj.ayush/s2s-forecast-data'
-OPEN = dict(engine='cfgrib', backend_kwargs={'indexpath': ''})
-ADIR = '/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis'
+G         = 9.80665
+DATA      = '/storage/raj.ayush/s2s-forecast-data'
+OPEN      = dict(engine='cfgrib', backend_kwargs={'indexpath': ''})
+ADIR      = '/home/raj.ayush/s2s/s2s_anlysis/paper/results'
+CLIM_PATH = '/storage/raj.ayush/benchmark(jfm)/era5_climatology.nc'  # 1990-2019 30yr WMO
+DEC25_PATH = '/storage/raj.ayush/s2s-forecast-data/era5/data/era5_dec2025_persistence.nc'
 
 init_dates = ['2026-01-01', '2026-01-08', '2026-01-15', '2026-01-22', '2026-01-29',
               '2026-02-05', '2026-02-12', '2026-02-19', '2026-02-26',
@@ -51,6 +53,7 @@ def to_grid(da):
     if ren: da = da.rename(ren)
     return mask_land(da.interp(lat=target_lat, lon=target_lon, method='linear').squeeze(), LAND)
 
+#This handles cumulative precipitation — ECMWF/NCEP store TP as a running total, not daily values:
 
 def weekly_mean_cumulative(cum, ds, de):
     days = de - ds + 1
@@ -59,16 +62,62 @@ def weekly_mean_cumulative(cum, ds, de):
 
 print("Loading ERA5 ...", flush=True)
 era_tp_raw = xr.open_dataset(f'{DATA}/era5/data/era5_surface.grib', filter_by_keys={'shortName': 'tp'}, **OPEN)['tp'] * 1000.0
-era_z_raw = xr.open_dataset(f'{DATA}/era5/data/era5_pressure_500hpa.grib', **OPEN)['z'] / G
-clim_tp = to_grid(era_tp_raw.mean('time'))
-clim_z = to_grid(era_z_raw.mean('time'))
+era_z_raw  = xr.open_dataset(f'{DATA}/era5/data/era5_pressure_500hpa.grib', **OPEN)['z'] / G
+
+print("Loading 30-yr climatology (1990-2019) ...", flush=True)
+clim_era = xr.open_dataset(CLIM_PATH)   # dims: dayofyear, latitude, longitude
+
+# Dec 25-30 2025 patch for Jan 1 init persistence
+dec25 = xr.open_dataset(DEC25_PATH) if os.path.exists(DEC25_PATH) else None
+if dec25 is not None:
+    print(f"Loaded Dec25 persistence patch: {DEC25_PATH}", flush=True)
+else:
+    print("WARNING: Dec25 persistence patch not found — Jan 1 init uses 1 day only", flush=True)
+
+
+def clim_week(doys, var, scale=1.0):
+    """Return weekly climatological mean on target grid for given day-of-year list."""
+    c = clim_era[var].sel(dayofyear=doys).mean('dayofyear') * scale
+    return to_grid(c)
+
 
 
 def era_week(raw, valid):
     try:
         return to_grid(raw.sel(time=slice(valid[0], valid[-1])).mean('time'))
-    except Exception:
+    except Exception as e:
+        print(f"  ERA5 obs not found for {valid[0]} → {valid[-1]}: {e}", flush=True)
         return None
+
+
+def era_week_pers(raw_tp, raw_z, valid):
+    """Persistence: uses dec25 patch for Dec 25-31, GRIB for Jan 1+."""
+    GRIB_START = '2026-01-01'
+    before = [d for d in valid if d < GRIB_START]  # needs dec25
+    after  = [d for d in valid if d >= GRIB_START] # in GRIB
+
+    def _load_days(tp_pieces, z_pieces, days, source):
+        for d in days:
+            try:
+                if source == 'dec25' and dec25 is not None:
+                    tp_pieces.append(to_grid(dec25['tp'].sel(time=d)))
+                    z_pieces.append(to_grid(dec25['z500'].sel(time=d)))
+                else:
+                    tp_pieces.append(to_grid(raw_tp.sel(time=d)))
+                    z_pieces.append(to_grid(raw_z.sel(time=d)))
+            except Exception as e:
+                print(f"  pers load error {d}/{source}: {e}", flush=True)
+
+    tp_p, z_p = [], []
+    if before:  _load_days(tp_p, z_p, before, 'dec25')
+    if after:   _load_days(tp_p, z_p, after,  'grib')
+
+    if not tp_p:
+        return None, None
+    pers_tp = xr.concat(tp_p, 't').mean('t')
+    pers_z  = xr.concat(z_p,  't').mean('t')
+    print(f"  Persistence: {len(tp_p)}/7 days (dec25={len(before)}, grib={len(after)})", flush=True)
+    return pers_tp, pers_z
 
 
 def load_spire(init):
@@ -81,14 +130,19 @@ def fuxi_day(init_str, day, ch):
     for mem in range(11):
         p = f"{DATA}/fuxi/output/{init_str}/member/{mem:02d}/{day:02d}.nc"
         if not os.path.exists(p):
+            print(f"  FuXi missing: {init_str}/member/{mem:02d}/day{day:02d}", flush=True)
             continue
-        da = xr.open_dataset(p)['__xarray_dataarray_variable__']
-        da = da.sel(channel='tp') if ch == 'tp' else (da.isel(channel=5) / G)
-        for d in list(da.dims):
-            if d not in ('lat', 'lon', 'latitude', 'longitude'):
-                da = da.mean(d)
-        fs.append(da)
-    return None if not fs else xr.concat(fs, dim='m').mean('m')
+        try:
+            da = xr.open_dataset(p)['__xarray_dataarray_variable__']
+            da = da.sel(channel='tp') if ch == 'tp' else (da.sel(channel='z500') / G)
+            da = da.squeeze()   # remove size-1 dims (time, lead_time)
+            fs.append(da)
+        except Exception as e:
+            print(f"  FuXi load error: {init_str}/member/{mem:02d}/day{day:02d}: {e}", flush=True)
+    if not fs:
+        print(f"  FuXi: NO members found for {init_str} day {day:02d}", flush=True)
+        return None
+    return xr.concat(fs, dim='m').mean('m')
 
 
 def load_op(model, init_str):
@@ -97,14 +151,16 @@ def load_op(model, init_str):
     try:
         d = xr.open_dataset(f'{base}/sfc_pf_{init_str}.grib', filter_by_keys={'shortName': 'tp'}, **OPEN)['tp']
         tp = d.mean('number') if 'number' in d.dims else d
+        print(f"  {model.upper()} TP loaded: {init_str} ({tp.sizes.get('step','?')} steps, {tp.sizes.get('number','det')} members)", flush=True)
     except Exception as e:
-        print(f"  {model} tp fail {init_str}: {e}", flush=True)
+        print(f"  {model.upper()} TP NOT FOUND {init_str}: {e}", flush=True)
     try:
         d = xr.open_dataset(f'{base}/pl_pf_{init_str}.grib', filter_by_keys={'shortName': 'gh'}, **OPEN)['gh']
         if 'isobaricInhPa' in d.dims: d = d.sel(isobaricInhPa=500)
         gh = d.mean('number') if 'number' in d.dims else d
+        print(f"  {model.upper()} Z500 loaded: {init_str} ({gh.sizes.get('step','?')} steps)", flush=True)
     except Exception as e:
-        print(f"  {model} gh fail {init_str}: {e}", flush=True)
+        print(f"  {model.upper()} Z500 NOT FOUND {init_str}: {e}", flush=True)
     return tp, gh
 
 
@@ -156,13 +212,17 @@ for ii, init in enumerate(init_dates):
         sp_tp = sp_z = None; print(f"  SPIRE fail {e}", flush=True)
     ec_tp, ec_z = load_op('ecmwf', init_str)
     nc_tp, nc_z = load_op('ncep', init_str)
-    fx_tp = {d: fuxi_day(init_str, d, 'tp') for d in range(1, 43)}
-    fx_z = {d: fuxi_day(init_str, d, 5) for d in range(1, 43)}
+    fx_tp = {d: fuxi_day(init_str, d, 'tp')    for d in range(1, 43)}
+    fx_z  = {d: fuxi_day(init_str, d, 'z500')  for d in range(1, 43)}
+    n_fx_tp = sum(1 for v in fx_tp.values() if v is not None)
+    n_fx_z  = sum(1 for v in fx_z.values()  if v is not None)
+    print(f"  FuXi TP: {n_fx_tp}/42 days found | Z500: {n_fx_z}/42 days found", flush=True)
 
-    # persistence reference = observed week immediately before init
-    pre = pd.date_range(end=pd.to_datetime(init) - pd.Timedelta(days=1), periods=7)
+    # persistence = observed week immediately before init (uses dec25 patch for Jan 1)
+    pre   = pd.date_range(end=pd.to_datetime(init) - pd.Timedelta(days=1), periods=7)
     pre_v = [d.strftime('%Y-%m-%d') for d in pre]
-    pers_tp, pers_z = era_week(era_tp_raw, pre_v), era_week(era_z_raw, pre_v)
+    pers_tp, pers_z = era_week_pers(era_tp_raw, era_z_raw, pre_v)
+
 
     for wi, (wn, ds, de) in enumerate(weeks):
         dates = pd.date_range(start=init, periods=42)[ds - 1:de]
@@ -171,7 +231,13 @@ for ii, init in enumerate(init_dates):
             continue
         o_tp, o_z = era_week(era_tp_raw, valid), era_week(era_z_raw, valid)
         if o_tp is None or o_z is None:
+            print(f"  SKIP {wn}: ERA5 obs missing for {valid[0]}→{valid[-1]}", flush=True)
             continue
+
+        # Week-specific 30-yr climatology (proper anomaly baseline)
+        doys    = [pd.to_datetime(d).dayofyear for d in valid]
+        clim_tp = clim_week(doys, 'tp',   scale=1000.0)   # m → mm
+        clim_z  = clim_week(doys, 'z500', scale=1.0/G)    # geopotential → gpm
 
         f_tp, f_z = {}, {}
         if sp_tp is not None:

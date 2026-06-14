@@ -20,7 +20,7 @@ sys.path.append('/home/raj.ayush/s2s/s2s_anlysis/paper/code')
 from utils.verification_wmo import get_cosine_latitude_weights, calc_wmo_acc, calc_wmo_rmse, calc_wmo_bias
 from utils.verification_extra import get_land_mask, mask_land, bootstrap_ci
 
-ADIR = '/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis'
+ADIR = '/home/raj.ayush/s2s/s2s_anlysis/paper/results'
 DATA = '/storage/raj.ayush/s2s-forecast-data'
 OPEN = dict(engine='cfgrib', backend_kwargs={'indexpath': ''})
 target_lat = np.arange(38, 5, -1.5)
@@ -55,14 +55,18 @@ def regional(f, rg):
     return f.where(mask)
 
 
-# --- recover clim_6h to undo the stored anomaly ---
-era6 = xr.open_dataset(f'{DATA}/era5/data/era5_surface.grib', filter_by_keys={'shortName': 'tp'}, **OPEN)['tp'] * 1000.0
-clim6 = to_grid(era6.mean('time'))
+# --- 30-yr climatology for anomaly recovery ---
+CLIM_PATH = '/storage/raj.ayush/benchmark(jfm)/era5_climatology.nc'
+clim_era = xr.open_dataset(CLIM_PATH)
+
+def clim_week(doys, var, scale=1.0):
+    c = clim_era[var].sel(dayofyear=doys).mean('dayofyear') * scale
+    return to_grid(c)
 
 # --- TRUE daily ERA5 (mm/day) from ARCO build ---
 ERA5_DAILY_TP = '/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_tp.nc'
 daily = xr.open_dataset(ERA5_DAILY_TP)['tp']  # dims time,lat,lon (mm/day)
-clim_daily = to_grid(daily.mean('time'))
+
 
 fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
 init_dates = [str(x) for x in fields['init'].values]
@@ -83,16 +87,25 @@ for ii, init in enumerate(init_dates):
     pre_field = era_daily_week([d.strftime('%Y-%m-%d') for d in pre])
     for wi, (wn, ds, de) in enumerate(weeks):
         dates = pd.date_range(start=init, periods=42)[ds - 1:de]
+        
+        # Script 03 used dates up to May 15 for anomaly subtraction
+        valid_03 = [d.strftime('%Y-%m-%d') for d in dates if d.strftime('%Y-%m-%d') <= '2026-05-15']
+        if not valid_03: continue
+        clim_tp_03 = clim_week([pd.to_datetime(d).dayofyear for d in valid_03], 'tp', scale=1000.0)
+
+        # Script 04 (daily ERA5) only goes up to May 10
         valid = [d.strftime('%Y-%m-%d') for d in dates if d.strftime('%Y-%m-%d') <= '2026-05-10']
-        if not valid:
-            continue
+        if not valid: continue
         o = era_daily_week(valid)
-        if o is None or np.isnan(o).all():
-            continue
+        if o is None or np.isnan(o).all(): continue
+        
+        # Proper 30-year evaluation climatology for the days we actually have
+        clim_tp_eval = clim_week([pd.to_datetime(d).dayofyear for d in valid], 'tp', scale=1000.0)
+
         # persistence row(s)
         if pre_field is not None and not np.isnan(pre_field).all():
             for rg in REGIONS:
-                fr, orr, cr = regional(pre_field, rg), regional(o, rg), regional(clim_daily, rg)
+                fr, orr, cr = regional(pre_field, rg), regional(o, rg), regional(clim_tp_eval, rg)
                 w = get_cosine_latitude_weights(target_lat)
                 try:
                     rows.append(dict(variable='TP', region=rg, week=wn, init_date=init, model='Persistence',
@@ -113,7 +126,7 @@ for ii, init in enumerate(init_dates):
             anom = fields['tp_fcst'].sel(model=m).isel(init=ii, week=wi)
             if np.isnan(anom).all():
                 continue
-            raws[m] = (anom + clim6) * (FUXI_TP_FACTOR if m == 'FuXi' else 1.0)
+            raws[m] = (anom + clim_tp_03) * (FUXI_TP_FACTOR if m == 'FuXi' else 1.0)
         if len(raws) >= 3:
             raws['MME'] = sum(raws.values()) / len(raws)
         for m in MODELS:
@@ -121,7 +134,7 @@ for ii, init in enumerate(init_dates):
                 continue
             raw = raws[m]
             for rg in REGIONS:
-                fr, orr, cr = regional(raw, rg), regional(o, rg), regional(clim_daily, rg)
+                fr, orr, cr = regional(raw, rg), regional(o, rg), regional(clim_tp_eval, rg)
                 w = get_cosine_latitude_weights(target_lat)
                 try:
                     rows.append(dict(variable='TP', region=rg, week=wn, init_date=init, model=m,

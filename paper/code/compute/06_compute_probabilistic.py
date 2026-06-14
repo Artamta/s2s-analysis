@@ -20,7 +20,7 @@ sys.path.append('/home/raj.ayush/s2s/s2s_anlysis/paper/code')
 from utils.verification_extra import get_land_mask, mask_land
 
 DATA = '/storage/raj.ayush/s2s-forecast-data'
-ADIR = '/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis'
+ADIR = '/home/raj.ayush/s2s/s2s_anlysis/paper/results'
 OPEN = dict(engine='cfgrib', backend_kwargs={'indexpath': ''})
 G = 9.80665
 TEST = len(sys.argv) > 1 and sys.argv[1] == 'test'

@@ -39,11 +39,11 @@ SPIRE_C = "#E8720C"   # highlight colour for SPIRE
 MODEL_BARC = {"SPIRE": SPIRE_C, "FuXi": "#5B8FB9", "ECMWF": "#4FA06A", "NCEP": "#9B7FC2"}
 
 plt.rcParams.update({
-    "font.family": "sans-serif",
-    "font.sans-serif": ["DejaVu Sans"],
+    "font.family": "serif",
+    "font.serif": ["DejaVu Serif"],
     "font.size": 13, "axes.titlesize": 14, "axes.titleweight": "bold",
     "figure.facecolor": "white", "savefig.facecolor": "white",
-    "savefig.dpi": 200,
+    "savefig.dpi": 300, "pdf.fonttype": 42,
 })
 
 
@@ -71,8 +71,6 @@ def panel(ax, grid, data, cmap, norm, contour=False, highlight=False,
             cs = ax.contour(grid.lon, grid.lat, data, levels=lv, colors="k",
                             linewidths=0.5, alpha=0.45, transform=PROJ, zorder=3)
     ax.add_feature(cfeature.COASTLINE.with_scale("50m"), lw=0.7, zorder=5, edgecolor="#111")
-    ax.add_feature(cfeature.BORDERS.with_scale("50m"), lw=0.4, zorder=5,
-                   edgecolor="#444", linestyle="--")
     gl = ax.gridlines(draw_labels=False, lw=0.3, color="#AAA", alpha=0.5, linestyle=":")
     gl.xlocator = mticker.FixedLocator(range(70, 100, 10))
     gl.ylocator = mticker.FixedLocator(range(10, 40, 10))
@@ -109,28 +107,26 @@ def fig_truth(grid, F, scales):
     spec = [("Z500", "RdBu_r", "Z500 height anomaly (gpm)", True),
             ("TP", "BrBG", "Precipitation anomaly (mm day$^{-1}$)", False),
             ("T2M", "RdBu_r", "2 m temperature anomaly ($^{\\circ}$C)", False)]
-    titles = ["(a)  Anomalous RIDGE", "(b)  DRY (rain deficit)", "(c)  WARM core"]
+    titles = ["(a)  Z500 anomaly", "(b)  Precipitation anomaly", "(c)  T2M anomaly"]
     for j, (v, cmap, lab, ct) in enumerate(spec):
         im = panel(axes[j], grid, F[lead][v]["ERA5"], cmap, scales[v]["norm"],
                    contour=ct, ll=(j == 0), lb=True)
         axes[j].set_title(titles[j], pad=8)
-        cbar(fig, im, [0.13 + j*0.283, 0.02, 0.20, 0.022], lab)
-    fig.suptitle("What happened  ·  India, 12–18 Feb 2026  "
-                 "(ERA5 observed; IMD: +4–6 $^{\\circ}$C, near-dry)",
-                 fontsize=16.5, fontweight="bold", y=1.04)
+        cbar(fig, im, [0.13 + j*0.283, 0.04, 0.20, 0.022], lab)
     save(fig, "pres_01_truth")
 
 
 # ----------------------------------------------------------------------------
 # Hero matrix: 2 leads (rows) x 5 systems (cols), one variable
 # ----------------------------------------------------------------------------
-def fig_matrix(grid, F, scales, var, cmap, cbar_lab, name, suptitle, contour=False,
+def fig_matrix(grid, F, scales, var, cmap, cbar_lab, name, contour=False,
                metrics=None):
     nrow, ncol = len(LEADS), len(COLS)
-    fig = plt.figure(figsize=(18, 8.4))
+    fig = plt.figure(figsize=(18, 8.0))
     from matplotlib.gridspec import GridSpec
     gs = GridSpec(nrow, ncol, figure=fig, hspace=0.06, wspace=0.04,
-                  top=0.86, bottom=0.13, left=0.05, right=0.985)
+                  top=0.94, bottom=0.13, left=0.05, right=0.985)
+    rowlab = {"Week-1 lead": "Week 1", "Week-2 lead": "Week 2"}
     im_ref = None
     for ri, lead in enumerate(LEADS):
         for ci, m in enumerate(COLS):
@@ -148,11 +144,10 @@ def fig_matrix(grid, F, scales, var, cmap, cbar_lab, name, suptitle, contour=Fal
                 ax.set_title(CLAB[m], color=col, pad=7,
                              fontsize=15 if m == "SPIRE" else 13.5)
             if ci == 0:
-                ax.text(-0.13, 0.5, lead.replace(" lead", "\nlead"),
-                        transform=ax.transAxes, rotation=90, fontsize=13,
-                        fontweight="bold", ha="center", va="center", color="#333")
-    cbar(fig, im_ref, [0.30, 0.055, 0.42, 0.02], cbar_lab)
-    fig.suptitle(suptitle, fontsize=17, fontweight="bold", y=0.955)
+                ax.text(-0.10, 0.5, rowlab[lead], transform=ax.transAxes,
+                        rotation=90, fontsize=13.5, fontweight="bold",
+                        ha="center", va="center", color="#333")
+    cbar(fig, im_ref, [0.30, 0.06, 0.42, 0.02], cbar_lab)
     save(fig, name)
 
 
@@ -163,7 +158,7 @@ def fig_precip_abs(grid, F_abs, vmax):
     from matplotlib.colors import Normalize
     fig = plt.figure(figsize=(18, 4.6))
     from matplotlib.gridspec import GridSpec
-    gs = GridSpec(1, len(COLS), figure=fig, wspace=0.04, top=0.80, bottom=0.16,
+    gs = GridSpec(1, len(COLS), figure=fig, wspace=0.04, top=0.90, bottom=0.16,
                   left=0.04, right=0.985)
     norm = Normalize(0, vmax)
     im_ref = None
@@ -179,9 +174,6 @@ def fig_precip_abs(grid, F_abs, vmax):
                      fontsize=15 if m == "SPIRE" else 13.5)
     cbar(fig, im_ref, [0.30, 0.04, 0.42, 0.028],
          "Total precipitation (mm day$^{-1}$)", extend="max")
-    fig.suptitle("Desiccation — near-zero rainfall predicted by all systems "
-                 "(Week-1 lead, absolute mm day$^{-1}$)",
-                 fontsize=17, fontweight="bold", y=1.0)
     save(fig, "pres_04_precip_dry")
 
 
@@ -218,22 +210,15 @@ def fig_bars(metrics, bias):
         ax.grid(axis="y", ls=":", alpha=0.4)
 
     grouped(axes[0], lambda l, m: metrics["T2M"][l][m],
-            "(a)  T2M pattern skill (PCC)", "Pattern correlation",
+            "(a)  T2M  —  PCC", "Pattern correlation",
             ref=0.5, ylim=(-0.25, 1.05))
     grouped(axes[1], lambda l, m: metrics["Z500"][l][m],
-            "(b)  Z500 pattern skill (PCC)", "Pattern correlation",
+            "(b)  Z500  —  PCC", "Pattern correlation",
             ref=0.5, ylim=(0, 1.08))
     grouped(axes[2], lambda l, m: bias[l][m],
-            "(c)  T2M bias ($^{\\circ}$C)", "Mean bias ($^{\\circ}$C)",
+            "(c)  T2M  —  bias ($^{\\circ}$C)", "Mean bias ($^{\\circ}$C)",
             ylim=(-7, 1.5), fmt="{:+.1f}")
     axes[0].legend(loc="upper right", fontsize=10, frameon=True, edgecolor="#CCC")
-    fig.suptitle("Skill scorecard — SPIRE leads on temperature pattern & bias "
-                 "(12–18 Feb 2026, India land)",
-                 fontsize=17, fontweight="bold", y=1.02)
-    fig.text(0.5, -0.02, "PCC is the fair, reference-independent skill metric. "
-             "Precipitation PCC omitted: a near-dry week makes anomaly correlation "
-             "degenerate (shown in absolute terms instead).",
-             ha="center", fontsize=10, color="#777", fontstyle="italic")
     fig.tight_layout()
     save(fig, "pres_05_skill_bars")
 
@@ -287,14 +272,10 @@ def main():
     fig_truth(grid, F, scales)
     fig_matrix(grid, F, scales, "T2M", "RdBu_r",
                "2 m temperature anomaly ($^{\\circ}$C)", "pres_02_t2m_hero",
-               "Headline — only SPIRE captures the warm core "
-               "(SPIRE PCC 0.83/0.74; others miss the pattern & run cold)",
                metrics=metrics["T2M"])
     fig_matrix(grid, F, scales, "Z500", "RdBu_r",
                "Z500 height anomaly (gpm)", "pres_03_z500_ridge",
-               "Circulation — the ridge is captured at week-1; "
-               "SPIRE holds it best at week-2", contour=True,
-               metrics=metrics["Z500"])
+               contour=True, metrics=metrics["Z500"])
     fig_precip_abs(grid, F_abs, pmax)
     fig_bars(metrics, bias)
     print("\nPRESENTATION_FIGS_DONE", flush=True)

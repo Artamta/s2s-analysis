@@ -34,13 +34,12 @@ weeks = [('Week 1', 1, 7), ('Week 2', 8, 14), ('Week 3', 15, 21),
          ('Week 4', 22, 28), ('Week 5', 29, 35), ('Week 6', 36, 42)]
 target_lat = np.arange(38, 5, -1.5)
 target_lon = np.arange(65, 100, 1.5)
-REGION_BOUNDS = {
-    'All India':            (5.0, 38.0, 65.0, 100.0),
-    'northwest_india':      (22.0, 38.0, 68.0, 82.0),
-    'central_india':        (18.0, 28.0, 72.0, 89.0),
-    'south_peninsula':      (8.0, 20.0, 72.0, 85.0),
-    'east_northeast_india': (20.0, 30.0, 85.0, 98.0),
-}
+# IMD 4 homogeneous regions — proper state-boundary masks (no overlaps)
+_mask_ds = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/imd_region_masks.nc')
+REGION_MASKS = {k: _mask_ds[k].values.astype(bool) for k in _mask_ds.data_vars}
+ALL_INDIA_MASK = np.zeros((len(np.arange(38,5,-1.5)), len(np.arange(65,100,1.5))), dtype=bool)
+for _m in REGION_MASKS.values(): ALL_INDIA_MASK |= _m
+REGIONS = ['All India', 'northwest_india', 'central_india', 'south_peninsula', 'east_northeast_india']
 MODELS = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP', 'MME', 'Persistence']
 LAND = get_land_mask(target_lat, target_lon)
 
@@ -110,8 +109,14 @@ def load_op(model, init_str):
 
 
 def regional(field, rg):
-    a, b, c, d = REGION_BOUNDS[rg]
-    return field.sel(lat=slice(b, a), lon=slice(c, d))
+    """Apply IMD state-boundary mask. Returns field with NaN outside region."""
+    if rg == 'All India':
+        mask = xr.DataArray(ALL_INDIA_MASK, dims=['lat', 'lon'],
+                            coords={'lat': target_lat, 'lon': target_lon})
+    else:
+        mask = xr.DataArray(REGION_MASKS[rg], dims=['lat', 'lon'],
+                            coords={'lat': target_lat, 'lon': target_lon})
+    return field.where(mask)
 
 
 def wstd(x, w):
@@ -123,7 +128,7 @@ def metrics(model, var, rg, init, week, f, o, clim):
     if f is None or o is None:
         return None
     fr, orr, cr = regional(f, rg), regional(o, rg), regional(clim, rg)
-    w = get_cosine_latitude_weights(fr.lat.values)
+    w = get_cosine_latitude_weights(target_lat)  # full grid; NaN pts excluded by weighted.mean
     try:
         return dict(variable=var, region=rg, week=week, init_date=init, model=model,
                     pcc=calc_wmo_acc(fr, orr, cr, w), rmse=calc_wmo_rmse(fr, orr, w),
@@ -196,7 +201,7 @@ for ii, init in enumerate(init_dates):
             if m in f_tp: store['tp'][mi, ii, wi] = (f_tp[m] - clim_tp).values
             if m in f_z: store['z'][mi, ii, wi] = (f_z[m] - clim_z).values
 
-        for rg in REGION_BOUNDS:
+        for rg in REGIONS:
             for m in MODELS:
                 r = metrics(m, 'TP', rg, init, wn, f_tp.get(m), o_tp, clim_tp)
                 if r: rows.append(r)

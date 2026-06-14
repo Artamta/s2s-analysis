@@ -47,7 +47,7 @@ store = {}
 # ---------- TP (corrected) + Z500 (anomaly), no model reload ----------
 era6 = xr.open_dataset(f'{DATA}/era5/data/era5_surface.grib', filter_by_keys={'shortName': 'tp'}, **OPEN)['tp'] * 1000.0
 clim6 = to_grid(era6.mean('time'))
-daily = xr.open_dataset(f'{ADIR}/era5_daily_tp.nc')['tp']
+daily = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_tp.nc')['tp']
 clim_tp = to_grid(daily.mean('time'))  # true-daily TP climatology for anomalies
 fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
 init_dates = [str(x) for x in fields['init'].values]
@@ -83,7 +83,7 @@ for ii, init in enumerate(init_dates):
 print('TP + Z500 pooled (no reload)', flush=True)
 
 # ---------- T2M, reload raw ensembles ----------
-dailyT = xr.open_dataset(f'{ADIR}/era5_daily_t2m.nc')['t2m']
+dailyT = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_t2m.nc')['t2m']
 clim_t2 = to_grid(dailyT.mean('time'))  # T2M climatology for anomalies
 
 

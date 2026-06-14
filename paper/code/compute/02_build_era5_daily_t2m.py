@@ -1,7 +1,7 @@
 """True daily-mean 2-m temperature from ARCO-ERA5 hourly. Output: analysis/era5_daily_t2m.nc (K)."""
 import warnings; warnings.filterwarnings('ignore')
 import numpy as np, pandas as pd, xarray as xr
-OUT='/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis/era5_daily_t2m.nc'
+OUT='/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_t2m.nc'
 print("opening ARCO (anon)...", flush=True)
 ds=xr.open_zarr("gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3",
                consolidated=True, storage_options={"token":"anon"})

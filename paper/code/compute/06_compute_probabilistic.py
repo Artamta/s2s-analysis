@@ -34,10 +34,13 @@ if TEST: init_dates = init_dates[:1]
 weeks = [('Week 1', 1, 7), ('Week 2', 8, 14), ('Week 3', 15, 21),
          ('Week 4', 22, 28), ('Week 5', 29, 35), ('Week 6', 36, 42)]
 MODELS = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP']
-REGION_BOUNDS = {'All India': (5., 38., 65., 100.), 'northwest_india': (22., 38., 68., 82.),
-                 'central_india': (18., 28., 72., 89.), 'south_peninsula': (8., 20., 72., 85.),
-                 'east_northeast_india': (20., 30., 85., 98.)}
-REGS = list(REGION_BOUNDS)
+# IMD 4 homogeneous regions — proper state-boundary masks (no overlaps)
+_mask_ds = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/imd_region_masks.nc')
+REGION_MASKS = {k: _mask_ds[k].values.astype(bool) for k in _mask_ds.data_vars}
+ALL_INDIA_MASK = np.zeros((ny, nx), dtype=bool)
+for _m in REGION_MASKS.values(): ALL_INDIA_MASK |= _m
+REGIONS = ['All India', 'northwest_india', 'central_india', 'south_peninsula', 'east_northeast_india']
+REGS = REGIONS
 
 
 def crop(da):
@@ -62,8 +65,8 @@ def wmean_cum(cum, ds, de):
 
 
 # ERA5 truth
-era_tp = xr.open_dataset(f'{ADIR}/era5_daily_tp.nc')['tp']
-era_t2 = xr.open_dataset(f'{ADIR}/era5_daily_t2m.nc')['t2m']
+era_tp = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_tp.nc')['tp']
+era_t2 = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_t2m.nc')['t2m']
 era_z = crop(xr.open_dataset(f'{DATA}/era5/data/era5_pressure_500hpa.grib', **OPEN)['z'] / G)
 
 
@@ -123,10 +126,19 @@ NB = 10
 REL = {ev: {m: np.zeros((3, NB)) for m in MODELS} for ev in ('tp_wet', 't2_cold')}
 
 
+def _region_mask_da(rg):
+    """Return xarray DataArray mask for region rg on target grid."""
+    m = ALL_INDIA_MASK if rg == 'All India' else REGION_MASKS[rg]
+    return xr.DataArray(m, dims=['lat', 'lon'],
+                        coords={'lat': target_lat, 'lon': target_lon})
+
+
 def rweights(g, rg):
-    a, b, c, d = REGION_BOUNDS[rg]
-    s = g.sel(lat=slice(b, a), lon=slice(c, d))
-    return s, np.cos(np.deg2rad(s.lat))
+    mda = _region_mask_da(rg)
+    s = g if mda is None else g.where(mda)
+    w = xr.DataArray(np.cos(np.deg2rad(target_lat)), dims=['lat'],
+                     coords={'lat': target_lat})
+    return s, w
 
 
 def cosmean(g, rg):
@@ -154,12 +166,14 @@ def accum_reliability(ev, m, prob_g, outcome_g):
 
 
 def regional_scalars(mu_g, sig_g):
-    """area-mean of gridded mu and sigma per region (cosine-weighted)."""
+    """area-mean of gridded mu and sigma per region (cosine-weighted, mask-based)."""
     out_mu, out_sig = [], []
+    w = xr.DataArray(np.cos(np.deg2rad(target_lat)), dims=['lat'],
+                     coords={'lat': target_lat})
     for rg in REGS:
-        a, b, c, d = REGION_BOUNDS[rg]
-        m = mu_g.sel(lat=slice(b, a), lon=slice(c, d)); s = sig_g.sel(lat=slice(b, a), lon=slice(c, d))
-        w = np.cos(np.deg2rad(m.lat))
+        mda = _region_mask_da(rg)
+        m = mu_g  if mda is None else mu_g.where(mda)
+        s = sig_g if mda is None else sig_g.where(mda)
         out_mu.append(float(m.weighted(w).mean(['lat', 'lon'])))
         out_sig.append(float(s.weighted(w).mean(['lat', 'lon'])))
     return out_mu, out_sig

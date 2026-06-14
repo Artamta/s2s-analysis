@@ -19,7 +19,12 @@ init_dates=['2026-01-01','2026-01-08','2026-01-15','2026-01-22','2026-01-29','20
 weeks=[('Week 1',1,7),('Week 2',8,14),('Week 3',15,21),('Week 4',22,28),('Week 5',29,35),('Week 6',36,42)]
 target_lat=np.arange(38,5,-1.5); target_lon=np.arange(65,100,1.5)
 LAND=get_land_mask(target_lat,target_lon)
-REGION_BOUNDS={'All India':(5.,38.,65.,100.),'northwest_india':(22.,38.,68.,82.),'central_india':(18.,28.,72.,89.),'south_peninsula':(8.,20.,72.,85.),'east_northeast_india':(20.,30.,85.,98.)}
+# IMD 4 homogeneous regions — proper state-boundary masks (no overlaps)
+_mask_ds = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/imd_region_masks.nc')
+REGION_MASKS = {k: _mask_ds[k].values.astype(bool) for k in _mask_ds.data_vars}
+ALL_INDIA_MASK = np.zeros((len(target_lat), len(target_lon)), dtype=bool)
+for _m in REGION_MASKS.values(): ALL_INDIA_MASK |= _m
+REGIONS = ['All India', 'northwest_india', 'central_india', 'south_peninsula', 'east_northeast_india']
 MODELS=['SPIRE','FuXi','ECMWF','NCEP']
 
 def to_grid(da):
@@ -29,7 +34,7 @@ def to_grid(da):
     if ren: da=da.rename(ren)
     return mask_land(da.interp(lat=target_lat,lon=target_lon,method='linear').squeeze(),LAND)
 
-daily=xr.open_dataset(f'{ADIR}/era5_daily_t2m.nc')['t2m']
+daily=xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_t2m.nc')['t2m']
 clim=to_grid(daily.mean('time'))
 def era_week(valid):
     try: return to_grid(daily.sel(time=slice(valid[0],valid[-1])).mean('time'))
@@ -56,8 +61,14 @@ def load_op_t2m(model,init_str):
     except Exception as e:
         print(f"  {model} t2m fail {init_str}: {e}",flush=True); return None
 
-def regional(f,rg):
-    a,b,c,d=REGION_BOUNDS[rg]; return f.sel(lat=slice(b,a),lon=slice(c,d))
+def regional(f, rg):
+    if rg == 'All India':
+        mask = xr.DataArray(ALL_INDIA_MASK, dims=['lat', 'lon'],
+                            coords={'lat': target_lat, 'lon': target_lon})
+    else:
+        mask = xr.DataArray(REGION_MASKS[rg], dims=['lat', 'lon'],
+                            coords={'lat': target_lat, 'lon': target_lon})
+    return f.where(mask)
 
 rows=[]
 for init in init_dates:
@@ -80,11 +91,11 @@ for init in init_dates:
         for nm,arr in [('ECMWF',ec),('NCEP',nc)]:
             if arr is not None and arr.sizes.get('step',0)>=de:
                 f[nm]=to_grid(arr.isel(step=slice(ds_-1,de)).mean('step'))
-        for rg in REGION_BOUNDS:
+        for rg in REGIONS:
             for m in MODELS:
                 if m not in f: continue
                 fr,orr,cr=regional(f[m],rg),regional(o,rg),regional(clim,rg)
-                w=get_cosine_latitude_weights(fr.lat.values)
+                w = get_cosine_latitude_weights(target_lat)
                 try:
                     rows.append(dict(variable='T2M',region=rg,week=wn,init_date=init,model=m,
                         pcc=calc_wmo_acc(fr,orr,cr,w),rmse=calc_wmo_rmse(fr,orr,w),bias=calc_wmo_bias(fr,orr,w),

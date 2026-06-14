@@ -28,10 +28,12 @@ target_lon = np.arange(65, 100, 1.5)
 LAND = get_land_mask(target_lat, target_lon)
 weeks = [('Week 1', 1, 7), ('Week 2', 8, 14), ('Week 3', 15, 21),
          ('Week 4', 22, 28), ('Week 5', 29, 35), ('Week 6', 36, 42)]
-REGION_BOUNDS = {
-    'All India': (5.0, 38.0, 65.0, 100.0), 'northwest_india': (22.0, 38.0, 68.0, 82.0),
-    'central_india': (18.0, 28.0, 72.0, 89.0), 'south_peninsula': (8.0, 20.0, 72.0, 85.0),
-    'east_northeast_india': (20.0, 30.0, 85.0, 98.0)}
+# IMD 4 homogeneous regions — proper state-boundary masks (no overlaps)
+_mask_ds = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/imd_region_masks.nc')
+REGION_MASKS = {k: _mask_ds[k].values.astype(bool) for k in _mask_ds.data_vars}
+ALL_INDIA_MASK = np.zeros((len(target_lat), len(target_lon)), dtype=bool)
+for _m in REGION_MASKS.values(): ALL_INDIA_MASK |= _m
+REGIONS = ['All India', 'northwest_india', 'central_india', 'south_peninsula', 'east_northeast_india']
 MODELS = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP', 'MME']
 
 
@@ -44,8 +46,13 @@ def to_grid(da):
 
 
 def regional(f, rg):
-    a, b, c, d = REGION_BOUNDS[rg]
-    return f.sel(lat=slice(b, a), lon=slice(c, d))
+    if rg == 'All India':
+        mask = xr.DataArray(ALL_INDIA_MASK, dims=['lat', 'lon'],
+                            coords={'lat': target_lat, 'lon': target_lon})
+    else:
+        mask = xr.DataArray(REGION_MASKS[rg], dims=['lat', 'lon'],
+                            coords={'lat': target_lat, 'lon': target_lon})
+    return f.where(mask)
 
 
 # --- recover clim_6h to undo the stored anomaly ---
@@ -53,7 +60,8 @@ era6 = xr.open_dataset(f'{DATA}/era5/data/era5_surface.grib', filter_by_keys={'s
 clim6 = to_grid(era6.mean('time'))
 
 # --- TRUE daily ERA5 (mm/day) from ARCO build ---
-daily = xr.open_dataset(f'{ADIR}/era5_daily_tp.nc')['tp']  # dims time,lat,lon (mm/day)
+ERA5_DAILY_TP = '/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_tp.nc'
+daily = xr.open_dataset(ERA5_DAILY_TP)['tp']  # dims time,lat,lon (mm/day)
 clim_daily = to_grid(daily.mean('time'))
 
 fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
@@ -83,9 +91,9 @@ for ii, init in enumerate(init_dates):
             continue
         # persistence row(s)
         if pre_field is not None and not np.isnan(pre_field).all():
-            for rg in REGION_BOUNDS:
+            for rg in REGIONS:
                 fr, orr, cr = regional(pre_field, rg), regional(o, rg), regional(clim_daily, rg)
-                w = get_cosine_latitude_weights(fr.lat.values)
+                w = get_cosine_latitude_weights(target_lat)
                 try:
                     rows.append(dict(variable='TP', region=rg, week=wn, init_date=init, model='Persistence',
                                      pcc=calc_wmo_acc(fr, orr, cr, w), rmse=calc_wmo_rmse(fr, orr, w),
@@ -112,9 +120,9 @@ for ii, init in enumerate(init_dates):
             if m not in raws:
                 continue
             raw = raws[m]
-            for rg in REGION_BOUNDS:
+            for rg in REGIONS:
                 fr, orr, cr = regional(raw, rg), regional(o, rg), regional(clim_daily, rg)
-                w = get_cosine_latitude_weights(fr.lat.values)
+                w = get_cosine_latitude_weights(target_lat)
                 try:
                     rows.append(dict(variable='TP', region=rg, week=wn, init_date=init, model=m,
                                      pcc=calc_wmo_acc(fr, orr, cr, w), rmse=calc_wmo_rmse(fr, orr, w),

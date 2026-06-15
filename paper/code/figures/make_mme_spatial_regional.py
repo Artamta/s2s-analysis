@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 sys.path.append('/home/raj.ayush/s2s/s2s_anlysis/paper/code')
 from utils.verification_extra import bootstrap_ci
 
-ADIR = '/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis'
+ADIR = '/home/raj.ayush/s2s/s2s_anlysis/paper/results'
 FIGDIR = '/home/raj.ayush/s2s/s2s_anlysis/paper/figs'
 os.makedirs(FIGDIR, exist_ok=True)
 COL = {'SPIRE': '#D55E00', 'FuXi': '#0072B2', 'ECMWF': '#009E73', 'NCEP': '#CC79A7',
@@ -29,16 +29,22 @@ STY = {'SPIRE': ('-', 's'), 'FuXi': ('-', 'o'), 'ECMWF': ('--', '^'), 'NCEP': ('
 REG = ['northwest_india', 'central_india', 'south_peninsula', 'east_northeast_india']
 REGL = {'northwest_india': 'Northwest', 'central_india': 'Central',
         'south_peninsula': 'S. Peninsula', 'east_northeast_india': 'East/NE'}
-plt.rcParams.update({'font.size': 11, 'axes.titlesize': 12, 'axes.labelweight': 'bold'})
+plt.rcParams.update({
+    'font.size': 10, 'axes.titlesize': 11, 'axes.labelweight': 'bold',
+    'font.family': 'sans-serif', 'font.sans-serif': ['Helvetica', 'DejaVu Sans'],
+    'savefig.dpi': 600, 'pdf.fonttype': 42, 'ps.fonttype': 42,
+    'figure.facecolor': 'white', 'savefig.facecolor': 'white',
+})
 
 df = pd.read_csv(f'{ADIR}/skill_per_init_full.csv')
-# use the unit-corrected TP (true daily ERA5; FuXi mm/h->mm/day) instead of the
-# original 6-h-referenced TP, so the precipitation panel matches the rest of the paper
 df = df[df.variable != 'TP']
 tp_corr = pd.read_csv(f'{ADIR}/skill_tp_corrected.csv')
 df = pd.concat([df, tp_corr], ignore_index=True)
 df['wk'] = df['week'].str.extract(r'(\d)').astype(int)
-fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
+try:
+    fields = xr.open_dataset(f'{ADIR}/weekly_anom_fields.nc')
+except Exception:
+    fields = None
 
 
 def save(fig, name):
@@ -49,38 +55,73 @@ def save(fig, name):
 
 
 def horizon(ax, variable, metric, models, refline=None, ylabel=''):
+    """Clean skill-horizon curves — no CI ribbons."""
     for m in models:
         sub = df[(df.variable == variable) & (df.region == 'All India') & (df.model == m)]
-        xs, ys, los, his = [], [], [], []
+        xs, ys = [], []
         for wk in sorted(sub.wk.unique()):
-            mean, lo, hi = bootstrap_ci(sub[sub.wk == wk][metric].values)
+            vals = sub[sub.wk == wk][metric].values
+            mean = np.nanmean(vals) if len(vals) else np.nan
             if np.isfinite(mean):
-                xs.append(wk); ys.append(mean); los.append(lo); his.append(hi)
+                xs.append(wk); ys.append(mean)
+        if not xs:
+            continue
         ls, mk = STY[m]
-        lw = 3 if m == 'MME' else 2.2
-        ax.plot(xs, ys, ls, marker=mk, color=COL[m], lw=lw, ms=7, label=m, zorder=5 if m == 'MME' else 3)
-        if m in ('MME',):
-            ax.fill_between(xs, los, his, color=COL[m], alpha=0.12)
+        lw = 2.8 if m == 'MME' else (1.6 if m == 'Persistence' else 2.2)
+        alpha = 0.45 if m == 'Persistence' else 1.0
+        zord = 5 if m == 'MME' else (2 if m == 'Persistence' else 3)
+        ax.plot(xs, ys, ls, marker=mk, color=COL[m], lw=lw, ms=7,
+                label=m, zorder=zord, alpha=alpha,
+                markerfacecolor='white' if m == 'Persistence' else COL[m],
+                markeredgecolor=COL[m], markeredgewidth=1.2)
     if refline is not None:
-        ax.axhline(refline, color='k', lw=1, ls=':')
-    ax.set_xticks(range(1, 7)); ax.set_xticklabels([f'Wk{i}' for i in range(1, 7)])
-    ax.set_xlim(0.6, 6.4); ax.grid(axis='y', ls=':', alpha=0.6); ax.set_ylabel(ylabel)
+        ax.axhline(refline, color='#555555', lw=0.9, ls=(0, (6, 3)), zorder=1)
+    ax.set_xticks(range(1, 7))
+    ax.set_xticklabels([f'Week {i}' for i in range(1, 7)])
+    ax.set_xlim(0.55, 6.45)
+    ax.grid(axis='y', ls=':', alpha=0.4, color='#CCCCCC')
+    ax.set_ylabel(ylabel)
+    for sp in ('top', 'right'):
+        ax.spines[sp].set_visible(False)
+    for sp in ('left', 'bottom'):
+        ax.spines[sp].set_linewidth(0.7)
+        ax.spines[sp].set_color('#333333')
 
 
 # ---------- Fig 6: MME + persistence ----------
 def fig6():
     mods = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP', 'MME', 'Persistence']
-    fig, ax = plt.subplots(1, 3, figsize=(16, 5))
-    horizon(ax[0], 'TP', 'pcc', mods, refline=0.5, ylabel='Pattern correlation (PCC)')
-    ax[0].set_title('(a) Precipitation — PCC'); ax[0].set_ylim(-0.3, 1.0)
-    horizon(ax[1], 'Z500', 'pcc', mods, refline=0.5, ylabel='Pattern correlation (PCC)')
-    ax[1].set_title('(b) Z500 — PCC'); ax[1].set_ylim(-0.1, 1.02)
-    horizon(ax[2], 'Z500', 'rmse', mods, ylabel='RMSE (m)')
-    ax[2].set_title('(c) Z500 — RMSE')
-    ax[0].legend(loc='upper right', fontsize=9, ncol=2)
-    fig.suptitle('Multi-model ensemble (MME) and persistence baseline — JFM 2026',
-                 fontsize=13, fontweight='bold', y=1.02)
-    fig.tight_layout(); save(fig, 'fig06_mme_persistence')
+    fig, ax = plt.subplots(1, 3, figsize=(16, 4.8),
+                           gridspec_kw={'wspace': 0.30})
+    horizon(ax[0], 'TP', 'pcc', mods, refline=0.5,
+            ylabel='Anomaly Correlation Coefficient (ACC)')
+    ax[0].set_title('(a)  Precipitation — ACC', fontweight='bold', pad=10)
+    ax[0].set_ylim(-0.3, 1.04)
+    # no-skill zone
+    ax[0].axhspan(-0.3, 0.5, color='#F7F7F7', zorder=0)
+
+    horizon(ax[1], 'Z500', 'pcc', mods, refline=0.5,
+            ylabel='Anomaly Correlation Coefficient (ACC)')
+    ax[1].set_title('(b)  Z500 — ACC', fontweight='bold', pad=10)
+    ax[1].set_ylim(-0.1, 1.04)
+    ax[1].axhspan(-0.1, 0.5, color='#F7F7F7', zorder=0)
+
+    horizon(ax[2], 'Z500', 'rmse', mods,
+            ylabel='RMSE  (gpm)')
+    ax[2].set_title('(c)  Z500 — RMSE', fontweight='bold', pad=10)
+
+    ax[0].legend(loc='upper right', fontsize=8.5, ncol=2, frameon=True,
+                 fancybox=False, edgecolor='#CCCCCC', framealpha=0.96,
+                 borderpad=0.5, handlelength=2.2)
+    fig.suptitle(
+        'Multi-model Ensemble (MME) and Persistence Baseline — JFM 2026',
+        fontsize=12.5, fontweight='bold', y=1.02, color='#111111')
+    fig.text(0.5, -0.02,
+             'All-India (land only, IMD boundaries). '
+             'Cosine-latitude weighted area mean over 13 initialisations.',
+             ha='center', fontsize=7.8, color='#777777', fontstyle='italic')
+    fig.tight_layout()
+    save(fig, 'fig06_mme_persistence')
 
 
 # ---------- spatial helpers ----------

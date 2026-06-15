@@ -16,14 +16,14 @@ import matplotlib.pyplot as plt
 sys.path.append('/home/raj.ayush/s2s/s2s_anlysis/paper/code')
 from utils.verification_extra import bootstrap_ci
 
-ADIR = '/home/raj.ayush/s2s/s2s_anlysis/analysis-code/analysis'
+ADIR = '/home/raj.ayush/s2s/s2s_anlysis/paper/results'
 FIGDIR = '/home/raj.ayush/s2s/s2s_anlysis/paper/figs'
 COL = {'SPIRE': '#D55E00', 'FuXi': '#0072B2', 'ECMWF': '#009E73', 'NCEP': '#CC79A7'}
 STY = {'SPIRE': ('-', 's'), 'FuXi': ('-', 'o'), 'ECMWF': ('--', '^'), 'NCEP': ('-.', 'd')}
 LAB = {'SPIRE': 'SPIRE', 'FuXi': 'FuXi-S2S', 'ECMWF': 'ECMWF', 'NCEP': 'NCEP'}
 CORE = ['SPIRE', 'FuXi', 'ECMWF', 'NCEP']
-VARS = ['TP', 'Z500', 'T2M']
-VLAB = {'TP': 'Precipitation', 'Z500': 'Z500', 'T2M': 'T2M'}
+VARS = ['TP', 'Z500']
+VLAB = {'TP': 'Precipitation', 'Z500': 'Z500'}
 plt.rcParams.update({'font.size': 12, 'axes.titlesize': 13, 'axes.titleweight': 'bold',
                      'axes.labelsize': 12, 'legend.fontsize': 10, 'axes.grid': True, 'grid.alpha': 0.35,
                      'grid.linestyle': ':', 'savefig.dpi': 300, 'axes.spines.top': False,
@@ -48,7 +48,7 @@ def line(ax, var, metric):
 
 
 def fig_crpss():
-    fig, ax = plt.subplots(1, 3, figsize=(16, 4.8))
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.8))
     for i, v in enumerate(VARS):
         line(ax[i], v, 'crpss'); ax[i].axhline(0, color='k', lw=1.1, ls='--')
         ax[i].set_title(f'({chr(97+i)}) {VLAB[v]}'); ax[i].set_ylabel('CRPSS (vs climatology)' if i == 0 else '')
@@ -64,7 +64,7 @@ def fig_crpss():
 
 
 def fig_ssr():
-    fig, ax = plt.subplots(1, 3, figsize=(16, 4.8))
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.8))
     for i, v in enumerate(VARS):
         line(ax[i], v, 'ssr'); ax[i].axhline(1.0, color='k', lw=1.2, ls='--')
         ax[i].set_title(f'({chr(97+i)}) {VLAB[v]}'); ax[i].set_ylabel('spread-skill ratio (SSR)' if i == 0 else '')
@@ -81,9 +81,8 @@ def fig_ssr():
 def fig_reliability():
     r = np.load(f'{ADIR}/reliability.npz')
     NB = int(r['nbins']); centers = (np.arange(NB) + 0.5) / NB
-    events = [('tp_wet', 'Heavy-rain day (precip $>$ 1 mm day$^{-1}$)'),
-              ('t2_cold', 'Cold day (T2M $<$ climatological lower tercile)')]
-    fig, ax = plt.subplots(1, 2, figsize=(12, 5.6))
+    events = [('tp_wet', 'Heavy-rain day (precip $>$ 1 mm day$^{-1}$)')]
+    fig, ax = plt.subplots(1, 1, figsize=(6, 5.6)); ax = [ax]
     for i, (ev, title) in enumerate(events):
         ax[i].plot([0, 1], [0, 1], 'k--', lw=1)
         for m in CORE:

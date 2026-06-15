@@ -66,7 +66,7 @@ def wmean_cum(cum, ds, de):
 
 # ERA5 truth
 era_tp = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_tp.nc')['tp']
-era_t2 = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_t2m.nc')['t2m']
+#era_t2 = xr.open_dataset('/storage/raj.ayush/s2s-forecast-data/era5/daily/era5_daily_t2m.nc')['t2m']
 era_z = crop(xr.open_dataset(f'{DATA}/era5/data/era5_pressure_500hpa.grib', **OPEN)['z'] / G)
 
 
@@ -92,7 +92,7 @@ def ms(da, mdim):
 
 
 from scipy.stats import norm
-SIG_FLOOR = {'tp': 0.05, 'z': 1.0, 't2': 0.1}  # avoid sigma=0 (degenerate ensembles)
+SIG_FLOOR = {'tp': 0.05, 'z': 1.0}  # avoid sigma=0 (degenerate ensembles)
 
 
 def crps_gauss(mu, sig, y):
@@ -104,26 +104,25 @@ def crps_gauss(mu, sig, y):
 
 # storage: gridded weekly mu/sig per model/var + obs
 shape = (len(MODELS), len(init_dates), len(weeks), ny, nx)
-F = {v: {'mu': np.full(shape, np.nan), 'sig': np.full(shape, np.nan)} for v in ['tp', 'z', 't2']}
-O = {v: np.full((len(init_dates), len(weeks), ny, nx), np.nan) for v in ['tp', 'z', 't2']}
+F = {v: {'mu': np.full(shape, np.nan), 'sig': np.full(shape, np.nan)} for v in ['tp', 'z']}
+O = {v: np.full((len(init_dates), len(weeks), ny, nx), np.nan) for v in ['tp', 'z']}
 # daily regional: (model, init, 42, region) mean & spread for z and tp and t2
 DR = {v: {'mu': np.full((len(MODELS), len(init_dates), 42, len(REGS)), np.nan),
-          'sig': np.full((len(MODELS), len(init_dates), 42, len(REGS)), np.nan)} for v in ['tp', 'z', 't2']}
+          'sig': np.full((len(MODELS), len(init_dates), 42, len(REGS)), np.nan)} for v in ['tp', 'z']}
 
 # --- gridded daily climatology (mean+std) for CRPSS, and event thresholds ---
 CLIM = {'tp': (to_grid(era_tp.mean('time')), to_grid(era_tp.std('time'))),
-        't2': (to_grid(era_t2.mean('time')), to_grid(era_t2.std('time'))),
         'z': (to_grid(era_z.mean('time')), to_grid(era_z.std('time')))}
 THR_TP = 1.0                                   # heavy/wet day: precip > 1 mm/day
-THR_T2_COLD = to_grid(era_t2.quantile(0.33, 'time'))   # cold day: T2M below climatological lower tercile
+#THR_T2_COLD = to_grid(era_t2.quantile(0.33, 'time'))   # cold day: T2M below climatological lower tercile
 
 # weekly accumulators per (variable, model, init, week, region): daily-level, fair across systems
-VARS3 = ['tp', 'z', 't2']
+VARS3 = ['tp', 'z']
 ACC = {k: np.zeros((len(VARS3), len(MODELS), len(init_dates), len(weeks), len(REGS))) for k in
        ('crps', 'se', 'sig', 'crps_clim', 'cnt')}
 # reliability: per event, per model, 10 probability bins -> (sum outcome, count, sum prob)
 NB = 10
-REL = {ev: {m: np.zeros((3, NB)) for m in MODELS} for ev in ('tp_wet', 't2_cold')}
+REL = {ev: {m: np.zeros((3, NB)) for m in MODELS} for ev in ('tp_wet',)}
 
 
 def _region_mask_da(rg):
@@ -197,7 +196,7 @@ for ii, init in enumerate(init_dates):
         sp = {'tp': (crop(s['precipitation_amount']), crop(s['precipitation_amount_stddev'])),
               'z': (crop(s['geopotential_height_at_isobaric_levels'].sel(isobar=50000.0)),
                     crop(s['geopotential_height_at_isobaric_levels_stddev'].sel(isobar=50000.0))),
-              't2': (crop(s['air_temperature']), crop(s['air_temperature_stddev']))}
+              }#'t2': (crop(s['air_temperature']), crop(s['air_temperature_stddev']))}
     except Exception as e:
         sp = None; print("  SPIRE fail", e, flush=True)
     # ---- ECMWF / NCEP members ----
@@ -210,15 +209,15 @@ for ii, init in enumerate(init_dates):
             z = xr.open_dataset(f'{base}/pl_pf_{init_str}.grib', filter_by_keys={'shortName': 'gh'}, **OPEN)['gh']
             ent['z'] = crop(z.sel(isobaricInhPa=500) if 'isobaricInhPa' in z.dims else z)
         except Exception as e: print(f"  {mdl} z fail", e, flush=True)
-        try:
-            mx = xr.open_dataset(f'{base}/sfc_pf_{init_str}.grib', filter_by_keys={'shortName': 'mx2t6'}, **OPEN)['mx2t6']
-            mn = xr.open_dataset(f'{base}/sfc_pf_{init_str}.grib', filter_by_keys={'shortName': 'mn2t6'}, **OPEN)['mn2t6']
-            ent['t2'] = crop((mx + mn) / 2.0)
-        except Exception as e: print(f"  {mdl} t2 fail", e, flush=True)
+        #try:
+        #    mx = xr.open_dataset(f'{base}/sfc_pf_{init_str}.grib', filter_by_keys={'shortName': 'mx2t6'}, **OPEN)['mx2t6']
+        #    mn = xr.open_dataset(f'{base}/sfc_pf_{init_str}.grib', filter_by_keys={'shortName': 'mn2t6'}, **OPEN)['mn2t6']
+        #    ent['t2'] = crop((mx + mn) / 2.0)
+        #except Exception as e: print(f"  {mdl} t2 fail", e, flush=True)
         op[mdl.upper()] = ent
     # ---- FuXi members: preload all member/day fields per variable ----
-    fx = {'tp': {}, 'z': {}, 't2': {}}
-    for v in ['tp', 'z', 't2']:
+    fx = {'tp': {}, 'z': {}}
+    for v in ['tp', 'z']:
         for mem in range(11):
             for day in range(1, 43):
                 f = fuxi_member_day(init_str, mem, day, v)
@@ -229,11 +228,11 @@ for ii, init in enumerate(init_dates):
         dts = pd.date_range(start=init, periods=42)[ds - 1:de]
         valid = [d.strftime('%Y-%m-%d') for d in dts if d.strftime('%Y-%m-%d') <= '2026-05-10']
         if not valid: continue
-        otp = era_week_daily(era_tp, valid); ot2 = era_week_daily(era_t2, valid); oz = era_week_z(valid)
-        for v, o in [('tp', otp), ('z', oz), ('t2', ot2)]:
+        otp = era_week_daily(era_tp, valid); oz = era_week_z(valid)
+        for v, o in [('tp', otp), ('z', oz)]:
             if o is not None: O[v][ii, wi] = o.values
         for mi, m in enumerate(MODELS):
-            for v in ['tp', 'z', 't2']:
+            for v in ['tp', 'z']:
                 mu = sig = None
                 if m == 'SPIRE' and sp is not None:
                     muf, sigf = sp[v]
@@ -260,7 +259,7 @@ for ii, init in enumerate(init_dates):
         day = di + 1; wk = min(di // 7, 5)
         date = (pd.to_datetime(init) + pd.Timedelta(days=di)).strftime('%Y-%m-%d')
         if date > '2026-05-10': break
-        obs = {'tp': obs_day(era_tp, date), 't2': obs_day(era_t2, date), 'z': obs_day(era_z, date)}
+        obs = {'tp': obs_day(era_tp, date), 'z': obs_day(era_z, date)}
         for mi, m in enumerate(MODELS):
             for vi, v in enumerate(VARS3):
                 mu_g = sig_g = None
@@ -302,13 +301,13 @@ for ii, init in enumerate(init_dates):
                 if v == 'tp':
                     prob = 1 - norm.cdf((THR_TP - mu_g.values) / sig_g.values)
                     accum_reliability('tp_wet', m, prob, (o.values > THR_TP).astype(float))
-                elif v == 't2':
-                    prob = norm.cdf((THR_T2_COLD.values - mu_g.values) / sig_g.values)
-                    accum_reliability('t2_cold', m, prob, (o.values < THR_T2_COLD.values).astype(float))
+                #elif v == 't2':
+                #    prob = norm.cdf((THR_T2_COLD.values - mu_g.values) / sig_g.values)
+                #    accum_reliability('t2_cold', m, prob, (o.values < THR_T2_COLD.values).astype(float))
 
 # ---------- write weekly probabilistic skill CSV ----------
 rows = []
-VLAB3 = {'tp': 'TP', 'z': 'Z500', 't2': 'T2M'}
+VLAB3 = {'tp': 'TP', 'z': 'Z500'}
 for vi, v in enumerate(VARS3):
     for mi, m in enumerate(MODELS):
         for ii, init in enumerate(init_dates):

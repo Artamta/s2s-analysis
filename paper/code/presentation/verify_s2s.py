@@ -155,7 +155,8 @@ def process_init(init, want_vars):
     rel_accum = {}  # (event, model) -> (3, NB)
 
     spire = L.load_spire(init)
-    fuxi = {v: L.load_fuxi(init_str, v, CFG.G) for v in want_vars}
+    # single-pass FuXi load: open each member-day file ONCE for all variables
+    fuxi = L.load_fuxi_all(init_str, want_vars, CFG.G)
     op = {m: {v: L.load_op(m, init_str, v, CFG.G) for v in want_vars}
           for m in ('ECMWF', 'NCEP')}
     pers = {v: L.persistence_field(v, truth, init, GC) for v in want_vars}

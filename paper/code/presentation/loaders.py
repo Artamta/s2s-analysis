@@ -328,6 +328,47 @@ def load_fuxi(init_str, var, G):
     return per_day
 
 
+# FuXi channel name per verification variable (Z500 is additionally /G -> gpm).
+FUXI_CHANNEL = {'TP': 'tp', 'T2M': 't2m', 'Z500': 'z500'}
+
+
+def load_fuxi_all(init_str, want_vars, G):
+    """Open each FuXi member-day file ONCE and extract ALL requested channels in
+       a single read, instead of reopening every file once per variable.
+
+       Returns {var: {day: DataArray(member, lat, lon)}}, byte-for-byte equal to
+       calling load_fuxi() per variable, but with ~len(want_vars)x fewer netCDF
+       opens/decodes (the CPU bottleneck under many parallel workers)."""
+    out = {v: {} for v in want_vars}
+    for day in range(1, 43):
+        per_var = {v: [] for v in want_vars}
+        for mem in range(CFG.fuxi_members):
+            p = f"{CFG.fuxi_root}/{init_str}/member/{mem:02d}/{day:02d}.nc"
+            if not os.path.exists(p):
+                continue
+            try:
+                # .load() reads the (small) all-channel array ONCE into memory;
+                # subsequent per-channel .sel are pure in-memory numpy.
+                ds = xr.open_dataset(p)['__xarray_dataarray_variable__'].load()
+            except Exception:
+                continue
+            for v in want_vars:
+                try:
+                    da = ds.sel(channel=FUXI_CHANNEL[v])
+                except Exception:
+                    continue
+                if v == 'Z500':
+                    da = da / G
+                for d in list(da.dims):
+                    if d not in ('lat', 'lon', 'latitude', 'longitude'):
+                        da = da.mean(d)
+                per_var[v].append(crop_box(da).assign_coords(member=mem))
+        for v in want_vars:
+            if per_var[v]:
+                out[v][day] = xr.concat(per_var[v], 'member')
+    return out
+
+
 def load_op(model, init_str, var, G):
     """ECMWF/NCEP DataArray with dims (number, step, lat, lon); None if missing.
        TP stays CUMULATIVE (differenced later). T2M = (mx2t6+mn2t6)/2 proxy."""

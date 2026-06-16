@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=s2s_verify
-#SBATCH --output=verify_%j.out
-#SBATCH --error=verify_%j.err
+#SBATCH --output=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentation/verify_%j.out
+#SBATCH --error=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentation/verify_%j.err
 #SBATCH --partition=GPU-AI          # allocation requested by user (CPU/IO job; GPU idle)
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -20,7 +20,10 @@
 # Submit from this directory:   sbatch run_slurm.sh
 # ==============================================================================
 set -euo pipefail
-cd "$(dirname "$0")"
+# NOTE: SLURM runs a SPOOLED copy of this script, so "$0" is NOT the real path.
+# Use an absolute directory instead of $(dirname "$0").
+SCRIPT_DIR=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentation
+cd "$SCRIPT_DIR"
 
 # Activate the same Python env you use interactively (edit if you use conda):
 # source ~/miniconda3/etc/profile.d/conda.sh && conda activate s2s
@@ -32,5 +35,5 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
 echo "host: $(hostname)   start: $(date)"
-python verify_s2s.py --workers 13 --vars TP Z500 T2M
+python -u "$SCRIPT_DIR/verify_s2s.py" --workers 13 --vars TP Z500 T2M
 echo "end: $(date)"

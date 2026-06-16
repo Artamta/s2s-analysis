@@ -340,6 +340,7 @@ def load_fuxi_all(init_str, want_vars, G):
        calling load_fuxi() per variable, but with ~len(want_vars)x fewer netCDF
        opens/decodes (the CPU bottleneck under many parallel workers)."""
     out = {v: {} for v in want_vars}
+    chans = [FUXI_CHANNEL[v] for v in want_vars]   # only the channels we need
     for day in range(1, 43):
         per_var = {v: [] for v in want_vars}
         for mem in range(CFG.fuxi_members):
@@ -347,14 +348,15 @@ def load_fuxi_all(init_str, want_vars, G):
             if not os.path.exists(p):
                 continue
             try:
-                # .load() reads the (small) all-channel array ONCE into memory;
-                # subsequent per-channel .sel are pure in-memory numpy.
-                ds = xr.open_dataset(p)['__xarray_dataarray_variable__'].load()
+                # FuXi files carry ~76 channels; select ONLY the needed ones
+                # BEFORE .load() so we read 3 channels/file (once), not all 76.
+                ds = xr.open_dataset(p)['__xarray_dataarray_variable__']
+                sub = ds.sel(channel=chans).load()
             except Exception:
                 continue
             for v in want_vars:
                 try:
-                    da = ds.sel(channel=FUXI_CHANNEL[v])
+                    da = sub.sel(channel=FUXI_CHANNEL[v])
                 except Exception:
                     continue
                 if v == 'Z500':

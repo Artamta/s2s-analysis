@@ -89,9 +89,8 @@ METRICS = {
     'rmse':  dict(src='det',  ylabel='RMSE', short='RMSE',
                   hline=None, hline_label='', ylim=None,
                   fmt='{:.1f}', title='RMSE'),
-    'bias':  dict(src='det',  ylabel='Bias', short='Bias',
-                  hline=None, hline_label='', ylim=None,
-                  fmt='{:+.1f}', title='Mean Bias'),
+    # NOTE: bias is plotted as LINES (drift over lead), not bars — see
+    # bias_lines_allindia / bias_lines_regions. Kept out of the bar registry.
     'msss_clim': dict(src='det', ylabel='MSSS', short='MSSS',
                   hline=0.0, hline_label='= climatology', ylim=(-1.0, 1.08),
                   fmt='{:+.2f}', title='MSSS vs Climatology'),
@@ -145,6 +144,77 @@ def _autoylim(ax, data):
     lo, hi = finite.min(), finite.max()
     pad = (hi - lo) * 0.18 + 1e-9
     ax.set_ylim(min(0, lo - pad), max(0, hi + pad * 1.4))
+
+
+# ── BIAS as LINE plots (drift over lead reads better than up/down bars) ─────────
+def _bias_lines(ax, det, var, region, models):
+    drew = False
+    for m in models:
+        vals = _matrix(det, var, region, [m], 'bias')[0]
+        if np.all(np.isnan(vals)):
+            continue
+        ax.plot(WEEKS, vals, color=MODEL_COLORS[m], marker=MODEL_MARKERS[m],
+                lw=2.4, ms=8, label=m, markeredgecolor='white',
+                markeredgewidth=0.7, zorder=3)
+        drew = True
+    ax.axhline(0, color='#333', lw=1.2, zorder=2)
+    ax.set_xticks(WEEKS); ax.set_xticklabels(WLABELS)
+    ax.grid(axis='y', alpha=0.3, zorder=0)
+    return drew
+
+
+def bias_lines_allindia(det):
+    for var in ['TP', 'Z500']:
+        fig, ax = plt.subplots(figsize=(11, 5.5))
+        fig.suptitle(f'Mean Bias Drift — {VAR_LONG[var]} ({VAR_UNITS[var]})\n'
+                     f'All India · JFM 2026 · vs ERA5  '
+                     f'(above 0 = too high/warm, below 0 = too low/cold)',
+                     fontsize=13, fontweight='bold', y=1.0)
+        data = _matrix(det, var, 'All India', DET_MODELS, 'bias')
+        _autoylim(ax, data)
+        _bias_lines(ax, det, var, 'All India', DET_MODELS)
+        ax.set_ylabel(f'Bias ({VAR_UNITS[var]})', fontsize=13)
+        ax.set_xlabel('Forecast Week', fontsize=13)
+        ax.tick_params(labelsize=11)
+        ax.legend(ncol=len(DET_MODELS), fontsize=11, loc='upper center',
+                  bbox_to_anchor=(0.5, -0.11), frameon=True)
+        fig.tight_layout(rect=[0, 0.02, 1, 0.93])
+        savefig(fig, f'bias_lines_{var}.png')
+
+
+def bias_lines_regions(det):
+    for var in ['TP', 'Z500']:
+        all_data = [_matrix(det, var, r, DET_MODELS, 'bias') for r in REGIONS]
+        stacked = np.concatenate([d[np.isfinite(d)] for d in all_data])
+        lo, hi = stacked.min(), stacked.max()
+        pad = (hi - lo) * 0.12 + 1e-9
+        ylim = (lo - pad, hi + pad)
+
+        fig, axes = plt.subplots(2, 3, figsize=(17, 9), sharey=True)
+        fig.suptitle(f'Mean Bias Drift — {VAR_LONG[var]} ({VAR_UNITS[var]})\n'
+                     f'All India + IMD Homogeneous Regions · JFM 2026 · vs ERA5',
+                     fontsize=15, fontweight='bold', y=1.0)
+        axes_flat = axes.flatten()
+        for pi, reg in enumerate(REGIONS):
+            ax = axes_flat[pi]
+            ax.set_ylim(ylim)
+            _bias_lines(ax, det, var, reg, DET_MODELS)
+            ax.set_title(REGION_LABEL[reg], fontsize=13, fontweight='bold', pad=4)
+            if pi % 3 == 0:
+                ax.set_ylabel(f'Bias ({VAR_UNITS[var]})', fontsize=12)
+            if pi >= 3:
+                ax.set_xlabel('Forecast Week', fontsize=12)
+            ax.tick_params(labelsize=10)
+        axes_flat[5].axis('off')
+        handles = [plt.Line2D([0], [0], color=MODEL_COLORS[m],
+                              marker=MODEL_MARKERS[m], lw=2.4, ms=9, label=m)
+                   for m in DET_MODELS]
+        handles.append(plt.Line2D([0], [0], color='#333', lw=1.2, label='zero bias'))
+        axes_flat[5].legend(handles, [m for m in DET_MODELS] + ['zero bias'],
+                            loc='center', fontsize=14, frameon=True,
+                            title='Models', title_fontsize=14)
+        fig.tight_layout(rect=[0, 0, 1, 0.95])
+        savefig(fig, f'bias_lines_regions_{var}.png')
 
 
 # ── ALL REGIONS (2x3 panels) ───────────────────────────────────────────────────
@@ -299,6 +369,10 @@ def main():
     print("\nAll-regions (2x3) bar charts...")
     for metric in METRICS:
         bar_regions(det, prob, metric)
+
+    print("\nBias drift line plots (All India + regions)...")
+    bias_lines_allindia(det)
+    bias_lines_regions(det)
 
     print("\nStory slides...")
     make_week1_overview(det, prob)

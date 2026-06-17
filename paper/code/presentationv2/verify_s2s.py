@@ -212,7 +212,7 @@ def process_init(init, want_vars):
                        init_date=init, scale=scale, lead=lead, week=week,
                        pcc=M.acc(fr, orr, cf, w, clim_o=co), rmse=M.rmse(fr, orr, w),
                        bias=M.bias(fr, orr, w),
-                       msss_clim=M.msss(fr, orr, cf, w),
+                       msss_clim=M.msss(fr, orr, co, w),
                        msss_pers=(M.msss(fr, orr, pr, w) if pr is not None else np.nan),
                        fcst_std=M.wstd_anom(fr - cf, w), obs_std=M.wstd_anom(orr - co, w),
                        fcst_mean=M._f(M.wmean(fr, w)), obs_mean=M._f(M.wmean(orr, w)))

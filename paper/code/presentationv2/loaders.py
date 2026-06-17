@@ -224,12 +224,22 @@ def clim_spread_field(var, truth, GC):
     """Per-grid-point CLIMATOLOGICAL SPREAD = temporal std of the ERA5 truth over
        the available verification period. Used as the spread of the climatology
        REFERENCE forecast for CRPSS, and to set Gaussian tercile boundaries for
-       the Brier events. This reproduces the validated compute/06 approach
-       (in-sample temporal std); it is the climatological uncertainty at each
-       location, which is more principled than a single domain-wide scalar."""
+       the Brier events. Computed as temporal std of ERA5 ANOMALIES (obs - ERA5_clim)
+       so the seasonal trend does not inflate the spread (important for Z500 which
+       rises ~100 gpm Jan->May; raw std ~44 gpm vs anomaly std ~18 gpm over India)."""
+    clim_ds = open_clim()
     src = (truth['tp_daily'] if var == 'TP'
            else truth['t2m_daily'] if var == 'T2M' else truth['z_raw'])
-    return to_grid(src.std('time'), GC)
+    src_g = to_grid(src, GC)  # (time, lat, lon) on verification grid
+    # subtract ERA5 clim per day-of-year to remove seasonal trend
+    anoms = []
+    import pandas as _pd
+    for t in range(src_g.sizes['time']):
+        doy = [_pd.to_datetime(str(src_g['time'].values[t])[:10]).dayofyear]
+        c = clim_field(clim_ds, var, doy, GC)
+        anoms.append((src_g.isel(time=t) - c).values)
+    import numpy as _np
+    return src_g.isel(time=0).copy(data=_np.nanstd(_np.stack(anoms, axis=0), axis=0))
 
 
 # ==============================================================================

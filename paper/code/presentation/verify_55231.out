@@ -1,0 +1,19 @@
+host: gpu1   start: Wed 17 Jun 2026 06:01:08 AM IST
+
+Unified S2S verification — season=JFM2026
+  inits=13  vars=['TP', 'Z500', 'T2M']  workers=13
+  out_dir=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentation
+
+=== INIT 2026-03-19 (pid 924746) ===
+=== INIT 2026-01-01 (pid 924735) ===
+=== INIT 2026-02-19 (pid 924742) ===
+=== INIT 2026-03-12 (pid 924745) ===
+=== INIT 2026-02-12 (pid 924741) ===
+=== INIT 2026-03-26 (pid 924747) ===
+=== INIT 2026-01-08 (pid 924736) ===
+=== INIT 2026-02-26 (pid 924743) ===
+=== INIT 2026-01-15 (pid 924737) ===
+=== INIT 2026-01-29 (pid 924739) ===
+=== INIT 2026-02-05 (pid 924740) ===
+=== INIT 2026-03-05 (pid 924744) ===
+=== INIT 2026-01-22 (pid 924738) ===

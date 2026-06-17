@@ -332,7 +332,7 @@ def process_init(init, want_vars):
     # ============ DAILY ============
     for di in range(42):
         day = di + 1
-        date = (pd.to_datetime(init) + pd.Timedelta(days=di)).strftime('%Y-%m-%d')
+        date = (pd.to_datetime(init) + pd.Timedelta(days=di + 1)).strftime('%Y-%m-%d')
         if date > CFG.valid_end:
             break
         wn = f'Week {min(di // 7 + 1, 6)}'

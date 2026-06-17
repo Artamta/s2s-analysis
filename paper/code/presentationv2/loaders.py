@@ -541,7 +541,8 @@ def ens_mean_std(da, mdim, GC):
 
 
 def valid_dates_for(init, ds, de, end):
-    dates = pd.date_range(start=init, periods=42)[ds - 1:de]
+    # step ds..de (1-based lead days) = calendar dates init+ds .. init+de
+    dates = pd.date_range(start=pd.to_datetime(init) + pd.Timedelta(days=1), periods=42)[ds - 1:de]
     return [d.strftime('%Y-%m-%d') for d in dates if d.strftime('%Y-%m-%d') <= end]
 
 

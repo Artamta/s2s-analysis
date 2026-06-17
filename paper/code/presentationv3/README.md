@@ -21,6 +21,19 @@ Every metric is scored **twice**:
 
 > **SPIRE has no multi-year hindcast archive**, so it is only scored under `era5` basis.
 
+### SPIRE Data Loading — `mean_stddev` group only
+
+SPIRE's zarr store has two groups:
+
+| Group | Contents | Used? |
+|:---|:---|:---:|
+| `mean_stddev` | Absolute ensemble mean + spread (no climatology subtracted) | **YES** |
+| `anomalies` | Pre-computed anomalies (SPIRE subtracted their own ERA5 clim) | **NO** |
+
+**Why not `anomalies`?** SPIRE's embedded ERA5 climatology differs from our 30-yr WMO ERA5 climatology by **~17.5 gpm (Z500)** and **~0.22 mm/day (TP)**. Reconstituting absolute values via `SPIRE_anom + our_ERA5_clim` introduces a systematic offset that inflates RMSE from ~13 gpm to ~33 gpm and destroys MSSS. PCC is unaffected (the offset cancels in the correlation), which is why a buggy run (job 55264 using `anomalies`) showed correct PCC=0.28 but clearly wrong RMSE — that was the diagnostic.
+
+We load `mean_stddev`, subtract our ERA5 climatology ourselves, and score normally.
+
 ---
 
 ## All India — ERA5 Basis

@@ -2,7 +2,7 @@
 #SBATCH --job-name=s2s_verify_v2
 #SBATCH --output=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv2/verify_%j.out
 #SBATCH --error=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv2/verify_%j.err
-#SBATCH --partition=GPU-AI          # allocation requested by user (CPU/IO job; GPU idle)
+#SBATCH --partition=GPU-AI_prio         # allocation requested by user (CPU/IO job; GPU idle)
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=64          # 13 init-worker processes (+ headroom); IO-bound

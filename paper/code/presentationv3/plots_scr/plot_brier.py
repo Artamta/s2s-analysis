@@ -62,7 +62,7 @@ def fig_events(df, var, events):
     fig, axes = plt.subplots(nrow, ncol, figsize=(ncol * 5.5, nrow * 4.2),
                              squeeze=False)
     fig.suptitle(f'{VAR_LONG[var]} — Brier Skill Score vs Climatology\n'
-                 f'All India  |  ERA5 basis  |  Shading = ±1 std',
+                 f'All India  |  ERA5 basis  |  Mean across 13 initialisations',
                  fontsize=12, y=1.01)
 
     for idx, event in enumerate(events):
@@ -73,8 +73,6 @@ def fig_events(df, var, events):
                 continue
             c = MODEL_COLORS[m]; mk = MODEL_MARKERS[m]
             ax.plot(WEEKS, means, color=c, marker=mk, lw=2.0, ms=7, label=m, zorder=3)
-            ax.fill_between(WEEKS, means - stds, means + stds,
-                            color=c, alpha=0.12, zorder=2)
         style_week_axis(ax, ylabel='BSS', ylim=(-0.6, 1.1),
                         title=EVENT_LABEL.get(event, event))
 

@@ -48,7 +48,7 @@ def fig_crps_absolute(df):
     """Absolute CRPS values + climatology and persistence references."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     fig.suptitle('Absolute CRPS — All India  (lower = better)\n'
-                 'ERA5 anomaly basis  |  Shading = ±1 std',
+                 'ERA5 anomaly basis  |  Mean across 13 initialisations',
                  fontsize=12, y=1.02)
 
     for ci, var in enumerate(['TP', 'Z500']):
@@ -67,8 +67,6 @@ def fig_crps_absolute(df):
                 continue
             c = MODEL_COLORS[m]; mk = MODEL_MARKERS[m]
             ax.plot(WEEKS, means, color=c, marker=mk, lw=2.0, ms=7, label=m, zorder=3)
-            ax.fill_between(WEEKS, np.maximum(0, means - stds), means + stds,
-                            color=c, alpha=0.10, zorder=2)
 
         style_week_axis(ax, ylabel=f'CRPS ({unit})',
                         title=f'{VAR_LONG[var]}  ({unit})')
@@ -87,7 +85,7 @@ def fig_crpss(df):
     """CRPSS vs climatology."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     fig.suptitle('CRPSS vs Climatology — All India\n'
-                 'ERA5 anomaly basis  |  > 0 = better than climatology  |  Shading = ±1 std',
+                 'ERA5 anomaly basis  |  > 0 = better than climatology',
                  fontsize=12, y=1.02)
 
     for ci, var in enumerate(['TP', 'Z500']):
@@ -98,8 +96,6 @@ def fig_crpss(df):
                 continue
             c = MODEL_COLORS[m]; mk = MODEL_MARKERS[m]
             ax.plot(WEEKS, means, color=c, marker=mk, lw=2.0, ms=7, label=m, zorder=3)
-            ax.fill_between(WEEKS, means - stds, means + stds,
-                            color=c, alpha=0.10, zorder=2)
 
         style_week_axis(ax, ylabel='CRPSS', ylim=(-0.45, 1.05),
                         title=f'{VAR_LONG[var]}  ({VAR_UNITS[var]})')
@@ -161,8 +157,6 @@ def fig_crpss_regional(df, var):
                 continue
             ax.plot(WEEKS, means, color=MODEL_COLORS[m], marker=MODEL_MARKERS[m],
                     lw=1.8, ms=5, zorder=3)
-            ax.fill_between(WEEKS, means - stds, means + stds,
-                            color=MODEL_COLORS[m], alpha=0.10, zorder=2)
         style_week_axis(ax, ylabel='CRPSS' if ci == 0 else '',
                         ylim=(-0.5, 1.05), title=REGION_LABEL[reg])
 

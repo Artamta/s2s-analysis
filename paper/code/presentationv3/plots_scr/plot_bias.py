@@ -45,15 +45,13 @@ def fig_allIndia(df, var):
     unit = VAR_UNITS[var]
     fig, ax = plt.subplots(figsize=(9, 5))
     fig.suptitle(f'{VAR_LONG[var]}  ({unit}) — Weekly Mean Bias (Forecast − Observed)\n'
-                 f'All India  |  ERA5 anomaly basis  |  Shading = ±1 std across 13 inits',
+                 f'All India  |  ERA5 anomaly basis  |  Mean across 13 initialisations',
                  fontsize=12)
 
     for m in MODELS_BIAS:
         means, stds = _get_bias_stats(df, var, m, 'All India')
         c = MODEL_COLORS[m]; mk = MODEL_MARKERS[m]
         ax.plot(WEEKS, means, color=c, marker=mk, lw=2.0, ms=7, label=m, zorder=3)
-        ax.fill_between(WEEKS, means - stds, means + stds,
-                        color=c, alpha=0.12, zorder=2)
 
     style_week_axis(ax, ylabel=f'Bias ({unit})', title='')
     ax.axhline(0, color='#555', lw=1.2, ls='-', zorder=1)
@@ -68,7 +66,7 @@ def fig_regional(df, var):
     unit = VAR_UNITS[var]
     fig, axes = plt.subplots(1, 5, figsize=(18, 4.5), sharey=True)
     fig.suptitle(f'{VAR_LONG[var]}  ({unit}) — Weekly Bias by IMD Region\n'
-                 f'Shading = ±1 std  |  ERA5 anomaly basis',
+                 f'ERA5 anomaly basis  |  Mean across 13 initialisations',
                  fontsize=12, y=1.03)
 
     for ci, reg in enumerate(REGIONS):
@@ -77,8 +75,6 @@ def fig_regional(df, var):
             means, stds = _get_bias_stats(df, var, m, reg)
             c = MODEL_COLORS[m]; mk = MODEL_MARKERS[m]
             ax.plot(WEEKS, means, color=c, marker=mk, lw=1.8, ms=5, label=m, zorder=3)
-            ax.fill_between(WEEKS, means - stds, means + stds,
-                            color=c, alpha=0.12, zorder=2)
         style_week_axis(ax, ylabel=f'Bias ({unit})' if ci == 0 else '',
                         title=REGION_LABEL[reg])
         ax.axhline(0, color='#555', lw=1.0, ls='-')

@@ -42,7 +42,7 @@ def fig_allIndia(df):
     """Side-by-side TP and Z500, all models, weekly PCC."""
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     fig.suptitle('Anomaly Pattern Correlation (PCC) — All India\n'
-                 'ERA5 anomaly basis  |  Weekly aggregation  |  Shading = ±1 std',
+                 'ERA5 anomaly basis  |  Weekly aggregation  |  Mean across 13 initialisations',
                  fontsize=12, y=1.03)
 
     for ci, var in enumerate(['TP', 'Z500']):
@@ -58,8 +58,6 @@ def fig_allIndia(df):
             ls = '--' if m == 'Persistence' else '-'
             ax.plot(WEEKS, means, color=c, marker=mk, lw=lw, ms=7, ls=ls,
                     label=m, zorder=3)
-            ax.fill_between(WEEKS, means - stds, means + stds,
-                            color=c, alpha=0.10, zorder=2)
 
         style_week_axis(ax, ylabel='PCC', ylim=(-0.25, 1.05),
                         title=f'{VAR_LONG[var]}  ({VAR_UNITS[var]})')
@@ -80,7 +78,7 @@ def fig_regional(df, var):
     unit = VAR_UNITS[var]
     fig, axes = plt.subplots(1, 5, figsize=(18, 4.5), sharey=True)
     fig.suptitle(f'{VAR_LONG[var]}  ({unit}) — PCC by IMD Region  (ERA5 basis)\n'
-                 'Shading = ±1 std across 13 initialisations',
+                 'Mean across 13 initialisations',
                  fontsize=12, y=1.03)
 
     for ci, reg in enumerate(REGIONS):
@@ -95,8 +93,6 @@ def fig_regional(df, var):
             ls = '--' if m == 'Persistence' else '-'
             ax.plot(WEEKS, means, color=c, marker=mk, lw=1.8, ms=5, ls=ls,
                     zorder=3)
-            ax.fill_between(WEEKS, means - stds, means + stds,
-                            color=c, alpha=0.10, zorder=2)
 
         ax.axhline(0.5, color='darkorange', lw=0.8, ls=':', alpha=0.7)
         style_week_axis(ax, ylabel='PCC' if ci == 0 else '',

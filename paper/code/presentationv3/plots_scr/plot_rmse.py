@@ -40,7 +40,7 @@ def _stats(df, var, model, region, metric, weeks=WEEKS):
 def fig_allIndia(df):
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     fig.suptitle('RMSE — All India  (ERA5 anomaly basis)\n'
-                 'Shading = ±1 std across 13 initialisations',
+                 'Mean across 13 initialisations',
                  fontsize=12, y=1.02)
 
     for ci, var in enumerate(['TP', 'Z500']):
@@ -56,8 +56,6 @@ def fig_allIndia(df):
             ls = '--' if m == 'Persistence' else '-'
             ax.plot(WEEKS, means, color=c, marker=mk, lw=2.0, ms=7, ls=ls,
                     label=m, zorder=3)
-            ax.fill_between(WEEKS, np.maximum(0, means - stds), means + stds,
-                            color=c, alpha=0.10, zorder=2)
 
         style_week_axis(ax, ylabel=f'RMSE ({unit})',
                         title=f'{VAR_LONG[var]}  ({unit})')
@@ -74,7 +72,7 @@ def fig_regional(df, var):
     unit = VAR_UNITS[var]
     fig, axes = plt.subplots(1, 5, figsize=(18, 4.5), sharey=True)
     fig.suptitle(f'{VAR_LONG[var]}  ({unit}) — RMSE by IMD Region  (ERA5 basis)\n'
-                 'Shading = ±1 std',
+                 'Mean across 13 initialisations',
                  fontsize=12, y=1.03)
 
     for ci, reg in enumerate(REGIONS):
@@ -89,8 +87,6 @@ def fig_regional(df, var):
             ls = '--' if m == 'Persistence' else '-'
             ax.plot(WEEKS, means, color=c, marker=mk, lw=1.8, ms=5, ls=ls,
                     zorder=3)
-            ax.fill_between(WEEKS, np.maximum(0, means - stds), means + stds,
-                            color=c, alpha=0.10, zorder=2)
         style_week_axis(ax, ylabel=f'RMSE ({unit})' if ci == 0 else '',
                         title=REGION_LABEL[reg])
         ax.set_ylim(bottom=0)

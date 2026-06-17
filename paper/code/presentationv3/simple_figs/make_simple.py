@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 make_simple.py — THREE simple figures: ACC, RMSE, Bias.
-All India · weekly · ERA5 basis · models SPIRE/FuXi/ECMWF/MME.
+All India · weekly · MODEL-OWN climatology basis.
+Each model scored against ITS OWN hindcast climatology.
+Models: FuXi/ECMWF/MME  (SPIRE has no model-own climatology, so excluded).
 One line per model, value vs forecast week. Nothing else.
 
 Output (this folder):  acc.png  rmse.png  bias.png
@@ -16,9 +18,10 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 CSV  = os.path.join(os.path.dirname(HERE), 'skill_deterministic.csv')
 
-MODELS = ['SPIRE', 'FuXi', 'ECMWF', 'MME']
-COLORS = {'SPIRE': '#1a6faf', 'FuXi': '#e05c2a', 'ECMWF': '#2a9d54', 'MME': '#9b59b6'}
-MARKERS = {'SPIRE': 'o', 'FuXi': 's', 'ECMWF': '^', 'MME': 'D'}
+# Only models that have their OWN hindcast climatology (SPIRE excluded)
+MODELS = ['FuXi', 'ECMWF', 'MME']
+COLORS = {'FuXi': '#e05c2a', 'ECMWF': '#2a9d54', 'MME': '#9b59b6'}
+MARKERS = {'FuXi': 's', 'ECMWF': '^', 'MME': 'D'}
 WEEKS  = [1, 2, 3, 4, 5, 6]
 WLABELS = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6']
 VARS = {'TP': 'Total Precipitation (mm/day)', 'Z500': 'Z500 (gpm)'}
@@ -30,7 +33,7 @@ plt.rcParams.update({'font.size': 13, 'axes.spines.top': False,
 def load():
     df = pd.read_csv(CSV)
     return df[(df.scale == 'weekly') & (df.region == 'All India') &
-              (df.clim_basis == 'era5')]
+              (df.clim_basis == 'model_own')]
 
 
 def series(df, var, model, metric):
@@ -52,8 +55,8 @@ def make(df, metric, ylabel, title, fname, hline=None, ndigits=2):
         ax.set_ylabel(ylabel)
         ax.grid(alpha=0.3)
     fig.suptitle(title, fontsize=15, fontweight='bold')
-    axes[0].legend(ncol=4, loc='upper center', bbox_to_anchor=(1.05, -0.13),
-                   frameon=True)
+    axes[0].legend(ncol=len(MODELS), loc='upper center',
+                   bbox_to_anchor=(1.05, -0.13), frameon=True)
     fig.tight_layout(rect=[0, 0.04, 1, 0.95])
     out = os.path.join(HERE, fname)
     fig.savefig(out, dpi=200, bbox_inches='tight')
@@ -63,10 +66,11 @@ def make(df, metric, ylabel, title, fname, hline=None, ndigits=2):
 
 def main():
     df = load()
-    make(df, 'pcc',  'ACC',  'ACC (Anomaly Correlation) — All India', 'acc.png',
+    sub = 'All India · each model vs its OWN climatology'
+    make(df, 'pcc',  'ACC',  f'ACC (Anomaly Correlation) — {sub}', 'acc.png',
          hline=0.5)
-    make(df, 'rmse', 'RMSE', 'RMSE — All India', 'rmse.png')
-    make(df, 'bias', 'Bias', 'Mean Bias — All India', 'bias.png', hline=0.0)
+    make(df, 'rmse', 'RMSE', f'RMSE — {sub}', 'rmse.png')
+    make(df, 'bias', 'Bias', f'Mean Bias — {sub}', 'bias.png', hline=0.0)
     print('Done.')
 
 

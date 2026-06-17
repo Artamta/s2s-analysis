@@ -398,27 +398,30 @@ def persistence_field(var, truth, init, GC):
 # MODEL LOADERS
 # ==============================================================================
 def load_spire(init):
-    """{var: (mean_da, stddev_da)} with a `step` dim; None if unavailable."""
+    """{var: (mean_da, stddev_da)} with a `step` dim; None if unavailable.
+       Mean comes from the 'anomalies' group (SPIRE pre-computed ERA5-1991-2020
+       referenced anomalies); stddev from 'mean_stddev' (raw ensemble spread)."""
     try:
-        s = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+        s_anom = xr.open_zarr(CFG.spire_zarr, group='anomalies').sel(reference_time=init)
+        s_std  = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
     except Exception as e:
         print(f"  [SPIRE] open fail {init}: {e}", flush=True)
         return None
     out = {}
     try:
-        out['TP'] = (crop_box(s['precipitation_amount']),
-                     crop_box(s['precipitation_amount_stddev']))
+        out['TP'] = (crop_box(s_anom['precipitation_amount']),
+                     crop_box(s_std['precipitation_amount_stddev']))
     except Exception:
         pass
     try:
-        z = s['geopotential_height_at_isobaric_levels'].sel(isobar=50000.0)
-        zs = s['geopotential_height_at_isobaric_levels_stddev'].sel(isobar=50000.0)
+        z  = s_anom['geopotential_height'].sel(isobar=50000.0)
+        zs = s_std['geopotential_height_at_isobaric_levels_stddev'].sel(isobar=50000.0)
         out['Z500'] = (crop_box(z), crop_box(zs))
     except Exception:
         pass
     try:
-        out['T2M'] = (crop_box(s['air_temperature']),
-                      crop_box(s['air_temperature_stddev']))
+        out['T2M'] = (crop_box(s_std['air_temperature']),
+                      crop_box(s_std['air_temperature_stddev']))
     except Exception:
         pass
     return out or None

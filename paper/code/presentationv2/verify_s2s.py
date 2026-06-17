@@ -320,6 +320,11 @@ def process_init(init, want_vars):
             clim_o = L.clim_field(clim_ds, var, doys, GC)   # ERA5 (obs anomaly baseline)
             persf = pers[var]
             det_field, mu_sig = assemble_fields(var, 'weekly', (ds, de), spire, fuxi, op, GC)
+            # SPIRE anomalies group -> reconstitute absolute so scoring path is unchanged
+            if 'SPIRE' in det_field:
+                det_field['SPIRE'] = det_field['SPIRE'] + clim_o
+                if 'SPIRE' in mu_sig:
+                    mu_sig['SPIRE'] = (mu_sig['SPIRE'][0] + clim_o, mu_sig['SPIRE'][1])
             # per-model FORECAST clima (model-own, same weekly aggregation as fcst)
             cf_field = {m: L.model_clim_aggregate(m, var, model_clim[m][var],
                                                   'weekly', (ds, de), GC)
@@ -344,6 +349,11 @@ def process_init(init, want_vars):
             clim_o = L.clim_field(clim_ds, var, doy, GC)
             persf = pers[var]
             det_field, mu_sig = assemble_fields(var, 'daily', di, spire, fuxi, op, GC)
+            # SPIRE anomalies group -> reconstitute absolute so scoring path is unchanged
+            if 'SPIRE' in det_field:
+                det_field['SPIRE'] = det_field['SPIRE'] + clim_o
+                if 'SPIRE' in mu_sig:
+                    mu_sig['SPIRE'] = (mu_sig['SPIRE'][0] + clim_o, mu_sig['SPIRE'][1])
             cf_field = {m: L.model_clim_aggregate(m, var, model_clim[m][var],
                                                   'daily', di, GC)
                         for m in MODEL_OWN_CLIM}

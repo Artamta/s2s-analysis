@@ -94,13 +94,16 @@ AREA = [40, 60, 0, 100]
 GRID = [1.5, 1.5]
 
 # Surface variables — mx2t/mn2t do NOT exist in ECMWF operational S2S stream
-# z uses MARS param ID 129; "z" and "geopotential" both fail with MARS ambiguity
+# z uses MARS param ID 156 (geopotential height gpm)
+# 2t (param 167) is ONLY stored at step=24 in the operational S2S stream — all
+# other steps return MarsNoDataError. Use STEPS_2T = ["24"] for this variable.
 # dict layout: param_id_sent_to_API -> short_name_for_output_filename
 SURFACE_VARS = {
     "tp":  "tp",    # total precipitation          (MARS param 228)
-    "167": "2t",    # 2 m temperature              (MARS param 167)
+    "167": "2t",    # 2 m temperature              (MARS param 167) — step=24 only!
     "msl": "msl",   # mean sea level pressure      (MARS param 151)
 }
+STEPS_2T = ["24"]   # 2t only available at day-1 in operational S2S stream
 PL_VARS   = {"156": "z"}   # geopotential height in gpm (MARS param 156)
 PL_LEVELS = ["200", "500", "850", "1000"]
 
@@ -160,11 +163,10 @@ def build_tasks(dates: list[pd.Timestamp], ftypes: list[str],
             if do_sfc:
                 for cds_name, short in SURFACE_VARS.items():
                     p = outpath(short, date, ftype)
-                    # 2t (param 167) must be fetched step-by-step and concatenated
-                    per_step = (cds_name == "167")
+                    # 2t only exists at step=24 in operational S2S stream
+                    steps = STEPS_2T if cds_name == "167" else STEPS
                     tasks.append({"out": str(p), "label": f"{short}/{date:%Y%m%d}_{ftype}.nc",
-                                  "per_step": per_step,
-                                  "req": {**base, "level_type": "single_level", "variable": cds_name}})
+                                  "req": {**base, "step": steps, "level_type": "single_level", "variable": cds_name}})
             if do_pl:
                 for cds_name, short in PL_VARS.items():
                     for lev in PL_LEVELS:
@@ -195,8 +197,6 @@ def _retrieve_with_retry(client: cdsapi.Client, req: dict, dest: Path,
 
 
 def download_one(task: dict, log: logging.Logger, req_log: Path) -> dict:
-    import tempfile, xarray as xr, numpy as np
-
     out = Path(task["out"])
     if is_done(out):
         log.info(f"SKIP   {task['label']}")
@@ -204,47 +204,6 @@ def download_one(task: dict, log: logging.Logger, req_log: Path) -> dict:
 
     client = cdsapi.Client(quiet=True)
 
-    # 2t (param 167): ECDS collapses multi-step into single step in netcdf.
-    # Workaround: download each step individually then concatenate.
-    if task.get("per_step"):
-        log.info(f"START  {task['label']}  (per-step mode, {len(STEPS)} steps)")
-        t0 = time.time()
-        step_arrays = []
-        base_req = {k: v for k, v in task["req"].items() if k != "step"}
-        try:
-            with tempfile.TemporaryDirectory() as tmp:
-                for step in STEPS:
-                    req_s = {**base_req, "step": step}
-                    dest_s = Path(tmp) / f"step_{step}.nc"
-                    _retrieve_with_retry(client, req_s, dest_s, f"{task['label']}@{step}h", log)
-                    ds_s = xr.open_dataset(dest_s, engine="netcdf4")
-                    # get the data variable (t2m or similar)
-                    var = list(ds_s.data_vars)[0]
-                    da = ds_s[var].expand_dims({"step": [int(step)]})
-                    step_arrays.append(da.load())
-                    ds_s.close()
-
-            combined = xr.concat(step_arrays, dim="step")
-            combined.name = "t2m"
-            combined.to_netcdf(str(out))
-            elapsed = time.time() - t0
-            mb = out.stat().st_size / 1024 ** 2
-            log.info(f"DONE   {task['label']}  {mb:.1f} MB  {elapsed:.0f}s  ({len(STEPS)} steps merged)")
-            rec = {**task, "status": "success", "size_mb": round(mb, 2),
-                   "elapsed_s": round(elapsed, 1), "ts": datetime.utcnow().isoformat()}
-            with open(req_log, "a") as f:
-                f.write(json.dumps(rec) + "\n")
-            return rec
-        except Exception as exc:
-            log.error(f"FAIL   {task['label']}: {exc}")
-            if out.exists(): out.unlink()
-            rec = {**task, "status": "failed", "error": str(exc),
-                   "ts": datetime.utcnow().isoformat()}
-            with open(req_log, "a") as f:
-                f.write(json.dumps(rec) + "\n")
-            return rec
-
-    # Normal path: all other variables support multi-step in one request
     log.info(f"START  {task['label']}  (attempt 1/{MAX_RETRIES})")
     try:
         t0 = time.time()

@@ -1,0 +1,423 @@
+================================================================
+Job         : FuXi-S2S ERA5 Input Download via CDS (JFM 2026)
+Job ID      : 55781
+Node        : cn19
+Start time  : Mon 22 Jun 2026 11:27:11 AM IST
+Output      : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/
+Dates       : 90 daily (2026-01-01 to 2026-03-31), skips existing
+Grid        : Global 1.5deg — 76 channels for FuXi
+================================================================
+2026-06-22 11:27:12,356 [INFO] =================================================================
+2026-06-22 11:27:12,357 [INFO] FuXi-S2S ERA5 Input Download via CDS (JFM 2026)
+2026-06-22 11:27:12,357 [INFO]   Output dir : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs
+2026-06-22 11:27:12,357 [INFO]   Dates      : 90  (2026-01-01 → 2026-03-31)
+2026-06-22 11:27:12,357 [INFO]   Done       : 14
+2026-06-22 11:27:12,357 [INFO]   Pending    : 76
+2026-06-22 11:27:12,357 [INFO]   Grid       : Global 1.5°  (121×240, matches FuXi input)
+2026-06-22 11:27:12,357 [INFO]   PL vars    : ['geopotential', 'temperature', 'u_component_of_wind', 'v_component_of_wind', 'specific_humidity']
+2026-06-22 11:27:12,358 [INFO]   SFC vars   : 11 variables
+2026-06-22 11:27:12,358 [INFO] =================================================================
+2026-06-22 11:27:18,409 [INFO] START 20260103  (ERA5: 2026-01-02 + 2026-01-03)
+2026-06-22 11:28:12,770 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/1ac97096370da4c48f5729df337de342.nc
+2026-06-22 11:28:49,100 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/782d10a69fc1b327f4f1a4b1fbac4c70.zip
+2026-06-22 11:29:03,500 [INFO]   combining → input.nc
+2026-06-22 11:29:04,444 [INFO] DONE  20260103  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260103/input.nc
+2026-06-22 11:29:04,451 [INFO] Progress 1/76  failed=0
+2026-06-22 11:29:04,453 [INFO] START 20260104  (ERA5: 2026-01-03 + 2026-01-04)
+2026-06-22 11:29:38,948 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/360591123e7c107622816aeb2209a359.nc
+2026-06-22 11:31:10,653 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/6c561a4425581dca1f173914e19824e3.zip
+2026-06-22 11:31:23,919 [INFO]   combining → input.nc
+2026-06-22 11:31:24,503 [INFO] DONE  20260104  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260104/input.nc
+2026-06-22 11:31:24,510 [INFO] Progress 2/76  failed=0
+2026-06-22 11:31:24,511 [INFO] START 20260105  (ERA5: 2026-01-04 + 2026-01-05)
+2026-06-22 11:32:43,160 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/dca743ed9aaaf73f52d254d322faf61b.nc
+2026-06-22 11:33:32,142 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/a9ac12e9150f5f56a6bcb1ad31a45f4e.zip
+2026-06-22 11:33:45,548 [INFO]   combining → input.nc
+2026-06-22 11:33:46,020 [INFO] DONE  20260105  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260105/input.nc
+2026-06-22 11:33:46,024 [INFO] Progress 3/76  failed=0
+2026-06-22 11:33:46,025 [INFO] START 20260106  (ERA5: 2026-01-05 + 2026-01-06)
+2026-06-22 11:34:21,232 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/d711f4a1ef3f0f9f7596201a8dedf12f.nc
+2026-06-22 11:34:58,216 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/e08d601294e18b26cd50114a787e9019.zip
+2026-06-22 11:35:11,342 [INFO]   combining → input.nc
+2026-06-22 11:35:11,842 [INFO] DONE  20260106  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260106/input.nc
+2026-06-22 11:35:11,847 [INFO] Progress 4/76  failed=0
+2026-06-22 11:35:11,848 [INFO] START 20260107  (ERA5: 2026-01-06 + 2026-01-07)
+2026-06-22 11:35:46,559 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/b12a8b0ccc76565b5d142af76a6a3254.nc
+2026-06-22 11:36:22,630 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/9c824552f6157ca33c933c79d98c2ee0.zip
+2026-06-22 11:36:35,929 [INFO]   combining → input.nc
+2026-06-22 11:36:36,477 [INFO] DONE  20260107  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260107/input.nc
+2026-06-22 11:36:36,484 [INFO] Progress 5/76  failed=0
+2026-06-22 11:36:36,485 [INFO] START 20260109  (ERA5: 2026-01-08 + 2026-01-09)
+2026-06-22 11:36:59,541 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/cfc141229f55a81d790be2908ee165fe.nc
+2026-06-22 11:37:28,159 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/d73fa97b3881259abebd52dc198080ee.zip
+2026-06-22 11:37:41,407 [INFO]   combining → input.nc
+2026-06-22 11:37:41,983 [INFO] DONE  20260109  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260109/input.nc
+2026-06-22 11:37:41,987 [INFO] Progress 6/76  failed=0
+2026-06-22 11:37:41,988 [INFO] START 20260110  (ERA5: 2026-01-09 + 2026-01-10)
+2026-06-22 11:38:59,960 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/34b2a3bba3dd2b2eea18b3e0360b323f.nc
+2026-06-22 11:39:47,417 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/49ca00187c6a2c72c494f437493c4af1.zip
+2026-06-22 11:40:00,438 [INFO]   combining → input.nc
+2026-06-22 11:40:00,903 [INFO] DONE  20260110  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260110/input.nc
+2026-06-22 11:40:00,907 [INFO] Progress 7/76  failed=0
+2026-06-22 11:40:00,908 [INFO] START 20260111  (ERA5: 2026-01-10 + 2026-01-11)
+2026-06-22 11:40:35,518 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/b0cb8175cd7dd9d08217c0f1216596dc.nc
+2026-06-22 11:41:22,778 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/320b9e14157d3b67f7343520e2d0b4ce.zip
+2026-06-22 11:41:35,988 [INFO]   combining → input.nc
+2026-06-22 11:41:36,517 [INFO] DONE  20260111  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260111/input.nc
+2026-06-22 11:41:36,522 [INFO] Progress 8/76  failed=0
+2026-06-22 11:41:36,523 [INFO] START 20260112  (ERA5: 2026-01-11 + 2026-01-12)
+2026-06-22 11:42:11,161 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/fda6ce97b57c3a18d0cadfc6fc54e13a.nc
+2026-06-22 11:42:47,895 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/d8d66a5d3124c1bc2538c3311ad7cbf8.zip
+2026-06-22 11:43:02,001 [INFO]   combining → input.nc
+2026-06-22 11:43:02,517 [INFO] DONE  20260112  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260112/input.nc
+2026-06-22 11:43:02,522 [INFO] Progress 9/76  failed=0
+2026-06-22 11:43:02,523 [INFO] START 20260113  (ERA5: 2026-01-12 + 2026-01-13)
+2026-06-22 11:43:30,596 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/7ec6732c1662e4a8a5333081298dffbe.nc
+2026-06-22 11:44:17,933 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/d6a514b3c766ac569dd48343b8015233.zip
+2026-06-22 11:44:31,110 [INFO]   combining → input.nc
+2026-06-22 11:44:31,661 [INFO] DONE  20260113  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260113/input.nc
+2026-06-22 11:44:31,671 [INFO] Progress 10/76  failed=0
+2026-06-22 11:44:31,673 [INFO] START 20260114  (ERA5: 2026-01-13 + 2026-01-14)
+2026-06-22 11:44:55,713 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/4b478d47865b06a5ebfba50d01f12484.nc
+2026-06-22 11:45:33,855 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/978352f8db0db5a7b5e54303524c083f.zip
+2026-06-22 11:45:47,033 [INFO]   combining → input.nc
+2026-06-22 11:45:47,610 [INFO] DONE  20260114  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260114/input.nc
+2026-06-22 11:45:47,620 [INFO] Progress 11/76  failed=0
+2026-06-22 11:45:47,622 [INFO] START 20260116  (ERA5: 2026-01-15 + 2026-01-16)
+2026-06-22 11:46:23,915 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/23c33662a003d3f3b23ff812f8ae244e.nc
+2026-06-22 11:47:07,139 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/3914c6063371421ecea847e4920cd66.zip
+2026-06-22 11:47:21,080 [INFO]   combining → input.nc
+2026-06-22 11:47:21,675 [INFO] DONE  20260116  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260116/input.nc
+2026-06-22 11:47:21,685 [INFO] Progress 12/76  failed=0
+2026-06-22 11:47:21,687 [INFO] START 20260117  (ERA5: 2026-01-16 + 2026-01-17)
+2026-06-22 11:47:57,214 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/e645c0ca449c5592ec7fe154c35f5072.nc
+2026-06-22 11:48:47,147 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/16b4a9645aedc51762dad7f5751b3a17.zip
+2026-06-22 11:49:04,454 [INFO]   combining → input.nc
+2026-06-22 11:49:04,953 [INFO] DONE  20260117  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260117/input.nc
+2026-06-22 11:49:04,959 [INFO] Progress 13/76  failed=0
+2026-06-22 11:49:04,960 [INFO] START 20260118  (ERA5: 2026-01-17 + 2026-01-18)
+2026-06-22 11:49:39,455 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/8dfa30e53962bc02c92574ec467e75cc.nc
+2026-06-22 11:50:15,299 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/ffe332f515bbcfedd78e95e5bb891138.zip
+2026-06-22 11:50:28,415 [INFO]   combining → input.nc
+2026-06-22 11:50:28,960 [INFO] DONE  20260118  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260118/input.nc
+2026-06-22 11:50:28,967 [INFO] Progress 14/76  failed=0
+2026-06-22 11:50:28,972 [INFO] START 20260119  (ERA5: 2026-01-18 + 2026-01-19)
+2026-06-22 11:51:21,979 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/92d13f7ea1418a27228c67eb9103cb0e.nc
+2026-06-22 11:52:10,770 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/ad2ff065fe9f7602286adf5d6ecc7c82.zip
+2026-06-22 11:52:24,339 [INFO]   combining → input.nc
+2026-06-22 11:52:24,904 [INFO] DONE  20260119  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260119/input.nc
+2026-06-22 11:52:24,914 [INFO] Progress 15/76  failed=0
+2026-06-22 11:52:24,916 [INFO] START 20260120  (ERA5: 2026-01-19 + 2026-01-20)
+2026-06-22 11:53:00,364 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/369f536ee7d4c74a1573aa053655c20e.nc
+2026-06-22 11:53:47,825 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/6278ed1ea54220c3714747da3192fa3e.zip
+2026-06-22 11:54:00,987 [INFO]   combining → input.nc
+2026-06-22 11:54:01,544 [INFO] DONE  20260120  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260120/input.nc
+2026-06-22 11:54:01,554 [INFO] Progress 16/76  failed=0
+2026-06-22 11:54:01,556 [INFO] START 20260121  (ERA5: 2026-01-20 + 2026-01-21)
+2026-06-22 11:54:27,907 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/2b8c84b06a16ebb56088361b7ab6c22a.nc
+2026-06-22 11:54:55,934 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/5f501092eef20259c80855da435241d0.zip
+2026-06-22 11:55:09,343 [INFO]   combining → input.nc
+2026-06-22 11:55:09,842 [INFO] DONE  20260121  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260121/input.nc
+2026-06-22 11:55:09,847 [INFO] Progress 17/76  failed=0
+2026-06-22 11:55:09,849 [INFO] START 20260123  (ERA5: 2026-01-22 + 2026-01-23)
+2026-06-22 11:55:32,713 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/3f534083e37674007b89f0a703e1179e.nc
+2026-06-22 11:56:08,661 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/cad7afe61ce4f41d5abea46e08cd2868.zip
+2026-06-22 11:56:21,958 [INFO]   combining → input.nc
+2026-06-22 11:56:22,503 [INFO] DONE  20260123  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260123/input.nc
+2026-06-22 11:56:22,513 [INFO] Progress 18/76  failed=0
+2026-06-22 11:56:22,516 [INFO] START 20260124  (ERA5: 2026-01-23 + 2026-01-24)
+2026-06-22 11:56:53,532 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/d6910110ca63b5c0df1a432763aa4f32.nc
+2026-06-22 11:57:38,976 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/2957281f2da1d8fc6680f44cbca5a42b.zip
+2026-06-22 11:57:52,564 [INFO]   combining → input.nc
+2026-06-22 11:57:53,136 [INFO] DONE  20260124  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260124/input.nc
+2026-06-22 11:57:53,146 [INFO] Progress 19/76  failed=0
+2026-06-22 11:57:53,149 [INFO] START 20260125  (ERA5: 2026-01-24 + 2026-01-25)
+2026-06-22 11:58:17,742 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/37efa29a8b2034badf545aac261a6962.nc
+2026-06-22 11:58:49,368 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/1fda6d12debf42b84eace8d69112944f.zip
+2026-06-22 11:59:02,444 [INFO]   combining → input.nc
+2026-06-22 11:59:02,991 [INFO] DONE  20260125  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260125/input.nc
+2026-06-22 11:59:03,001 [INFO] Progress 20/76  failed=0
+2026-06-22 11:59:03,003 [INFO] START 20260126  (ERA5: 2026-01-25 + 2026-01-26)
+2026-06-22 11:59:37,966 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/aa373ad326b6f4d13fbedc98b808c319.nc
+2026-06-22 12:00:15,808 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/61ad33f80d58937c2598d919c7444048.zip
+2026-06-22 12:00:29,699 [INFO]   combining → input.nc
+2026-06-22 12:00:30,804 [INFO] DONE  20260126  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260126/input.nc
+2026-06-22 12:00:30,813 [INFO] Progress 21/76  failed=0
+2026-06-22 12:00:30,815 [INFO] START 20260127  (ERA5: 2026-01-26 + 2026-01-27)
+2026-06-22 12:01:06,857 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/aae66292cb9fa6fce37b46b579838f97.nc
+2026-06-22 12:01:54,069 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/b7ed795a81c081215314f57733ec9b86.zip
+2026-06-22 12:02:07,180 [INFO]   combining → input.nc
+2026-06-22 12:02:07,676 [INFO] DONE  20260127  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260127/input.nc
+2026-06-22 12:02:07,683 [INFO] Progress 22/76  failed=0
+2026-06-22 12:02:07,684 [INFO] START 20260128  (ERA5: 2026-01-27 + 2026-01-28)
+2026-06-22 12:02:43,096 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/3a39057ec0f57218952f854af77ff237.nc
+2026-06-22 12:03:20,747 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/e8f68d8107c8aa7d4a8f964bf13089b5.zip
+2026-06-22 12:03:33,802 [INFO]   combining → input.nc
+2026-06-22 12:03:34,313 [INFO] DONE  20260128  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260128/input.nc
+2026-06-22 12:03:34,323 [INFO] Progress 23/76  failed=0
+2026-06-22 12:03:34,325 [INFO] START 20260130  (ERA5: 2026-01-29 + 2026-01-30)
+2026-06-22 12:04:09,288 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/89762050317af7f5cfcb7f504a9b04fb.nc
+2026-06-22 12:04:56,672 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/1b7befe8df5375cdc4cdd7c787567335.zip
+2026-06-22 12:05:09,881 [INFO]   combining → input.nc
+2026-06-22 12:05:10,466 [INFO] DONE  20260130  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260130/input.nc
+2026-06-22 12:05:10,476 [INFO] Progress 24/76  failed=0
+2026-06-22 12:05:10,478 [INFO] START 20260131  (ERA5: 2026-01-30 + 2026-01-31)
+2026-06-22 12:05:38,164 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/41c4ba7885fe4bd5c5905962c47fe7e9.nc
+2026-06-22 12:06:14,123 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/659940dfc32566189137859dc1b5675.zip
+2026-06-22 12:06:27,351 [INFO]   combining → input.nc
+2026-06-22 12:06:27,880 [INFO] DONE  20260131  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260131/input.nc
+2026-06-22 12:06:27,891 [INFO] Progress 25/76  failed=0
+2026-06-22 12:06:27,893 [INFO] START 20260201  (ERA5: 2026-01-31 + 2026-02-01)
+2026-06-22 12:07:02,381 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/e1116bfddbeadc55144d12b7d0dd6c1a.nc
+2026-06-22 12:07:49,810 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/f51e872a334992f1da352b778b06f6c0.zip
+2026-06-22 12:08:03,205 [INFO]   combining → input.nc
+2026-06-22 12:08:03,734 [INFO] DONE  20260201  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260201/input.nc
+2026-06-22 12:08:03,741 [INFO] Progress 26/76  failed=0
+2026-06-22 12:08:03,743 [INFO] START 20260202  (ERA5: 2026-02-01 + 2026-02-02)
+2026-06-22 12:08:38,600 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/b051bf96a79cf12e0b75b00c34b6c338.nc
+2026-06-22 12:09:14,947 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/6f0ce2bf1d739dba6f43716ec5684ac5.zip
+2026-06-22 12:09:28,277 [INFO]   combining → input.nc
+2026-06-22 12:09:28,903 [INFO] DONE  20260202  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260202/input.nc
+2026-06-22 12:09:28,914 [INFO] Progress 27/76  failed=0
+2026-06-22 12:09:28,917 [INFO] START 20260203  (ERA5: 2026-02-02 + 2026-02-03)
+2026-06-22 12:10:04,657 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/5e08cc58bfe3b79d6c3eeb1dcf00f08e.nc
+2026-06-22 12:10:53,072 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/28af4773eec08c807034009191a8c59f.zip
+2026-06-22 12:11:06,227 [INFO]   combining → input.nc
+2026-06-22 12:11:06,812 [INFO] DONE  20260203  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260203/input.nc
+2026-06-22 12:11:06,824 [INFO] Progress 28/76  failed=0
+2026-06-22 12:11:06,826 [INFO] START 20260204  (ERA5: 2026-02-03 + 2026-02-04)
+2026-06-22 12:12:24,610 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/9614829a96cc03c5a8e54820172e0c61.nc
+2026-06-22 12:12:53,353 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/531d89bce8c58ce2c5974ce2c7645a7b.zip
+2026-06-22 12:13:06,747 [INFO]   combining → input.nc
+2026-06-22 12:13:07,212 [INFO] DONE  20260204  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260204/input.nc
+2026-06-22 12:13:07,219 [INFO] Progress 29/76  failed=0
+2026-06-22 12:13:07,220 [INFO] START 20260206  (ERA5: 2026-02-05 + 2026-02-06)
+2026-06-22 12:13:42,773 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/8b416b6b3cf159fc47fab6676f4f5209.nc
+2026-06-22 12:14:18,874 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/fbbcbf6d8914d15a9a9d7b7db33ab3c8.zip
+2026-06-22 12:14:32,019 [INFO]   combining → input.nc
+2026-06-22 12:14:32,572 [INFO] DONE  20260206  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260206/input.nc
+2026-06-22 12:14:32,582 [INFO] Progress 30/76  failed=0
+2026-06-22 12:14:32,584 [INFO] START 20260207  (ERA5: 2026-02-06 + 2026-02-07)
+2026-06-22 12:14:55,596 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/678f80d5a0ce6de5553ae87c3957abf.nc
+2026-06-22 12:15:32,503 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/95192f2949fa0ea6c2f9de5105df2001.zip
+2026-06-22 12:15:45,584 [INFO]   combining → input.nc
+2026-06-22 12:15:46,063 [INFO] DONE  20260207  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260207/input.nc
+2026-06-22 12:15:46,070 [INFO] Progress 31/76  failed=0
+2026-06-22 12:15:46,071 [INFO] START 20260208  (ERA5: 2026-02-07 + 2026-02-08)
+2026-06-22 12:16:22,164 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/6efba1eca22d41b4b395134ca38ecde6.nc
+2026-06-22 12:17:01,727 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/48af15f6109c5b030877303b32f1577e.zip
+2026-06-22 12:17:14,973 [INFO]   combining → input.nc
+2026-06-22 12:17:15,534 [INFO] DONE  20260208  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260208/input.nc
+2026-06-22 12:17:15,544 [INFO] Progress 32/76  failed=0
+2026-06-22 12:17:15,547 [INFO] START 20260209  (ERA5: 2026-02-08 + 2026-02-09)
+2026-06-22 12:17:50,218 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/9342a5d93cbc4ec3761af54bb233c7c2.nc
+2026-06-22 12:18:26,716 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/c89b31668600a63ed98d6ba764d3d578.zip
+2026-06-22 12:18:39,782 [INFO]   combining → input.nc
+2026-06-22 12:18:40,262 [INFO] DONE  20260209  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260209/input.nc
+2026-06-22 12:18:40,268 [INFO] Progress 33/76  failed=0
+2026-06-22 12:18:40,270 [INFO] START 20260210  (ERA5: 2026-02-09 + 2026-02-10)
+2026-06-22 12:19:15,225 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/7cd2c357117a5e9a601017c91253cab1.nc
+2026-06-22 12:19:43,114 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/bb89adcc6e5083f63816c0dc43d95d6.zip
+2026-06-22 12:19:56,186 [INFO]   combining → input.nc
+2026-06-22 12:19:56,732 [INFO] DONE  20260210  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260210/input.nc
+2026-06-22 12:19:56,739 [INFO] Progress 34/76  failed=0
+2026-06-22 12:19:56,740 [INFO] START 20260211  (ERA5: 2026-02-10 + 2026-02-11)
+2026-06-22 12:20:32,102 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/78f9455824c3243e796d6cfbd0870d88.nc
+2026-06-22 12:21:29,905 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/d5d3a6955d2dde839360b40cabf0cc0.zip
+2026-06-22 12:21:43,054 [INFO]   combining → input.nc
+2026-06-22 12:21:43,598 [INFO] DONE  20260211  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260211/input.nc
+2026-06-22 12:21:43,606 [INFO] Progress 35/76  failed=0
+2026-06-22 12:21:43,607 [INFO] START 20260213  (ERA5: 2026-02-12 + 2026-02-13)
+2026-06-22 12:22:18,326 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/a5f6889d4b404be6830101a68e47fde7.nc
+2026-06-22 12:22:54,335 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/74008bc460361b66ed3a1444953c691c.zip
+2026-06-22 12:23:07,318 [INFO]   combining → input.nc
+2026-06-22 12:23:07,820 [INFO] DONE  20260213  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260213/input.nc
+2026-06-22 12:23:07,828 [INFO] Progress 36/76  failed=0
+2026-06-22 12:23:07,830 [INFO] START 20260214  (ERA5: 2026-02-13 + 2026-02-14)
+2026-06-22 12:23:42,618 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/e4fa7df2af5e32dbf955452f2b523dff.nc
+2026-06-22 12:24:20,808 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/6048988598b32a5391ff0afb902400b6.zip
+2026-06-22 12:24:34,074 [INFO]   combining → input.nc
+2026-06-22 12:24:34,597 [INFO] DONE  20260214  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260214/input.nc
+2026-06-22 12:24:34,603 [INFO] Progress 37/76  failed=0
+2026-06-22 12:24:34,604 [INFO] START 20260215  (ERA5: 2026-02-14 + 2026-02-15)
+2026-06-22 12:25:09,132 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/4f8b8aa444866f3602649aa92b1228b1.nc
+2026-06-22 12:25:56,560 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/4af2394282fbb3e1df34f2de479eb79e.zip
+2026-06-22 12:26:10,277 [INFO]   combining → input.nc
+2026-06-22 12:26:11,239 [INFO] DONE  20260215  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260215/input.nc
+2026-06-22 12:26:11,248 [INFO] Progress 38/76  failed=0
+2026-06-22 12:26:11,251 [INFO] START 20260216  (ERA5: 2026-02-15 + 2026-02-16)
+2026-06-22 12:26:45,731 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/e98e285b128a09097326338dd4f81a9.nc
+2026-06-22 12:27:39,280 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/803a0694f54b85f00dfd2eb8777a6bfd.zip
+2026-06-22 12:27:52,725 [INFO]   combining → input.nc
+2026-06-22 12:27:53,307 [INFO] DONE  20260216  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260216/input.nc
+2026-06-22 12:27:53,318 [INFO] Progress 39/76  failed=0
+2026-06-22 12:27:53,320 [INFO] START 20260217  (ERA5: 2026-02-16 + 2026-02-17)
+2026-06-22 12:28:29,057 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/ac1f24386f87a0a6dc13b93868c72a68.nc
+2026-06-22 12:29:20,142 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/97b9aeceb6220b222c8cc4edf391010a.zip
+2026-06-22 12:29:33,482 [INFO]   combining → input.nc
+2026-06-22 12:29:34,053 [INFO] DONE  20260217  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260217/input.nc
+2026-06-22 12:29:34,063 [INFO] Progress 40/76  failed=0
+2026-06-22 12:29:34,065 [INFO] START 20260218  (ERA5: 2026-02-17 + 2026-02-18)
+2026-06-22 12:30:10,401 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/a9e2cf35eb587ed24c56dd0295d9b8fc.nc
+2026-06-22 12:30:59,462 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/b64d459236df400802e16e12b8d2660.zip
+2026-06-22 12:31:12,752 [INFO]   combining → input.nc
+2026-06-22 12:31:13,331 [INFO] DONE  20260218  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260218/input.nc
+2026-06-22 12:31:13,341 [INFO] Progress 41/76  failed=0
+2026-06-22 12:31:13,344 [INFO] START 20260220  (ERA5: 2026-02-19 + 2026-02-20)
+2026-06-22 12:32:06,027 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/29fb546dc6f8085aee5cae9245e5eeac.nc
+2026-06-22 12:32:42,095 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/75850081a1c8ff5144c91c5b6cbcf1be.zip
+2026-06-22 12:32:55,133 [INFO]   combining → input.nc
+2026-06-22 12:32:55,665 [INFO] DONE  20260220  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260220/input.nc
+2026-06-22 12:32:55,676 [INFO] Progress 42/76  failed=0
+2026-06-22 12:32:55,678 [INFO] START 20260221  (ERA5: 2026-02-20 + 2026-02-21)
+2026-06-22 12:33:48,609 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/9db5ea28ac44d88969300d32e970084f.nc
+2026-06-22 12:34:36,537 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/e07472f2bfa1339bb37065134f176b6c.zip
+2026-06-22 12:34:50,068 [INFO]   combining → input.nc
+2026-06-22 12:34:50,563 [INFO] DONE  20260221  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260221/input.nc
+2026-06-22 12:34:50,569 [INFO] Progress 43/76  failed=0
+2026-06-22 12:34:50,570 [INFO] START 20260222  (ERA5: 2026-02-21 + 2026-02-22)
+2026-06-22 12:35:42,199 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/8a423a056a51da7a159d1308d99bcf26.nc
+2026-06-22 12:36:30,222 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/1e9130e9dacd47b0c0432525cf77820a.zip
+2026-06-22 12:36:43,205 [INFO]   combining → input.nc
+2026-06-22 12:36:43,670 [INFO] DONE  20260222  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260222/input.nc
+2026-06-22 12:36:43,677 [INFO] Progress 44/76  failed=0
+2026-06-22 12:36:43,678 [INFO] START 20260223  (ERA5: 2026-02-22 + 2026-02-23)
+2026-06-22 12:37:35,379 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/bb84d25473690afaec4280f504ee3b33.nc
+2026-06-22 12:38:11,023 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/5f2bdb5eb96f7e502039795d7ffb47f7.zip
+2026-06-22 12:38:24,497 [INFO]   combining → input.nc
+2026-06-22 12:38:25,215 [INFO] DONE  20260223  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260223/input.nc
+2026-06-22 12:38:25,231 [INFO] Progress 45/76  failed=0
+2026-06-22 12:38:25,235 [INFO] START 20260224  (ERA5: 2026-02-23 + 2026-02-24)
+2026-06-22 12:38:59,832 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/838615cf576decaffafe91329abc7581.nc
+2026-06-22 12:39:46,936 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/f8cf66ba24508ecb01ad8aacfd6de773.zip
+2026-06-22 12:40:00,892 [INFO]   combining → input.nc
+2026-06-22 12:40:01,522 [INFO] DONE  20260224  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260224/input.nc
+2026-06-22 12:40:01,540 [INFO] Progress 46/76  failed=0
+2026-06-22 12:40:01,543 [INFO] START 20260225  (ERA5: 2026-02-24 + 2026-02-25)
+2026-06-22 12:40:36,200 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/d87e6f65787e7cfb3704d3ec1f53b850.nc
+2026-06-22 12:41:12,088 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/99c22da077b4aee5771048c37cc52d0b.zip
+2026-06-22 12:41:25,637 [INFO]   combining → input.nc
+2026-06-22 12:41:26,314 [INFO] DONE  20260225  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260225/input.nc
+2026-06-22 12:41:26,329 [INFO] Progress 47/76  failed=0
+2026-06-22 12:41:26,333 [INFO] START 20260227  (ERA5: 2026-02-26 + 2026-02-27)
+2026-06-22 12:42:18,613 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/c00ebf0c64d036f5ef99448fab8b43f3.nc
+2026-06-22 12:42:56,108 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/bfca2c95de48472d403e7885ef4980ff.zip
+2026-06-22 12:43:09,387 [INFO]   combining → input.nc
+2026-06-22 12:43:10,065 [INFO] DONE  20260227  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260227/input.nc
+2026-06-22 12:43:10,082 [INFO] Progress 48/76  failed=0
+2026-06-22 12:43:10,086 [INFO] START 20260228  (ERA5: 2026-02-27 + 2026-02-28)
+2026-06-22 12:43:46,744 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/1886460cc3882744294a468bdedf0f37.nc
+2026-06-22 12:44:22,503 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/8fb0a918643026c1352ba70947650129.zip
+2026-06-22 12:44:35,881 [INFO]   combining → input.nc
+2026-06-22 12:44:36,512 [INFO] DONE  20260228  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260228/input.nc
+2026-06-22 12:44:36,528 [INFO] Progress 49/76  failed=0
+2026-06-22 12:44:36,532 [INFO] START 20260301  (ERA5: 2026-02-28 + 2026-03-01)
+2026-06-22 12:45:10,995 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/c3a8c4ad78f4c48802f439f8c999bb72.nc
+2026-06-22 12:45:47,604 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/61c44b43eced58d450c2d5db2dd155b8.zip
+2026-06-22 12:46:00,778 [INFO]   combining → input.nc
+2026-06-22 12:46:01,374 [INFO] DONE  20260301  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260301/input.nc
+2026-06-22 12:46:01,383 [INFO] Progress 50/76  failed=0
+2026-06-22 12:46:01,386 [INFO] START 20260302  (ERA5: 2026-03-01 + 2026-03-02)
+2026-06-22 12:46:37,878 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/b1fbe62282772ae581a98931ae74353f.nc
+2026-06-22 12:47:13,580 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/f9789d9c5f092fd0d99c45b8719da613.zip
+2026-06-22 12:47:26,799 [INFO]   combining → input.nc
+2026-06-22 12:47:27,414 [INFO] DONE  20260302  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260302/input.nc
+2026-06-22 12:47:27,427 [INFO] Progress 51/76  failed=0
+2026-06-22 12:47:27,430 [INFO] START 20260303  (ERA5: 2026-03-02 + 2026-03-03)
+2026-06-22 12:48:04,209 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/2674ae08e930a94148501b7295e0c8e5.nc
+2026-06-22 12:48:41,080 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/e1b97614d308e712cd82bbf159224e21.zip
+2026-06-22 12:48:54,326 [INFO]   combining → input.nc
+2026-06-22 12:48:54,889 [INFO] DONE  20260303  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260303/input.nc
+2026-06-22 12:48:54,898 [INFO] Progress 52/76  failed=0
+2026-06-22 12:48:54,900 [INFO] START 20260304  (ERA5: 2026-03-03 + 2026-03-04)
+2026-06-22 12:49:46,689 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/170d09cdd267338c10fd8971256ce9c4.nc
+2026-06-22 12:50:35,311 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/f288deb395c47714b4d02c5156237819.zip
+2026-06-22 12:50:48,812 [INFO]   combining → input.nc
+2026-06-22 12:50:49,306 [INFO] DONE  20260304  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260304/input.nc
+2026-06-22 12:50:49,311 [INFO] Progress 53/76  failed=0
+2026-06-22 12:50:49,313 [INFO] START 20260306  (ERA5: 2026-03-05 + 2026-03-06)
+2026-06-22 12:51:24,022 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/8b0ff24ed8abd531447bb48ee897da7b.nc
+2026-06-22 12:52:02,901 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/94e916e32d48610d94d10d8f856fd2b8.zip
+2026-06-22 12:52:16,147 [INFO]   combining → input.nc
+2026-06-22 12:52:16,738 [INFO] DONE  20260306  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260306/input.nc
+2026-06-22 12:52:16,746 [INFO] Progress 54/76  failed=0
+2026-06-22 12:52:16,748 [INFO] START 20260307  (ERA5: 2026-03-06 + 2026-03-07)
+2026-06-22 12:52:54,593 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/76b891b33f8e281631ee74fcfc87c62a.nc
+2026-06-22 12:55:05,522 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/4a2871d94c9f0e49fc28e7f966664e5b.zip
+2026-06-22 12:55:18,680 [INFO]   combining → input.nc
+2026-06-22 12:55:19,233 [INFO] DONE  20260307  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260307/input.nc
+2026-06-22 12:55:19,243 [INFO] Progress 55/76  failed=0
+2026-06-22 12:55:19,245 [INFO] START 20260308  (ERA5: 2026-03-07 + 2026-03-08)
+2026-06-22 12:56:42,452 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/db8f368b18c6fabe185d9dc687e016ec.nc
+2026-06-22 12:57:20,730 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/77593c122ad424bbcb3c09f0b836471a.zip
+2026-06-22 12:57:34,406 [INFO]   combining → input.nc
+2026-06-22 12:57:35,416 [INFO] DONE  20260308  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260308/input.nc
+2026-06-22 12:57:35,423 [INFO] Progress 56/76  failed=0
+2026-06-22 12:57:35,426 [INFO] START 20260309  (ERA5: 2026-03-08 + 2026-03-09)
+2026-06-22 12:58:10,322 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/9d79d7194fb8603c29bbdec84865d66a.nc
+2026-06-22 12:58:45,982 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/ba2453324b75b0f88e130bbbc2f373e8.zip
+2026-06-22 12:58:59,304 [INFO]   combining → input.nc
+2026-06-22 12:58:59,878 [INFO] DONE  20260309  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260309/input.nc
+2026-06-22 12:58:59,889 [INFO] Progress 57/76  failed=0
+2026-06-22 12:58:59,891 [INFO] START 20260310  (ERA5: 2026-03-09 + 2026-03-10)
+2026-06-22 12:59:34,330 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/878ead74cc6ec6a2a26d9493412343f3.nc
+2026-06-22 13:01:04,624 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/ad931546747c7c83a4d12f88ba18ee9.zip
+2026-06-22 13:01:17,951 [INFO]   combining → input.nc
+2026-06-22 13:01:18,534 [INFO] DONE  20260310  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260310/input.nc
+2026-06-22 13:01:18,543 [INFO] Progress 58/76  failed=0
+2026-06-22 13:01:18,544 [INFO] START 20260311  (ERA5: 2026-03-10 + 2026-03-11)
+2026-06-22 13:01:57,842 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/1e65c674c9b4fcdcbd0dbbdea6fc3567.nc
+2026-06-22 13:02:38,831 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/f3f1f566d05d82c56f086c8bb08dd451.zip
+2026-06-22 13:02:52,038 [INFO]   combining → input.nc
+2026-06-22 13:02:52,630 [INFO] DONE  20260311  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260311/input.nc
+2026-06-22 13:02:52,639 [INFO] Progress 59/76  failed=0
+2026-06-22 13:02:52,640 [INFO] START 20260313  (ERA5: 2026-03-12 + 2026-03-13)
+2026-06-22 13:03:27,281 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/4c5ab88685905f23e7f254705754f6c7.nc
+2026-06-22 13:04:02,961 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/65169e2e833ed5f6e5bf0cc0d3382d0f.zip
+2026-06-22 13:04:15,962 [INFO]   combining → input.nc
+2026-06-22 13:04:16,498 [INFO] DONE  20260313  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260313/input.nc
+2026-06-22 13:04:16,505 [INFO] Progress 60/76  failed=0
+2026-06-22 13:04:16,508 [INFO] START 20260314  (ERA5: 2026-03-13 + 2026-03-14)
+2026-06-22 13:04:50,911 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/17ed9ed535a616dcecc469397316264b.nc
+2026-06-22 13:05:56,490 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/28d808f66c05f76baa93039880a7d6f0.zip
+2026-06-22 13:06:09,824 [INFO]   combining → input.nc
+2026-06-22 13:06:10,392 [INFO] DONE  20260314  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260314/input.nc
+2026-06-22 13:06:10,403 [INFO] Progress 61/76  failed=0
+2026-06-22 13:06:10,405 [INFO] START 20260315  (ERA5: 2026-03-14 + 2026-03-15)
+2026-06-22 13:07:02,960 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/d05159658a20554662022b0af2930935.nc
+2026-06-22 13:07:38,649 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/408024a4958daa550a5e838363145409.zip
+2026-06-22 13:07:51,963 [INFO]   combining → input.nc
+2026-06-22 13:07:52,499 [INFO] DONE  20260315  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260315/input.nc
+2026-06-22 13:07:52,507 [INFO] Progress 62/76  failed=0
+2026-06-22 13:07:52,509 [INFO] START 20260316  (ERA5: 2026-03-15 + 2026-03-16)
+2026-06-22 13:08:28,288 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/b496a7a3b1c6e22eb984eec5bc38cedf.nc
+2026-06-22 13:09:16,288 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/f9046252b65d958f7c0582b7e6ea3aab.zip
+2026-06-22 13:09:29,517 [INFO]   combining → input.nc
+2026-06-22 13:09:30,102 [INFO] DONE  20260316  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260316/input.nc
+2026-06-22 13:09:30,111 [INFO] Progress 63/76  failed=0
+2026-06-22 13:09:30,112 [INFO] START 20260317  (ERA5: 2026-03-16 + 2026-03-17)
+2026-06-22 13:10:25,249 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/617c28e8d939b9b5117e0ce597c096fe.nc
+2026-06-22 13:13:39,191 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-06-22/528ac5529d4809d2b995f61a2ef8f084.zip
+2026-06-22 13:13:52,433 [INFO]   combining → input.nc
+2026-06-22 13:13:52,986 [INFO] DONE  20260317  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260317/input.nc
+2026-06-22 13:13:52,997 [INFO] Progress 64/76  failed=0
+2026-06-22 13:13:52,999 [INFO] START 20260318  (ERA5: 2026-03-17 + 2026-03-18)
+2026-06-22 13:14:30,176 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/3814224d8aa62f3def662234d3a3b63c.nc
+2026-06-22 13:16:45,684 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/5d183c1402ed1be3dc80d8b45bae406c.zip
+2026-06-22 13:16:58,685 [INFO]   combining → input.nc
+2026-06-22 13:16:59,159 [INFO] DONE  20260318  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260318/input.nc
+2026-06-22 13:16:59,165 [INFO] Progress 65/76  failed=0
+2026-06-22 13:16:59,166 [INFO] START 20260320  (ERA5: 2026-03-19 + 2026-03-20)
+2026-06-22 13:17:35,695 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/c87a39cf48bb9f1a5ed5249e7e0f63ee.nc
+2026-06-22 13:18:23,413 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/69e3865be6a0fc2964fe130fe51d3f1d.zip
+2026-06-22 13:18:36,973 [INFO]   combining → input.nc
+2026-06-22 13:18:37,539 [INFO] DONE  20260320  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260320/input.nc
+2026-06-22 13:18:37,550 [INFO] Progress 66/76  failed=0
+2026-06-22 13:18:37,552 [INFO] START 20260321  (ERA5: 2026-03-20 + 2026-03-21)
+2026-06-22 13:19:18,028 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/702312818c7b38997574a11a3ffed7de.nc
+2026-06-22 13:20:07,965 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/fb0c0d2a372ff982bde1ee23eb1bbc26.zip
+2026-06-22 13:20:21,060 [INFO]   combining → input.nc
+2026-06-22 13:20:21,546 [INFO] DONE  20260321  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260321/input.nc
+2026-06-22 13:20:21,554 [INFO] Progress 67/76  failed=0
+2026-06-22 13:20:21,557 [INFO] START 20260322  (ERA5: 2026-03-21 + 2026-03-22)
+2026-06-22 13:20:56,619 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-06-22/ac8a487d8c360e0aa288ccaba524edca.nc

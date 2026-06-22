@@ -1,0 +1,79 @@
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3/loaders.py:407: UserWarning: Following pandas, xarray only supports decoding to timedelta64 values with a resolution of 's', 'ms', 'us', or 'ns'. Encoded values for variable 'step' have a resolution of 'D'. Attempting to decode to a resolution of 's'. Note, depending on the encoded values, this may lead to an OverflowError. Additionally, data will not be identically round tripped; xarray will choose an encoding dtype of 'timedelta64[s]' when re-encoding.
+  ds = xr.open_zarr(CFG.spire_zarr, group='mean_stddev').sel(reference_time=init)
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+slurmstepd: error: *** JOB 55273 ON gpu2 CANCELLED AT 2026-06-17T13:45:03 ***

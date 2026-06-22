@@ -1,0 +1,74 @@
+/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/pyproj/network.py:59: UserWarning: pyproj unable to set PROJ database path.
+  _set_context_ca_bundle_path(ca_bundle_path)
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:333: RuntimeWarning: Mean of empty slice
+  obs_mean = np.nanmean(obs_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:352: RuntimeWarning: Mean of empty slice
+  fcst_mean = np.nanmean(f_arr, axis=0) * land_mask
+/home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/make_spatial_maps.py:353: RuntimeWarning: Mean of empty slice
+  bias = np.nanmean(f_arr - o_sub, axis=0) * land_mask

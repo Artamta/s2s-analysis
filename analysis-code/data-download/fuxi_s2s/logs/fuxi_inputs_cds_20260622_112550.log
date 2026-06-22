@@ -1,0 +1,19 @@
+2026-06-22 11:25:50,528 [INFO] =================================================================
+2026-06-22 11:25:50,528 [INFO] FuXi-S2S ERA5 Input Download via CDS (JFM 2026)
+2026-06-22 11:25:50,528 [INFO]   Output dir : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs
+2026-06-22 11:25:50,528 [INFO]   Dates      : 1  (2026-01-02 → 2026-01-02)
+2026-06-22 11:25:50,528 [INFO]   Done       : 0
+2026-06-22 11:25:50,528 [INFO]   Pending    : 1
+2026-06-22 11:25:50,528 [INFO]   Grid       : Global 1.5°  (121×240, matches FuXi input)
+2026-06-22 11:25:50,529 [INFO]   PL vars    : ['geopotential', 'temperature', 'u_component_of_wind', 'v_component_of_wind', 'specific_humidity']
+2026-06-22 11:25:50,529 [INFO]   SFC vars   : 11 variables
+2026-06-22 11:25:50,529 [INFO] =================================================================
+2026-06-22 11:25:51,553 [INFO] START 20260102  (ERA5: 2026-01-01 + 2026-01-02)
+2026-06-22 11:26:16,299 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/fb6d27c8d94714660cdfbacf91282e1a.nc
+2026-06-22 11:26:42,930 [INFO] Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-06-22/b607cedb1dd719578a9a200a5cb4a9.zip
+2026-06-22 11:26:48,414 [INFO]   combining → input.nc
+2026-06-22 11:26:50,261 [INFO] DONE  20260102  17 MB  → /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/20260102/input.nc
+2026-06-22 11:26:50,280 [INFO] Progress 1/1  failed=0
+2026-06-22 11:26:50,280 [INFO] =================================================================
+2026-06-22 11:26:50,281 [INFO] Done. Success: 1  Failed: 0
+2026-06-22 11:26:50,281 [INFO] =================================================================

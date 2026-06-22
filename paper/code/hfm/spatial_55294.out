@@ -1,0 +1,53 @@
+host: gpu1   start: Wed 17 Jun 2026 02:47:44 PM IST
+Building grid context ...
+Loading data in parallel using 32 workers over 35 inits...
+  [1/35] loaded data for 2019-06-02 (elapsed=99.2s)
+  [2/35] loaded data for 2019-06-06 (elapsed=100.0s)
+  [3/35] loaded data for 2019-06-09 (elapsed=103.2s)
+  [4/35] loaded data for 2019-06-13 (elapsed=103.2s)
+  [5/35] loaded data for 2019-06-16 (elapsed=103.2s)
+  [6/35] loaded data for 2019-06-20 (elapsed=103.2s)
+  [7/35] loaded data for 2019-06-23 (elapsed=103.2s)
+  [8/35] loaded data for 2019-06-27 (elapsed=103.2s)
+  [9/35] loaded data for 2019-06-30 (elapsed=103.2s)
+  [10/35] loaded data for 2019-07-04 (elapsed=103.2s)
+  [11/35] loaded data for 2019-07-07 (elapsed=103.2s)
+  [12/35] loaded data for 2019-07-11 (elapsed=103.2s)
+  [13/35] loaded data for 2019-07-14 (elapsed=103.2s)
+  [14/35] loaded data for 2019-07-18 (elapsed=110.7s)
+  [15/35] loaded data for 2019-07-21 (elapsed=110.7s)
+  [16/35] loaded data for 2019-07-25 (elapsed=110.7s)
+  [17/35] loaded data for 2019-07-28 (elapsed=110.7s)
+  [18/35] loaded data for 2019-08-01 (elapsed=110.7s)
+  [19/35] loaded data for 2019-08-04 (elapsed=110.8s)
+  [20/35] loaded data for 2019-08-08 (elapsed=189.1s)
+  [21/35] loaded data for 2019-08-11 (elapsed=189.8s)
+  [22/35] loaded data for 2019-08-15 (elapsed=189.8s)
+  [23/35] loaded data for 2019-08-18 (elapsed=190.2s)
+  [24/35] loaded data for 2019-08-22 (elapsed=190.2s)
+  [25/35] loaded data for 2019-08-25 (elapsed=190.2s)
+  [26/35] loaded data for 2019-08-29 (elapsed=190.2s)
+  [27/35] loaded data for 2019-09-01 (elapsed=190.2s)
+  [28/35] loaded data for 2019-09-05 (elapsed=190.2s)
+  [29/35] loaded data for 2019-09-08 (elapsed=190.2s)
+  [30/35] loaded data for 2019-09-12 (elapsed=190.2s)
+  [31/35] loaded data for 2019-09-15 (elapsed=190.2s)
+  [32/35] loaded data for 2019-09-19 (elapsed=190.2s)
+  [33/35] loaded data for 2019-09-22 (elapsed=280.1s)
+  [34/35] loaded data for 2019-09-26 (elapsed=280.1s)
+  [35/35] loaded data for 2019-09-29 (elapsed=280.8s)
+All data loaded in 281.0s! Aggregating and plotting...
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_TP_W1.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_TP_W2.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_TP_W3.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_TP_W4.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_TP_W5.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_TP_W6.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_Z500_W1.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_Z500_W2.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_Z500_W3.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_Z500_W4.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_Z500_W5.png
+  WROTE /home/raj.ayush/s2s/s2s_anlysis/paper/code/hfm/plots_scr/plots/spatial_Z500_W6.png
+ALL SPATIAL DONE
+end: Wed 17 Jun 2026 02:52:51 PM IST

@@ -1,0 +1,233 @@
+host: gpu2   start: Wed 17 Jun 2026 01:40:33 PM IST
+
+Unified S2S verification V3 (dual clim basis) — season=JFM2026
+  models=['SPIRE', 'FuXi', 'ECMWF'] (+MME,Persistence)  vars=['TP', 'Z500']
+  clim_basis: era5 (all models) + model_own (FuXi/ECMWF)
+  inits=13  workers=13  out_dir=/home/raj.ayush/s2s/s2s_anlysis/paper/code/presentationv3
+
+[2026-03-19 pid483346 +    4s] START vars=['TP', 'Z500']  grid=22x24
+[2026-03-19 pid483346 +    4s] loading SPIRE (mean_stddev)...
+[2026-03-12 pid483344 +    4s] START vars=['TP', 'Z500']  grid=22x24
+[2026-03-12 pid483344 +    4s] loading SPIRE (mean_stddev)...
+[2026-03-19 pid483346 +    4s]   SPIRE: ok TP,Z500,T2M
+[2026-03-19 pid483346 +    4s] loading FuXi members...
+[2026-03-12 pid483344 +    4s]   SPIRE: ok TP,Z500,T2M
+[2026-03-12 pid483344 +    4s] loading FuXi members...
+[2026-02-12 pid483340 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-02-12 pid483340 +    5s] loading SPIRE (mean_stddev)...
+[2026-02-19 pid483343 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-02-19 pid483343 +    5s] loading SPIRE (mean_stddev)...
+[2026-01-22 pid483339 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-01-22 pid483339 +    5s] loading SPIRE (mean_stddev)...
+[2026-01-01 pid483335 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-01-01 pid483335 +    5s] loading SPIRE (mean_stddev)...
+[2026-02-26 pid483342 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-02-26 pid483342 +    5s] loading SPIRE (mean_stddev)...
+[2026-03-26 pid483347 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-03-26 pid483347 +    5s] loading SPIRE (mean_stddev)...
+[2026-03-05 pid483345 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-03-05 pid483345 +    5s] loading SPIRE (mean_stddev)...
+[2026-01-08 pid483336 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-01-08 pid483336 +    5s] loading SPIRE (mean_stddev)...
+[2026-01-29 pid483338 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-01-29 pid483338 +    5s] loading SPIRE (mean_stddev)...
+[2026-02-05 pid483341 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-02-05 pid483341 +    5s] loading SPIRE (mean_stddev)...
+[2026-01-15 pid483337 +    5s] START vars=['TP', 'Z500']  grid=22x24
+[2026-01-15 pid483337 +    5s] loading SPIRE (mean_stddev)...
+[2026-02-12 pid483340 +    5s]   SPIRE: ok TP,Z500,T2M
+[2026-02-12 pid483340 +    5s] loading FuXi members...
+[2026-01-22 pid483339 +    5s]   SPIRE: ok TP,Z500,T2M
+[2026-01-22 pid483339 +    5s] loading FuXi members...
+[2026-01-15 pid483337 +    5s]   SPIRE: ok TP,Z500,T2M
+[2026-01-15 pid483337 +    5s] loading FuXi members...
+[2026-03-05 pid483345 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-03-05 pid483345 +    6s] loading FuXi members...
+[2026-02-19 pid483343 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-02-19 pid483343 +    6s] loading FuXi members...
+[2026-01-01 pid483335 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-01-01 pid483335 +    6s] loading FuXi members...
+[2026-01-08 pid483336 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-01-08 pid483336 +    6s] loading FuXi members...
+[2026-02-26 pid483342 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-02-26 pid483342 +    6s] loading FuXi members...
+[2026-03-26 pid483347 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-03-26 pid483347 +    6s] loading FuXi members...
+[2026-02-05 pid483341 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-02-05 pid483341 +    6s] loading FuXi members...
+[2026-01-29 pid483338 +    6s]   SPIRE: ok TP,Z500,T2M
+[2026-01-29 pid483338 +    6s] loading FuXi members...
+[2026-03-12 pid483344 +   22s]   FuXi: TP=42d, Z500=42d
+[2026-03-12 pid483344 +   22s] loading ECMWF...
+[2026-03-19 pid483346 +   22s]   FuXi: TP=42d, Z500=42d
+[2026-03-19 pid483346 +   22s] loading ECMWF...
+[2026-02-12 pid483340 +   22s]   FuXi: TP=42d, Z500=42d
+[2026-02-12 pid483340 +   22s] loading ECMWF...
+[2026-01-22 pid483339 +   23s]   FuXi: TP=42d, Z500=42d
+[2026-01-22 pid483339 +   23s] loading ECMWF...
+[2026-03-05 pid483345 +   23s]   FuXi: TP=42d, Z500=42d
+[2026-03-05 pid483345 +   23s] loading ECMWF...
+[2026-01-15 pid483337 +   23s]   FuXi: TP=42d, Z500=42d
+[2026-01-15 pid483337 +   23s] loading ECMWF...
+[2026-01-08 pid483336 +   23s]   FuXi: TP=42d, Z500=42d
+[2026-01-08 pid483336 +   23s] loading ECMWF...
+[2026-02-19 pid483343 +   23s]   FuXi: TP=42d, Z500=42d
+[2026-02-19 pid483343 +   23s] loading ECMWF...
+[2026-02-26 pid483342 +   23s]   FuXi: TP=42d, Z500=42d
+[2026-02-26 pid483342 +   23s] loading ECMWF...
+[2026-01-01 pid483335 +   27s]   FuXi: TP=42d, Z500=42d
+[2026-01-01 pid483335 +   27s] loading ECMWF...
+[2026-02-05 pid483341 +   27s]   FuXi: TP=42d, Z500=42d
+[2026-02-05 pid483341 +   27s] loading ECMWF...
+[2026-03-26 pid483347 +   27s]   FuXi: TP=42d, Z500=42d
+[2026-03-26 pid483347 +   27s] loading ECMWF...
+[2026-01-29 pid483338 +   27s]   FuXi: TP=42d, Z500=42d
+[2026-01-29 pid483338 +   27s] loading ECMWF...
+[2026-03-12 pid483344 +   52s]   ECMWF: TP=ok, Z500=ok
+[2026-03-19 pid483346 +   52s]   ECMWF: TP=ok, Z500=ok
+[2026-02-12 pid483340 +   53s]   ECMWF: TP=ok, Z500=ok
+[2026-01-22 pid483339 +   53s]   ECMWF: TP=ok, Z500=ok
+[2026-01-08 pid483336 +   53s]   ECMWF: TP=ok, Z500=ok
+[2026-01-15 pid483337 +   54s]   ECMWF: TP=ok, Z500=ok
+[2026-03-05 pid483345 +   54s]   ECMWF: TP=ok, Z500=ok
+[2026-02-19 pid483343 +   54s]   ECMWF: TP=ok, Z500=ok
+[2026-02-26 pid483342 +   54s]   ECMWF: TP=ok, Z500=ok
+[2026-03-12 pid483344 +   59s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-03-19 pid483346 +   59s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-03-19 pid483346 +   59s]   FuXi clima: TP=ok, Z500=ok
+[2026-03-19 pid483346 +   59s]   ECMWF clima: TP=ok, Z500=ok
+[2026-03-19 pid483346 +   59s] data loaded -> scoring weekly + daily ...
+[2026-03-12 pid483344 +   59s]   FuXi clima: TP=ok, Z500=ok
+[2026-03-12 pid483344 +   59s]   ECMWF clima: TP=ok, Z500=ok
+[2026-03-12 pid483344 +   59s] data loaded -> scoring weekly + daily ...
+[2026-02-12 pid483340 +   59s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-02-12 pid483340 +   59s]   FuXi clima: TP=ok, Z500=ok
+[2026-02-12 pid483340 +   59s]   ECMWF clima: TP=ok, Z500=ok
+[2026-02-12 pid483340 +   59s] data loaded -> scoring weekly + daily ...
+[2026-01-22 pid483339 +   60s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-01-22 pid483339 +   60s]   FuXi clima: TP=ok, Z500=ok
+[2026-01-22 pid483339 +   60s]   ECMWF clima: TP=ok, Z500=ok
+[2026-01-22 pid483339 +   60s] data loaded -> scoring weekly + daily ...
+[2026-01-08 pid483336 +   60s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-01-15 pid483337 +   60s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-03-05 pid483345 +   60s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-01-08 pid483336 +   60s]   FuXi clima: TP=ok, Z500=ok
+[2026-01-08 pid483336 +   60s]   ECMWF clima: TP=ok, Z500=ok
+[2026-01-08 pid483336 +   60s] data loaded -> scoring weekly + daily ...
+[2026-01-15 pid483337 +   60s]   FuXi clima: TP=ok, Z500=ok
+[2026-01-15 pid483337 +   60s]   ECMWF clima: TP=ok, Z500=ok
+[2026-01-15 pid483337 +   60s] data loaded -> scoring weekly + daily ...
+[2026-02-19 pid483343 +   60s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-03-05 pid483345 +   60s]   FuXi clima: TP=ok, Z500=ok
+[2026-03-05 pid483345 +   60s]   ECMWF clima: TP=ok, Z500=ok
+[2026-03-05 pid483345 +   60s] data loaded -> scoring weekly + daily ...
+[2026-02-19 pid483343 +   60s]   FuXi clima: TP=ok, Z500=ok
+[2026-02-19 pid483343 +   60s]   ECMWF clima: TP=ok, Z500=ok
+[2026-02-19 pid483343 +   60s] data loaded -> scoring weekly + daily ...
+[2026-02-26 pid483342 +   61s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-02-26 pid483342 +   61s]   FuXi clima: TP=ok, Z500=ok
+[2026-02-26 pid483342 +   61s]   ECMWF clima: TP=ok, Z500=ok
+[2026-02-26 pid483342 +   61s] data loaded -> scoring weekly + daily ...
+[2026-03-12 pid483344 +   82s]   weekly Week 1 done (80 det rows so far)
+[2026-02-12 pid483340 +   82s]   weekly Week 1 done (80 det rows so far)
+[2026-03-19 pid483346 +   82s]   weekly Week 1 done (80 det rows so far)
+[2026-01-22 pid483339 +   82s]   weekly Week 1 done (80 det rows so far)
+[2026-03-05 pid483345 +   83s]   weekly Week 1 done (80 det rows so far)
+[2026-01-15 pid483337 +   83s]   weekly Week 1 done (80 det rows so far)
+[2026-02-19 pid483343 +   83s]   weekly Week 1 done (80 det rows so far)
+[2026-01-08 pid483336 +   83s]   weekly Week 1 done (80 det rows so far)
+[2026-02-26 pid483342 +   84s]   weekly Week 1 done (80 det rows so far)
+[2026-01-01 pid483335 +   94s]   ECMWF: TP=ok, Z500=ok
+[2026-03-26 pid483347 +   95s]   ECMWF: TP=ok, Z500=ok
+[2026-01-29 pid483338 +   95s]   ECMWF: TP=ok, Z500=ok
+[2026-02-05 pid483341 +   95s]   ECMWF: TP=ok, Z500=ok
+[2026-03-12 pid483344 +  104s]   weekly Week 2 done (160 det rows so far)
+[2026-03-19 pid483346 +  105s]   weekly Week 2 done (160 det rows so far)
+[2026-02-12 pid483340 +  105s]   weekly Week 2 done (160 det rows so far)
+[2026-01-22 pid483339 +  105s]   weekly Week 2 done (160 det rows so far)
+[2026-01-01 pid483335 +  105s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-01-01 pid483335 +  106s]   FuXi clima: TP=ok, Z500=ok
+[2026-01-01 pid483335 +  106s]   ECMWF clima: TP=ok, Z500=ok
+[2026-01-01 pid483335 +  106s] data loaded -> scoring weekly + daily ...
+[2026-03-05 pid483345 +  106s]   weekly Week 2 done (160 det rows so far)
+[2026-01-15 pid483337 +  106s]   weekly Week 2 done (160 det rows so far)
+[2026-02-19 pid483343 +  106s]   weekly Week 2 done (160 det rows so far)
+[2026-03-26 pid483347 +  106s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-01-08 pid483336 +  106s]   weekly Week 2 done (160 det rows so far)
+[2026-01-29 pid483338 +  106s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-03-26 pid483347 +  106s]   FuXi clima: TP=ok, Z500=ok
+[2026-03-26 pid483347 +  106s]   ECMWF clima: TP=ok, Z500=ok
+[2026-03-26 pid483347 +  106s] data loaded -> scoring weekly + daily ...
+[2026-02-05 pid483341 +  106s] loading model-own climatologies (FuXi, ECMWF)...
+[2026-01-29 pid483338 +  107s]   FuXi clima: TP=ok, Z500=ok
+[2026-01-29 pid483338 +  107s]   ECMWF clima: TP=ok, Z500=ok
+[2026-01-29 pid483338 +  107s] data loaded -> scoring weekly + daily ...
+[2026-02-05 pid483341 +  107s]   FuXi clima: TP=ok, Z500=ok
+[2026-02-05 pid483341 +  107s]   ECMWF clima: TP=ok, Z500=ok
+[2026-02-05 pid483341 +  107s] data loaded -> scoring weekly + daily ...
+[2026-02-26 pid483342 +  107s]   weekly Week 2 done (160 det rows so far)
+[2026-03-12 pid483344 +  128s]   weekly Week 3 done (240 det rows so far)
+[2026-03-19 pid483346 +  128s]   weekly Week 3 done (240 det rows so far)
+[2026-02-12 pid483340 +  128s]   weekly Week 3 done (240 det rows so far)
+[2026-01-22 pid483339 +  128s]   weekly Week 3 done (240 det rows so far)
+[2026-01-15 pid483337 +  129s]   weekly Week 3 done (240 det rows so far)
+[2026-03-05 pid483345 +  130s]   weekly Week 3 done (240 det rows so far)
+[2026-02-19 pid483343 +  130s]   weekly Week 3 done (240 det rows so far)
+[2026-01-08 pid483336 +  130s]   weekly Week 3 done (240 det rows so far)
+[2026-02-26 pid483342 +  132s]   weekly Week 3 done (240 det rows so far)
+[2026-01-01 pid483335 +  135s]   weekly Week 1 done (80 det rows so far)
+[2026-02-05 pid483341 +  136s]   weekly Week 1 done (80 det rows so far)
+[2026-03-26 pid483347 +  137s]   weekly Week 1 done (80 det rows so far)
+[2026-01-29 pid483338 +  137s]   weekly Week 1 done (80 det rows so far)
+[2026-02-12 pid483340 +  152s]   weekly Week 4 done (320 det rows so far)
+[2026-03-19 pid483346 +  152s]   weekly Week 4 done (320 det rows so far)
+[2026-03-12 pid483344 +  152s]   weekly Week 4 done (320 det rows so far)
+[2026-01-22 pid483339 +  152s]   weekly Week 4 done (320 det rows so far)
+[2026-01-15 pid483337 +  153s]   weekly Week 4 done (320 det rows so far)
+[2026-02-19 pid483343 +  154s]   weekly Week 4 done (320 det rows so far)
+[2026-03-05 pid483345 +  154s]   weekly Week 4 done (320 det rows so far)
+[2026-01-08 pid483336 +  155s]   weekly Week 4 done (320 det rows so far)
+[2026-02-26 pid483342 +  155s]   weekly Week 4 done (320 det rows so far)
+[2026-01-01 pid483335 +  163s]   weekly Week 2 done (160 det rows so far)
+[2026-02-05 pid483341 +  164s]   weekly Week 2 done (160 det rows so far)
+[2026-01-29 pid483338 +  166s]   weekly Week 2 done (160 det rows so far)
+[2026-03-26 pid483347 +  166s]   weekly Week 2 done (160 det rows so far)
+[2026-01-22 pid483339 +  176s]   weekly Week 5 done (400 det rows so far)
+[2026-03-12 pid483344 +  176s]   weekly Week 5 done (400 det rows so far)
+[2026-03-19 pid483346 +  176s]   weekly Week 5 done (400 det rows so far)
+[2026-02-12 pid483340 +  176s]   weekly Week 5 done (400 det rows so far)
+[2026-01-15 pid483337 +  178s]   weekly Week 5 done (400 det rows so far)
+[2026-02-19 pid483343 +  178s]   weekly Week 5 done (400 det rows so far)
+[2026-03-05 pid483345 +  178s]   weekly Week 5 done (400 det rows so far)
+[2026-02-26 pid483342 +  180s]   weekly Week 5 done (400 det rows so far)
+[2026-01-08 pid483336 +  180s]   weekly Week 5 done (400 det rows so far)
+[2026-01-01 pid483335 +  191s]   weekly Week 3 done (240 det rows so far)
+[2026-02-05 pid483341 +  193s]   weekly Week 3 done (240 det rows so far)
+[2026-03-26 pid483347 +  194s]   weekly Week 3 done (240 det rows so far)
+[2026-01-29 pid483338 +  195s]   weekly Week 3 done (240 det rows so far)
+[2026-03-19 pid483346 +  201s]   weekly Week 6 done (480 det rows so far)
+[2026-03-19 pid483346 +  201s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-03-12 pid483344 +  201s]   weekly Week 6 done (480 det rows so far)
+[2026-03-12 pid483344 +  201s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-01-22 pid483339 +  201s]   weekly Week 6 done (480 det rows so far)
+[2026-01-22 pid483339 +  201s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-02-12 pid483340 +  201s]   weekly Week 6 done (480 det rows so far)
+[2026-02-12 pid483340 +  201s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-01-15 pid483337 +  202s]   weekly Week 6 done (480 det rows so far)
+[2026-01-15 pid483337 +  202s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-02-19 pid483343 +  202s]   weekly Week 6 done (480 det rows so far)
+[2026-02-19 pid483343 +  202s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-03-05 pid483345 +  203s]   weekly Week 6 done (480 det rows so far)
+[2026-03-05 pid483345 +  203s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-02-26 pid483342 +  203s]   weekly Week 6 done (480 det rows so far)
+[2026-02-26 pid483342 +  203s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-01-08 pid483336 +  204s]   weekly Week 6 done (480 det rows so far)
+[2026-01-08 pid483336 +  204s] WEEKLY complete -> 480 det / 180 prob / 540 brier
+[2026-01-01 pid483335 +  218s]   weekly Week 4 done (320 det rows so far)
+[2026-02-05 pid483341 +  219s]   weekly Week 4 done (320 det rows so far)
+[2026-03-26 pid483347 +  221s]   weekly Week 4 done (320 det rows so far)
+[2026-01-29 pid483338 +  222s]   weekly Week 4 done (320 det rows so far)
+[2026-01-01 pid483335 +  241s]   weekly Week 5 done (400 det rows so far)
+[2026-02-05 pid483341 +  243s]   weekly Week 5 done (400 det rows so far)
+[2026-03-26 pid483347 +  244s]   weekly Week 5 done (400 det rows so far)
+[2026-01-29 pid483338 +  245s]   weekly Week 5 done (400 det rows so far)

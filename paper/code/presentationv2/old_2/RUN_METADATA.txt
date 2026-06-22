@@ -1,0 +1,42 @@
+S2S verification run metadata
+============================================================
+timestamp        : 2026-06-17T08:00:49
+season_label     : JFM2026
+n_inits          : 13
+init_dates       : 2026-01-01, 2026-01-08, 2026-01-15, 2026-01-22, 2026-01-29, 2026-02-05, 2026-02-12, 2026-02-19, 2026-02-26, 2026-03-05, 2026-03-12, 2026-03-19, 2026-03-26
+variables        : TP, Z500
+regions          : All India, northwest_india, central_india, south_peninsula, east_northeast_india
+grid             : 1.5 deg, lat 38.0->5.0, lon 65.0->100.0
+V2 models        : SPIRE, FuXi, ECMWF (+ MME, Persistence). NCEP dropped.
+model-own clima  : SPIRE, FuXi, ECMWF  (SPIRE -> ERA5 clima baseline)
+ERA5 climatology : /storage/raj.ayush/benchmark(jfm)/era5_climatology.nc (30-yr WMO, day-of-year) -> OBS anomaly + Persistence baseline
+model clima root : /storage/raj.ayush/All_Model_Data/models/<model>/clima/<var>_clima_<MMDD>.nc
+FuXi tp factor   : x24.0 (mm/h -> mm/day; applied to fcst AND FuXi clima)
+sigma floors     : {'TP': 0.05, 'Z500': 1.0, 'T2M': 0.1}
+tp thresholds    : (1.0, 10.0) mm/day; terciles=True
+
+Units (verification): TP mm/day, Z500 gpm. (T2M dropped in V2.)
+Z500: FuXi geopotential/9.80665 -> gpm; ECMWF clima already gpm.
+TP truth = true 24-h ERA5 daily total; ECMWF tp cumulative -> differenced
+to mm/day (fcst AND clima); FuXi tp mm/h rate -> x24 (fcst AND clima).
+
+V2 ANOMALY DEFINITION (model-own hindcast climatology):
+  fcst_anom = fcst_weekly - model_clima_weekly(lead, gridpoint)
+  obs_anom  = ERA5        - ERA5_clima(doy, gridpoint)
+  Each model's clima is pushed through the SAME weekly aggregation as its
+  forecast, so units match by construction. MME = mean of model-own anoms.
+  Persistence (an observation) is scored as an anomaly vs ERA5 clima.
+  Each model is scored only where its own clima exists for that lead.
+  SPIRE excluded: its 'anomalies' are ERA5-1991-2020-referenced (not
+  model-own), so including it would mix anomaly baselines.
+  Per-model clima MMDD is nearest-matched to each init (FuXi & ECMWF have
+  different available dates -> matched independently).
+
+SPIRE: provider mean (mean_stddev group) + stddev (Gaussian spread);
+scored as an anomaly vs the SAME ERA5 clima as the observation (SPIRE
+ships ERA5-1991-2020-referenced anomalies; no model-own clima file).
+Probabilistic framework: Gaussian(ensemble mean, spread); CRPS/Brier are
+baseline-neutral (raw fcst vs raw obs; clim reference from ERA5 clim mean
++ ERA5 clim spread). SPIRE summary / FuXi 11 / ECMWF 100 members.
+
+rows: deterministic=31200  probabilistic=18720  brier=7020

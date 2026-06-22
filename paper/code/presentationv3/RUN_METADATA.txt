@@ -1,10 +1,10 @@
 S2S verification run metadata — V3 (dual clim basis)
 ============================================================
-timestamp        : 2026-06-17T13:39:40
+timestamp        : 2026-06-17T13:51:57
 season_label     : JFM2026
-n_inits          : 1
-init_dates       : 2026-01-01
-variables        : TP
+n_inits          : 13
+init_dates       : 2026-01-01, 2026-01-08, 2026-01-15, 2026-01-22, 2026-01-29, 2026-02-05, 2026-02-12, 2026-02-19, 2026-02-26, 2026-03-05, 2026-03-12, 2026-03-19, 2026-03-26
+variables        : TP, Z500
 regions          : All India, northwest_india, central_india, south_peninsula, east_northeast_india
 grid             : 1.5 deg, lat 38.0->5.0, lon 65.0->100.0
 models           : SPIRE, FuXi, ECMWF (+ MME, Persistence)
@@ -20,4 +20,4 @@ tp thresholds    : (1.0, 10.0); terciles=True
 Probabilistic scores (CRPS/Brier/SSR) are anomaly-baseline-neutral;
 they appear once, tagged clim_basis='era5'.
 
-rows: deterministic=1920  probabilistic=720  brier=360
+rows: deterministic=49920  probabilistic=18720  brier=7020

@@ -124,8 +124,19 @@ def download_one(client: cdsapi.Client, date: pd.Timestamp,
                     return False
 
         # ── Combine into one file ─────────────────────────────────────────
-        sfc = xr.open_dataset(str(sfc_file))
-        pl  = xr.open_dataset(str(pl_file))
+        import zipfile
+        pl = xr.open_dataset(str(pl_file), engine="netcdf4")
+
+        # CDS single-levels returns a ZIP with instant+accum split
+        if zipfile.is_zipfile(str(sfc_file)):
+            parts = []
+            with zipfile.ZipFile(str(sfc_file)) as z:
+                for name in z.namelist():
+                    z.extract(name, str(tmp))
+                    parts.append(xr.open_dataset(str(tmp / name), engine="netcdf4"))
+            sfc = xr.merge(parts)
+        else:
+            sfc = xr.open_dataset(str(sfc_file), engine="netcdf4")
 
         out = xr.Dataset()
 
@@ -198,7 +209,9 @@ def main():
         log.info("All files exist — nothing to download.")
         return
 
-    client = cdsapi.Client(quiet=True)
+    # Must use CDS (not ECDS) — ~/.cdsapirc points to ECDS for S2S forecasts
+    client = cdsapi.Client(url="https://cds.climate.copernicus.eu/api",
+                           key="f628388c-5c81-44ae-a403-266655286ed0", quiet=True)
     failed = []
     for i, date in enumerate(pending, 1):
         ok = download_one(client, date, log)

@@ -1,0 +1,22 @@
+================================================================
+Job         : ERA5 Ground Truth Download (JFM 2026, Jan-May)
+Job ID      : 55763
+Node        : cn19
+Start time  : Mon 22 Jun 2026 10:31:23 AM IST
+Output      : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/ground_truth/
+Vars        : z500, t2m, tp, msl  |  Domain: India 0.25deg
+================================================================
+2026-06-22 10:31:25,449 [INFO] ============================================================
+2026-06-22 10:31:25,450 [INFO] ERA5 Ground Truth Download — JFM 2026
+2026-06-22 10:31:25,450 [INFO]   Output dir : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/ground_truth
+2026-06-22 10:31:25,450 [INFO]   Period     : 2026-01-01 → 2026-05-16  (136 days)
+2026-06-22 10:31:25,450 [INFO]   Done       : 0
+2026-06-22 10:31:25,450 [INFO]   Pending    : 136
+2026-06-22 10:31:25,450 [INFO]   Variables  : z500 (gpm), t2m (K), tp (mm), msl (Pa)
+2026-06-22 10:31:25,450 [INFO]   Domain     : India 0-40N 60-100E @ 0.25°
+2026-06-22 10:31:25,451 [INFO] ============================================================
+2026-06-22 10:31:31,335 [INFO] START 20260101
+2026-06-22 10:31:31,511 [WARNING]   attempt 1 failed: 404 Client Error: Not Found for url: https://ecds.ecmwf.int/api/retrieve/v1/processes/reanalysis-era5-single-levels
+process not found
+dataset reanalysis-era5-single-levels not found
+2026-06-22 10:31:31,511 [INFO]   waiting 60s...

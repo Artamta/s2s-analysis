@@ -755,8 +755,8 @@ def make_hw_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
                             wspace=0.08)
 
         for col, (prob_list, label) in enumerate([
-            (hw_prob,  "Heat Wave (T2m > 35°C)"),
-            (shw_prob, "Severe Heat Wave (T2m > 40°C)"),
+            (hw_prob,  "Heat Wave (T2m daily mean > 30°C)"),
+            (shw_prob, "Severe Heat Wave (T2m daily mean > 34°C)"),
         ]):
             ax = axes[col]
             india_map(ax, soi, lo0, lo1, la0, la1)

@@ -534,21 +534,22 @@ def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
                     ha="right", va="center", fontsize=9, fontweight="bold",
                     rotation=90, color="black")
 
-        # Bottom: anomaly (mm/week)
+        # Bottom: % departure from ERA5 climatology (avoids unit mismatch)
         ax = axes[1, col]
         india_map(ax, soi, lo0, lo1, la0, la1)
         if climo:
             c_days = [climo[s]["tp"] for s in steps if s in climo and "tp" in climo[s]]
             if c_days:
-                tp_c = crop(np.mean(c_days, axis=0), lat, lon, la0, la1, lo0, lo1)[0] * 7
-                anom = tp_i - tp_c
-                ax.contourf(lon_i, lat_i, anom,
-                            levels=np.linspace(-30, 30, 17),
+                tp_c = crop(np.mean(c_days, axis=0), lat, lon, la0, la1, lo0, lo1)[0]
+                # % departure: (model_daily - climo_daily) / climo × 100
+                anom_pct = (tp_i/7 - tp_c) / np.maximum(tp_c, 0.01) * 100
+                ax.contourf(lon_i, lat_i, anom_pct,
+                            levels=[-100,-75,-50,-25,-10,0,10,25,50,75,100],
                             cmap=RANOM_CMAP, transform=PROJ,
                             extend="both", zorder=1)
         ax.set_title(label, fontsize=9, color="blue", fontweight="bold", pad=3)
         if col == 0:
-            ax.text(-0.16, 0.5, "Anomaly\n(mm/week)", transform=ax.transAxes,
+            ax.text(-0.16, 0.5, "Anomaly\n(% dep.)", transform=ax.transAxes,
                     ha="right", va="center", fontsize=9, fontweight="bold",
                     rotation=90, color="black")
 
@@ -559,15 +560,16 @@ def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
                  pad=0.10, shrink=0.5, aspect=32, ticks=PREC_BOUNDS_WK,
                  label="mm/week").ax.tick_params(labelsize=7)
 
-    sm_an = plt.cm.ScalarMappable(cmap=RANOM_CMAP, norm=mcolors.Normalize(-30, 30))
+    sm_an = plt.cm.ScalarMappable(cmap=RANOM_CMAP,
+                                  norm=mcolors.Normalize(-100, 100))
     sm_an.set_array([])
     fig.colorbar(sm_an, ax=axes[1,:], orientation="horizontal",
                  pad=0.10, shrink=0.5, aspect=32,
-                 ticks=np.arange(-30, 31, 10),
-                 label="mm/week anomaly").ax.tick_params(labelsize=7)
+                 ticks=[-100,-75,-50,-25,-10,0,10,25,50,75,100],
+                 label="% departure from ERA5 climo").ax.tick_params(labelsize=7)
 
     plt.subplots_adjust(left=0.08, right=0.97, top=0.89,
-                        bottom=0.16, hspace=0.22, wspace=0.06)
+                        bottom=0.18, hspace=0.25, wspace=0.06)
     out = out_dir/f"rf_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -623,7 +625,7 @@ def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
     WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    fig, axes = plt.subplots(2, 2, figsize=(10, 12),
+    fig, axes = plt.subplots(2, 2, figsize=(12, 11),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
     png_header(fig, init_date, "Maximum Temperature Anomaly (°C)",
@@ -646,22 +648,25 @@ def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
                 t2m_c = crop(np.mean(c_days,axis=0)-273.15, lat, lon,
                              la0, la1, lo0, lo1)[0]
                 anom  = t2m_i - t2m_c
+                # ERPAS-matching levels: finer near zero, coarser at extremes
                 ax.contourf(lon_i, lat_i, anom,
-                            levels=np.linspace(-10,10,21),
+                            levels=[-10,-7,-5,-3,-1,0,1,3,5,7,10],
                             cmap=TANOM_CMAP, transform=PROJ,
                             extend="both", zorder=1)
-        ax.set_title(f"(Week{wk}: {d0}–{d1})", fontsize=9,
-                     color="blue", fontweight="bold", pad=3)
+        ax.set_title(f"Week{wk}: {d0}–{d1}", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
 
     sm = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
     sm.set_array([])
-    fig.colorbar(sm, ax=axes, orientation="horizontal",
-                 pad=0.09, shrink=0.6, aspect=28,
-                 ticks=np.arange(-10,11,1),
-                 label="°C  (T2m anomaly)").ax.tick_params(labelsize=7)
+    cb = fig.colorbar(sm, ax=axes.ravel().tolist(),
+                      orientation="horizontal",
+                      pad=0.04, fraction=0.03, aspect=40,
+                      ticks=[-10,-7,-5,-3,-1,0,1,3,5,7,10])
+    cb.set_label("°C  (T2m anomaly)", fontsize=9)
+    cb.ax.tick_params(labelsize=8)
 
-    plt.subplots_adjust(left=0.05, right=0.97, top=0.91,
-                        bottom=0.14, hspace=0.18, wspace=0.08)
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.90,
+                        bottom=0.12, hspace=0.20, wspace=0.10)
     out = out_dir/f"tmax_anom_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)

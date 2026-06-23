@@ -709,41 +709,40 @@ def make_hw_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
     save_gif(frames, out_dir/f"hw_daily_{date_str}.gif", fps)
 
 
-# ── 9. WEEKLY ACTUAL RAINFALL (1×4 PNG, mm/day) ───────────────────────────────
+# ── 9. WEEKLY ACTUAL RAINFALL (2×3 PNG, 6 weeks) ─────────────────────────────
 def make_rf_weekly(raw_dir, date_str, init_date, out_dir, soi):
-    print("\n[9] Weekly Actual Rainfall PNG (mm/day) …")
-    WEEKS = {1: range(1,8), 2: range(8,15), 3: range(15,22), 4: range(22,29)}
+    print("\n[9] Weekly Actual Rainfall PNG (weeks 1-6) …")
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
     la0,la1,lo0,lo1 = 6, 38, 66, 100
+    POS = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
 
-    fig, axes = plt.subplots(1, 4, figsize=(18, 6),
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
-    plt.subplots_adjust(left=0.04, right=0.97, top=0.86,
-                        bottom=0.18, hspace=0.0, wspace=0.06)
+    plt.subplots_adjust(left=0.04, right=0.97, top=0.88,
+                        bottom=0.12, hspace=0.18, wspace=0.06)
     png_header(fig, init_date, "FuXi-S2S Actual Rainfall (mm/day)",
-               "Weekly mean  ·  India")
+               "Weekly mean  ·  India  ·  Weeks 1-6")
 
-    for col, (wk, steps) in enumerate(WEEKS.items()):
+    for (r,c), (wk, steps) in zip(POS, WEEKS6.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["tp"])
-        if not d: continue
-        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0]
-        lat_i = lat[(lat>=la0)&(lat<=la1)]; lon_i = lon[(lon>=lo0)&(lon<=lo1)]
         d0 = (init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1 = (init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
-
-        ax = axes[col]
+        ax = axes[r, c]
         india_map(ax, soi, lo0, lo1, la0, la1)
-        ax.contourf(lon_i, lat_i, tp_i, levels=PREC_BOUNDS_WK, colors=PREC_COLS_WK,
-                    transform=PROJ, extend="max", zorder=1)
+        if d:
+            tp_i, lat_i, lon_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)
+            ax.contourf(lon_i, lat_i, tp_i, levels=PREC_BOUNDS_WK, colors=PREC_COLS_WK,
+                        transform=PROJ, extend="max", zorder=1)
         ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
                      color="blue", fontweight="bold", pad=4)
 
-    cax = fig.add_axes([0.20, 0.06, 0.60, 0.03])
+    cax = fig.add_axes([0.20, 0.04, 0.60, 0.025])
     sm  = plt.cm.ScalarMappable(cmap=PREC_CMAP_WK, norm=PREC_NORM_WK)
     sm.set_array([])
     cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=PREC_BOUNDS_WK)
-    cb.ax.tick_params(labelsize=8)
-
+    cb.set_label("mm/day", fontsize=9); cb.ax.tick_params(labelsize=8)
     out = out_dir/f"rf_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -800,43 +799,43 @@ def make_rf_weekly6(raw_dir, date_str, init_date, out_dir, soi):
     print(f"  → {out}")
 
 
-# ── 10. WEEKLY RAINFALL ANOMALY (2×2 PNG) ─────────────────────────────────────
+# ── 10. WEEKLY RAINFALL ANOMALY (2×3 PNG, 6 weeks) ───────────────────────────
 def make_rf_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
-    print("\n[10] Weekly Rainfall Anomaly PNG (mm/day) …")
+    print("\n[10] Weekly Rainfall Anomaly PNG (weeks 1-6) …")
     if climo is None:
         print("  No climo — skipping")
         return
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
+    POS = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
     la0,la1,lo0,lo1 = 6, 38, 66, 100
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
     plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
-                        bottom=0.13, hspace=0.22, wspace=0.10)
+                        bottom=0.12, hspace=0.18, wspace=0.10)
     png_header(fig, init_date, "FuXi-S2S Rainfall Anomaly (mm/day)",
-               "vs ERA5 1990-2019 climatology  ·  India")
+               "vs ERA5 1990-2019 climatology  ·  India  ·  Weeks 1-6")
 
-    for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
+    for (r,c), (wk, steps) in zip(POS, WEEKS6.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["tp"])
-        if not d: continue
-        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0]
-        lat_i = lat[(lat>=la0)&(lat<=la1)]; lon_i = lon[(lon>=lo0)&(lon<=lo1)]
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
-
         ax = axes[r,c]
         india_map(ax, soi, lo0, lo1, la0, la1)
-        c_days = [climo[s]["tp"] for s in steps if s in climo and "tp" in climo[s]]
-        if c_days:
-            tp_c = crop(np.mean(c_days, axis=0), lat, lon, la0, la1, lo0, lo1)[0]
-            anom = tp_i - tp_c
-            ax.contourf(lon_i, lat_i, anom, levels=RANOM_BOUNDS, colors=RANOM_COLS,
-                        transform=PROJ, extend="both", zorder=1)
+        if d:
+            tp_i, lat_i, lon_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)
+            c_days = [climo[s]["tp"] for s in steps if s in climo and "tp" in climo[s]]
+            if c_days:
+                tp_c = crop(np.mean(c_days, axis=0), lat, lon, la0, la1, lo0, lo1)[0]
+                ax.contourf(lon_i, lat_i, tp_i - tp_c,
+                            levels=RANOM_BOUNDS, colors=RANOM_COLS,
+                            transform=PROJ, extend="both", zorder=1)
         ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
                      color="blue", fontweight="bold", pad=4)
 
-    cax = fig.add_axes([0.15, 0.05, 0.70, 0.025])
+    cax = fig.add_axes([0.15, 0.04, 0.70, 0.025])
     sm  = plt.cm.ScalarMappable(cmap=RANOM_CMAP, norm=RANOM_NORM)
     sm.set_array([])
     cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=RANOM_BOUNDS)
@@ -847,25 +846,27 @@ def make_rf_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
     print(f"  → {out}")
 
 
-# ── 11. IGPP WEEKLY (2×2 PNG) ─────────────────────────────────────────────────
+# ── 11. IGPP WEEKLY (2×3 PNG, 6 weeks) ───────────────────────────────────────
 def make_igpp_weekly(raw_dir, date_str, init_date, out_dir, soi):
-    print("\n[11] IGPP Weekly PNG …")
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    print("\n[11] IGPP Weekly PNG (weeks 1-6) …")
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
+    POS = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
     members = list(_member_dirs(raw_dir, date_str))
     if len(members) < 2:
         print("  Need ≥2 members — skipping")
         return
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
     plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
-                        bottom=0.13, hspace=0.22, wspace=0.10)
+                        bottom=0.12, hspace=0.18, wspace=0.10)
     png_header(fig, init_date,
                "Cyclogenesis & Evolution Probability (%) from FuXi-IGPP",
-               "Ensemble fraction with 850hPa vorticity > 3×10⁻⁵ s⁻¹")
+               "Ensemble fraction with 850hPa vorticity > 3×10⁻⁵ s⁻¹  ·  Weeks 1-6")
 
-    for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
+    for (r,c), (wk, steps) in zip(POS, WEEKS6.items()):
         d0s=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1s=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
 
@@ -887,7 +888,7 @@ def make_igpp_weekly(raw_dir, date_str, init_date, out_dir, soi):
 
         ax = axes[r,c]
         base_map(ax, 40, 125, 0, 40)
-        ax.set_title(f"(W{wk}: {d0s}-{d1s})", fontsize=9,
+        ax.set_title(f"(W{wk}: {d0s}-{d1s})", fontsize=8,
                      color="blue", fontweight="bold", pad=4)
         if vort_days and lat_ref is not None:
             prob = (np.array(vort_days) > 3).mean(axis=0)*100.0
@@ -908,36 +909,37 @@ def make_igpp_weekly(raw_dir, date_str, init_date, out_dir, soi):
     print(f"  → {out}")
 
 
-# ── 12. WEEKLY T2m ACTUAL (2×2 PNG) ───────────────────────────────────────────
+# ── 12. WEEKLY T2m ACTUAL (2×3 PNG, 6 weeks) ─────────────────────────────────
 def make_tmax_actual(raw_dir, date_str, init_date, out_dir, soi):
-    print("\n[12] Weekly T2m Actual PNG (weeks 1-4) …")
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    print("\n[12] Weekly T2m Actual PNG (weeks 1-6) …")
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
+    POS = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
     plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
-                        bottom=0.13, hspace=0.22, wspace=0.10)
+                        bottom=0.12, hspace=0.18, wspace=0.10)
     png_header(fig, init_date, "Maximum Temperature Actual (°C)",
-               "T2m used as proxy for daily Tmax  ·  FuXi-S2S ensemble mean")
+               "T2m proxy for Tmax  ·  FuXi-S2S ensemble mean  ·  Weeks 1-6")
 
-    for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
+    for (r,c), (wk, steps) in zip(POS, WEEKS6.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
-        if not d: continue
-        t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
-        lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
-
         ax = axes[r,c]
         india_map(ax, soi, lo0, lo1, la0, la1)
-        ax.contourf(lon_i, lat_i, t2m_i, levels=TMAX_BOUNDS, colors=TMAX_COLS,
-                    transform=PROJ, extend="both", zorder=1)
+        if d:
+            t2m_i, lat_i, lon_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)
+            ax.contourf(lon_i, lat_i, t2m_i - 273.15,
+                        levels=TMAX_BOUNDS, colors=TMAX_COLS,
+                        transform=PROJ, extend="both", zorder=1)
         ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
                      color="blue", fontweight="bold", pad=4)
 
-    cax = fig.add_axes([0.20, 0.05, 0.60, 0.025])
+    cax = fig.add_axes([0.20, 0.04, 0.60, 0.025])
     sm  = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
     sm.set_array([])
     cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TMAX_BOUNDS)
@@ -948,43 +950,40 @@ def make_tmax_actual(raw_dir, date_str, init_date, out_dir, soi):
     print(f"  → {out}")
 
 
-# ── 13. WEEKLY T2m ANOMALY (2×2 PNG) ──────────────────────────────────────────
+# ── 13. WEEKLY T2m ANOMALY (2×3 PNG, 6 weeks) ────────────────────────────────
 def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
-    print("\n[13] Weekly T2m Anomaly PNG (weeks 1-4) …")
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    print("\n[13] Weekly T2m Anomaly PNG (weeks 1-6) …")
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
+    POS = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
+    fig, axes = plt.subplots(2, 3, figsize=(18, 11),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
     plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
-                        bottom=0.13, hspace=0.22, wspace=0.10)
+                        bottom=0.12, hspace=0.18, wspace=0.10)
     png_header(fig, init_date, "Maximum Temperature Anomaly (°C)",
-               "T2m anomaly vs ERA5 1990-2019 climatology")
+               "T2m anomaly vs ERA5 1990-2019 climatology  ·  Weeks 1-6")
 
-    for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
+    for (r,c), (wk, steps) in zip(POS, WEEKS6.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
-        if not d: continue
-        t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
-        lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
-
         ax = axes[r,c]
         india_map(ax, soi, lo0, lo1, la0, la1)
-        if climo:
-            c_days=[climo[s]["t2m"] for s in steps if s in climo and "t2m" in climo[s]]
+        if d and climo:
+            t2m_i, lat_i, lon_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)
+            c_days = [climo[s]["t2m"] for s in steps if s in climo and "t2m" in climo[s]]
             if c_days:
-                t2m_c = crop(np.mean(c_days,axis=0)-273.15, lat, lon,
-                             la0, la1, lo0, lo1)[0]
-                anom  = t2m_i - t2m_c
-                ax.contourf(lon_i, lat_i, anom,
+                t2m_c = crop(np.mean(c_days,axis=0), lat, lon, la0, la1, lo0, lo1)[0]
+                ax.contourf(lon_i, lat_i, (t2m_i - t2m_c),
                             levels=TANOM_LEVELS, cmap=TANOM_CMAP,
                             transform=PROJ, extend="both", zorder=1)
         ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
                      color="blue", fontweight="bold", pad=4)
 
-    cax = fig.add_axes([0.20, 0.05, 0.60, 0.025])
+    cax = fig.add_axes([0.20, 0.04, 0.60, 0.025])
     sm  = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
     sm.set_array([])
     cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TANOM_LEVELS)
@@ -995,99 +994,94 @@ def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
     print(f"  → {out}")
 
 
-# ── 14. COMBINED WEEKLY TMIN + TMAX ACTUAL (2×4 side by side) ────────────────
+# ── 14. COMBINED WEEKLY TMIN + TMAX ACTUAL (2×6, common colorbar) ────────────
 def make_temp_weekly(raw_dir, date_str, init_date, out_dir, soi):
-    print("\n[14] Combined Weekly Tmin+Tmax Actual PNG …")
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    """Row 0 = T2m with Tmin colorscale, Row 1 = T2m with Tmax colorscale.
+    Single shared colorbar at bottom (TMAX scale covers the full range)."""
+    print("\n[14] Combined Weekly Tmin+Tmax Actual PNG (weeks 1-6) …")
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    fig = plt.figure(figsize=(22, 10), facecolor="white")
-    plt.subplots_adjust(left=0.04, right=0.98, top=0.88,
-                        bottom=0.16, hspace=0.25, wspace=0.06)
+    fig = plt.figure(figsize=(26, 11), facecolor="white")
+    plt.subplots_adjust(left=0.06, right=0.98, top=0.88,
+                        bottom=0.12, hspace=0.20, wspace=0.06)
 
-    wk_list = list(WEEKS4.items())
-    for col, (wk, steps) in enumerate(wk_list):
+    for col, (wk, steps) in enumerate(WEEKS6.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
 
         for row, (cmap, norm, bounds, side) in enumerate([
-            (TMIN_CMAP, TMIN_NORM, TMIN_BOUNDS, "Min"),
-            (TMAX_CMAP, TMAX_NORM, TMAX_BOUNDS, "Max"),
+            (TMIN_CMAP, TMIN_NORM, TMIN_BOUNDS, "Min Temp\nActual (°C)"),
+            (TMAX_CMAP, TMAX_NORM, TMAX_BOUNDS, "Max Temp\nActual (°C)"),
         ]):
-            ax = fig.add_subplot(2, 4, row*4 + col + 1, projection=PROJ)
+            ax = fig.add_subplot(2, 6, row*6 + col + 1, projection=PROJ)
             india_map(ax, soi, lo0, lo1, la0, la1)
             if d:
-                t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
-                lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
-                ax.contourf(lon_i, lat_i, t2m_i, levels=bounds,
+                t2m_i, lat_i, lon_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)
+                ax.contourf(lon_i, lat_i, t2m_i - 273.15, levels=bounds,
                             colors=list(cmap.colors),
                             transform=PROJ, extend="both", zorder=1)
-            ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=8,
+            ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=7,
                          color="blue", fontweight="bold", pad=3)
             if col == 0:
-                ax.text(-0.18, 0.5, f"{side} Temp\nActual (°C)",
-                        transform=ax.transAxes, ha="right", va="center",
-                        fontsize=8, fontweight="bold", color="red")
+                ax.text(-0.20, 0.5, side, transform=ax.transAxes,
+                        ha="right", va="center", fontsize=8,
+                        fontweight="bold", color="red")
 
-    cax0 = fig.add_axes([0.06, 0.095, 0.88, 0.022])
-    sm0  = plt.cm.ScalarMappable(cmap=TMIN_CMAP, norm=TMIN_NORM)
-    sm0.set_array([])
-    cb0  = fig.colorbar(sm0, cax=cax0, orientation="horizontal", ticks=TMIN_BOUNDS)
-    cb0.set_label("Minimum Temp (°C)", fontsize=8); cb0.ax.tick_params(labelsize=6)
-
-    cax1 = fig.add_axes([0.06, 0.035, 0.88, 0.022])
-    sm1  = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
-    sm1.set_array([])
-    cb1  = fig.colorbar(sm1, cax=cax1, orientation="horizontal", ticks=TMAX_BOUNDS)
-    cb1.set_label("Maximum Temp (°C)", fontsize=8); cb1.ax.tick_params(labelsize=6)
+    # Single colorbar spanning full width — use TMAX scale (wider range)
+    cax = fig.add_axes([0.10, 0.04, 0.80, 0.022])
+    sm  = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TMAX_BOUNDS)
+    cb.set_label("T2m (°C)", fontsize=9); cb.ax.tick_params(labelsize=7)
 
     png_header(fig, init_date,
-               "Minimum Temperature Actual (°C)    |    Maximum Temperature Actual (°C)",
-               f"IC={init_date.strftime('%Y%m%d')}  ·  T2m used as proxy for both Tmin & Tmax")
+               "Minimum Temperature Actual (°C)  |  Maximum Temperature Actual (°C)",
+               "T2m as proxy  ·  FuXi-S2S ensemble mean  ·  Weeks 1-6")
     out = out_dir/f"temp_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"  → {out}")
 
 
-# ── 15. COMBINED WEEKLY TMIN + TMAX ANOMALY (2×4 side by side) ───────────────
+# ── 15. COMBINED WEEKLY TMIN + TMAX ANOMALY (2×6, common colorbar) ───────────
 def make_temp_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
-    print("\n[15] Combined Weekly Tmin+Tmax Anomaly PNG …")
+    print("\n[15] Combined Weekly Tmin+Tmax Anomaly PNG (weeks 1-6) …")
     if climo is None:
         print("  No climo — skipping")
         return
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    WEEKS6 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    fig = plt.figure(figsize=(22, 10), facecolor="white")
-    plt.subplots_adjust(left=0.04, right=0.98, top=0.88,
-                        bottom=0.16, hspace=0.25, wspace=0.06)
+    fig = plt.figure(figsize=(26, 11), facecolor="white")
+    plt.subplots_adjust(left=0.06, right=0.98, top=0.88,
+                        bottom=0.12, hspace=0.20, wspace=0.06)
 
-    for col, (wk, steps) in enumerate(WEEKS4.items()):
+    for col, (wk, steps) in enumerate(WEEKS6.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
 
-        for row, side in enumerate(["Min Temp Anomaly", "Max Temp Anomaly"]):
-            ax = fig.add_subplot(2, 4, row*4 + col + 1, projection=PROJ)
+        for row, side in enumerate(["Min Temp\nAnomaly (°C)", "Max Temp\nAnomaly (°C)"]):
+            ax = fig.add_subplot(2, 6, row*6 + col + 1, projection=PROJ)
             india_map(ax, soi, lo0, lo1, la0, la1)
             if d and climo:
-                t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
-                lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
+                t2m_i, lat_i, lon_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)
                 c_days=[climo[s]["t2m"] for s in steps if s in climo and "t2m" in climo[s]]
                 if c_days:
-                    t2m_c = crop(np.mean(c_days,axis=0)-273.15, lat, lon,
-                                 la0, la1, lo0, lo1)[0]
-                    anom  = t2m_i - t2m_c
-                    ax.contourf(lon_i, lat_i, anom, levels=TANOM_LEVELS,
-                                cmap=TANOM_CMAP, transform=PROJ, extend="both", zorder=1)
-            ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=8,
+                    t2m_c = crop(np.mean(c_days,axis=0), lat, lon, la0, la1, lo0, lo1)[0]
+                    ax.contourf(lon_i, lat_i, t2m_i - t2m_c,
+                                levels=TANOM_LEVELS, cmap=TANOM_CMAP,
+                                transform=PROJ, extend="both", zorder=1)
+            ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=7,
                          color="blue", fontweight="bold", pad=3)
             if col == 0:
-                ax.text(-0.18, 0.5, side,
-                        transform=ax.transAxes, ha="right", va="center",
-                        fontsize=8, fontweight="bold", color="red")
+                ax.text(-0.20, 0.5, side, transform=ax.transAxes,
+                        ha="right", va="center", fontsize=8,
+                        fontweight="bold", color="red")
 
     cax = fig.add_axes([0.12, 0.055, 0.76, 0.022])
     sm  = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
@@ -1104,14 +1098,15 @@ def make_temp_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
     print(f"  → {out}")
 
 
-# ── 16. HEAT-STRESS PROBABILITY WEEKLY (4×2 PNG) ─────────────────────────────
+# ── 16. HEAT-STRESS PROBABILITY WEEKLY (6×2 PNG) ─────────────────────────────
 def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
-    print("\n[16] Heat-Stress Probability Weekly PNG …")
-    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    print("\n[16] Heat-Stress Probability Weekly PNG (weeks 1-6) …")
+    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22),
+              4:range(22,29), 5:range(29,36), 6:range(36,43)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
     members = list(_member_dirs(raw_dir, date_str))
 
-    fig, axes = plt.subplots(4, 2, figsize=(10, 18),
+    fig, axes = plt.subplots(6, 2, figsize=(10, 26),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
     plt.subplots_adjust(left=0.15, right=0.97, top=0.92,

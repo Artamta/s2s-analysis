@@ -13,6 +13,7 @@ SCRIPT="/home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/plo
 
 DATE="${ERPAS_DATE:-20260617}"
 OUT_DIR="/home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/erpas_style/${DATE}"
+CLIMO_NC="${CLIMO_NC:-/storage/raj.ayush/benchmark(jfm)/era5_climatology.nc}"
 
 echo "================================================================"
 echo "Job    : FuXi-S2S  Extra diagnostic plots (7 new types)"
@@ -20,11 +21,15 @@ echo "Job ID : $SLURM_JOB_ID"
 echo "Node   : $(hostname)"
 echo "Date   : $DATE"
 echo "Out    : $OUT_DIR"
+echo "Climo  : $CLIMO_NC"
 echo "Plots  : olr  tcwv  hovmoller  z500_anom  wind850  sst  shear"
 echo "Start  : $(date)"
 echo "================================================================"
 
 mkdir -p "$OUT_DIR"
+
+CLIMO_ARG=""
+[ -f "$CLIMO_NC" ] && CLIMO_ARG="--climo_nc $CLIMO_NC"
 
 for MODE in olr tcwv hovmoller z500_anom wind850 sst shear; do
     echo ""
@@ -34,7 +39,8 @@ for MODE in olr tcwv hovmoller z500_anom wind850 sst shear; do
         --out_dir "$OUT_DIR" \
         --steps   42 \
         --fps     4 \
-        --mode    "$MODE"
+        --mode    "$MODE" \
+        $CLIMO_ARG
 done
 
 echo ""

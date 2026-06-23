@@ -13,6 +13,8 @@ SCRIPT="/home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/plo
 
 DATE="${ERPAS_DATE:-20260617}"
 OUT_DIR="/home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/erpas_style/${DATE}"
+# Local ERA5 climo (much faster than WB2); unset to fall back to WB2
+CLIMO_NC="${CLIMO_NC:-/storage/raj.ayush/benchmark(jfm)/era5_climatology.nc}"
 
 echo "================================================================"
 echo "Job    : FuXi-S2S ERPAS-style plots"
@@ -20,14 +22,19 @@ echo "Job ID : $SLURM_JOB_ID"
 echo "Node   : $(hostname)"
 echo "Date   : $DATE"
 echo "Out    : $OUT_DIR"
+echo "Climo  : $CLIMO_NC"
 echo "Start  : $(date)"
 echo "================================================================"
+
+CLIMO_ARG=""
+[ -f "$CLIMO_NC" ] && CLIMO_ARG="--climo_nc $CLIMO_NC"
 
 $PYTHON "$SCRIPT" \
     --date    "$DATE" \
     --out_dir "$OUT_DIR" \
     --steps   42 \
-    --fps     4
+    --fps     4 \
+    $CLIMO_ARG
 
 echo "================================================================"
 echo "End : $(date)"

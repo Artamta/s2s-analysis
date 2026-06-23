@@ -370,6 +370,52 @@ def build_climo(init_date, nsteps, lat, lon):
     return cache
 
 
+def build_climo_nc(climo_nc, init_date, nsteps, lat, lon):
+    """Fast local-file climatology from era5_climatology.nc (dayofyear × lat × lon).
+
+    Expects variables t2m (K), tp (m/day), z500 (m²/s²) — same ERA5 conventions
+    as WB2. Unit conversions (tp×1000 → mm, z500/g → m) are applied here so the
+    returned cache is drop-in compatible with build_climo().
+    """
+    print(f"  Loading local ERA5 climatology: {climo_nc} …")
+    try:
+        ds = xr.open_dataset(climo_nc)
+    except Exception as e:
+        print(f"  WARNING: cannot open {climo_nc} ({e}) — falling back to WB2")
+        return build_climo(init_date, nsteps, lat, lon)
+
+    avail = [v for v in ["t2m", "tp", "z500"] if v in ds]
+    print(f"  Variables found: {avail}")
+
+    # ERA5 climo uses 'latitude'/'longitude'; we need to interp to FuXi lat/lon
+    c_lat = ds.latitude.values
+    c_lon = ds.longitude.values
+
+    cache = {}
+    for step in range(1, nsteps + 1):
+        valid = init_date + datetime.timedelta(days=step)
+        doy   = valid.timetuple().tm_yday          # 1-365 (or 366 in leap year)
+
+        sc = {}
+        for ch in avail:
+            arr = ds[ch].sel(dayofyear=doy).values.astype(np.float32)
+            if ch == "tp":
+                arr = arr * 1000.0       # m/day → mm/day
+            if ch == "z500":
+                arr = arr / 9.80665      # m²/s² → m
+            xda     = xr.DataArray(arr, dims=["lat", "lon"],
+                                   coords={"lat": c_lat, "lon": c_lon})
+            sc[ch]  = xda.interp(lat=lat, lon=lon, method="linear").values
+
+        cache[step] = sc
+        if step % 14 == 0:
+            print(f"    … day {step}")
+
+    ds.close()
+    print("  Done.\n")
+    return cache
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # PLOT FUNCTIONS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1586,6 +1632,10 @@ def main():
     p.add_argument("--fps",     type=int, default=FPS)
     p.add_argument("--members", type=int, nargs="+", default=None,
                    help="Member indices (e.g. 0 1 2); default=all")
+    p.add_argument("--climo_nc", default=None,
+                   help="Path to local ERA5 climatology NetCDF "
+                        "(dayofyear×lat×lon, vars: t2m/tp/z500). "
+                        "Much faster than WB2; falls back to WB2 if not given.")
     args = p.parse_args()
 
     global _MEMBER_FILTER
@@ -1618,7 +1668,13 @@ def main():
     modes = [args.mode] if args.mode else MODES
     need_climo = any(m in modes for m in
                      ["rf_anom","tmax_anom","temp_anom","temp_anom_weekly","z500_anom"])
-    climo = build_climo(init_date, args.steps, lat, lon) if need_climo else None
+    if need_climo:
+        if args.climo_nc:
+            climo = build_climo_nc(args.climo_nc, init_date, args.steps, lat, lon)
+        else:
+            climo = build_climo(init_date, args.steps, lat, lon)
+    else:
+        climo = None
 
     for mode in modes:
         if   mode == "prec":

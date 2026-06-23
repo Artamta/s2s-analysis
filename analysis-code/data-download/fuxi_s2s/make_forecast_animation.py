@@ -124,13 +124,21 @@ def add_india_map(ax, soi_geoms, title, subtitle=None):
     gl.xlabel_style = {"size": 7, "color": "#aaaaaa"}
     gl.ylabel_style = {"size": 7, "color": "#aaaaaa"}
 
-    # Panel title
-    ax.set_title(title, fontsize=10, fontweight="bold", color="white",
-                 pad=5, loc="center")
+    # Title box: sits inside the top of the axes — no overlap with figure header
+    ax.set_title("")   # disable matplotlib default title slot
+    ax.text(0.5, 0.988, title, transform=ax.transAxes,
+            ha="center", va="top", fontsize=9.5, fontweight="bold",
+            color="white",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="#1a1a2e",
+                      edgecolor="#4444aa", alpha=0.90, linewidth=0.9),
+            zorder=10)
     if subtitle:
-        ax.text(0.5, 1.01, subtitle, transform=ax.transAxes,
-                ha="center", va="bottom", fontsize=7.5,
-                color="#bbbbbb", style="italic")
+        ax.text(0.5, 0.945, subtitle, transform=ax.transAxes,
+                ha="center", va="top", fontsize=7.5, style="italic",
+                color="#bbbbee",
+                bbox=dict(boxstyle="round,pad=0.25", facecolor="#1a1a2e",
+                          edgecolor="none", alpha=0.82),
+                zorder=10)
 
 
 def add_colorbar(fig, cf, ax, label, fmt="%.1f", ticks=None):
@@ -231,7 +239,7 @@ def build_climo_cache(lat, lon):
 def frame_tp(step, data, climo, lat, lon, soi, valid_date):
     tp, lat_i, lon_i = india_box(data["tp"], lat, lon)
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5),
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.2),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="#121212")
 
@@ -268,7 +276,7 @@ def frame_t2m(step, data, climo, lat, lon, soi, valid_date):
     t2m_K, lat_i, lon_i = india_box(data["t2m"], lat, lon)
     t2m_C = t2m_K - 273.15
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5),
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.2),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="#121212")
 
@@ -314,7 +322,7 @@ def frame_z500(step, data, climo, lat, lon, soi, valid_date):
     u850,  _,     _     = india_box(data["u850"],            lat, lon)
     v850,  _,     _     = india_box(data["v850"],            lat, lon)
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5),
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.2),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="#121212")
 
@@ -377,7 +385,7 @@ def frame_llj(step, data, climo, lat, lon, soi, valid_date):
     v850, _,     _     = india_box(data["v850"], lat, lon)
     wspd = np.sqrt(u850**2 + v850**2)
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5),
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.2),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="#121212")
 
@@ -440,7 +448,7 @@ def frame_olr(step, data, climo_day1, lat, lon, soi, valid_date):
     ttr, lat_i, lon_i = india_box(data["ttr"], lat, lon)
     olr = -ttr   # positive OLR = energy leaving atmosphere
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5),
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.2),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="#121212")
 
@@ -478,7 +486,7 @@ def frame_moisture(step, data, climo, lat, lon, soi, valid_date):
     """Total column water vapour (TCWV) — atmospheric moisture reservoir."""
     tcwv, lat_i, lon_i = india_box(data["tcwv"], lat, lon)
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5),
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.2),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="#121212")
 
@@ -517,24 +525,25 @@ def frame_moisture(step, data, climo, lat, lon, soi, valid_date):
 
 # ── FIGURE FOOTER + HEADER ────────────────────────────────────────────────────
 def add_header_footer(fig, step, valid_date):
-    init_str  = f"FuXi-S2S  ·  Initialised: {INIT_DATE.strftime('%d %b %Y')}"
-    lead_str  = (f"Lead Day {step:02d}  ·  Valid: {valid_date.strftime('%d %b %Y')}"
-                 f"  ·  Ensemble Control Run")
-    foot_str  = ("FuXi-S2S deep learning model  ·  "
-                 "Anomalies vs WeatherBench2 ERA5 1990–2019 climatology  ·  "
-                 "Grid: 1.5° global")
-
-    fig.text(0.5, 0.985, init_str, ha="center", va="top",
-             fontsize=10, color="#aaaaaa", fontweight="bold")
-    fig.text(0.5, 0.965, lead_str, ha="center", va="top",
-             fontsize=13, color="#f0c040", fontweight="bold")
-    fig.text(0.5, 0.012, foot_str, ha="center", va="bottom",
-             fontsize=7, color="#666666", style="italic")
+    # Row 1 — model + init date (small, grey)
+    fig.text(0.5, 0.980, f"FuXi-S2S  ·  Init: {INIT_DATE.strftime('%d %b %Y')}",
+             ha="center", va="top", fontsize=9, color="#888888", fontweight="bold")
+    # Row 2 — lead day + valid date (large, gold) — the "clock" the viewer cares about
+    fig.text(0.5, 0.960,
+             f"Lead Day {step:02d}  ·  Valid:  {valid_date.strftime('%A, %d %B %Y')}",
+             ha="center", va="top", fontsize=15, color="#f0c040", fontweight="bold")
+    # Footer
+    fig.text(0.5, 0.013,
+             "FuXi-S2S deep learning S2S model  ·  "
+             "Anomalies vs WeatherBench2 ERA5 1990–2019 climatology  ·  "
+             "1.5° grid  ·  Ensemble control run",
+             ha="center", va="bottom", fontsize=7, color="#555555", style="italic")
 
 
 def render_frame(fig, step, valid_date):
     add_header_footer(fig, step, valid_date)
-    plt.subplots_adjust(left=0.03, right=0.97, top=0.92, bottom=0.10, wspace=0.06)
+    # top=0.88 gives ~12% of figure height to the header zone above the axes
+    plt.subplots_adjust(left=0.04, right=0.96, top=0.88, bottom=0.11, wspace=0.08)
     fig.canvas.draw()
     buf = fig.canvas.buffer_rgba()
     img = Image.frombytes("RGBA", fig.canvas.get_width_height(), buf).convert("RGB")

@@ -30,7 +30,8 @@ echo "================================================================"
 
 mkdir -p "$OUT_DIR"
 
-$PYTHON "$FUXI_DIR/inference.py" \
+cd "$FUXI_DIR"
+$PYTHON inference.py \
     --model   "$FUXI_DIR/model/fuxi_s2s.onnx" \
     --input   "$INPUT_FILE" \
     --device  cuda \

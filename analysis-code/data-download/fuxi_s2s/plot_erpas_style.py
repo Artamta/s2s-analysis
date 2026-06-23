@@ -750,6 +750,56 @@ def make_rf_weekly(raw_dir, date_str, init_date, out_dir, soi):
     print(f"  → {out}")
 
 
+# ── 9b. 6-WEEK MONSOON RAINFALL EVOLUTION (2×3 PNG) ──────────────────────────
+def make_rf_weekly6(raw_dir, date_str, init_date, out_dir, soi):
+    print("\n[9b] 6-Week Monsoon Rainfall PNG (2×3) …")
+    WEEKS6 = {
+        1: range(1, 8), 2: range(8, 15),
+        3: range(15,22), 4: range(22,29),
+        5: range(29,36), 6: range(36,43),
+    }
+    # Wider domain to track monsoon advance: 60E-100E, 5N-40N
+    la0,la1,lo0,lo1 = 5, 40, 60, 102
+
+    fig, axes = plt.subplots(2, 3, figsize=(18, 10),
+                             subplot_kw=dict(projection=PROJ),
+                             facecolor="white")
+    plt.subplots_adjust(left=0.04, right=0.97, top=0.88,
+                        bottom=0.12, hspace=0.18, wspace=0.06)
+    png_header(fig, init_date,
+               "FuXi-S2S Monsoon Rainfall — 6-Week Evolution (mm/day)",
+               "Weekly mean  ·  India + neighbourhood")
+
+    positions = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
+    for (r,c), (wk, steps) in zip(positions, WEEKS6.items()):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["tp"])
+        d0 = (init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1 = (init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+
+        ax = axes[r, c]
+        india_map(ax, soi, lo0, lo1, la0, la1)
+        if d:
+            tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0]
+            lat_i = lat[(lat>=la0)&(lat<=la1)]
+            lon_i = lon[(lon>=lo0)&(lon<=lo1)]
+            ax.contourf(lon_i, lat_i, tp_i,
+                        levels=PREC_BOUNDS_WK, colors=PREC_COLS_WK,
+                        transform=PROJ, extend="max", zorder=1)
+        ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=10,
+                     color="blue", fontweight="bold", pad=4)
+
+    cax = fig.add_axes([0.20, 0.04, 0.60, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap=PREC_CMAP_WK, norm=PREC_NORM_WK)
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=PREC_BOUNDS_WK)
+    cb.set_label("mm/day", fontsize=9); cb.ax.tick_params(labelsize=8)
+
+    out = out_dir/f"rf_weekly6_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
 # ── 10. WEEKLY RAINFALL ANOMALY (2×2 PNG) ─────────────────────────────────────
 def make_rf_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
     print("\n[10] Weekly Rainfall Anomaly PNG (mm/day) …")
@@ -1130,7 +1180,7 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
 MODES = [
     "prec","vort","divg","rh","igpp",
     "temp_gif","temp_anom","hw_gif",
-    "rf_weekly","rf_anom","igpp_weekly",
+    "rf_weekly","rf_w6","rf_anom","igpp_weekly",
     "tmax_actual","tmax_anom","temp_weekly","temp_anom_weekly","hw",
 ]
 
@@ -1203,6 +1253,8 @@ def main():
             make_hw_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
         elif mode == "rf_weekly":
             make_rf_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "rf_w6":
+            make_rf_weekly6(args.raw_dir, args.date, init_date, out_dir, soi)
         elif mode == "rf_anom":
             make_rf_anom_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
         elif mode == "igpp_weekly":

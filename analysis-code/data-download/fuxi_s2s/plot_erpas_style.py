@@ -61,12 +61,19 @@ PROJ = ccrs.PlateCarree()
 FPS  = 4
 
 # ── COLORMAPS (matching ERPAS visually) ───────────────────────────────────────
-# Precipitation greens
-PREC_BOUNDS = [2, 4, 8, 12, 18, 25, 35]
-PREC_COLS   = ["#d9f0d3","#a8ddb5","#4eb3d3","#2b8cbe",
-               "#08589e","#084081","#02205e"]
+# Precipitation daily (GIF): tuned to FuXi-S2S output (~0–3 mm/day over India)
+PREC_BOUNDS = [0.1, 0.3, 0.5, 1.0, 1.5, 2.0, 3.0]
+PREC_COLS   = ["#edf8e9","#bae4b3","#74c476","#31a354",
+               "#2171b5","#08519c","#08306b"]
 PREC_CMAP   = mcolors.ListedColormap(PREC_COLS)
 PREC_NORM   = BoundaryNorm(PREC_BOUNDS, PREC_CMAP.N)
+
+# Precipitation weekly total (PNG): daily×7 → mm/week, matches ERPAS scale
+PREC_BOUNDS_WK = [2, 4, 8, 12, 18, 25, 35]
+PREC_COLS_WK   = ["#d9f0d3","#a8ddb5","#4eb3d3","#2b8cbe",
+                  "#08589e","#084081","#02205e"]
+PREC_CMAP_WK   = mcolors.ListedColormap(PREC_COLS_WK)
+PREC_NORM_WK   = BoundaryNorm(PREC_BOUNDS_WK, PREC_CMAP_WK.N)
 
 # Vorticity / Divergence: dark-purple→blue→white→orange→dark-red
 VDIV_CMAP = LinearSegmentedColormap.from_list("vdiv", [
@@ -200,14 +207,28 @@ def png_header(fig, init_date, title, subtitle=""):
 
 
 # ── DATA I/O ──────────────────────────────────────────────────────────────────
+# Set by --members CLI arg; None = use all members
+_MEMBER_FILTER: set = None   # type: ignore
+
+
+def _member_dirs(raw_dir, date_str):
+    """Yield member Path objects, filtered by _MEMBER_FILTER."""
+    mem_dir = Path(raw_dir) / date_str / "member"
+    if not mem_dir.exists():
+        return
+    for mem in sorted(mem_dir.iterdir()):
+        if _MEMBER_FILTER is None or int(mem.name) in _MEMBER_FILTER:
+            yield mem
+
+
 def load_step(raw_dir, date_str, step, channels):
-    """Ensemble mean across all member subdirectories."""
+    """Ensemble mean across selected member subdirectories."""
     accum = {ch: [] for ch in channels}
     lat = lon = None
     mem_dir = Path(raw_dir) / date_str / "member"
     if not mem_dir.exists():
         return {}, None, None
-    for mem in sorted(mem_dir.iterdir()):
+    for mem in _member_dirs(raw_dir, date_str):
         f = mem / f"{step:02d}.nc"
         if not f.exists():
             continue
@@ -296,7 +317,7 @@ def build_climo(init_date, nsteps, lat, lon):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # ── 1. PRECIPITATION + 850hPa WIND (GIF) ─────────────────────────────────────
-def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
+def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
     print(f"\n[1/8] Precipitation + 850hPa Wind GIF …")
     frames = []
     for step in range(1, nsteps+1):
@@ -310,6 +331,7 @@ def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
         fig = plt.figure(figsize=(10, 7.5), facecolor="white")
         ax  = fig.add_subplot(1,1,1, projection=PROJ)
         base_map(ax, 20, 180, -20, 50)
+        add_soi(ax, soi)
         ax.contourf(lon_i, lat_i, tp, levels=PREC_BOUNDS, colors=PREC_COLS,
                     transform=PROJ, extend="max", zorder=1)
         skip=3
@@ -320,11 +342,11 @@ def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
         sm = plt.cm.ScalarMappable(cmap=PREC_CMAP, norm=PREC_NORM)
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
-                          pad=0.04, shrink=0.65, aspect=28, ticks=PREC_BOUNDS)
+                          pad=0.08, shrink=0.65, aspect=28, ticks=PREC_BOUNDS)
         cb.set_label("mm/day", fontsize=8); cb.ax.tick_params(labelsize=7)
         frame_header(fig, init_date, valid,
                      "Rainfall (shaded, mm/day) & 850hPa winds (vector, 20→)")
-        plt.tight_layout(rect=[0, 0.05, 1, 0.91])
+        plt.subplots_adjust(top=0.88, bottom=0.18, left=0.05, right=0.97)
         frames.append(render(fig))
         if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
     save_gif(frames, out_dir/f"prec_wind850_{date_str}.gif", fps)
@@ -358,19 +380,19 @@ def make_vort_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
                                    norm=mcolors.Normalize(-12,12))
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
-                          pad=0.04, shrink=0.65, aspect=28,
+                          pad=0.08, shrink=0.65, aspect=28,
                           ticks=np.arange(-12,13,3))
         cb.set_label("×10⁻⁵ s⁻¹", fontsize=8); cb.ax.tick_params(labelsize=7)
         frame_header(fig, init_date, valid,
                      "850hPa Vorticity (shaded)  &  mslp (contours, hPa)")
-        plt.tight_layout(rect=[0, 0.05, 1, 0.91])
+        plt.subplots_adjust(top=0.88, bottom=0.18, left=0.05, right=0.97)
         frames.append(render(fig))
         if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
     save_gif(frames, out_dir/f"vort850_mslp_{date_str}.gif", fps)
 
 
 # ── 3. 200hPa DIVERGENCE + WIND + Z500 (GIF) ─────────────────────────────────
-def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
+def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
     print(f"\n[3/8] 200hPa Divergence + Wind + Z500 GIF …")
     frames = []
     for step in range(1, nsteps+1):
@@ -389,6 +411,7 @@ def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
         fig = plt.figure(figsize=(10, 7.5), facecolor="white")
         ax  = fig.add_subplot(1,1,1, projection=PROJ)
         base_map(ax, 20, 180, -10, 90)
+        add_soi(ax, soi)
         ax.contourf(lon_i, lat_i, divg, levels=np.linspace(-4,4,21),
                     cmap=VDIV_CMAP, transform=PROJ, extend="both", zorder=1)
         cs = ax.contour(lon_i, lat_i, z500, levels=np.arange(5300,5960,30),
@@ -402,27 +425,26 @@ def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
         sm = plt.cm.ScalarMappable(cmap=VDIV_CMAP, norm=mcolors.Normalize(-4,4))
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
-                          pad=0.04, shrink=0.65, aspect=28,
+                          pad=0.08, shrink=0.65, aspect=28,
                           ticks=np.arange(-4,5,1))
         cb.set_label("×10⁻⁵ s⁻¹", fontsize=8); cb.ax.tick_params(labelsize=7)
         frame_header(fig, init_date, valid,
                      "200hPa Divergence (shaded), Winds (vector, 50→) & 500mb GH (contours, m)")
-        plt.tight_layout(rect=[0, 0.05, 1, 0.91])
+        plt.subplots_adjust(top=0.88, bottom=0.18, left=0.05, right=0.97)
         frames.append(render(fig))
         if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
     save_gif(frames, out_dir/f"divg200_wind_z500_{date_str}.gif", fps)
 
 
 # ── 4. CYCLOGENESIS PROBABILITY (GIF) ─────────────────────────────────────────
-def make_igpp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
+def make_igpp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
     """
     Proxy for ERPAS IGPP: ensemble spread of 850hPa vorticity as a
     cyclogenesis-activity indicator. Fraction of members with vort > threshold.
     """
     print(f"\n[4/8] Cyclogenesis Probability (vorticity spread) GIF …")
     frames = []
-    mem_dir = Path(raw_dir) / date_str / "member"
-    members = sorted(mem_dir.iterdir()) if mem_dir.exists() else []
+    members = list(_member_dirs(raw_dir, date_str))
     if len(members) < 2:
         print("  Need ≥2 members for probability — skipping")
         return
@@ -457,6 +479,7 @@ def make_igpp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
         fig = plt.figure(figsize=(10, 6), facecolor="white")
         ax  = fig.add_subplot(1,1,1, projection=PROJ)
         base_map(ax, 40, 125, 0, 40)
+        add_soi(ax, soi)
         # Only plot where probability > 25%
         prob_masked = np.ma.masked_less(prob_i, 25)
         cf = ax.contourf(lon_i, lat_i, prob_masked,
@@ -465,12 +488,12 @@ def make_igpp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
         sm = plt.cm.ScalarMappable(cmap=IGPP_CMAP, norm=IGPP_NORM)
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
-                          pad=0.05, shrink=0.65, aspect=28, ticks=IGPP_BOUNDS)
+                          pad=0.08, shrink=0.65, aspect=28, ticks=IGPP_BOUNDS)
         cb.set_label("Probability (%)", fontsize=8)
         cb.ax.tick_params(labelsize=7)
         frame_header(fig, init_date, valid,
                      "Cyclogenesis & Vorticity Activity Probability from FuXi Ensemble")
-        plt.tight_layout(rect=[0, 0.05, 1, 0.91])
+        plt.subplots_adjust(top=0.88, bottom=0.18, left=0.05, right=0.97)
         frames.append(render(fig))
         if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
     save_gif(frames, out_dir/f"igpp_{date_str}.gif", fps)
@@ -479,71 +502,72 @@ def make_igpp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps):
 # ── 5. WEEKLY ACTUAL + ANOMALY RAINFALL (2×3 PNG) ────────────────────────────
 def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
     print("\n[5/8] Weekly Rainfall PNG (actual | anomaly) …")
-    WEEKS = {1: range(1,8), 2: range(8,15), 3: range(15,22)}
+    # 4 weeks, daily avg ×7 → weekly total mm/week (matches ERPAS scale)
+    WEEKS = {1: range(1,8), 2: range(8,15), 3: range(15,22), 4: range(22,29)}
     la0,la1,lo0,lo1 = 6, 38, 66, 100
 
-    fig, axes = plt.subplots(2, 3, figsize=(14, 9),
+    fig, axes = plt.subplots(2, 4, figsize=(18, 9),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
-    png_header(fig, init_date, "MPME  Rainfall (mm/day)",
-               "Left: Actual  ·  Right: Anomaly vs ERA5 1990–2019 climo")
+    png_header(fig, init_date, "Rainfall Forecast  (mm/week)",
+               "Top: Actual  ·  Bottom: Anomaly vs ERA5 1990–2019  ·  FuXi-S2S ensemble mean")
 
     for col, (wk, steps) in enumerate(WEEKS.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["tp"])
         if not d: continue
-        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0]
+        # ×7: convert daily mean → weekly total (mm/week)
+        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0] * 7
         lm = (lat>=la0)&(lat<=la1); om=(lon>=lo0)&(lon<=lo1)
         lat_i=lat[lm]; lon_i=lon[om]
         d0 = (init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1 = (init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
-        label = f"Week{wk}: {d0}–{d1}"
+        label = f"Week{wk}\n{d0}–{d1}"
 
-        # Top: actual
+        # Top: actual (mm/week)
         ax = axes[0, col]
         india_map(ax, soi, lo0, lo1, la0, la1)
-        ax.contourf(lon_i, lat_i, tp_i, levels=PREC_BOUNDS, colors=PREC_COLS,
+        ax.contourf(lon_i, lat_i, tp_i, levels=PREC_BOUNDS_WK, colors=PREC_COLS_WK,
                     transform=PROJ, extend="max", zorder=1)
         ax.set_title(label, fontsize=9, color="blue", fontweight="bold", pad=3)
         if col == 0:
-            ax.text(-0.14, 0.5, "Actual\n(mm/day)", transform=ax.transAxes,
+            ax.text(-0.16, 0.5, "Actual\n(mm/week)", transform=ax.transAxes,
                     ha="right", va="center", fontsize=9, fontweight="bold",
                     rotation=90, color="black")
 
-        # Bottom: anomaly
+        # Bottom: anomaly (mm/week)
         ax = axes[1, col]
         india_map(ax, soi, lo0, lo1, la0, la1)
         if climo:
             c_days = [climo[s]["tp"] for s in steps if s in climo and "tp" in climo[s]]
             if c_days:
-                tp_c = crop(np.mean(c_days,axis=0), lat, lon, la0, la1, lo0, lo1)[0]
+                tp_c = crop(np.mean(c_days, axis=0), lat, lon, la0, la1, lo0, lo1)[0] * 7
                 anom = tp_i - tp_c
-                lim  = 20
                 ax.contourf(lon_i, lat_i, anom,
-                            levels=np.linspace(-lim,lim,17),
+                            levels=np.linspace(-30, 30, 17),
                             cmap=RANOM_CMAP, transform=PROJ,
                             extend="both", zorder=1)
         ax.set_title(label, fontsize=9, color="blue", fontweight="bold", pad=3)
         if col == 0:
-            ax.text(-0.14, 0.5, "Anomaly\n(mm/day)", transform=ax.transAxes,
+            ax.text(-0.16, 0.5, "Anomaly\n(mm/week)", transform=ax.transAxes,
                     ha="right", va="center", fontsize=9, fontweight="bold",
                     rotation=90, color="black")
 
     # Colorbars
-    sm_act = plt.cm.ScalarMappable(cmap=PREC_CMAP, norm=PREC_NORM)
+    sm_act = plt.cm.ScalarMappable(cmap=PREC_CMAP_WK, norm=PREC_NORM_WK)
     sm_act.set_array([])
     fig.colorbar(sm_act, ax=axes[0,:], orientation="horizontal",
-                 pad=0.07, shrink=0.55, aspect=28, ticks=PREC_BOUNDS,
-                 label="mm/day").ax.tick_params(labelsize=7)
+                 pad=0.10, shrink=0.5, aspect=32, ticks=PREC_BOUNDS_WK,
+                 label="mm/week").ax.tick_params(labelsize=7)
 
-    sm_an = plt.cm.ScalarMappable(cmap=RANOM_CMAP, norm=mcolors.Normalize(-20,20))
+    sm_an = plt.cm.ScalarMappable(cmap=RANOM_CMAP, norm=mcolors.Normalize(-30, 30))
     sm_an.set_array([])
     fig.colorbar(sm_an, ax=axes[1,:], orientation="horizontal",
-                 pad=0.07, shrink=0.55, aspect=28,
-                 ticks=np.arange(-20,21,5),
-                 label="mm/day anomaly").ax.tick_params(labelsize=7)
+                 pad=0.10, shrink=0.5, aspect=32,
+                 ticks=np.arange(-30, 31, 10),
+                 label="mm/week anomaly").ax.tick_params(labelsize=7)
 
-    plt.subplots_adjust(left=0.10, right=0.97, top=0.89,
-                        bottom=0.13, hspace=0.20, wspace=0.08)
+    plt.subplots_adjust(left=0.08, right=0.97, top=0.89,
+                        bottom=0.16, hspace=0.22, wspace=0.06)
     out = out_dir/f"rf_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -582,11 +606,11 @@ def make_tmax_actual(raw_dir, date_str, init_date, out_dir, soi):
     sm = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
     sm.set_array([])
     fig.colorbar(sm, ax=axes, orientation="horizontal",
-                 pad=0.05, shrink=0.6, aspect=28, ticks=TMAX_BOUNDS,
+                 pad=0.09, shrink=0.6, aspect=28, ticks=TMAX_BOUNDS,
                  label="°C").ax.tick_params(labelsize=7)
 
     plt.subplots_adjust(left=0.05, right=0.97, top=0.91,
-                        bottom=0.10, hspace=0.15, wspace=0.08)
+                        bottom=0.14, hspace=0.18, wspace=0.08)
     out = out_dir/f"tmax_actual_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -632,12 +656,12 @@ def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
     sm = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
     sm.set_array([])
     fig.colorbar(sm, ax=axes, orientation="horizontal",
-                 pad=0.05, shrink=0.6, aspect=28,
+                 pad=0.09, shrink=0.6, aspect=28,
                  ticks=np.arange(-10,11,1),
                  label="°C  (T2m anomaly)").ax.tick_params(labelsize=7)
 
     plt.subplots_adjust(left=0.05, right=0.97, top=0.91,
-                        bottom=0.10, hspace=0.15, wspace=0.08)
+                        bottom=0.14, hspace=0.18, wspace=0.08)
     out = out_dir/f"tmax_anom_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -654,8 +678,7 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
     WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    mem_dir = Path(raw_dir) / date_str / "member"
-    members = sorted(mem_dir.iterdir()) if mem_dir.exists() else []
+    members = list(_member_dirs(raw_dir, date_str))
 
     fig, axes = plt.subplots(4, 2, figsize=(10, 18),
                              subplot_kw=dict(projection=PROJ),
@@ -717,11 +740,11 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
     sm = plt.cm.ScalarMappable(cmap=HW_CMAP, norm=HW_NORM)
     sm.set_array([])
     fig.colorbar(sm, ax=axes, orientation="horizontal",
-                 pad=0.04, shrink=0.5, aspect=28, ticks=HW_BOUNDS,
+                 pad=0.09, shrink=0.5, aspect=28, ticks=HW_BOUNDS,
                  label="% ensemble members").ax.tick_params(labelsize=7)
 
     plt.subplots_adjust(left=0.12, right=0.97, top=0.92,
-                        bottom=0.06, hspace=0.18, wspace=0.10)
+                        bottom=0.10, hspace=0.20, wspace=0.10)
     out = out_dir/f"hw_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -749,7 +772,13 @@ def main():
                    help="Single mode; omit = all 8")
     p.add_argument("--steps",   type=int, default=42)
     p.add_argument("--fps",     type=int, default=FPS)
+    p.add_argument("--members", type=int, nargs="+", default=None,
+                   help="Member indices to use (e.g. 0 1 2); default = all")
     args = p.parse_args()
+
+    # Wire up member filter before any data loading
+    global _MEMBER_FILTER
+    _MEMBER_FILTER = set(args.members) if args.members else None
 
     init_date = datetime.date(int(args.date[:4]),
                               int(args.date[4:6]),
@@ -758,7 +787,8 @@ def main():
               else OUT_DIR / args.date
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"\nERPAS-style plots  —  FuXi-S2S  ({args.date})")
+    mem_label = f"members {sorted(_MEMBER_FILTER)}" if _MEMBER_FILTER else "all members"
+    print(f"\nERPAS-style plots  —  FuXi-S2S  ({args.date})  [{mem_label}]")
     print(f"  Raw : {args.raw_dir}/{args.date}/member/")
     print(f"  Out : {out_dir}\n")
 
@@ -780,12 +810,12 @@ def main():
     climo = build_climo(init_date, args.steps, lat, lon) if need_climo else None
 
     for mode in modes:
-        if   mode == "prec":       make_prec_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps)
+        if   mode == "prec":       make_prec_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
         elif mode == "vort":       make_vort_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
         elif mode == "divg":
             if not has_200: print("  SKIP divg — u200/v200 not found")
-            else: make_divg_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps)
-        elif mode == "igpp":       make_igpp_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps)
+            else: make_divg_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "igpp":       make_igpp_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
         elif mode == "rf_weekly":  make_rf_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
         elif mode == "tmax_actual":make_tmax_actual(args.raw_dir, args.date, init_date, out_dir, soi)
         elif mode == "tmax_anom":  make_tmax_anom(args.raw_dir, args.date, init_date, out_dir, climo, soi)

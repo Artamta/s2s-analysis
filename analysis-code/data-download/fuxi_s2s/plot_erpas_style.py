@@ -76,9 +76,10 @@ PREC_COLS   = ["#edf8e9","#bae4b3","#74c476","#31a354",
 PREC_CMAP   = mcolors.ListedColormap(PREC_COLS)
 PREC_NORM   = BoundaryNorm(PREC_BOUNDS, PREC_CMAP.N)
 
-# Rainfall weekly actual (ERPAS scale mm/day): 2,5,10,20,40
-PREC_BOUNDS_WK = [2, 5, 10, 20, 40]
-PREC_COLS_WK   = ["#c7e9c0","#74c476","#2ca25f","#006d2c","#00441b"]
+# Rainfall weekly actual: FuXi-adapted scale (tp ~0.1-3 mm/day)
+PREC_BOUNDS_WK = [0.3, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0]
+PREC_COLS_WK   = ["#edf8e9","#bae4b3","#74c476","#31a354",
+                  "#2171b5","#08519c","#08306b"]
 PREC_CMAP_WK   = mcolors.ListedColormap(PREC_COLS_WK)
 PREC_NORM_WK   = BoundaryNorm(PREC_BOUNDS_WK, PREC_CMAP_WK.N)
 
@@ -661,7 +662,7 @@ def make_hw_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
             da = xr.open_dataarray(str(f))
             t  = da.sel(channel="t2m").squeeze(drop=True).values - 273.15
             lat_ref = da.lat.values; lon_ref = da.lon.values
-            hw_prob.append(t > 35); shw_prob.append(t > 40)
+            hw_prob.append(t > 30); shw_prob.append(t > 34)
 
         if not hw_prob: continue
         valid = init_date + datetime.timedelta(days=step)
@@ -1067,7 +1068,7 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
                         bottom=0.08, hspace=0.22, wspace=0.10)
     png_header(fig, init_date,
                f"Prediction from IC={init_date.strftime('%Y%m%d')}",
-               "HW (T2m>35°C) & SHW (T2m>40°C) — % ensemble members")
+               "HW (T2m>30°C) & SHW (T2m>34°C) — % ensemble  [t2m proxy for Tmax]")
 
     for row, (wk, steps) in enumerate(WEEKS4.items()):
         d0s=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
@@ -1086,11 +1087,11 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
                 mem_days.append(t)
             if not mem_days: continue
             t_wmean = np.mean(mem_days, axis=0)
-            hw_prob.append(t_wmean > 35)
-            shw_prob.append(t_wmean > 40)
+            hw_prob.append(t_wmean > 30)
+            shw_prob.append(t_wmean > 34)
 
         for col, (prob_list, thresh_label) in enumerate(
-                [(hw_prob,"HW"), (shw_prob,"SHW")]):
+                [(hw_prob,"HW (t2m>30°C)"), (shw_prob,"SHW (t2m>34°C)")]):
             ax = axes[row, col]
             india_map(ax, soi, lo0, lo1, la0, la1)
             ax.set_title(thresh_label, fontsize=8,

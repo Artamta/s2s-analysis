@@ -2,27 +2,34 @@
 """
 plot_erpas_style.py
 ===================
-Reproduce ALL ERPAS forecast plots from FuXi-S2S output for visual comparison.
-Uses SOI state shapefile for India panels. Ensemble mean of all members.
+ALL ERPAS forecast plot types reproduced from FuXi-S2S output.
 
-Plots produced (matching ERPAS one-to-one):
+Plots produced (ERPAS layout / colorbars):
   GIFs (daily animated):
-    prec_wind850_<DATE>.gif      Rainfall + 850hPa winds  (20E-180, 20S-50N)
-    vort850_mslp_<DATE>.gif      850hPa vorticity + MSLP  (50E-110, 0-42N)
-    divg200_wind_z500_<DATE>.gif 200hPa divergence + wind + Z500 (global)
-    igpp_<DATE>.gif              Cyclogenesis probability  (40E-125, 0-40N)
+    prec_wind850_<D>.gif         Rainfall + 850hPa winds    (20E-180, 20S-50N)
+    vort850_mslp_<D>.gif         850hPa vorticity + MSLP    (50E-110, 0-42N)
+    divg200_wind_z500_<D>.gif    200hPa divg + wind + Z500  (20E-180, 10S-90N)
+    rh700_wind_<D>.gif           700hPa RH + winds          (20E-180, 20S-40N)
+    igpp_<D>.gif                 Cyclogenesis probability   (40E-125, 0-40N)
+    temp_actual_<D>.gif          T2m actual (India, min+max)(67E-98, 7-37N)
+    temp_anom_<D>.gif            T2m anomaly (India)        (67E-98, 7-37N)
+    hw_daily_<D>.gif             HW/SHW probability (India) (67E-98, 7-37N)
 
   PNGs (weekly static):
-    rf_weekly_<DATE>.png         2×3: India rainfall actual | anomaly wk1-3
-    tmax_actual_weekly_<DATE>.png 2×2: India T2m actual weeks 1-4
-    tmax_anom_weekly_<DATE>.png  2×2: India T2m anomaly weeks 1-4
-    hw_weekly_<DATE>.png         4×2: Heat-stress probability weeks 1-4
+    rf_weekly_<D>.png            1×4  India actual rainfall  mm/day
+    rf_anom_weekly_<D>.png       2×2  India rainfall anomaly mm/day
+    igpp_weekly_<D>.png          2×2  Cyclogenesis prob      (40E-125,0-40N)
+    tmax_actual_weekly_<D>.png   2×2  India T2m actual       °C
+    tmax_anom_weekly_<D>.png     2×2  India T2m anomaly      °C
+    temp_weekly_<D>.png          2×4  India tmin+tmax actual °C
+    temp_anom_weekly_<D>.png     2×4  India tmin+tmax anom   °C
+    hw_weekly_<D>.png            4×2  Heat-stress prob       %
 
 Usage
 -----
-  python plot_erpas_style.py --date 20260617          # all plots
+  python plot_erpas_style.py --date 20260617
   python plot_erpas_style.py --date 20260617 --mode prec
-  python plot_erpas_style.py --date 20260617 --steps 28 --fps 4
+  python plot_erpas_style.py --date 20260617 --members 0 1 2
 """
 
 import argparse
@@ -60,29 +67,43 @@ SOI_CRS = ccrs.LambertConformal(
 PROJ = ccrs.PlateCarree()
 FPS  = 4
 
-# ── COLORMAPS (matching ERPAS visually) ───────────────────────────────────────
-# Precipitation daily (GIF): tuned to FuXi-S2S output (~0–3 mm/day over India)
+# ── COLORMAPS ─────────────────────────────────────────────────────────────────
+
+# Rainfall daily GIF: tuned to FuXi-S2S output (~0-3 mm/day)
 PREC_BOUNDS = [0.1, 0.3, 0.5, 1.0, 1.5, 2.0, 3.0]
 PREC_COLS   = ["#edf8e9","#bae4b3","#74c476","#31a354",
                "#2171b5","#08519c","#08306b"]
 PREC_CMAP   = mcolors.ListedColormap(PREC_COLS)
 PREC_NORM   = BoundaryNorm(PREC_BOUNDS, PREC_CMAP.N)
 
-# Precipitation weekly total (PNG): daily×7 → mm/week, matches ERPAS scale
-PREC_BOUNDS_WK = [2, 4, 8, 12, 18, 25, 35]
-PREC_COLS_WK   = ["#d9f0d3","#a8ddb5","#4eb3d3","#2b8cbe",
-                  "#08589e","#084081","#02205e"]
+# Rainfall weekly actual (ERPAS scale mm/day): 2,5,10,20,40
+PREC_BOUNDS_WK = [2, 5, 10, 20, 40]
+PREC_COLS_WK   = ["#c7e9c0","#74c476","#2ca25f","#006d2c","#00441b"]
 PREC_CMAP_WK   = mcolors.ListedColormap(PREC_COLS_WK)
 PREC_NORM_WK   = BoundaryNorm(PREC_BOUNDS_WK, PREC_CMAP_WK.N)
 
-# Vorticity / Divergence: dark-purple→blue→white→orange→dark-red
+# Rainfall anomaly weekly: -20,-15,-10,-5,-2, 2, 5, 10, 15, 20 mm/day
+RANOM_BOUNDS = [-20,-15,-10,-5,-2, 2, 5, 10, 15, 20]
+RANOM_COLS   = ["#543005","#8c510a","#bf812d","#dfc27d",
+                "#f6e8c3","#c7eae5","#80cdc1","#35978f","#01665e"]
+RANOM_CMAP   = mcolors.ListedColormap(RANOM_COLS)
+RANOM_NORM   = BoundaryNorm(RANOM_BOUNDS, RANOM_CMAP.N)
+
+# 700hPa RH: yellow=dry, blue=moist
+RH_BOUNDS = [15, 30, 40, 45, 50, 55, 60, 70, 85, 95]
+RH_COLS   = ["#c8601b","#e8a048","#f5d56a","#fffcd8","#d0eef5",
+             "#97cce4","#4d9dc2","#2161a6","#083080"]
+RH_CMAP   = mcolors.ListedColormap(RH_COLS)
+RH_NORM   = BoundaryNorm(RH_BOUNDS, RH_CMAP.N)
+
+# Vorticity / Divergence: dark-purple → blue → white → orange → dark-red
 VDIV_CMAP = LinearSegmentedColormap.from_list("vdiv", [
     "#1a0030","#4a0080","#0000cc","#6699ff","#ccddff",
     "#ffffff",
     "#ffddaa","#ff8800","#cc2200","#660000",
 ], N=256)
 
-# Tmax actual: white→yellow→orange→red→dark-red (ERPAS heat scale)
+# Tmax actual (ERPAS bounds °C): 0,10,20,25,28,30,32,34,36,38,40,42,44,46
 TMAX_BOUNDS = [0,10,20,25,28,30,32,34,36,38,40,42,44,46]
 TMAX_COLS   = ["#ffffff","#ffffcc","#ffeda0","#fed976","#feb24c",
                "#fd8d3c","#fc4e2a","#e31a1c","#bd0026","#800026",
@@ -90,28 +111,29 @@ TMAX_COLS   = ["#ffffff","#ffffcc","#ffeda0","#fed976","#feb24c",
 TMAX_CMAP   = mcolors.ListedColormap(TMAX_COLS)
 TMAX_NORM   = BoundaryNorm(TMAX_BOUNDS, TMAX_CMAP.N)
 
-# Tmax anomaly: blue→white→red  ±10°C
+# Tmin actual (ERPAS bounds °C): 0,4,8,12,16,20,24,26,28,30,32,34,36
+TMIN_BOUNDS = [0, 4, 8, 12, 16, 20, 24, 26, 28, 30, 32, 34, 36]
+TMIN_COLS   = ["#ffffff","#ffffcc","#ffeda0","#fed976","#feb24c","#fd8d3c",
+               "#fc4e2a","#e31a1c","#bd0026","#800026","#54001a","#10000a"]
+TMIN_CMAP   = mcolors.ListedColormap(TMIN_COLS)
+TMIN_NORM   = BoundaryNorm(TMIN_BOUNDS, TMIN_CMAP.N)
+
+# Temperature anomaly: blue → white → red  ±10°C
 TANOM_CMAP = LinearSegmentedColormap.from_list("tanom", [
     "#053061","#2166ac","#4393c3","#92c5de","#d1e5f0",
     "#ffffff",
     "#fddbc7","#f4a582","#d6604d","#b2182b","#67001f",
 ], N=256)
+TANOM_LEVELS = [-10,-9,-7,-5,-3,-1, 0, 1, 3, 5, 7, 9, 10]
 
-# Rainfall anomaly: brown→white→green
-RANOM_CMAP = LinearSegmentedColormap.from_list("ranom", [
-    "#543005","#8c510a","#bf812d","#dfc27d","#f6e8c3",
-    "#ffffff",
-    "#c7eae5","#80cdc1","#35978f","#01665e","#003c30",
-], N=256)
-
-# Heat-stress probability: white→yellow→orange→red→magenta (ERPAS HW scale)
-HW_BOUNDS = [20,30,50,70,90,100]
+# Heat-stress probability: white → yellow → orange → red → magenta
+HW_BOUNDS = [20, 30, 50, 70, 90, 100]
 HW_COLS   = ["#ffffb2","#fecc5c","#fd8d3c","#f03b20","#bd0026","#7a0177"]
 HW_CMAP   = mcolors.ListedColormap(HW_COLS)
 HW_NORM   = BoundaryNorm(HW_BOUNDS, HW_CMAP.N)
 
-# Cyclogenesis probability: cyan→green→yellow→red→magenta
-IGPP_BOUNDS = [25,30,40,50,60,70,80,90,100]
+# Cyclogenesis probability: cyan → green → yellow → red → magenta
+IGPP_BOUNDS = [25, 30, 40, 50, 60, 70, 80, 90, 100]
 IGPP_COLS   = ["#a6f2f2","#00cc44","#88dd00","#ffee00",
                "#ff9900","#ff3300","#cc0066","#880088"]
 IGPP_CMAP   = mcolors.ListedColormap(IGPP_COLS)
@@ -131,7 +153,6 @@ def load_soi(shp=SOI_SHP):
 
 
 def add_soi(ax, soi_geoms):
-    """Add SOI state borders to an axes (India domain only)."""
     if soi_geoms:
         ax.add_geometries(soi_geoms, crs=SOI_CRS,
                           facecolor="none", edgecolor="#333333",
@@ -143,7 +164,6 @@ def add_soi(ax, soi_geoms):
 
 # ── BASE MAPS ─────────────────────────────────────────────────────────────────
 def base_map(ax, lon0, lon1, lat0, lat1, with_states=False, soi=None):
-    """ERPAS-style white/light-blue map."""
     ax.set_extent([lon0, lon1, lat0, lat1], crs=PROJ)
     ax.add_feature(cfeature.OCEAN.with_scale("50m"), color="#b8d4e8", zorder=0)
     ax.add_feature(cfeature.LAND.with_scale("50m"),  color="#f5f5e8", zorder=0)
@@ -153,7 +173,6 @@ def base_map(ax, lon0, lon1, lat0, lat1, with_states=False, soi=None):
                    edgecolor="black", linewidth=0.5, zorder=5)
     if with_states:
         add_soi(ax, soi)
-
     gl = ax.gridlines(draw_labels=True, linewidth=0.3, color="grey",
                       alpha=0.5, linestyle="--", zorder=2)
     gl.top_labels = gl.right_labels = False
@@ -164,9 +183,7 @@ def base_map(ax, lon0, lon1, lat0, lat1, with_states=False, soi=None):
 
 
 def india_map(ax, soi, lon0=67, lon1=98, lat0=7, lat1=37):
-    """Tight India panel with SOI state borders."""
     base_map(ax, lon0, lon1, lat0, lat1, with_states=True, soi=soi)
-    # Tighter gridlines for India panels
     gl = ax.gridlines(draw_labels=True, linewidth=0.25, color="grey",
                       alpha=0.4, linestyle="--", zorder=2)
     gl.top_labels = gl.right_labels = False
@@ -177,7 +194,7 @@ def india_map(ax, soi, lon0=67, lon1=98, lat0=7, lat1=37):
 
 
 def frame_header(fig, init_date, valid_date, subtitle):
-    """ERPAS-style red/black/blue three-line header."""
+    """ERPAS-style red/black/blue three-line GIF header."""
     fig.text(0.5, 0.975,
              f"FuXi-S2S   Forecast Valid Time = "
              f"00Z{valid_date.strftime('%d%b%Y').upper()}",
@@ -193,27 +210,24 @@ def frame_header(fig, init_date, valid_date, subtitle):
 
 
 def png_header(fig, init_date, title, subtitle=""):
-    """Place 2–3 line header. Always call with subplots_adjust(top≤0.88)."""
+    """Place 2-3 line header for PNG plots. Call AFTER subplots_adjust."""
     fig.text(0.5, 0.980, title,
              ha="center", va="top", fontsize=12,
              color="red", fontweight="bold")
     fig.text(0.5, 0.955,
              f"FuXi-S2S  ·  IC={init_date.strftime('%Y%m%d')}  ·  "
-             "ERA5 1990–2019 climatology",
-             ha="center", va="top", fontsize=9,
-             color="black")
+             "ERA5 1990-2019 climatology",
+             ha="center", va="top", fontsize=9, color="black")
     if subtitle:
         fig.text(0.5, 0.933, subtitle,
                  ha="center", va="top", fontsize=8, color="blue")
 
 
 # ── DATA I/O ──────────────────────────────────────────────────────────────────
-# Set by --members CLI arg; None = use all members
 _MEMBER_FILTER: set = None   # type: ignore
 
 
 def _member_dirs(raw_dir, date_str):
-    """Yield member Path objects, filtered by _MEMBER_FILTER."""
     mem_dir = Path(raw_dir) / date_str / "member"
     if not mem_dir.exists():
         return
@@ -223,12 +237,9 @@ def _member_dirs(raw_dir, date_str):
 
 
 def load_step(raw_dir, date_str, step, channels):
-    """Ensemble mean across selected member subdirectories."""
+    """Ensemble mean across selected members for given step."""
     accum = {ch: [] for ch in channels}
     lat = lon = None
-    mem_dir = Path(raw_dir) / date_str / "member"
-    if not mem_dir.exists():
-        return {}, None, None
     for mem in _member_dirs(raw_dir, date_str):
         f = mem / f"{step:02d}.nc"
         if not f.exists():
@@ -250,7 +261,6 @@ def crop(arr, lat, lon, lat0, lat1, lon0, lon1):
 
 
 def weekly_mean(raw_dir, date_str, steps, channels):
-    """Average a list of steps into a weekly mean. Returns (dict, lat, lon)."""
     accum = {ch: [] for ch in channels}
     lat = lon = None
     for step in steps:
@@ -265,6 +275,14 @@ def weekly_mean(raw_dir, date_str, steps, channels):
     return out, lat, lon
 
 
+def q_to_rh(q700, t700, p_hPa=700.0):
+    """Compute RH (%) from specific humidity and temperature at p_hPa."""
+    T_C = t700 - 273.15
+    es = 6.1078 * np.exp(17.2694 * T_C / (T_C + 237.29))
+    e  = q700 * p_hPa / (0.622 + 0.378 * q700)
+    return np.clip(e / es * 100.0, 0, 100)
+
+
 def render(fig):
     fig.canvas.draw()
     buf = fig.canvas.buffer_rgba()
@@ -274,6 +292,9 @@ def render(fig):
 
 
 def save_gif(frames, path, fps):
+    if not frames:
+        print(f"  WARNING: no frames — {path} not written")
+        return
     frames[0].save(str(path), save_all=True, append_images=frames[1:],
                    duration=int(1000/fps), loop=0, optimize=True)
     print(f"  → {path}  ({path.stat().st_size/1024**2:.1f} MB)")
@@ -283,7 +304,7 @@ def save_gif(frames, path, fps):
 WB2_MAP = {"t2m":"t2m", "z500":"z500", "tp":"tp24", "u850":"u850", "v850":"v850"}
 
 def build_climo(init_date, nsteps, lat, lon):
-    print("  Loading WB2 1990–2019 climatology …")
+    print("  Loading WB2 1990-2019 climatology …")
     try:
         from earth2studio.data import WB2Climatology
         wb2 = WB2Climatology(climatology_zarr_store="1990-2019_6h_1440x721.zarr",
@@ -319,7 +340,7 @@ def build_climo(init_date, nsteps, lat, lon):
 
 # ── 1. PRECIPITATION + 850hPa WIND (GIF) ─────────────────────────────────────
 def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
-    print(f"\n[1/8] Precipitation + 850hPa Wind GIF …")
+    print(f"\n[1] Precipitation + 850hPa Wind GIF …")
     frames = []
     for step in range(1, nsteps+1):
         d, lat, lon = load_step(raw_dir, date_str, step, ["tp","u850","v850"])
@@ -335,7 +356,7 @@ def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
         add_soi(ax, soi)
         ax.contourf(lon_i, lat_i, tp, levels=PREC_BOUNDS, colors=PREC_COLS,
                     transform=PROJ, extend="max", zorder=1)
-        skip=3
+        skip = 3
         ax.quiver(lon_i[::skip], lat_i[::skip],
                   u850[::skip,::skip], v850[::skip,::skip],
                   transform=PROJ, scale=350, width=0.002, color="black",
@@ -355,7 +376,7 @@ def make_prec_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
 
 # ── 2. 850hPa VORTICITY + MSLP (GIF) ─────────────────────────────────────────
 def make_vort_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
-    print(f"\n[2/8] 850hPa Vorticity + MSLP GIF …")
+    print(f"\n[2] 850hPa Vorticity + MSLP GIF …")
     frames = []
     for step in range(1, nsteps+1):
         d, lat, lon = load_step(raw_dir, date_str, step, ["u850","v850","msl"])
@@ -377,8 +398,7 @@ def make_vort_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
         cs = ax.contour(lon_i, lat_i, msl, levels=np.arange(994,1026,2),
                         colors="blue", linewidths=0.6, transform=PROJ, zorder=3)
         ax.clabel(cs, fmt="%d", fontsize=6, colors="blue", inline=True)
-        sm = plt.cm.ScalarMappable(cmap=VDIV_CMAP,
-                                   norm=mcolors.Normalize(-12,12))
+        sm = plt.cm.ScalarMappable(cmap=VDIV_CMAP, norm=mcolors.Normalize(-12,12))
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
                           pad=0.08, shrink=0.65, aspect=28,
@@ -394,7 +414,7 @@ def make_vort_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
 
 # ── 3. 200hPa DIVERGENCE + WIND + Z500 (GIF) ─────────────────────────────────
 def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
-    print(f"\n[3/8] 200hPa Divergence + Wind + Z500 GIF …")
+    print(f"\n[3] 200hPa Divergence + Wind + Z500 GIF …")
     frames = []
     for step in range(1, nsteps+1):
         d, lat, lon = load_step(raw_dir, date_str, step,
@@ -418,7 +438,7 @@ def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
         cs = ax.contour(lon_i, lat_i, z500, levels=np.arange(5300,5960,30),
                         colors="blue", linewidths=0.5, transform=PROJ, zorder=3)
         ax.clabel(cs, fmt="%d", fontsize=5, colors="blue", inline=True)
-        skip=3
+        skip = 3
         ax.quiver(lon_i[::skip], lat_i[::skip],
                   u200[::skip,::skip], v200[::skip,::skip],
                   transform=PROJ, scale=700, width=0.002, color="black",
@@ -437,73 +457,260 @@ def make_divg_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
     save_gif(frames, out_dir/f"divg200_wind_z500_{date_str}.gif", fps)
 
 
-# ── 4. CYCLOGENESIS PROBABILITY (GIF) ─────────────────────────────────────────
+# ── 4. 700hPa RH + WIND (GIF) ────────────────────────────────────────────────
+def make_rh_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
+    print(f"\n[4] 700hPa RH + Wind GIF …")
+    frames = []
+    for step in range(1, nsteps+1):
+        d, lat, lon = load_step(raw_dir, date_str, step,
+                                ["q700","t700","u700","v700"])
+        if not d or "q700" not in d or "t700" not in d: continue
+        valid = init_date + datetime.timedelta(days=step)
+
+        q700, lat_i, lon_i = crop(d["q700"], lat, lon, -20, 40, 20, 180)
+        t700 = crop(d["t700"], lat, lon, -20, 40, 20, 180)[0]
+        rh   = q_to_rh(q700, t700, 700.0)
+
+        fig = plt.figure(figsize=(10, 7.5), facecolor="white")
+        ax  = fig.add_subplot(1,1,1, projection=PROJ)
+        base_map(ax, 20, 180, -20, 40)
+        ax.contourf(lon_i, lat_i, rh, levels=RH_BOUNDS, colors=RH_COLS,
+                    transform=PROJ, extend="both", zorder=1)
+
+        if "u700" in d and "v700" in d:
+            u700 = crop(d["u700"], lat, lon, -20, 40, 20, 180)[0]
+            v700 = crop(d["v700"], lat, lon, -20, 40, 20, 180)[0]
+            skip = 3
+            ax.quiver(lon_i[::skip], lat_i[::skip],
+                      u700[::skip,::skip], v700[::skip,::skip],
+                      transform=PROJ, scale=350, width=0.002, color="black",
+                      alpha=0.85, zorder=5, headwidth=3, headlength=3)
+
+        sm = plt.cm.ScalarMappable(cmap=RH_CMAP, norm=RH_NORM)
+        sm.set_array([])
+        cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
+                          pad=0.08, shrink=0.65, aspect=28, ticks=RH_BOUNDS)
+        cb.set_label("RH (%)", fontsize=8); cb.ax.tick_params(labelsize=7)
+        frame_header(fig, init_date, valid,
+                     "700hPa Relative humidity (%)  &  700hPa winds (vector, 20→)")
+        plt.subplots_adjust(top=0.88, bottom=0.18, left=0.05, right=0.97)
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir/f"rh700_wind_{date_str}.gif", fps)
+
+
+# ── 5. CYCLOGENESIS PROBABILITY daily (GIF) ───────────────────────────────────
 def make_igpp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
-    """
-    Proxy for ERPAS IGPP: ensemble spread of 850hPa vorticity as a
-    cyclogenesis-activity indicator. Fraction of members with vort > threshold.
-    """
-    print(f"\n[4/8] Cyclogenesis Probability (vorticity spread) GIF …")
+    print(f"\n[5] Cyclogenesis Probability GIF …")
     frames = []
     members = list(_member_dirs(raw_dir, date_str))
     if len(members) < 2:
-        print("  Need ≥2 members for probability — skipping")
+        print("  Need ≥2 members — skipping")
         return
 
     for step in range(1, nsteps+1):
-        # Load each member separately for spread
         vort_members = []
         lat_ref = lon_ref = None
         for mem in members:
             f = mem / f"{step:02d}.nc"
             if not f.exists(): continue
-            da = xr.open_dataarray(str(f))
-            u = da.sel(channel="u850").squeeze(drop=True).values
-            v = da.sel(channel="v850").squeeze(drop=True).values
+            da  = xr.open_dataarray(str(f))
+            u   = da.sel(channel="u850").squeeze(drop=True).values
+            v   = da.sel(channel="v850").squeeze(drop=True).values
             lat = da.lat.values; lon = da.lon.values
             lat_ref = lat; lon_ref = lon
-            dx = np.deg2rad(1.5)*6371000*np.cos(np.deg2rad(lat[:,None]))
-            dy = np.deg2rad(1.5)*6371000
+            dx   = np.deg2rad(1.5)*6371000*np.cos(np.deg2rad(lat[:,None]))
+            dy   = np.deg2rad(1.5)*6371000
             vort = (np.gradient(v,axis=1)/dx - np.gradient(u,axis=0)/dy)*1e5
             vort_members.append(vort)
 
         if not vort_members: continue
         valid = init_date + datetime.timedelta(days=step)
-
-        # Probability of cyclonic anomaly (vort > 3×10⁻⁵ s⁻¹)
         vort_stack = np.array(vort_members)
-        prob = (vort_stack > 3).mean(axis=0) * 100.0  # %
-
-        # Domain: 40E-125E, 0-40N
+        prob = (vort_stack > 3).mean(axis=0) * 100.0
         prob_i, lat_i, lon_i = crop(prob, lat_ref, lon_ref, 0, 40, 40, 125)
 
         fig = plt.figure(figsize=(10, 6), facecolor="white")
         ax  = fig.add_subplot(1,1,1, projection=PROJ)
         base_map(ax, 40, 125, 0, 40)
         add_soi(ax, soi)
-        # Only plot where probability > 25%
         prob_masked = np.ma.masked_less(prob_i, 25)
-        cf = ax.contourf(lon_i, lat_i, prob_masked,
-                         levels=IGPP_BOUNDS, colors=IGPP_COLS,
-                         transform=PROJ, extend="max", zorder=1)
+        ax.contourf(lon_i, lat_i, prob_masked,
+                    levels=IGPP_BOUNDS, colors=IGPP_COLS,
+                    transform=PROJ, extend="max", zorder=1)
         sm = plt.cm.ScalarMappable(cmap=IGPP_CMAP, norm=IGPP_NORM)
         sm.set_array([])
         cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
-                          pad=0.08, shrink=0.65, aspect=28, ticks=IGPP_BOUNDS)
-        cb.set_label("Probability (%)", fontsize=8)
-        cb.ax.tick_params(labelsize=7)
+                          pad=0.08, shrink=0.65, aspect=28, ticks=IGPP_BOUNDS[:-1])
+        cb.set_label("Probability (%)", fontsize=8); cb.ax.tick_params(labelsize=7)
         frame_header(fig, init_date, valid,
-                     "Cyclogenesis & Vorticity Activity Probability from FuXi Ensemble")
+                     "Cyclogenesis & Evolution probability from FuXi-IGPP")
         plt.subplots_adjust(top=0.88, bottom=0.18, left=0.05, right=0.97)
         frames.append(render(fig))
         if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
     save_gif(frames, out_dir/f"igpp_{date_str}.gif", fps)
 
 
-# ── 5. WEEKLY ACTUAL + ANOMALY RAINFALL (2×3 PNG) ────────────────────────────
-def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
-    print("\n[5/8] Weekly Rainfall PNG (actual | anomaly) …")
-    # 4 weeks actual only (1×4) — anomaly vs ERA5 is not meaningful for FuXi tp
+# ── 6. TEMPERATURE ACTUAL daily (GIF, India, tmin+tmax) ──────────────────────
+def make_temp_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
+    print(f"\n[6] Temperature Actual daily GIF (India) …")
+    la0,la1,lo0,lo1 = 7, 37, 67, 98
+    frames = []
+    for step in range(1, nsteps+1):
+        d, lat, lon = load_step(raw_dir, date_str, step, ["t2m"])
+        if not d: continue
+        valid = init_date + datetime.timedelta(days=step)
+        t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
+        lat_i = lat[(lat>=la0)&(lat<=la1)]
+        lon_i = lon[(lon>=lo0)&(lon<=lo1)]
+
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6),
+                                 subplot_kw=dict(projection=PROJ),
+                                 facecolor="white")
+        plt.subplots_adjust(top=0.85, bottom=0.22, left=0.04, right=0.97,
+                            wspace=0.08)
+
+        for col, (cmap, norm, bounds, label) in enumerate([
+            (TMIN_CMAP, TMIN_NORM, TMIN_BOUNDS, "Minimum Temp. Actual in °C"),
+            (TMAX_CMAP, TMAX_NORM, TMAX_BOUNDS, "Maximum Temp. Actual in °C"),
+        ]):
+            ax = axes[col]
+            india_map(ax, soi, lo0, lo1, la0, la1)
+            ax.contourf(lon_i, lat_i, t2m_i, levels=bounds, colors=list(cmap.colors),
+                        transform=PROJ, extend="both", zorder=1)
+            ax.set_title(label, fontsize=10, color="blue", fontweight="bold", pad=3)
+
+            cax = fig.add_axes([0.07+col*0.50, 0.08, 0.42, 0.03])
+            sm  = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+            sm.set_array([])
+            cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=bounds)
+            cb.ax.tick_params(labelsize=6)
+
+        fig.text(0.5, 0.970,
+                 f"FuXi-S2S  Forecast Valid Time = 00Z{valid.strftime('%d%b%Y').upper()}",
+                 ha="center", va="top", fontsize=11, color="red", fontweight="bold")
+        fig.text(0.5, 0.935,
+                 f"Initial Condition : {init_date.strftime('%Y%m%d')}",
+                 ha="center", va="top", fontsize=9, color="black", fontweight="bold")
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir/f"temp_actual_{date_str}.gif", fps)
+
+
+# ── 7. TEMPERATURE ANOMALY daily (GIF, India) ─────────────────────────────────
+def make_temp_anom_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps,
+                       climo, soi):
+    print(f"\n[7] Temperature Anomaly daily GIF (India) …")
+    if climo is None:
+        print("  No climo available — skipping")
+        return
+    la0,la1,lo0,lo1 = 7, 37, 67, 98
+    frames = []
+    for step in range(1, nsteps+1):
+        d, lat, lon = load_step(raw_dir, date_str, step, ["t2m"])
+        if not d or step not in climo: continue
+        valid = init_date + datetime.timedelta(days=step)
+        t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
+        t2m_c = crop(climo[step]["t2m"] - 273.15, lat, lon, la0, la1, lo0, lo1)[0]
+        anom  = t2m_i - t2m_c
+        lat_i = lat[(lat>=la0)&(lat<=la1)]
+        lon_i = lon[(lon>=lo0)&(lon<=lo1)]
+
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6),
+                                 subplot_kw=dict(projection=PROJ),
+                                 facecolor="white")
+        plt.subplots_adjust(top=0.85, bottom=0.22, left=0.04, right=0.97,
+                            wspace=0.08)
+
+        for col, label in enumerate(["Minimum Temp. Anomaly in °C",
+                                     "Maximum Temp. Anomaly in °C"]):
+            ax = axes[col]
+            india_map(ax, soi, lo0, lo1, la0, la1)
+            ax.contourf(lon_i, lat_i, anom, levels=TANOM_LEVELS,
+                        cmap=TANOM_CMAP, transform=PROJ, extend="both", zorder=1)
+            ax.set_title(label, fontsize=10, color="blue", fontweight="bold", pad=3)
+
+        cax = fig.add_axes([0.20, 0.07, 0.60, 0.03])
+        sm  = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
+        sm.set_array([])
+        cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TANOM_LEVELS)
+        cb.set_label("°C", fontsize=8); cb.ax.tick_params(labelsize=6)
+
+        fig.text(0.5, 0.970,
+                 f"FuXi-S2S  Forecasted Temp Anomaly  Valid Time=00Z{valid.strftime('%d%b%Y').upper()}",
+                 ha="center", va="top", fontsize=10, color="red", fontweight="bold")
+        fig.text(0.5, 0.935,
+                 f"Initial Condition : {init_date.strftime('%Y%m%d')}",
+                 ha="center", va="top", fontsize=9, color="black", fontweight="bold")
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir/f"temp_anom_{date_str}.gif", fps)
+
+
+# ── 8. HEAT-STRESS daily (GIF, India, HW + SHW) ───────────────────────────────
+def make_hw_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
+    print(f"\n[8] Heat-Stress Probability daily GIF …")
+    members = list(_member_dirs(raw_dir, date_str))
+    la0,la1,lo0,lo1 = 7, 37, 67, 98
+    frames = []
+    for step in range(1, nsteps+1):
+        hw_prob = []; shw_prob = []; lat_ref = lon_ref = None
+        for mem in members:
+            f = mem / f"{step:02d}.nc"
+            if not f.exists(): continue
+            da = xr.open_dataarray(str(f))
+            t  = da.sel(channel="t2m").squeeze(drop=True).values - 273.15
+            lat_ref = da.lat.values; lon_ref = da.lon.values
+            hw_prob.append(t > 35); shw_prob.append(t > 40)
+
+        if not hw_prob: continue
+        valid = init_date + datetime.timedelta(days=step)
+
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6),
+                                 subplot_kw=dict(projection=PROJ),
+                                 facecolor="white")
+        plt.subplots_adjust(top=0.85, bottom=0.22, left=0.04, right=0.97,
+                            wspace=0.08)
+
+        for col, (prob_list, label) in enumerate([
+            (hw_prob,  "Heat Wave (T2m > 35°C)"),
+            (shw_prob, "Severe Heat Wave (T2m > 40°C)"),
+        ]):
+            ax = axes[col]
+            india_map(ax, soi, lo0, lo1, la0, la1)
+            prob_arr = np.mean(prob_list, axis=0)*100.0
+            prob_i   = crop(prob_arr, lat_ref, lon_ref, la0, la1, lo0, lo1)[0]
+            prob_m   = np.ma.masked_less(prob_i, 20)
+            lat_i = lat_ref[(lat_ref>=la0)&(lat_ref<=la1)]
+            lon_i = lon_ref[(lon_ref>=lo0)&(lon_ref<=lo1)]
+            ax.contourf(lon_i, lat_i, prob_m, levels=HW_BOUNDS, colors=HW_COLS,
+                        transform=PROJ, extend="max", zorder=1)
+            ax.set_title(label, fontsize=10,
+                         color="red" if col==0 else "darkred",
+                         fontweight="bold", pad=3)
+
+        cax = fig.add_axes([0.20, 0.08, 0.60, 0.03])
+        sm  = plt.cm.ScalarMappable(cmap=HW_CMAP, norm=HW_NORM)
+        sm.set_array([])
+        cb  = fig.colorbar(sm, cax=cax, orientation="horizontal",
+                           ticks=HW_BOUNDS[:-1])
+        cb.set_label("Probability (%)", fontsize=8); cb.ax.tick_params(labelsize=7)
+
+        fig.text(0.5, 0.970,
+                 f"Forecast Valid Time = 00Z{valid.strftime('%d%b%Y').upper()}  "
+                 f"IC: {init_date.strftime('%Y%m%d')}",
+                 ha="center", va="top", fontsize=10, color="blue", fontweight="bold")
+        fig.text(0.5, 0.940,
+                 "Probability of Occurrence for:  Heat Wave  |  Severe Heat Wave",
+                 ha="center", va="top", fontsize=9, color="black")
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1: print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir/f"hw_daily_{date_str}.gif", fps)
+
+
+# ── 9. WEEKLY ACTUAL RAINFALL (1×4 PNG, mm/day) ───────────────────────────────
+def make_rf_weekly(raw_dir, date_str, init_date, out_dir, soi):
+    print("\n[9] Weekly Actual Rainfall PNG (mm/day) …")
     WEEKS = {1: range(1,8), 2: range(8,15), 3: range(15,22), 4: range(22,29)}
     la0,la1,lo0,lo1 = 6, 38, 66, 100
 
@@ -512,15 +719,14 @@ def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
                              facecolor="white")
     plt.subplots_adjust(left=0.04, right=0.97, top=0.86,
                         bottom=0.18, hspace=0.0, wspace=0.06)
-    png_header(fig, init_date, "Rainfall Forecast  (mm/week)",
-               "FuXi-S2S ensemble  ·  weekly total  ·  India")
+    png_header(fig, init_date, "FuXi-S2S Actual Rainfall (mm/day)",
+               "Weekly mean  ·  India")
 
     for col, (wk, steps) in enumerate(WEEKS.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["tp"])
         if not d: continue
-        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0] * 7
-        lm = (lat>=la0)&(lat<=la1); om=(lon>=lo0)&(lon<=lo1)
-        lat_i=lat[lm]; lon_i=lon[om]
+        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0]
+        lat_i = lat[(lat>=la0)&(lat<=la1)]; lon_i = lon[(lon>=lo0)&(lon<=lo1)]
         d0 = (init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1 = (init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
 
@@ -528,16 +734,13 @@ def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
         india_map(ax, soi, lo0, lo1, la0, la1)
         ax.contourf(lon_i, lat_i, tp_i, levels=PREC_BOUNDS_WK, colors=PREC_COLS_WK,
                     transform=PROJ, extend="max", zorder=1)
-        ax.set_title(f"Week{wk}:  {d0}–{d1}", fontsize=9,
+        ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
                      color="blue", fontweight="bold", pad=4)
 
-    # Single colorbar below all 4 panels
     cax = fig.add_axes([0.20, 0.06, 0.60, 0.03])
     sm  = plt.cm.ScalarMappable(cmap=PREC_CMAP_WK, norm=PREC_NORM_WK)
     sm.set_array([])
-    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal",
-                       ticks=PREC_BOUNDS_WK)
-    cb.set_label("mm/week", fontsize=9)
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=PREC_BOUNDS_WK)
     cb.ax.tick_params(labelsize=8)
 
     out = out_dir/f"rf_weekly_{date_str}.png"
@@ -546,15 +749,125 @@ def make_rf_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
     print(f"  → {out}")
 
 
-# ── 6. WEEKLY ACTUAL TMAX (2×2 PNG) ──────────────────────────────────────────
+# ── 10. WEEKLY RAINFALL ANOMALY (2×2 PNG) ─────────────────────────────────────
+def make_rf_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
+    print("\n[10] Weekly Rainfall Anomaly PNG (mm/day) …")
+    if climo is None:
+        print("  No climo — skipping")
+        return
+    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    la0,la1,lo0,lo1 = 6, 38, 66, 100
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
+                             subplot_kw=dict(projection=PROJ),
+                             facecolor="white")
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
+                        bottom=0.13, hspace=0.22, wspace=0.10)
+    png_header(fig, init_date, "FuXi-S2S Rainfall Anomaly (mm/day)",
+               "vs ERA5 1990-2019 climatology  ·  India")
+
+    for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["tp"])
+        if not d: continue
+        tp_i = crop(d["tp"], lat, lon, la0, la1, lo0, lo1)[0]
+        lat_i = lat[(lat>=la0)&(lat<=la1)]; lon_i = lon[(lon>=lo0)&(lon<=lo1)]
+        d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+
+        ax = axes[r,c]
+        india_map(ax, soi, lo0, lo1, la0, la1)
+        c_days = [climo[s]["tp"] for s in steps if s in climo and "tp" in climo[s]]
+        if c_days:
+            tp_c = crop(np.mean(c_days, axis=0), lat, lon, la0, la1, lo0, lo1)[0]
+            anom = tp_i - tp_c
+            ax.contourf(lon_i, lat_i, anom, levels=RANOM_BOUNDS, colors=RANOM_COLS,
+                        transform=PROJ, extend="both", zorder=1)
+        ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
+
+    cax = fig.add_axes([0.15, 0.05, 0.70, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap=RANOM_CMAP, norm=RANOM_NORM)
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=RANOM_BOUNDS)
+    cb.ax.tick_params(labelsize=7)
+    out = out_dir/f"rf_anom_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 11. IGPP WEEKLY (2×2 PNG) ─────────────────────────────────────────────────
+def make_igpp_weekly(raw_dir, date_str, init_date, out_dir, soi):
+    print("\n[11] IGPP Weekly PNG …")
+    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    members = list(_member_dirs(raw_dir, date_str))
+    if len(members) < 2:
+        print("  Need ≥2 members — skipping")
+        return
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
+                             subplot_kw=dict(projection=PROJ),
+                             facecolor="white")
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
+                        bottom=0.13, hspace=0.22, wspace=0.10)
+    png_header(fig, init_date,
+               "Cyclogenesis & Evolution Probability (%) from FuXi-IGPP",
+               "Ensemble fraction with 850hPa vorticity > 3×10⁻⁵ s⁻¹")
+
+    for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
+        d0s=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1s=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+
+        vort_days = []
+        lat_ref = lon_ref = None
+        for mem in members:
+            for step in steps:
+                f = mem / f"{step:02d}.nc"
+                if not f.exists(): continue
+                da  = xr.open_dataarray(str(f))
+                u   = da.sel(channel="u850").squeeze(drop=True).values
+                v   = da.sel(channel="v850").squeeze(drop=True).values
+                lat = da.lat.values; lon = da.lon.values
+                lat_ref = lat; lon_ref = lon
+                dx   = np.deg2rad(1.5)*6371000*np.cos(np.deg2rad(lat[:,None]))
+                dy   = np.deg2rad(1.5)*6371000
+                vort = (np.gradient(v,axis=1)/dx - np.gradient(u,axis=0)/dy)*1e5
+                vort_days.append(vort)
+
+        ax = axes[r,c]
+        base_map(ax, 40, 125, 0, 40)
+        ax.set_title(f"(W{wk}: {d0s}-{d1s})", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
+        if vort_days and lat_ref is not None:
+            prob = (np.array(vort_days) > 3).mean(axis=0)*100.0
+            prob_i, lat_i, lon_i = crop(prob, lat_ref, lon_ref, 0, 40, 40, 125)
+            prob_m = np.ma.masked_less(prob_i, 25)
+            ax.contourf(lon_i, lat_i, prob_m, levels=IGPP_BOUNDS, colors=IGPP_COLS,
+                        transform=PROJ, extend="max", zorder=1)
+
+    cax = fig.add_axes([0.20, 0.05, 0.60, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap=IGPP_CMAP, norm=IGPP_NORM)
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal",
+                       ticks=IGPP_BOUNDS[:-1])
+    cb.set_label("(%)", fontsize=9); cb.ax.tick_params(labelsize=8)
+    out = out_dir/f"igpp_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 12. WEEKLY T2m ACTUAL (2×2 PNG) ───────────────────────────────────────────
 def make_tmax_actual(raw_dir, date_str, init_date, out_dir, soi):
-    print("\n[6/8] Weekly T2m Actual PNG (weeks 1–4) …")
+    print("\n[12] Weekly T2m Actual PNG (weeks 1-4) …")
     WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
-    fig, axes = plt.subplots(2, 2, figsize=(10, 12),
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
+                        bottom=0.13, hspace=0.22, wspace=0.10)
     png_header(fig, init_date, "Maximum Temperature Actual (°C)",
                "T2m used as proxy for daily Tmax  ·  FuXi-S2S ensemble mean")
 
@@ -562,36 +875,31 @@ def make_tmax_actual(raw_dir, date_str, init_date, out_dir, soi):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
         if not d: continue
         t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
-        lm=(lat>=la0)&(lat<=la1); om=(lon>=lo0)&(lon<=lo1)
-        lat_i=lat[lm]; lon_i=lon[om]
+        lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
 
         ax = axes[r,c]
         india_map(ax, soi, lo0, lo1, la0, la1)
-        ax.contourf(lon_i, lat_i, t2m_i,
-                    levels=TMAX_BOUNDS, colors=TMAX_COLS,
+        ax.contourf(lon_i, lat_i, t2m_i, levels=TMAX_BOUNDS, colors=TMAX_COLS,
                     transform=PROJ, extend="both", zorder=1)
-        ax.set_title(f"(Week{wk}: {d0}–{d1})", fontsize=9,
-                     color="blue", fontweight="bold", pad=3)
+        ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
 
-    sm = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
+    cax = fig.add_axes([0.20, 0.05, 0.60, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
     sm.set_array([])
-    fig.colorbar(sm, ax=axes, orientation="horizontal",
-                 pad=0.09, shrink=0.6, aspect=28, ticks=TMAX_BOUNDS,
-                 label="°C").ax.tick_params(labelsize=7)
-
-    plt.subplots_adjust(left=0.05, right=0.97, top=0.91,
-                        bottom=0.14, hspace=0.18, wspace=0.08)
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TMAX_BOUNDS)
+    cb.set_label("°C", fontsize=9); cb.ax.tick_params(labelsize=7)
     out = out_dir/f"tmax_actual_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"  → {out}")
 
 
-# ── 7. WEEKLY TMAX ANOMALY (2×2 PNG) ─────────────────────────────────────────
+# ── 13. WEEKLY T2m ANOMALY (2×2 PNG) ──────────────────────────────────────────
 def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
-    print("\n[7/8] Weekly T2m Anomaly PNG (weeks 1–4) …")
+    print("\n[13] Weekly T2m Anomaly PNG (weeks 1-4) …")
     WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
@@ -601,14 +909,13 @@ def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
     plt.subplots_adjust(left=0.05, right=0.97, top=0.88,
                         bottom=0.13, hspace=0.22, wspace=0.10)
     png_header(fig, init_date, "Maximum Temperature Anomaly (°C)",
-               "T2m anomaly vs ERA5 1990–2019 climatology")
+               "T2m anomaly vs ERA5 1990-2019 climatology")
 
     for (r,c), (wk, steps) in zip([(0,0),(0,1),(1,0),(1,1)], WEEKS4.items()):
         d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
         if not d: continue
         t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
-        lm=(lat>=la0)&(lat<=la1); om=(lon>=lo0)&(lon<=lo1)
-        lat_i=lat[lm]; lon_i=lon[om]
+        lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
         d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
         d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
 
@@ -620,57 +927,154 @@ def make_tmax_anom(raw_dir, date_str, init_date, out_dir, climo, soi):
                 t2m_c = crop(np.mean(c_days,axis=0)-273.15, lat, lon,
                              la0, la1, lo0, lo1)[0]
                 anom  = t2m_i - t2m_c
-                # ERPAS-matching levels: finer near zero, coarser at extremes
                 ax.contourf(lon_i, lat_i, anom,
-                            levels=[-10,-7,-5,-3,-1,0,1,3,5,7,10],
-                            cmap=TANOM_CMAP, transform=PROJ,
-                            extend="both", zorder=1)
-        ax.set_title(f"Week{wk}: {d0}–{d1}", fontsize=9,
+                            levels=TANOM_LEVELS, cmap=TANOM_CMAP,
+                            transform=PROJ, extend="both", zorder=1)
+        ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=9,
                      color="blue", fontweight="bold", pad=4)
 
-    # Manually placed colorbar so it can't overlap panels
     cax = fig.add_axes([0.20, 0.05, 0.60, 0.025])
     sm  = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
     sm.set_array([])
-    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal",
-                       ticks=[-10,-7,-5,-3,-1,0,1,3,5,7,10])
-    cb.set_label("°C  (T2m anomaly)", fontsize=9)
-    cb.ax.tick_params(labelsize=8)
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TANOM_LEVELS)
+    cb.set_label("°C  (T2m anomaly)", fontsize=9); cb.ax.tick_params(labelsize=8)
     out = out_dir/f"tmax_anom_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"  → {out}")
 
 
-# ── 8. HEAT-STRESS PROBABILITY (4×2 PNG) ─────────────────────────────────────
-def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
-    """
-    Proxy for ERPAS heat-wave probability:
-    fraction of members with T2m > 35°C (HW) or > 40°C (SHW) per grid cell.
-    """
-    print("\n[8/8] Heat-Stress Probability PNG (weeks 1–4) …")
+# ── 14. COMBINED WEEKLY TMIN + TMAX ACTUAL (2×4 side by side) ────────────────
+def make_temp_weekly(raw_dir, date_str, init_date, out_dir, soi):
+    print("\n[14] Combined Weekly Tmin+Tmax Actual PNG …")
     WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
     la0,la1,lo0,lo1 = 7, 37, 67, 98
 
+    fig = plt.figure(figsize=(22, 10), facecolor="white")
+    plt.subplots_adjust(left=0.04, right=0.98, top=0.88,
+                        bottom=0.16, hspace=0.25, wspace=0.06)
+
+    wk_list = list(WEEKS4.items())
+    for col, (wk, steps) in enumerate(wk_list):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
+        d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+
+        for row, (cmap, norm, bounds, side) in enumerate([
+            (TMIN_CMAP, TMIN_NORM, TMIN_BOUNDS, "Min"),
+            (TMAX_CMAP, TMAX_NORM, TMAX_BOUNDS, "Max"),
+        ]):
+            ax = fig.add_subplot(2, 4, row*4 + col + 1, projection=PROJ)
+            india_map(ax, soi, lo0, lo1, la0, la1)
+            if d:
+                t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
+                lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
+                ax.contourf(lon_i, lat_i, t2m_i, levels=bounds,
+                            colors=list(cmap.colors),
+                            transform=PROJ, extend="both", zorder=1)
+            ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=8,
+                         color="blue", fontweight="bold", pad=3)
+            if col == 0:
+                ax.text(-0.18, 0.5, f"{side} Temp\nActual (°C)",
+                        transform=ax.transAxes, ha="right", va="center",
+                        fontsize=8, fontweight="bold", color="red")
+
+    cax0 = fig.add_axes([0.06, 0.095, 0.88, 0.022])
+    sm0  = plt.cm.ScalarMappable(cmap=TMIN_CMAP, norm=TMIN_NORM)
+    sm0.set_array([])
+    cb0  = fig.colorbar(sm0, cax=cax0, orientation="horizontal", ticks=TMIN_BOUNDS)
+    cb0.set_label("Minimum Temp (°C)", fontsize=8); cb0.ax.tick_params(labelsize=6)
+
+    cax1 = fig.add_axes([0.06, 0.035, 0.88, 0.022])
+    sm1  = plt.cm.ScalarMappable(cmap=TMAX_CMAP, norm=TMAX_NORM)
+    sm1.set_array([])
+    cb1  = fig.colorbar(sm1, cax=cax1, orientation="horizontal", ticks=TMAX_BOUNDS)
+    cb1.set_label("Maximum Temp (°C)", fontsize=8); cb1.ax.tick_params(labelsize=6)
+
+    png_header(fig, init_date,
+               "Minimum Temperature Actual (°C)    |    Maximum Temperature Actual (°C)",
+               f"IC={init_date.strftime('%Y%m%d')}  ·  T2m used as proxy for both Tmin & Tmax")
+    out = out_dir/f"temp_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 15. COMBINED WEEKLY TMIN + TMAX ANOMALY (2×4 side by side) ───────────────
+def make_temp_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
+    print("\n[15] Combined Weekly Tmin+Tmax Anomaly PNG …")
+    if climo is None:
+        print("  No climo — skipping")
+        return
+    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    la0,la1,lo0,lo1 = 7, 37, 67, 98
+
+    fig = plt.figure(figsize=(22, 10), facecolor="white")
+    plt.subplots_adjust(left=0.04, right=0.98, top=0.88,
+                        bottom=0.16, hspace=0.25, wspace=0.06)
+
+    for col, (wk, steps) in enumerate(WEEKS4.items()):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["t2m"])
+        d0=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+
+        for row, side in enumerate(["Min Temp Anomaly", "Max Temp Anomaly"]):
+            ax = fig.add_subplot(2, 4, row*4 + col + 1, projection=PROJ)
+            india_map(ax, soi, lo0, lo1, la0, la1)
+            if d and climo:
+                t2m_i = crop(d["t2m"], lat, lon, la0, la1, lo0, lo1)[0] - 273.15
+                lat_i=lat[(lat>=la0)&(lat<=la1)]; lon_i=lon[(lon>=lo0)&(lon<=lo1)]
+                c_days=[climo[s]["t2m"] for s in steps if s in climo and "t2m" in climo[s]]
+                if c_days:
+                    t2m_c = crop(np.mean(c_days,axis=0)-273.15, lat, lon,
+                                 la0, la1, lo0, lo1)[0]
+                    anom  = t2m_i - t2m_c
+                    ax.contourf(lon_i, lat_i, anom, levels=TANOM_LEVELS,
+                                cmap=TANOM_CMAP, transform=PROJ, extend="both", zorder=1)
+            ax.set_title(f"(Week{wk}: {d0}-{d1})", fontsize=8,
+                         color="blue", fontweight="bold", pad=3)
+            if col == 0:
+                ax.text(-0.18, 0.5, side,
+                        transform=ax.transAxes, ha="right", va="center",
+                        fontsize=8, fontweight="bold", color="red")
+
+    cax = fig.add_axes([0.12, 0.055, 0.76, 0.022])
+    sm  = plt.cm.ScalarMappable(cmap=TANOM_CMAP, norm=mcolors.Normalize(-10,10))
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=TANOM_LEVELS)
+    cb.set_label("Temperature Anomaly (°C)", fontsize=9); cb.ax.tick_params(labelsize=7)
+
+    png_header(fig, init_date,
+               "Minimum Temp Anomaly (°C)    |    Maximum Temp Anomaly (°C)",
+               f"T2m anomaly vs ERA5 1990-2019 climatology  ·  IC={init_date.strftime('%Y%m%d')}")
+    out = out_dir/f"temp_anom_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 16. HEAT-STRESS PROBABILITY WEEKLY (4×2 PNG) ─────────────────────────────
+def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
+    print("\n[16] Heat-Stress Probability Weekly PNG …")
+    WEEKS4 = {1:range(1,8), 2:range(8,15), 3:range(15,22), 4:range(22,29)}
+    la0,la1,lo0,lo1 = 7, 37, 67, 98
     members = list(_member_dirs(raw_dir, date_str))
 
     fig, axes = plt.subplots(4, 2, figsize=(10, 18),
                              subplot_kw=dict(projection=PROJ),
                              facecolor="white")
+    plt.subplots_adjust(left=0.15, right=0.97, top=0.92,
+                        bottom=0.08, hspace=0.22, wspace=0.10)
     png_header(fig, init_date,
                f"Prediction from IC={init_date.strftime('%Y%m%d')}",
-               "Heat Stress (T2m>35°C) & Severe Heat Stress (T2m>40°C) — % ensemble")
+               "HW (T2m>35°C) & SHW (T2m>40°C) — % ensemble members")
 
     for row, (wk, steps) in enumerate(WEEKS4.items()):
-        d0s = (init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
-        d1s = (init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
-        wlabel = f"W{wk} Lead\n({d0s}–{d1s})"
+        d0s=(init_date+datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1s=(init_date+datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+        wlabel = f"W{wk} Lead\n({d0s}-{d1s})"
 
-        # Collect daily t2m from each member → weekly mean per member
-        hw_prob  = []   # fraction > 35°C
-        shw_prob = []   # fraction > 40°C
-        lat_ref = lon_ref = None
-
+        hw_prob = []; shw_prob = []; lat_ref = lon_ref = None
         for mem in members:
             mem_days = []
             for step in steps:
@@ -686,39 +1090,33 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
             shw_prob.append(t_wmean > 40)
 
         for col, (prob_list, thresh_label) in enumerate(
-                [(hw_prob,"HW (>35°C)"), (shw_prob,"SHW (>40°C)")]):
+                [(hw_prob,"HW"), (shw_prob,"SHW")]):
             ax = axes[row, col]
             india_map(ax, soi, lo0, lo1, la0, la1)
-            ax.set_title(f"{thresh_label}", fontsize=8,
+            ax.set_title(thresh_label, fontsize=8,
                          color="red" if col==0 else "darkred",
                          fontweight="bold", pad=2)
-
-            # Y-axis week label on left panel
             if col == 0:
-                ax.text(-0.18, 0.5, wlabel, transform=ax.transAxes,
+                ax.text(-0.25, 0.5, wlabel, transform=ax.transAxes,
                         ha="right", va="center", fontsize=8,
                         fontweight="bold", color="red", rotation=0)
-
             if prob_list and lat_ref is not None:
                 prob_arr = np.mean(prob_list, axis=0)*100.0
-                prob_i   = crop(prob_arr, lat_ref, lon_ref,
-                                la0, la1, lo0, lo1)[0]
-                lm=(lat_ref>=la0)&(lat_ref<=la1)
-                om=(lon_ref>=lo0)&(lon_ref<=lo1)
-                lat_i=lat_ref[lm]; lon_i=lon_ref[om]
+                prob_i   = crop(prob_arr, lat_ref, lon_ref, la0, la1, lo0, lo1)[0]
+                lat_i=lat_ref[(lat_ref>=la0)&(lat_ref<=la1)]
+                lon_i=lon_ref[(lon_ref>=lo0)&(lon_ref<=lo1)]
                 prob_m = np.ma.masked_less(prob_i, 20)
-                ax.contourf(lon_i, lat_i, prob_m,
-                            levels=HW_BOUNDS, colors=HW_COLS,
+                ax.contourf(lon_i, lat_i, prob_m, levels=HW_BOUNDS, colors=HW_COLS,
                             transform=PROJ, extend="max", zorder=1)
 
-    sm = plt.cm.ScalarMappable(cmap=HW_CMAP, norm=HW_NORM)
+    cax = fig.add_axes([0.20, 0.03, 0.60, 0.020])
+    sm  = plt.cm.ScalarMappable(cmap=HW_CMAP, norm=HW_NORM)
     sm.set_array([])
-    fig.colorbar(sm, ax=axes, orientation="horizontal",
-                 pad=0.09, shrink=0.5, aspect=28, ticks=HW_BOUNDS,
-                 label="% ensemble members").ax.tick_params(labelsize=7)
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal",
+                       ticks=HW_BOUNDS[:-1])
+    cb.set_label("% ensemble members", fontsize=9)
+    cb.ax.tick_params(labelsize=7)
 
-    plt.subplots_adjust(left=0.12, right=0.97, top=0.92,
-                        bottom=0.10, hspace=0.20, wspace=0.10)
     out = out_dir/f"hw_weekly_{date_str}.png"
     fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -728,29 +1126,29 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
 # ═══════════════════════════════════════════════════════════════════════════════
 # CLI
 # ═══════════════════════════════════════════════════════════════════════════════
-MODES = ["prec","vort","divg","igpp","rf_weekly",
-         "tmax_actual","tmax_anom","hw"]
+MODES = [
+    "prec","vort","divg","rh","igpp",
+    "temp_gif","temp_anom","hw_gif",
+    "rf_weekly","rf_anom","igpp_weekly",
+    "tmax_actual","tmax_anom","temp_weekly","temp_anom_weekly","hw",
+]
 
 def main():
     p = argparse.ArgumentParser(
-        description="ERPAS-style plots from FuXi-S2S (all 8 plot types)",
+        description="ERPAS-style plots from FuXi-S2S (all 16 plot types)",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument("--date",    required=True, help="Init date YYYYMMDD")
     p.add_argument("--raw_dir", default=str(RAW_DIR))
-    p.add_argument("--out_dir", default=None,
-                   help="Output dir (default: erpas_style/<date>/)")
-    p.add_argument("--soi_shp", default=SOI_SHP,
-                   help="SOI STATE_BOUNDARY.shp path")
-    p.add_argument("--mode",    default=None, choices=MODES,
-                   help="Single mode; omit = all 8")
+    p.add_argument("--out_dir", default=None)
+    p.add_argument("--soi_shp", default=SOI_SHP)
+    p.add_argument("--mode",    default=None, choices=MODES)
     p.add_argument("--steps",   type=int, default=42)
     p.add_argument("--fps",     type=int, default=FPS)
     p.add_argument("--members", type=int, nargs="+", default=None,
-                   help="Member indices to use (e.g. 0 1 2); default = all")
+                   help="Member indices (e.g. 0 1 2); default=all")
     args = p.parse_args()
 
-    # Wire up member filter before any data loading
     global _MEMBER_FILTER
     _MEMBER_FILTER = set(args.members) if args.members else None
 
@@ -768,32 +1166,56 @@ def main():
 
     soi = load_soi(args.soi_shp)
 
-    # Reference grid
     d1, lat, lon = load_step(args.raw_dir, args.date, 1,
                              ["tp","u850","v850","msl","u200","v200",
-                              "z500","t2m"])
+                              "z500","t2m","q700","t700","u700","v700"])
     if lat is None:
         print(f"ERROR: no data at {args.raw_dir}/{args.date}/member/")
         sys.exit(1)
     print(f"  Channels available: {list(d1.keys())}")
-    has_200 = "u200" in d1 and "v200" in d1
+    has_200  = "u200" in d1
+    has_rh   = "q700" in d1 and "t700" in d1
 
-    # Climo needed for anomaly plots
     modes = [args.mode] if args.mode else MODES
-    need_climo = any(m in modes for m in ["rf_weekly","tmax_anom"])
+    need_climo = any(m in modes for m in
+                     ["rf_anom","tmax_anom","temp_anom","temp_anom_weekly"])
     climo = build_climo(init_date, args.steps, lat, lon) if need_climo else None
 
     for mode in modes:
-        if   mode == "prec":       make_prec_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
-        elif mode == "vort":       make_vort_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        if   mode == "prec":
+            make_prec_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "vort":
+            make_vort_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
         elif mode == "divg":
             if not has_200: print("  SKIP divg — u200/v200 not found")
             else: make_divg_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
-        elif mode == "igpp":       make_igpp_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
-        elif mode == "rf_weekly":  make_rf_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
-        elif mode == "tmax_actual":make_tmax_actual(args.raw_dir, args.date, init_date, out_dir, soi)
-        elif mode == "tmax_anom":  make_tmax_anom(args.raw_dir, args.date, init_date, out_dir, climo, soi)
-        elif mode == "hw":         make_hw_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "rh":
+            if not has_rh: print("  SKIP rh — q700/t700 not found")
+            else: make_rh_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "igpp":
+            make_igpp_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "temp_gif":
+            make_temp_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "temp_anom":
+            make_temp_anom_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, climo, soi)
+        elif mode == "hw_gif":
+            make_hw_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "rf_weekly":
+            make_rf_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "rf_anom":
+            make_rf_anom_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
+        elif mode == "igpp_weekly":
+            make_igpp_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "tmax_actual":
+            make_tmax_actual(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "tmax_anom":
+            make_tmax_anom(args.raw_dir, args.date, init_date, out_dir, climo, soi)
+        elif mode == "temp_weekly":
+            make_temp_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "temp_anom_weekly":
+            make_temp_anom_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
+        elif mode == "hw":
+            make_hw_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
 
     print(f"\nAll done!  →  {out_dir}")
 

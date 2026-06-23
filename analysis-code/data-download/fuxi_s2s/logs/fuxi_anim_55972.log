@@ -1,0 +1,351 @@
+================================================================
+Job      : FuXi-S2S Forecast Animations
+Job ID   : 55972
+Node     : cn1
+Mode     : all
+Start    : Tue 23 Jun 2026 01:14:22 PM IST
+================================================================
+
+FuXi-S2S Animation Generator
+  Init date : 18 Jun 2026  (20260618)
+  Raw dir   : /storage/raj.ayush/All_Model_Data/fuxi/test/raw/20260618/member/
+  Output    : /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation
+  Domain    : lat 5–38  lon 65–100
+  Members   : [0]   FPS: 3   Steps: 42
+
+  SOI: 40 state polygons loaded
+  Building WB2 1990-2019 climatology cache …
+[32m2026-06-23 13:14:40.971[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-19T00:00:00[0m
+[32m2026-06-23 13:14:40.972[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-19T00:00:00[0m
+[32m2026-06-23 13:14:40.973[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-19T00:00:00[0m
+[32m2026-06-23 13:14:40.973[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-19T00:00:00[0m
+[32m2026-06-23 13:14:40.974[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-19T00:00:00[0m
+[32m2026-06-23 13:14:40.974[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-19T00:00:00[0m
+[32m2026-06-23 13:14:41.273[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-20T00:00:00[0m
+[32m2026-06-23 13:14:41.274[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-20T00:00:00[0m
+[32m2026-06-23 13:14:41.275[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-20T00:00:00[0m
+[32m2026-06-23 13:14:41.276[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-20T00:00:00[0m
+[32m2026-06-23 13:14:41.276[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-20T00:00:00[0m
+[32m2026-06-23 13:14:41.277[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-20T00:00:00[0m
+[32m2026-06-23 13:14:41.553[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-21T00:00:00[0m
+[32m2026-06-23 13:14:41.554[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-21T00:00:00[0m
+[32m2026-06-23 13:14:41.554[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-21T00:00:00[0m
+[32m2026-06-23 13:14:41.555[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-21T00:00:00[0m
+[32m2026-06-23 13:14:41.555[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-21T00:00:00[0m
+[32m2026-06-23 13:14:41.556[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-21T00:00:00[0m
+[32m2026-06-23 13:14:41.803[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-22T00:00:00[0m
+[32m2026-06-23 13:14:41.804[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-22T00:00:00[0m
+[32m2026-06-23 13:14:41.805[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-22T00:00:00[0m
+[32m2026-06-23 13:14:41.805[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-22T00:00:00[0m
+[32m2026-06-23 13:14:41.806[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-22T00:00:00[0m
+[32m2026-06-23 13:14:41.806[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-22T00:00:00[0m
+[32m2026-06-23 13:14:42.048[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-23T00:00:00[0m
+[32m2026-06-23 13:14:42.049[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-23T00:00:00[0m
+[32m2026-06-23 13:14:42.050[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-23T00:00:00[0m
+[32m2026-06-23 13:14:42.050[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-23T00:00:00[0m
+[32m2026-06-23 13:14:42.051[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-23T00:00:00[0m
+[32m2026-06-23 13:14:42.051[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-23T00:00:00[0m
+[32m2026-06-23 13:14:42.295[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-24T00:00:00[0m
+[32m2026-06-23 13:14:42.296[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-24T00:00:00[0m
+[32m2026-06-23 13:14:42.297[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-24T00:00:00[0m
+[32m2026-06-23 13:14:42.297[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-24T00:00:00[0m
+[32m2026-06-23 13:14:42.298[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-24T00:00:00[0m
+[32m2026-06-23 13:14:42.298[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-24T00:00:00[0m
+[32m2026-06-23 13:14:42.552[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-25T00:00:00[0m
+[32m2026-06-23 13:14:42.553[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-25T00:00:00[0m
+[32m2026-06-23 13:14:42.554[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-25T00:00:00[0m
+[32m2026-06-23 13:14:42.554[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-25T00:00:00[0m
+[32m2026-06-23 13:14:42.555[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-25T00:00:00[0m
+[32m2026-06-23 13:14:42.556[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-25T00:00:00[0m
+[32m2026-06-23 13:14:42.800[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-26T00:00:00[0m
+[32m2026-06-23 13:14:42.801[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-26T00:00:00[0m
+[32m2026-06-23 13:14:42.801[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-26T00:00:00[0m
+[32m2026-06-23 13:14:42.802[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-26T00:00:00[0m
+[32m2026-06-23 13:14:42.803[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-26T00:00:00[0m
+[32m2026-06-23 13:14:42.804[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-26T00:00:00[0m
+[32m2026-06-23 13:14:43.048[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-27T00:00:00[0m
+[32m2026-06-23 13:14:43.048[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-27T00:00:00[0m
+[32m2026-06-23 13:14:43.049[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-27T00:00:00[0m
+[32m2026-06-23 13:14:43.050[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-27T00:00:00[0m
+[32m2026-06-23 13:14:43.050[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-27T00:00:00[0m
+[32m2026-06-23 13:14:43.051[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-27T00:00:00[0m
+[32m2026-06-23 13:14:43.299[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-28T00:00:00[0m
+[32m2026-06-23 13:14:43.300[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-28T00:00:00[0m
+[32m2026-06-23 13:14:43.300[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-28T00:00:00[0m
+[32m2026-06-23 13:14:43.301[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-28T00:00:00[0m
+[32m2026-06-23 13:14:43.302[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-28T00:00:00[0m
+[32m2026-06-23 13:14:43.302[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-28T00:00:00[0m
+[32m2026-06-23 13:14:43.551[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-29T00:00:00[0m
+[32m2026-06-23 13:14:43.552[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-29T00:00:00[0m
+[32m2026-06-23 13:14:43.553[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-29T00:00:00[0m
+[32m2026-06-23 13:14:43.553[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-29T00:00:00[0m
+[32m2026-06-23 13:14:43.554[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-29T00:00:00[0m
+[32m2026-06-23 13:14:43.555[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-29T00:00:00[0m
+[32m2026-06-23 13:14:43.772[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-06-30T00:00:00[0m
+[32m2026-06-23 13:14:43.773[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-06-30T00:00:00[0m
+[32m2026-06-23 13:14:43.773[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-06-30T00:00:00[0m
+[32m2026-06-23 13:14:43.774[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-06-30T00:00:00[0m
+[32m2026-06-23 13:14:43.775[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-06-30T00:00:00[0m
+[32m2026-06-23 13:14:43.775[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-06-30T00:00:00[0m
+[32m2026-06-23 13:14:44.019[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-01T00:00:00[0m
+[32m2026-06-23 13:14:44.019[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-01T00:00:00[0m
+[32m2026-06-23 13:14:44.020[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-01T00:00:00[0m
+[32m2026-06-23 13:14:44.021[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-01T00:00:00[0m
+[32m2026-06-23 13:14:44.021[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-01T00:00:00[0m
+[32m2026-06-23 13:14:44.022[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-01T00:00:00[0m
+[32m2026-06-23 13:14:44.242[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-02T00:00:00[0m
+[32m2026-06-23 13:14:44.243[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-02T00:00:00[0m
+[32m2026-06-23 13:14:44.243[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-02T00:00:00[0m
+[32m2026-06-23 13:14:44.244[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-02T00:00:00[0m
+[32m2026-06-23 13:14:44.244[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-02T00:00:00[0m
+[32m2026-06-23 13:14:44.245[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-02T00:00:00[0m
+    … cached lead days 1–14
+[32m2026-06-23 13:14:44.464[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-03T00:00:00[0m
+[32m2026-06-23 13:14:44.465[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-03T00:00:00[0m
+[32m2026-06-23 13:14:44.465[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-03T00:00:00[0m
+[32m2026-06-23 13:14:44.466[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-03T00:00:00[0m
+[32m2026-06-23 13:14:44.466[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-03T00:00:00[0m
+[32m2026-06-23 13:14:44.467[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-03T00:00:00[0m
+[32m2026-06-23 13:14:44.691[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-04T00:00:00[0m
+[32m2026-06-23 13:14:44.692[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-04T00:00:00[0m
+[32m2026-06-23 13:14:44.692[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-04T00:00:00[0m
+[32m2026-06-23 13:14:44.693[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-04T00:00:00[0m
+[32m2026-06-23 13:14:44.694[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-04T00:00:00[0m
+[32m2026-06-23 13:14:44.694[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-04T00:00:00[0m
+[32m2026-06-23 13:14:44.917[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-05T00:00:00[0m
+[32m2026-06-23 13:14:44.917[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-05T00:00:00[0m
+[32m2026-06-23 13:14:44.918[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-05T00:00:00[0m
+[32m2026-06-23 13:14:44.918[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-05T00:00:00[0m
+[32m2026-06-23 13:14:44.919[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-05T00:00:00[0m
+[32m2026-06-23 13:14:44.919[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-05T00:00:00[0m
+[32m2026-06-23 13:14:45.140[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-06T00:00:00[0m
+[32m2026-06-23 13:14:45.140[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-06T00:00:00[0m
+[32m2026-06-23 13:14:45.141[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-06T00:00:00[0m
+[32m2026-06-23 13:14:45.141[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-06T00:00:00[0m
+[32m2026-06-23 13:14:45.142[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-06T00:00:00[0m
+[32m2026-06-23 13:14:45.142[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-06T00:00:00[0m
+[32m2026-06-23 13:14:45.363[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-07T00:00:00[0m
+[32m2026-06-23 13:14:45.364[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-07T00:00:00[0m
+[32m2026-06-23 13:14:45.365[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-07T00:00:00[0m
+[32m2026-06-23 13:14:45.365[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-07T00:00:00[0m
+[32m2026-06-23 13:14:45.366[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-07T00:00:00[0m
+[32m2026-06-23 13:14:45.366[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-07T00:00:00[0m
+[32m2026-06-23 13:14:45.599[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-08T00:00:00[0m
+[32m2026-06-23 13:14:45.599[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-08T00:00:00[0m
+[32m2026-06-23 13:14:45.600[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-08T00:00:00[0m
+[32m2026-06-23 13:14:45.601[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-08T00:00:00[0m
+[32m2026-06-23 13:14:45.601[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-08T00:00:00[0m
+[32m2026-06-23 13:14:45.602[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-08T00:00:00[0m
+[32m2026-06-23 13:14:45.823[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-09T00:00:00[0m
+[32m2026-06-23 13:14:45.824[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-09T00:00:00[0m
+[32m2026-06-23 13:14:45.825[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-09T00:00:00[0m
+[32m2026-06-23 13:14:45.825[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-09T00:00:00[0m
+[32m2026-06-23 13:14:45.826[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-09T00:00:00[0m
+[32m2026-06-23 13:14:45.826[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-09T00:00:00[0m
+[32m2026-06-23 13:14:46.047[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-10T00:00:00[0m
+[32m2026-06-23 13:14:46.048[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-10T00:00:00[0m
+[32m2026-06-23 13:14:46.049[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-10T00:00:00[0m
+[32m2026-06-23 13:14:46.049[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-10T00:00:00[0m
+[32m2026-06-23 13:14:46.050[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-10T00:00:00[0m
+[32m2026-06-23 13:14:46.050[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-10T00:00:00[0m
+[32m2026-06-23 13:14:46.276[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-11T00:00:00[0m
+[32m2026-06-23 13:14:46.277[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-11T00:00:00[0m
+[32m2026-06-23 13:14:46.277[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-11T00:00:00[0m
+[32m2026-06-23 13:14:46.278[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-11T00:00:00[0m
+[32m2026-06-23 13:14:46.278[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-11T00:00:00[0m
+[32m2026-06-23 13:14:46.279[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-11T00:00:00[0m
+[32m2026-06-23 13:14:46.492[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-12T00:00:00[0m
+[32m2026-06-23 13:14:46.492[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-12T00:00:00[0m
+[32m2026-06-23 13:14:46.492[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-12T00:00:00[0m
+[32m2026-06-23 13:14:46.493[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-12T00:00:00[0m
+[32m2026-06-23 13:14:46.493[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-12T00:00:00[0m
+[32m2026-06-23 13:14:46.493[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-12T00:00:00[0m
+[32m2026-06-23 13:14:46.710[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-13T00:00:00[0m
+[32m2026-06-23 13:14:46.711[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-13T00:00:00[0m
+[32m2026-06-23 13:14:46.712[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-13T00:00:00[0m
+[32m2026-06-23 13:14:46.712[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-13T00:00:00[0m
+[32m2026-06-23 13:14:46.713[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-13T00:00:00[0m
+[32m2026-06-23 13:14:46.713[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-13T00:00:00[0m
+[32m2026-06-23 13:14:46.931[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-14T00:00:00[0m
+[32m2026-06-23 13:14:46.932[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-14T00:00:00[0m
+[32m2026-06-23 13:14:46.933[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-14T00:00:00[0m
+[32m2026-06-23 13:14:46.934[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-14T00:00:00[0m
+[32m2026-06-23 13:14:46.934[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-14T00:00:00[0m
+[32m2026-06-23 13:14:46.935[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-14T00:00:00[0m
+[32m2026-06-23 13:14:47.153[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-15T00:00:00[0m
+[32m2026-06-23 13:14:47.154[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-15T00:00:00[0m
+[32m2026-06-23 13:14:47.154[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-15T00:00:00[0m
+[32m2026-06-23 13:14:47.155[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-15T00:00:00[0m
+[32m2026-06-23 13:14:47.156[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-15T00:00:00[0m
+[32m2026-06-23 13:14:47.156[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-15T00:00:00[0m
+[32m2026-06-23 13:14:47.376[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-16T00:00:00[0m
+[32m2026-06-23 13:14:47.376[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-16T00:00:00[0m
+[32m2026-06-23 13:14:47.377[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-16T00:00:00[0m
+[32m2026-06-23 13:14:47.377[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-16T00:00:00[0m
+[32m2026-06-23 13:14:47.378[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-16T00:00:00[0m
+[32m2026-06-23 13:14:47.378[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-16T00:00:00[0m
+    … cached lead days 1–28
+[32m2026-06-23 13:14:47.597[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-17T00:00:00[0m
+[32m2026-06-23 13:14:47.597[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-17T00:00:00[0m
+[32m2026-06-23 13:14:47.598[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-17T00:00:00[0m
+[32m2026-06-23 13:14:47.599[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-17T00:00:00[0m
+[32m2026-06-23 13:14:47.599[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-17T00:00:00[0m
+[32m2026-06-23 13:14:47.600[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-17T00:00:00[0m
+[32m2026-06-23 13:14:47.814[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-18T00:00:00[0m
+[32m2026-06-23 13:14:47.814[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-18T00:00:00[0m
+[32m2026-06-23 13:14:47.814[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-18T00:00:00[0m
+[32m2026-06-23 13:14:47.814[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-18T00:00:00[0m
+[32m2026-06-23 13:14:47.815[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-18T00:00:00[0m
+[32m2026-06-23 13:14:47.815[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-18T00:00:00[0m
+[32m2026-06-23 13:14:48.028[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-19T00:00:00[0m
+[32m2026-06-23 13:14:48.028[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-19T00:00:00[0m
+[32m2026-06-23 13:14:48.029[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-19T00:00:00[0m
+[32m2026-06-23 13:14:48.029[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-19T00:00:00[0m
+[32m2026-06-23 13:14:48.029[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-19T00:00:00[0m
+[32m2026-06-23 13:14:48.029[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-19T00:00:00[0m
+[32m2026-06-23 13:14:48.247[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-20T00:00:00[0m
+[32m2026-06-23 13:14:48.247[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-20T00:00:00[0m
+[32m2026-06-23 13:14:48.248[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-20T00:00:00[0m
+[32m2026-06-23 13:14:48.248[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-20T00:00:00[0m
+[32m2026-06-23 13:14:48.248[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-20T00:00:00[0m
+[32m2026-06-23 13:14:48.248[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-20T00:00:00[0m
+[32m2026-06-23 13:14:48.462[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-21T00:00:00[0m
+[32m2026-06-23 13:14:48.462[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-21T00:00:00[0m
+[32m2026-06-23 13:14:48.463[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-21T00:00:00[0m
+[32m2026-06-23 13:14:48.463[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-21T00:00:00[0m
+[32m2026-06-23 13:14:48.463[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-21T00:00:00[0m
+[32m2026-06-23 13:14:48.463[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-21T00:00:00[0m
+[32m2026-06-23 13:14:48.676[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-22T00:00:00[0m
+[32m2026-06-23 13:14:48.676[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-22T00:00:00[0m
+[32m2026-06-23 13:14:48.676[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-22T00:00:00[0m
+[32m2026-06-23 13:14:48.676[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-22T00:00:00[0m
+[32m2026-06-23 13:14:48.677[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-22T00:00:00[0m
+[32m2026-06-23 13:14:48.677[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-22T00:00:00[0m
+[32m2026-06-23 13:14:48.894[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-23T00:00:00[0m
+[32m2026-06-23 13:14:48.895[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-23T00:00:00[0m
+[32m2026-06-23 13:14:48.895[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-23T00:00:00[0m
+[32m2026-06-23 13:14:48.896[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-23T00:00:00[0m
+[32m2026-06-23 13:14:48.897[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-23T00:00:00[0m
+[32m2026-06-23 13:14:48.897[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-23T00:00:00[0m
+[32m2026-06-23 13:14:49.113[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-24T00:00:00[0m
+[32m2026-06-23 13:14:49.113[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-24T00:00:00[0m
+[32m2026-06-23 13:14:49.114[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-24T00:00:00[0m
+[32m2026-06-23 13:14:49.114[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-24T00:00:00[0m
+[32m2026-06-23 13:14:49.114[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-24T00:00:00[0m
+[32m2026-06-23 13:14:49.114[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-24T00:00:00[0m
+[32m2026-06-23 13:14:49.322[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-25T00:00:00[0m
+[32m2026-06-23 13:14:49.323[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-25T00:00:00[0m
+[32m2026-06-23 13:14:49.323[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-25T00:00:00[0m
+[32m2026-06-23 13:14:49.323[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-25T00:00:00[0m
+[32m2026-06-23 13:14:49.323[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-25T00:00:00[0m
+[32m2026-06-23 13:14:49.324[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-25T00:00:00[0m
+[32m2026-06-23 13:14:49.537[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-26T00:00:00[0m
+[32m2026-06-23 13:14:49.537[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-26T00:00:00[0m
+[32m2026-06-23 13:14:49.538[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-26T00:00:00[0m
+[32m2026-06-23 13:14:49.538[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-26T00:00:00[0m
+[32m2026-06-23 13:14:49.538[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-26T00:00:00[0m
+[32m2026-06-23 13:14:49.538[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-26T00:00:00[0m
+[32m2026-06-23 13:14:49.747[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-27T00:00:00[0m
+[32m2026-06-23 13:14:49.747[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-27T00:00:00[0m
+[32m2026-06-23 13:14:49.748[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-27T00:00:00[0m
+[32m2026-06-23 13:14:49.748[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-27T00:00:00[0m
+[32m2026-06-23 13:14:49.748[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-27T00:00:00[0m
+[32m2026-06-23 13:14:49.748[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-27T00:00:00[0m
+[32m2026-06-23 13:14:49.992[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-28T00:00:00[0m
+[32m2026-06-23 13:14:49.992[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-28T00:00:00[0m
+[32m2026-06-23 13:14:49.992[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-28T00:00:00[0m
+[32m2026-06-23 13:14:49.992[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-28T00:00:00[0m
+[32m2026-06-23 13:14:49.993[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-28T00:00:00[0m
+[32m2026-06-23 13:14:49.993[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-28T00:00:00[0m
+[32m2026-06-23 13:14:50.212[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-29T00:00:00[0m
+[32m2026-06-23 13:14:50.213[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-29T00:00:00[0m
+[32m2026-06-23 13:14:50.214[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-29T00:00:00[0m
+[32m2026-06-23 13:14:50.214[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-29T00:00:00[0m
+[32m2026-06-23 13:14:50.215[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-29T00:00:00[0m
+[32m2026-06-23 13:14:50.215[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-29T00:00:00[0m
+[32m2026-06-23 13:14:50.428[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: u850 at 2001-07-30T00:00:00[0m
+[32m2026-06-23 13:14:50.428[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: v850 at 2001-07-30T00:00:00[0m
+[32m2026-06-23 13:14:50.428[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: z500 at 2001-07-30T00:00:00[0m
+[32m2026-06-23 13:14:50.429[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: t2m at 2001-07-30T00:00:00[0m
+[32m2026-06-23 13:14:50.429[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tcwv at 2001-07-30T00:00:00[0m
+[32m2026-06-23 13:14:50.429[0m | [34m[1mDEBUG   [0m | [36mearth2studio.data.wb2[0m:[36mfetch_array[0m:[36m626[0m - [34m[1mFetching WB2 climatology zarr array for variable: tp24 at 2001-07-30T00:00:00[0m
+    … cached lead days 1–42
+  Climatology ready.
+
+
+=======================================================
+  Precipitation  (42 frames @ 3 fps)
+=======================================================
+  frame 01/42
+  frame 07/42
+  frame 14/42
+  frame 21/42
+  frame 28/42
+  frame 35/42
+  frame 42/42
+  → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation/tp_animation.gif  (3.2 MB)
+
+=======================================================
+  Temperature  (42 frames @ 3 fps)
+=======================================================
+  frame 01/42
+  frame 07/42
+  frame 14/42
+  frame 21/42
+  frame 28/42
+  frame 35/42
+  frame 42/42
+  → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation/t2m_animation.gif  (4.0 MB)
+
+=======================================================
+  Z500+Wind  (42 frames @ 3 fps)
+=======================================================
+  frame 01/42
+  frame 07/42
+  frame 14/42
+  frame 21/42
+  frame 28/42
+  frame 35/42
+  frame 42/42
+  → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation/z500_animation.gif  (4.4 MB)
+
+=======================================================
+  LLJ/850hPa  (42 frames @ 3 fps)
+=======================================================
+  frame 01/42
+  frame 07/42
+  frame 14/42
+  frame 21/42
+  frame 28/42
+  frame 35/42
+  frame 42/42
+  → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation/llj_animation.gif  (5.8 MB)
+
+=======================================================
+  OLR/Convection  (42 frames @ 3 fps)
+=======================================================
+  frame 01/42
+  frame 07/42
+  frame 14/42
+  frame 21/42
+  frame 28/42
+  frame 35/42
+  frame 42/42
+  → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation/olr_animation.gif  (3.9 MB)
+
+=======================================================
+  Moisture/TCWV  (42 frames @ 3 fps)
+=======================================================
+  frame 01/42
+  frame 07/42
+  frame 14/42
+  frame 21/42
+  frame 28/42
+  frame 35/42
+  frame 42/42
+  → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation/moisture_animation.gif  (4.1 MB)
+
+All done!  GIFs → /home/raj.ayush/s2s/s2s_anlysis/analysis-code/data-download/fuxi_s2s/forecast_animation
+================================================================
+End : Tue 23 Jun 2026 01:17:03 PM IST
+================================================================

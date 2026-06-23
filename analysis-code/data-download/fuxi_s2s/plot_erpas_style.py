@@ -140,6 +140,41 @@ IGPP_COLS   = ["#a6f2f2","#00cc44","#88dd00","#ffee00",
 IGPP_CMAP   = mcolors.ListedColormap(IGPP_COLS)
 IGPP_NORM   = BoundaryNorm(IGPP_BOUNDS, IGPP_CMAP.N)
 
+# OLR: low OLR = active convection (blue), high OLR = suppressed (orange/red)
+OLR_BOUNDS = [150, 180, 200, 210, 220, 230, 240, 260, 280, 300]
+OLR_COLS   = ["#000066","#0000cc","#4444ff","#88aaff","#ccddff",
+              "#ffffff","#ffeecc","#ffaa44","#ff4400","#aa0000"]
+OLR_CMAP   = mcolors.ListedColormap(OLR_COLS)
+OLR_NORM   = BoundaryNorm(OLR_BOUNDS, OLR_CMAP.N)
+
+# TCWV: dry=light yellow/green, moist=dark blue
+TCWV_BOUNDS = [20, 30, 40, 45, 50, 55, 60, 65, 70]
+TCWV_COLS   = ["#ffffb2","#c7e9c0","#78c679","#31a354","#a6bddb",
+               "#74a9cf","#2b8cbe","#0570b0","#023858"]
+TCWV_CMAP   = mcolors.ListedColormap(TCWV_COLS)
+TCWV_NORM   = BoundaryNorm(TCWV_BOUNDS, TCWV_CMAP.N)
+
+# Z500 anomaly: blue → white → red (ridge/trough)
+Z500_ANOM_CMAP = LinearSegmentedColormap.from_list("z500anom", [
+    "#053061","#2166ac","#4393c3","#92c5de","#d1e5f0",
+    "#ffffff",
+    "#fddbc7","#f4a582","#d6604d","#b2182b","#67001f",
+], N=256)
+
+# Wind shear (200-850): white=low TC-favorable, green→orange→red=unfavorable
+SHEAR_BOUNDS = [0, 5, 10, 15, 20, 25, 30, 40]
+SHEAR_COLS   = ["#ffffff","#c7e9c0","#74c476","#ffffb2",
+                "#fecc5c","#fd8d3c","#e31a1c","#99000d"]
+SHEAR_CMAP   = mcolors.ListedColormap(SHEAR_COLS)
+SHEAR_NORM   = BoundaryNorm(SHEAR_BOUNDS, SHEAR_CMAP.N)
+
+# SST: cool blue → warm red (Indian Ocean range)
+SST_BOUNDS = [22, 24, 26, 27, 28, 29, 30, 31, 32]
+SST_COLS   = ["#0000aa","#0055ff","#00aaff","#00ddff",
+              "#aaffaa","#ffff00","#ffaa00","#ff4400","#cc0000"]
+SST_CMAP   = mcolors.ListedColormap(SST_COLS)
+SST_NORM   = BoundaryNorm(SST_BOUNDS, SST_CMAP.N)
+
 
 # ── SHAPEFILE ─────────────────────────────────────────────────────────────────
 def load_soi(shp=SOI_SHP):
@@ -1169,6 +1204,362 @@ def make_hw_weekly(raw_dir, date_str, init_date, out_dir, soi):
     print(f"  → {out}")
 
 
+# ── 17. OLR (ttr proxy) daily GIF ─────────────────────────────────────────────
+def make_olr_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
+    """OLR = -ttr. Low OLR = deep convection (blue), high = suppressed (red)."""
+    print(f"\n[17] OLR (ttr) daily GIF …")
+    frames    = []
+    olr_scale = None
+    for step in range(1, nsteps + 1):
+        d, lat, lon = load_step(raw_dir, date_str, step, ["ttr"])
+        if not d or "ttr" not in d:
+            continue
+        valid = init_date + datetime.timedelta(days=step)
+        ttr   = d["ttr"]
+        if olr_scale is None:
+            # ERA5 daily ttr accumulation is ~1e7 J/m²; W/m² values are ~100-300
+            olr_scale = 86400.0 if np.abs(ttr).mean() > 1e4 else 1.0
+        olr = -ttr / olr_scale          # W/m², positive
+        olr_i, lat_i, lon_i = crop(olr, lat, lon, -20, 40, 40, 180)
+
+        fig = plt.figure(figsize=(11, 6), facecolor="white")
+        ax  = fig.add_subplot(1, 1, 1, projection=PROJ)
+        base_map(ax, 40, 180, -20, 40)
+        ax.contourf(lon_i, lat_i, olr_i, levels=OLR_BOUNDS, colors=OLR_COLS,
+                    transform=PROJ, extend="both", zorder=1)
+        sm = plt.cm.ScalarMappable(cmap=OLR_CMAP, norm=OLR_NORM)
+        sm.set_array([])
+        cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
+                          pad=0.07, shrink=0.65, aspect=30, ticks=OLR_BOUNDS)
+        cb.set_label("OLR (W/m²)  —  Low = Active Convection", fontsize=8)
+        cb.ax.tick_params(labelsize=7)
+        frame_header(fig, init_date, valid,
+                     "Outgoing Longwave Radiation  ·  MJO/ISO Tracker  ·  (40-180°E)")
+        plt.subplots_adjust(top=0.87, bottom=0.17, left=0.04, right=0.97)
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1:
+            print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir / f"olr_{date_str}.gif", fps)
+
+
+# ── 18. TCWV daily GIF ────────────────────────────────────────────────────────
+def make_tcwv_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
+    """Total column water vapour — monsoon moisture surge tracking."""
+    print(f"\n[18] TCWV daily GIF …")
+    frames = []
+    for step in range(1, nsteps + 1):
+        d, lat, lon = load_step(raw_dir, date_str, step, ["tcwv"])
+        if not d or "tcwv" not in d:
+            continue
+        valid   = init_date + datetime.timedelta(days=step)
+        tcwv_i, lat_i, lon_i = crop(d["tcwv"], lat, lon, -20, 40, 40, 180)
+
+        fig = plt.figure(figsize=(11, 6), facecolor="white")
+        ax  = fig.add_subplot(1, 1, 1, projection=PROJ)
+        base_map(ax, 40, 180, -20, 40)
+        ax.contourf(lon_i, lat_i, tcwv_i, levels=TCWV_BOUNDS, colors=TCWV_COLS,
+                    transform=PROJ, extend="both", zorder=1)
+        sm = plt.cm.ScalarMappable(cmap=TCWV_CMAP, norm=TCWV_NORM)
+        sm.set_array([])
+        cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
+                          pad=0.07, shrink=0.65, aspect=30, ticks=TCWV_BOUNDS)
+        cb.set_label("Total Column Water Vapour (kg/m²)", fontsize=8)
+        cb.ax.tick_params(labelsize=7)
+        frame_header(fig, init_date, valid,
+                     "Total Column Water Vapour  ·  Moisture Transport & Monsoon Surges")
+        plt.subplots_adjust(top=0.87, bottom=0.17, left=0.04, right=0.97)
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1:
+            print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir / f"tcwv_{date_str}.gif", fps)
+
+
+# ── 19. Hovmoller diagram (rainfall + OLR vs lon×time) ────────────────────────
+def make_hovmoller(raw_dir, date_str, init_date, out_dir, nsteps, soi):
+    """Time-longitude (Hovmoller) diagram averaged 5-25°N — MJO propagation."""
+    print("\n[19] Hovmoller diagram …")
+    tp_rows, olr_rows = [], []
+    lons      = None
+    olr_scale = None
+
+    for step in range(1, nsteps + 1):
+        d, lat, lon = load_step(raw_dir, date_str, step, ["tp", "ttr"])
+        if not d:
+            continue
+        lons = lon
+        lm = (lat >= 5) & (lat <= 25)
+        if "tp" in d:
+            tp_rows.append(d["tp"][lm, :].mean(axis=0))
+        if "ttr" in d:
+            ttr = d["ttr"]
+            if olr_scale is None:
+                olr_scale = 86400.0 if np.abs(ttr).mean() > 1e4 else 1.0
+            olr_rows.append((-ttr / olr_scale)[lm, :].mean(axis=0))
+
+    if not tp_rows:
+        print("  No data — skipping")
+        return
+
+    om      = (lons >= 50) & (lons <= 170)
+    lon_hov = lons[om]
+    tp_arr  = np.array(tp_rows)[:, om]
+    days    = np.arange(1, len(tp_rows) + 1)
+    wk_tks  = [7, 14, 21, 28, 35, 42]
+
+    has_olr = bool(olr_rows)
+    ncols   = 2 if has_olr else 1
+    fig, axes = plt.subplots(1, ncols, figsize=(8 * ncols, 12), facecolor="white")
+    if ncols == 1:
+        axes = [axes]
+    plt.subplots_adjust(left=0.08, right=0.97, top=0.91, bottom=0.10, wspace=0.12)
+
+    # Rainfall panel
+    ax  = axes[0]
+    cf  = ax.pcolormesh(lon_hov, days, tp_arr,
+                        cmap=PREC_CMAP, norm=PREC_NORM, shading="auto")
+    for wd in wk_tks:
+        ax.axhline(wd, color="white", linewidth=0.8, linestyle="--", alpha=0.7)
+    ax.set_xlabel("Longitude (°E)", fontsize=10, fontweight="bold")
+    ax.set_ylabel("Lead Time (days)", fontsize=10, fontweight="bold")
+    ax.set_title("Rainfall (mm/day)  [5-25°N mean]",
+                 fontsize=11, color="blue", fontweight="bold", pad=6)
+    ax.invert_yaxis()
+    ax.set_xticks(np.arange(60, 171, 20))
+    ax.set_yticks(wk_tks)
+    ax.set_yticklabels([f"Day {d}  (Wk {d//7})" for d in wk_tks], fontsize=8)
+    ax.grid(color="grey", alpha=0.25, linewidth=0.5)
+    cax0 = fig.add_axes([0.08, 0.04, 0.38 if has_olr else 0.85, 0.025])
+    fig.colorbar(cf, cax=cax0, orientation="horizontal",
+                 ticks=PREC_BOUNDS).ax.tick_params(labelsize=7)
+
+    # OLR panel
+    if has_olr:
+        olr_arr = np.array(olr_rows)[:, om]
+        ax2 = axes[1]
+        cf2 = ax2.pcolormesh(lon_hov, days, olr_arr,
+                             cmap=OLR_CMAP, norm=OLR_NORM, shading="auto")
+        for wd in wk_tks:
+            ax2.axhline(wd, color="grey", linewidth=0.8, linestyle="--", alpha=0.7)
+        ax2.set_xlabel("Longitude (°E)", fontsize=10, fontweight="bold")
+        ax2.set_title("OLR (W/m²)  [5-25°N]  —  Low = Deep Convection",
+                      fontsize=11, color="blue", fontweight="bold", pad=6)
+        ax2.invert_yaxis()
+        ax2.set_xticks(np.arange(60, 171, 20))
+        ax2.set_yticks(wk_tks)
+        ax2.set_yticklabels([f"Day {d}  (Wk {d//7})" for d in wk_tks], fontsize=8)
+        ax2.grid(color="grey", alpha=0.25, linewidth=0.5)
+        cax1 = fig.add_axes([0.55, 0.04, 0.40, 0.025])
+        fig.colorbar(cf2, cax=cax1, orientation="horizontal",
+                     ticks=OLR_BOUNDS).ax.tick_params(labelsize=7)
+
+    png_header(fig, init_date,
+               "Hovmoller Diagram  —  FuXi-S2S 42-day Forecast",
+               "Indo-Pacific (50-170°E)  ·  Averaged 5-25°N  ·  Day 1 at top")
+    out = out_dir / f"hovmoller_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 20. Z500 anomaly weekly 2×3 ───────────────────────────────────────────────
+def make_z500_anom_weekly(raw_dir, date_str, init_date, out_dir, climo, soi):
+    """Z500 height anomaly vs ERA5 WB2 climatology, Asia domain, weeks 1-6."""
+    print("\n[20] Z500 Anomaly Weekly PNG …")
+    if not climo:
+        print("  No climatology available — skipping z500_anom")
+        return
+    WEEKS6 = {1: range(1,8), 2: range(8,15), 3: range(15,22),
+              4: range(22,29), 5: range(29,36), 6: range(36,43)}
+    POS     = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
+    la0, la1, lo0, lo1 = 0, 60, 20, 150
+
+    fig, axes = plt.subplots(2, 3, figsize=(19, 12),
+                             subplot_kw=dict(projection=PROJ),
+                             facecolor="white")
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.90,
+                        bottom=0.10, hspace=0.18, wspace=0.10)
+    png_header(fig, init_date, "500 hPa Geopotential Height Anomaly (m)",
+               "vs ERA5 1990-2019 climatology  ·  Weeks 1-6  ·  Ridge(+) / Trough(−)")
+
+    for (r, c), (wk, steps) in zip(POS, WEEKS6.items()):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["z500"])
+        d0 = (init_date + datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1 = (init_date + datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+        ax = axes[r, c]
+        base_map(ax, lo0, lo1, la0, la1)
+        if d and "z500" in d:
+            z5_i, lat_i, lon_i = crop(d["z500"], lat, lon, la0, la1, lo0, lo1)
+            z5_m  = z5_i / 9.80665           # geopotential → height (m)
+            c_vals = [climo[s]["z500"]
+                      for s in steps if s in climo and "z500" in climo[s]]
+            if c_vals:
+                z5_c = crop(np.mean(c_vals, axis=0), lat, lon,
+                            la0, la1, lo0, lo1)[0]
+                anom = z5_m - z5_c
+                ax.contourf(lon_i, lat_i, anom,
+                            levels=np.linspace(-100, 100, 21),
+                            cmap=Z500_ANOM_CMAP, transform=PROJ,
+                            extend="both", zorder=1)
+                cs = ax.contour(lon_i, lat_i, z5_m,
+                               levels=np.arange(5400, 5950, 60),
+                               colors="black", linewidths=0.5,
+                               transform=PROJ, zorder=3)
+                ax.clabel(cs, fmt="%d", fontsize=5, inline=True)
+        ax.set_title(f"Week {wk}  ({d0}–{d1})", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
+
+    cax = fig.add_axes([0.15, 0.04, 0.70, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap=Z500_ANOM_CMAP,
+                                norm=mcolors.Normalize(-100, 100))
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal",
+                       ticks=np.arange(-100, 101, 20))
+    cb.set_label("Z500 Anomaly (m)", fontsize=9)
+    cb.ax.tick_params(labelsize=8)
+    out = out_dir / f"z500_anom_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 21. 850hPa wind speed + quiver weekly 2×3 ─────────────────────────────────
+def make_wind850_weekly(raw_dir, date_str, init_date, out_dir, soi):
+    """850hPa wind speed (shaded) + quiver arrows — LLJ evolution, weeks 1-6."""
+    print("\n[21] 850hPa Wind (Speed + Direction) Weekly PNG …")
+    WEEKS6  = {1: range(1,8), 2: range(8,15), 3: range(15,22),
+               4: range(22,29), 5: range(29,36), 6: range(36,43)}
+    POS     = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
+    la0, la1, lo0, lo1 = 0, 40, 40, 110
+    SPD_LEVS = [0, 2, 4, 6, 8, 10, 12, 16, 20]
+    SPD_NORM = BoundaryNorm(SPD_LEVS, 256)
+
+    fig, axes = plt.subplots(2, 3, figsize=(19, 12),
+                             subplot_kw=dict(projection=PROJ),
+                             facecolor="white")
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.90,
+                        bottom=0.10, hspace=0.18, wspace=0.10)
+    png_header(fig, init_date, "850 hPa Wind Speed & Direction (m/s)",
+               "Weekly mean  ·  LLJ = Low Level Jet  ·  Weeks 1-6")
+
+    for (r, c), (wk, steps) in zip(POS, WEEKS6.items()):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps, ["u850", "v850"])
+        d0 = (init_date + datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1 = (init_date + datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+        ax = axes[r, c]
+        base_map(ax, lo0, lo1, la0, la1)
+        if d and "u850" in d and "v850" in d:
+            u, lat_i, lon_i = crop(d["u850"], lat, lon, la0, la1, lo0, lo1)
+            v   = crop(d["v850"], lat, lon, la0, la1, lo0, lo1)[0]
+            spd = np.sqrt(u**2 + v**2)
+            ax.contourf(lon_i, lat_i, spd, levels=SPD_LEVS,
+                        cmap="YlOrRd", norm=SPD_NORM,
+                        transform=PROJ, extend="max", zorder=1)
+            n   = max(1, len(lon_i) // 16)
+            ax.quiver(lon_i[::n], lat_i[::n], u[::n, ::n], v[::n, ::n],
+                      transform=PROJ, scale=5, scale_units="xy",
+                      width=0.003, headwidth=4, headlength=5,
+                      color="black", zorder=4, alpha=0.85)
+        ax.set_title(f"Week {wk}  ({d0}–{d1})", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
+
+    cax = fig.add_axes([0.20, 0.04, 0.60, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap="YlOrRd", norm=SPD_NORM)
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=SPD_LEVS)
+    cb.set_label("Wind Speed (m/s)", fontsize=9)
+    cb.ax.tick_params(labelsize=8)
+    out = out_dir / f"wind850_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
+# ── 22. SST daily GIF ─────────────────────────────────────────────────────────
+def make_sst_gif(raw_dir, date_str, init_date, out_dir, nsteps, fps, soi):
+    """SST evolution — Indian Ocean, Bay of Bengal, Arabian Sea."""
+    print(f"\n[22] SST daily GIF …")
+    frames = []
+    for step in range(1, nsteps + 1):
+        d, lat, lon = load_step(raw_dir, date_str, step, ["sst"])
+        if not d or "sst" not in d:
+            continue
+        valid = init_date + datetime.timedelta(days=step)
+        sst_c = d["sst"] - 273.15          # K → °C
+        sst_m = np.ma.masked_where(np.isnan(sst_c) | (sst_c < 15.0), sst_c)
+        sst_i, lat_i, lon_i = crop(sst_m.data, lat, lon, -30, 35, 30, 120)
+        mask_i = crop(sst_m.mask.astype(float) if not np.ndim(sst_m.mask) == 0
+                      else np.zeros_like(sst_c), lat, lon, -30, 35, 30, 120)[0]
+        sst_plot = np.ma.array(sst_i, mask=mask_i > 0.5)
+
+        fig = plt.figure(figsize=(10, 7), facecolor="white")
+        ax  = fig.add_subplot(1, 1, 1, projection=PROJ)
+        base_map(ax, 30, 120, -30, 35)
+        ax.contourf(lon_i, lat_i, sst_plot, levels=SST_BOUNDS, colors=SST_COLS,
+                    transform=PROJ, extend="both", zorder=1)
+        sm = plt.cm.ScalarMappable(cmap=SST_CMAP, norm=SST_NORM)
+        sm.set_array([])
+        cb = fig.colorbar(sm, ax=ax, orientation="horizontal",
+                          pad=0.07, shrink=0.65, aspect=30, ticks=SST_BOUNDS)
+        cb.set_label("SST (°C)", fontsize=8)
+        cb.ax.tick_params(labelsize=7)
+        frame_header(fig, init_date, valid,
+                     "Sea Surface Temperature  ·  Indian Ocean / Bay of Bengal / Arabian Sea")
+        plt.subplots_adjust(top=0.87, bottom=0.17, left=0.04, right=0.97)
+        frames.append(render(fig))
+        if step % 7 == 0 or step == 1:
+            print(f"  frame {step:02d}/{nsteps}")
+    save_gif(frames, out_dir / f"sst_{date_str}.gif", fps)
+
+
+# ── 23. Wind shear (200-850 hPa) weekly 2×3 ──────────────────────────────────
+def make_shear_weekly(raw_dir, date_str, init_date, out_dir, soi):
+    """Vertical wind shear |V200−V850| — TC genesis environment, weeks 1-6."""
+    print("\n[23] Wind Shear (200-850 hPa) Weekly PNG …")
+    WEEKS6 = {1: range(1,8), 2: range(8,15), 3: range(15,22),
+              4: range(22,29), 5: range(29,36), 6: range(36,43)}
+    POS    = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
+    la0, la1, lo0, lo1 = -5, 35, 40, 120
+
+    fig, axes = plt.subplots(2, 3, figsize=(19, 12),
+                             subplot_kw=dict(projection=PROJ),
+                             facecolor="white")
+    plt.subplots_adjust(left=0.05, right=0.97, top=0.90,
+                        bottom=0.10, hspace=0.18, wspace=0.10)
+    png_header(fig, init_date, "200-850 hPa Vertical Wind Shear (m/s)",
+               "Low shear (<10 m/s) = TC-favorable  ·  dashed = 10 m/s  ·  Weeks 1-6")
+
+    for (r, c), (wk, steps) in zip(POS, WEEKS6.items()):
+        d, lat, lon = weekly_mean(raw_dir, date_str, steps,
+                                  ["u200", "v200", "u850", "v850"])
+        d0 = (init_date + datetime.timedelta(days=list(steps)[0])).strftime("%-d%b")
+        d1 = (init_date + datetime.timedelta(days=list(steps)[-1])).strftime("%-d%b")
+        ax = axes[r, c]
+        base_map(ax, lo0, lo1, la0, la1)
+        if d and all(k in d for k in ["u200", "v200", "u850", "v850"]):
+            du, lat_i, lon_i = crop(d["u200"] - d["u850"],
+                                    lat, lon, la0, la1, lo0, lo1)
+            dv    = crop(d["v200"] - d["v850"], lat, lon, la0, la1, lo0, lo1)[0]
+            shear = np.sqrt(du**2 + dv**2)
+            ax.contourf(lon_i, lat_i, shear, levels=SHEAR_BOUNDS, colors=SHEAR_COLS,
+                        transform=PROJ, extend="max", zorder=1)
+            ax.contour(lon_i, lat_i, shear, levels=[10.0],
+                       colors=["#333333"], linewidths=1.2,
+                       linestyles=["--"], transform=PROJ, zorder=3)
+        ax.set_title(f"Week {wk}  ({d0}–{d1})", fontsize=9,
+                     color="blue", fontweight="bold", pad=4)
+
+    cax = fig.add_axes([0.20, 0.04, 0.60, 0.025])
+    sm  = plt.cm.ScalarMappable(cmap=SHEAR_CMAP, norm=SHEAR_NORM)
+    sm.set_array([])
+    cb  = fig.colorbar(sm, cax=cax, orientation="horizontal", ticks=SHEAR_BOUNDS)
+    cb.set_label("Wind Shear (m/s)", fontsize=9)
+    cb.ax.tick_params(labelsize=8)
+    out = out_dir / f"shear_weekly_{date_str}.png"
+    fig.savefig(str(out), dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print(f"  → {out}")
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # CLI
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1177,6 +1568,8 @@ MODES = [
     "temp_gif","temp_anom","hw_gif",
     "rf_weekly","rf_w6","rf_anom","igpp_weekly",
     "tmax_actual","tmax_anom","temp_weekly","temp_anom_weekly","hw",
+    # Extra diagnostics
+    "olr","tcwv","hovmoller","z500_anom","wind850","sst","shear",
 ]
 
 def main():
@@ -1224,7 +1617,7 @@ def main():
 
     modes = [args.mode] if args.mode else MODES
     need_climo = any(m in modes for m in
-                     ["rf_anom","tmax_anom","temp_anom","temp_anom_weekly"])
+                     ["rf_anom","tmax_anom","temp_anom","temp_anom_weekly","z500_anom"])
     climo = build_climo(init_date, args.steps, lat, lon) if need_climo else None
 
     for mode in modes:
@@ -1264,6 +1657,20 @@ def main():
             make_temp_anom_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
         elif mode == "hw":
             make_hw_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "olr":
+            make_olr_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "tcwv":
+            make_tcwv_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "hovmoller":
+            make_hovmoller(args.raw_dir, args.date, init_date, out_dir, args.steps, soi)
+        elif mode == "z500_anom":
+            make_z500_anom_weekly(args.raw_dir, args.date, init_date, out_dir, climo, soi)
+        elif mode == "wind850":
+            make_wind850_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
+        elif mode == "sst":
+            make_sst_gif(args.raw_dir, args.date, init_date, out_dir, args.steps, args.fps, soi)
+        elif mode == "shear":
+            make_shear_weekly(args.raw_dir, args.date, init_date, out_dir, soi)
 
     print(f"\nAll done!  →  {out_dir}")
 

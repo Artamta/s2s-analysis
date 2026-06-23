@@ -36,7 +36,7 @@ $PYTHON "$SCRIPT" $MODE_ARG \
     --date    "$DATE" \
     --raw_dir "$RAW_DIR" \
     --out_dir "$OUT_DIR" \
-    --fps 3 --members 0
+    --fps 3
 
 echo "================================================================"
 echo "End : $(date)"

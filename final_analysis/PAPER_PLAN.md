@@ -89,8 +89,8 @@ WB2. *This is done and validated.*
 3. **Dual-basis** era5 vs model_own — the genuine-vs-climatological-skill panel.
    *(built; the key methodological figure)*
 4. Month-wise × IMD-region heatmaps (Jun/Jul/Aug/Sep evolution). *(built)*
-5. Per-year JJAS rainfall + anomaly maps on India; forecast bias maps. *(maps tool
-   in progress)*
+5. Per-year JJAS rainfall + anomaly maps on India; model-vs-obs maps (TP & Z500,
+   FuXi & ECMWF) and forecast bias maps. *(built — polished publication-grade)*
 6. **MISO/BSISO bivariate skill** (amplitude + phase error vs lead) — *headline.* *(to build)*
 7. **Active/break spell** hit-rate / lead-time skill by region. *(to build)*
 8. Intraseasonal variance ratio vs lead (AI damping). *(to build)*
@@ -129,6 +129,89 @@ WB2. *This is done and validated.*
   switch to a weekly-aggregated reference for the probabilistic numbers.
 - **Reforecast ensemble sizes differ** (FuXi 50 vs ECMWF 11) → note; optionally
   sub-sample FuXi to 11 for a fair probabilistic comparison.
+
+---
+
+## 10. Research & figure roadmap — what MORE to do (prioritized)
+
+*Added 2026-06-26. Ranked by scientific leverage ÷ cost. The WB2 ERA5 store is
+far richer than we've used: winds @13 levels, OLR-proxy (top net LW flux),
+vertical velocity, moisture divergence, MSLP, SST, IVT, soil moisture, RH/q.
+This unlocks process diagnostics no current AI-S2S monsoon paper has shown.*
+
+### Tier 1 — the headline novelty (build next; high impact, moderate cost)
+- **MISO/BSISO bivariate skill** *(§5.1, the headline)*. Project obs+forecast daily
+  anomalies onto BSISO1/BSISO2 EOFs (Lee et al. 2013; OLR-proxy = top-net-LW or
+  −TP, plus U850 — both in WB2 & FuXi). → bivariate amplitude error + phase error
+  vs lead; "useful-skill horizon" where bivariate ACC crosses 0.5. *Figure: ACC &
+  RMSE-amplitude & phase-error vs lead, FuXi vs ECMWF.* This is the figure referees
+  will cite — it tests FuXi's own stated future-work gap.
+- **Active/break spell skill** *(§5.2)*. Standardize area-mean rainfall over the
+  Monsoon-Core-Zone (MCZ, ~18–28°N, 73–82°E) and the 4 IMD regions; define
+  active(>+1σ)/break(<−1σ) spells; score **hit-rate / false-alarm / ETS / Heidke**
+  and **lead-time of onset** of each spell. *Figure: spell-onset hit-rate vs lead +
+  a 2019 case-study timeline (obs vs FuXi vs ECMWF rainfall-anomaly index).*
+- **Intraseasonal variance ratio vs lead** *(§5.4 — the "AI damping" smoking gun)*.
+  Band-pass (20–60 d) the forecast & obs rainfall/U850; plot
+  var(forecast)/var(obs) vs lead per model. *Hypothesis: AI damps faster.* Cheap
+  once daily fields are in hand; pairs with the MISO figure.
+
+### Tier 2 — cheap, high-value figures from data ALREADY computed
+- **Multi-panel skill scorecard (one figure).** A single heatmap/scorecard: rows =
+  {TP, Z500} × {era5, model_own} × {FuXi, ECMWF}, cols = W1–6, cell = PCC (and a
+  twin for CRPSS). Replaces several line plots with one citable "table-figure."
+- **Taylor diagram** per variable/lead — correlation + normalized σ + centred-RMSE
+  in one glance; classic, compact, reviewers love it. *(matplotlib, from existing CSVs.)*
+- **Skill-horizon bar** — the lead (in days) at which PCC drops below 0.5, per
+  model × variable × IMD region. One bar chart = the paper's "how far out is it
+  useful" answer.
+- **Forecast-vs-obs scatter / Q–Q of area-mean rainfall** per week — shows the wet
+  bias & variance compression directly (complements the dual-basis story).
+- **Bias-vs-lead growth curves** (signed area-mean bias W1–6) — does the wet bias
+  grow, saturate, or drift? Cheap from the deterministic CSV.
+- **Reliability + sharpness** for active/break (tercile) events — already have the
+  reliability machinery; extend to the monsoon events.
+
+### Tier 3 — richer process & teleconnection science (WB2 enables; medium cost)
+- **OLR / convection verification.** Use top-net-LW flux as OLR proxy → verify the
+  convective envelope (the variable MISO is classically defined on), not just TP.
+- **Vertical structure of bias.** Z & T & RH bias profiles (50–1000 hPa) over the
+  MCZ vs lead — does the AI model drift in the mid-troposphere? *(WB2 has all levels.)*
+- **Moisture-budget / IVT skill.** Verify forecast IVT (computed from q·V, not the
+  WB2 `integrated_vapor_transport` which is in bad units — see dynamics module) and
+  vertically-integrated moisture divergence → the monsoon's moisture supply.
+- **Low-Level Jet (Somali/Findlater) & TEJ skill.** U850 over the Arabian Sea LLJ
+  box and U200 TEJ index vs lead — circulation drivers of active/break.
+- **Teleconnection conditioning.** Stratify skill by ENSO/IOD phase (we already have
+  Niño3.4↔ISMR r=−0.40, IOD links): is monsoon skill higher in ENSO-active years?
+- **Onset/withdrawal date error** (optional) — Kerala onset & all-India advance from
+  forecast vs obs; lead-dependent onset-date error in days.
+
+### Tier 4 — robustness, fairness, framing (referee-proofing)
+- **Fair-ensemble comparison** — sub-sample FuXi 50→11 members to match ECMWF for an
+  apples-to-apples CRPSS/spread-skill; report both raw and matched.
+- **Bootstrap CIs** on all pooled-year skill (resample inits/years) → error bars on
+  every skill-vs-lead curve; significance of FuXi−ECMWF differences.
+- **Native-resolution check** — repeat the core skill at 0.25°/0.5° to show
+  conclusions aren't a regridding artefact (engine already supports `--dgrid`).
+- **Weekly-spread CRPSS fix** — switch the probabilistic reference to a
+  weekly-aggregated clim spread (current daily-scale spread makes weekly CRPSS
+  uniformly optimistic — §9 caveat). Re-report probabilistic numbers.
+- **Persistence & climatology baselines on every panel** — already in JFM; carry the
+  same skill-floor lines into JJAS so "beats persistence" is explicit.
+
+### ERA5 long-term context figures (finish the stuck Agent-A set)
+Only `1_clim_maps_jjas.png` landed. Re-run `analysis/era5_monsoon.py` (it was slow)
+to complete: JJAS annual cycle, interannual ISMR + trend, trend maps, MISO
+Hovmöller (lat–time northward propagation), and intraseasonal-variance maps —
+these are the obs "stage-setting" figures (1–2 in the paper) and feed the MISO module.
+
+### Suggested final figure set (≈10, mix of built + to-build)
+1 scorecard (T2) · 2 skill-vs-lead+horizon (built) · 3 **dual-basis** (built, key) ·
+4 month×region (built) · 5 model-vs-obs maps TP+Z500 (built, just polished) ·
+6 **MISO bivariate skill** (T1, headline) · 7 **active/break onset skill + 2019
+case** (T1) · 8 **intraseasonal variance ratio** (T1) · 9 Taylor + reliability
+(T2) · 10 SPIRE JFM2026 box + ERA5 long-term context inset (built).
 
 ---
 

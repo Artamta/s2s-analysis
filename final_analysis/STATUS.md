@@ -11,19 +11,45 @@ Legend: ✅ done · 🔄 in progress · ☐ todo · ⚠️ known issue
 
 ---
 
-## 0. RIGHT NOW — presentation plots (3 agents in parallel, ~18 figs to curate)
-- 🔄 **Agent A** — ERA5 obs (rainfall/temp/MISO) → `analysis/era5_monsoon.py`,
-  figs `analysis/figs/era5_monsoon/` (JJAS climatology, annual cycle, interannual
-  +trend, trend maps, MISO Hovmöller, variability). PARALLELIZED, `--quick`.
-- 🔄 **Agent B** — JJAS model eval (ECMWF vs ERA5, +FuXi where avail) →
-  `jjas/plots/figs/model_eval/` (skill vs lead, dual-basis, CRPSS/SSR, bias map).
-- 🔄 **Agent C** — monsoon DYNAMICS & teleconnections → `analysis/monsoon_dynamics.py`,
-  figs `analysis/figs/monsoon_dynamics/` (850/200 hPa circulation = Somali jet/TEJ,
-  Webster-Yang index, ENSO-ISMR & IOD-ISMR teleconnections, IVT moisture transport).
-- 🔄 confirm-test validating the to_grid fix (`run_verify --year 2019 --test`).
-- ☐ collect the best ~12 into one slide folder once agents land.
-- NOTE: WB2 ERA5 is RICH — winds(all levels), SST, MSLP, IVT, q, vorticity →
-  full monsoon-dynamics + teleconnection analysis is feasible.
+## 0. RIGHT NOW — figures done; next = build the novel modules
+**~30 figures exist** (presentation-grade). Model-vs-obs maps just re-polished
+(smooth contourf + India outline + shared colorbars — commit `b693f2f`). The 3
+parallel agents landed: model_eval (✅ full set), monsoon_dynamics (✅ 6 figs),
+era5_monsoon (⚠️ only 1/7 — script was slow, needs a re-run).
+
+**The decision point:** the *built* figures = a solid benchmark + dual-basis +
+maps + teleconnections. To make it a HIGH-IMPACT paper (not just a benchmark),
+build the **process modules** (MISO / active-break / variance-damping) — see §4
+and PAPER_PLAN §10. Those are the headline; everything else is supporting.
+
+### What MORE to do — prioritized (full detail in `PAPER_PLAN.md` §10)
+**Tier 1 — headline novelty (build next):**
+- ☐ **MISO/BSISO bivariate skill** module → amplitude + phase error vs lead
+  (FuXi vs ECMWF); the figure that tests FuXi's own stated gap. *Needs U850 (WB2 +
+  FuXi both have it) → add winds to truth + FuXi adapter first.*
+- ☐ **Active/break spell** skill → hit-rate / ETS / onset lead-time over the
+  Monsoon-Core-Zone + IMD regions, + a 2019 case-study timeline.
+- ☐ **Intraseasonal (20–60 d) variance ratio** vs lead → the "AI damping" figure.
+
+**Tier 2 — cheap wins from CSVs ALREADY computed (do these for the talk too):**
+- ☐ One-figure **scorecard** heatmap (TP/Z500 × era5/model_own × FuXi/ECMWF × W1–6).
+- ☐ **Taylor diagram** per variable/lead. ☐ **skill-horizon bar** (days-to-PCC<0.5).
+- ☐ forecast-vs-obs **scatter/Q–Q** of area-mean rain; ☐ **bias-vs-lead** growth curve.
+
+**Tier 3 — richer process science (WB2 enables):**
+- ☐ OLR(top-LW)/convection verification · ☐ vertical bias profiles (50–1000 hPa) ·
+  ☐ IVT & moisture-divergence skill · ☐ LLJ(U850)/TEJ(U200) skill ·
+  ☐ skill stratified by ENSO/IOD phase · ☐ onset-date error.
+
+**Tier 4 — referee-proofing:**
+- ☐ fair 50→11-member FuXi sub-sample · ☐ bootstrap CIs on pooled skill ·
+  ☐ native-res repeat (0.25/0.5°) · ☐ weekly-spread CRPSS fix (§9 caveat) ·
+  ☐ persistence/clim floor lines on JJAS panels.
+
+- ⚠️ **era5_monsoon.py** only made 1/7 figs (annual cycle, ISMR+trend, trend maps,
+  **MISO Hovmöller**, variance maps still missing) — re-run; feeds the MISO module.
+- NOTE: WB2 ERA5 is RICH — winds @13 levels, OLR-proxy(top-LW), w, q, moisture-div,
+  MSLP, SST, IVT, soil moisture, RH → all Tier-3 process diagnostics are feasible.
 
 ---
 

@@ -19,3 +19,13 @@ analysis-code/experiments/weekly_anomalies.nc
 __pycache__/
 paper/tectonic
 .pytest_cache/
+*.log
+*.err
+*.out
+nohup.out
+analysis-code/data-download/fuxi_s2s/logs/
+analysis-code/data-download/fuxi_s2s/erpas_style/
+analysis-code/data-download/fuxi_s2s/forecast_animation/
+analysis-code/data-download/fuxi_s2s/test_plots/
+final_analysis/**/slurm_logs/
+final_analysis/jjas/logs/

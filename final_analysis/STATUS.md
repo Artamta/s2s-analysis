@@ -70,10 +70,11 @@ Legend: ✅ done · 🔄 in progress · ☐ todo · ⚠️ known issue
 ---
 
 ## ⚠️ Known issues & fixes (so they don't bite again)
-- ⚠️ **`7z` not on SLURM compute nodes** → FuXi extraction must run on the LOGIN
-  node (7z + py7zr both available there), NOT inside the sbatch. Run
-  `preprocess_fuxi.py --start … --end …` interactively/nohup on login, THEN sbatch
-  the verify. (This is why job 56226's FuXi stage failed.)
+- ✅ **FuXi extraction in SLURM** — `preprocess_fuxi.py` now uses `py7zr` (pure
+  Python, works on compute nodes), so the FuXi extract runs INSIDE the sbatch.
+  NEVER run heavy compute on the login node (ban risk). `run_jjas2019.sbatch` is
+  self-contained again. (Job 56226 failed earlier because the old code called the
+  `/usr/bin/7z` binary, absent on compute nodes — fixed.)
 - ✅ **to_grid dim order** — fixed (was crashing JJAS verify on the numpy/Brier path).
 - ⚠️ **ECMWF cfgrib is slow** (~100 s to open a 20-yr×46-step reforecast grib) →
   use parallel workers; `_open_all` is lru_cached per worker. Keep test runs small.

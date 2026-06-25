@@ -96,11 +96,16 @@ def extract_archive(init_str: str, dest: Path, log: logging.Logger) -> Path:
         raise FileNotFoundError(f"archive not found: {arc}")
     dest.mkdir(parents=True, exist_ok=True)
     log.info(f"  extracting {arc.name} ({arc.stat().st_size / 1024**3:.1f} GB) -> {dest}")
-    # `7z x` preserves the internal <YYYYMMDD>/member/... tree.
-    subprocess.run(
-        [SEVENZIP, "x", str(arc), f"-o{dest}", "-y", "-bso0", "-bsp0"],
-        check=True,
-    )
+    # Use py7zr (pure-Python, works on SLURM COMPUTE nodes) so extraction never
+    # needs the login node or the /usr/bin/7z binary (absent on compute nodes).
+    # Falls back to the 7z binary only if py7zr is unavailable.
+    try:
+        import py7zr
+        with py7zr.SevenZipFile(str(arc), mode="r") as z:
+            z.extractall(path=str(dest))
+    except ImportError:
+        subprocess.run([SEVENZIP, "x", str(arc), f"-o{dest}", "-y", "-bso0", "-bsp0"],
+                       check=True)
     date_dir = dest / init_str
     if not date_dir.is_dir():
         raise RuntimeError(f"expected extracted dir missing: {date_dir}")

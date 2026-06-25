@@ -107,6 +107,10 @@ def to_grid(da, GC):
     if ren:
         da = da.rename(ren)
     out = da.interp(lat=GC["lat"], lon=GC["lon"], method="linear").squeeze()
+    # normalise dim order to (..., lat, lon) — some sources (e.g. WeatherBench2)
+    # carry (lon, lat) order, which otherwise breaks broadcasting against the
+    # (lat, lon) masks/metrics with a (24,22) vs (22,24) shape mismatch.
+    out = out.transpose(..., "lat", "lon")
     return mask_land(out, GC["land"])
 
 

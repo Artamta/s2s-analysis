@@ -78,6 +78,13 @@ def brier_events(var, mu, sig, o, cm, cs, physics):
         third   = np.full_like(cmv, 1.0 / 3.0)
         out.append((f"{var.lower()}_above_normal", p_above, y_above, third))
         out.append((f"{var.lower()}_below_normal", p_below, y_below, third))
+    # Mask every event's (prob, outcome, base-rate) to the SAME support: points
+    # where both the forecast and the obs are valid (land-in-region). Without this
+    # the tercile climatology reference (a constant 1/3) would be scored over ocean/
+    # off-region points that the model term drops as NaN -> biased Brier skill.
+    fin = np.isfinite(muv) & np.isfinite(ov)
+    out = [(name, np.where(fin, p, np.nan), np.where(fin, y, np.nan),
+            np.where(fin, base, np.nan)) for name, p, y, base in out]
     return out
 
 
@@ -118,7 +125,7 @@ def process_init(init, want_vars):
     model_names = CFG.model_names
 
     # ── deterministic scoring for one (var, scale, lead) slice ────────────────
-    def det_row(var, m, f, o, clim_f, clim_o, persf, scale, lead, week, basis):
+    def det_row(var, m, f, o, clim_f, clim_o, persf, scale, lead, week, basis, n_models=1):
         for rg in REGIONS:
             rda = G.region_da(rg, GC)
             fr, orr = f.where(rda), o.where(rda)
@@ -126,7 +133,7 @@ def process_init(init, want_vars):
             pr = persf.where(rda) if persf is not None else None
             row = dict(season=CFG.season_label, variable=var, model=m, region=rg,
                        init_date=init, scale=scale, lead=lead, week=week,
-                       clim_basis=basis, grid_res=CFG.grid.dgrid,
+                       clim_basis=basis, grid_res=CFG.grid.dgrid, n_models=n_models,
                        pcc       = M.acc(fr, orr, cf, w, clim_o=co),
                        rmse      = M.rmse(fr, orr, w),
                        bias      = M.bias(fr, orr, w),
@@ -151,7 +158,8 @@ def process_init(init, want_vars):
             anoms.append(a)
         if len(anoms) >= 2:
             mme = xr.concat(anoms, "mm").mean("mm") + clim_o
-            det_row(var, "MME", mme, o, clim_o, clim_o, persf, scale, lead, week, "era5")
+            det_row(var, "MME", mme, o, clim_o, clim_o, persf, scale, lead, week, "era5",
+                    n_models=len(anoms))   # record how many models the MME averaged
         if persf is not None and not bool(np.isnan(persf).all()):
             det_row(var, "Persistence", persf, o, clim_o, clim_o, persf, scale, lead, week, "era5")
 

@@ -50,9 +50,12 @@ def truth_series_on_grid(var, truth, start, end, GC):
 
 
 def truth_period_mean(var, truth, valid_dates, GC):
-    """ERA5 truth averaged over a list of valid dates (i.e. a weekly mean)."""
+    """ERA5 truth averaged over the EXPLICIT list of valid dates (weekly mean).
+       Uses .sel(time=list) (not a contiguous slice) so the obs window matches
+       the day-of-year set used for the climatology exactly, even if the date
+       list is non-contiguous (e.g. capped at valid_end)."""
     try:
-        src = _src(var, truth).sel(time=slice(valid_dates[0], valid_dates[-1])).mean("time")
+        src = _src(var, truth).sel(time=valid_dates).mean("time")
         return to_grid(src, GC)
     except Exception:
         return None

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=s2s_jfm2026
-#SBATCH --output=/home/raj.ayush/s2s/s2s_anlysis/final_analysis/jfm2026/verify_%j.out
-#SBATCH --error=/home/raj.ayush/s2s/s2s_anlysis/final_analysis/jfm2026/verify_%j.err
+#SBATCH --output=/home/raj.ayush/s2s/s2s_anlysis/final_analysis/jfm2026/logs/verify_%j.out
+#SBATCH --error=/home/raj.ayush/s2s/s2s_anlysis/final_analysis/jfm2026/logs/verify_%j.err
 #SBATCH --partition=GPU-AI_prio
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

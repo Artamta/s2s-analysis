@@ -64,5 +64,7 @@ def clim_spread_field(var, truth_on_grid_series, clim_ds, GC, physics):
         doy = [pd.to_datetime(str(src["time"].values[t])[:10]).dayofyear]
         c = clim_field(clim_ds, var, doy, GC, physics)
         anoms.append((src.isel(time=t) - c).values)
-    spread = np.nanstd(np.stack(anoms, axis=0), axis=0)
+    # ddof=1 to match the ensemble spread convention (aggregate.ens_mean_std);
+    # over a multi-week period N is large so the difference is negligible.
+    spread = np.nanstd(np.stack(anoms, axis=0), axis=0, ddof=1)
     return src.isel(time=0).copy(data=spread)

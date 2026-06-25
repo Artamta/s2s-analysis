@@ -34,6 +34,31 @@ def open_truth(paths, physics):
     return t
 
 
+def open_truth_wb2(zarr_path, physics, start, end, box=(40.0, 3.0, 60.0, 102.0)):
+    """ERA5 truth from a WeatherBench2 zarr, daily, for a date window [start, end].
+
+    Returns the SAME {tp_daily, z_raw} dict interface as `open_truth`, so every
+    truth accessor (period_mean / day / persistence) works unchanged.
+
+    Conversions:
+      TP   : total_precipitation_6hr [m] -> daily SUM -> x1000 -> mm/day
+      Z500 : geopotential@500 [m^2/s^2] -> daily MEAN -> /g -> gpm
+    The window is pre-cropped to an India box and loaded into memory so the
+    per-init .sel calls in the driver are cheap.
+    """
+    ds = xr.open_zarr(zarr_path)
+    n, s, w, e = box
+    # WB2 latitude is ascending (-90..90), longitude 0..358.5
+    ds = ds.sel(latitude=slice(s, n), longitude=slice(w, e),
+                time=slice(start, end))
+    tp6 = ds["total_precipitation_6hr"]
+    tp_daily = (tp6.resample(time="1D").sum() * 1000.0).load()           # mm/day
+    z = ds["geopotential"].sel(level=500)
+    z_daily = (z.resample(time="1D").mean() / physics.G).load()          # gpm
+    t = {"tp_daily": tp_daily, "z_raw": z_daily, "t2m_daily": None}
+    return t
+
+
 def _src(var, truth):
     if var == "TP":
         return truth["tp_daily"]

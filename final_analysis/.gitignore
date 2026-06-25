@@ -6,4 +6,9 @@ jfm2026/logs/
 jfm2026/results_*/
 # generated figures
 jfm2026/plots/figs/
+# JJAS generated outputs
+jjas/logs/
+jjas/results_*/
+jjas/plots/figs/
+jjas/fuxi_combined/
 # small IMD region masks ARE committed (needed, tiny) -> masks/ not ignored

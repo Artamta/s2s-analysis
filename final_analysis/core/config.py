@@ -45,9 +45,10 @@ class Paths:
        Model forecast paths live inside each ModelSpec.kwargs (adapter-specific)."""
     clim_nc: str                # ERA5 30-yr WMO day-of-year climatology
     region_mask_nc: str         # prebuilt IMD 4-region boolean masks (target grid)
-    era5_daily_tp: str          # ERA5 daily total precip (mm/day)
-    era5_daily_t2m: str         # ERA5 daily-mean 2 m temperature (K)
-    era5_z500_grib: str         # ERA5 500 hPa geopotential (m^2/s^2, GRIB)
+    era5_daily_tp: str = ""     # ERA5 daily total precip (mm/day)   [JFM file-based truth]
+    era5_daily_t2m: str = ""    # ERA5 daily-mean 2 m temperature (K)
+    era5_z500_grib: str = ""    # ERA5 500 hPa geopotential (m^2/s^2, GRIB)
+    wb2_zarr: str = ""          # WeatherBench2 ERA5 zarr  [JJAS multi-year truth]
     soi_shapefile: str = ""     # optional: SOI STATE_BOUNDARY.shp (to rebuild masks)
 
 
@@ -78,6 +79,7 @@ class ModelSpec:
     adapter: str
     kwargs: dict = field(default_factory=dict)
     has_model_own_clim: bool = False
+    clim_adapter: str = ""                  # registry key for the model-own clima loader
     clim_kwargs: dict = field(default_factory=dict)
 
 

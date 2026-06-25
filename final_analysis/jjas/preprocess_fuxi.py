@@ -60,8 +60,11 @@ DATA_ROOT    = Path("/storage/raj.ayush/s2s_final_data/jjas")
 ARCHIVE_DIR  = Path("/storage/raj.ayush/archive/All_Model_Data/models/fuxi/data")
 OUT_DIR      = DATA_ROOT / "fuxi_combined"
 LOG_DIR      = HERE / "logs"
-SCRATCH_ROOT = Path("/tmp/claude-1044/-home-raj-ayush-s2s-s2s-anlysis/"
-                    "828db6f6-6de3-41fa-ba01-afd17f005080/scratchpad/fuxi_extract")
+SCRATCH_ROOT = Path(
+    os.environ.get("FUXI_SCRATCH")
+    or os.environ.get("SLURM_TMPDIR")
+    or f"/tmp/{os.environ.get('USER', 'raj.ayush')}/fuxi_extract"
+)
 SEVENZIP     = "/usr/bin/7z"
 
 # ── ARCHIVE SHAPE ─────────────────────────────────────────────────────────────

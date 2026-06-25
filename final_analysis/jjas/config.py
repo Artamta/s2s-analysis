@@ -64,7 +64,11 @@ def build_config(year: int = 2019, dgrid: float = 1.5) -> ExperimentConfig:
                   kwargs={"root": ECMWF_ROOT, "year": year, "ens": "both"},
                   has_model_own_clim=True, clim_adapter="ecmwf_reforecast_clim",
                   clim_kwargs={"root": ECMWF_ROOT}),
-        # FuXi added after the ECMWF+truth path is validated (needs .7z extraction).
+        # FuXi: 50-member hindcast from the compact files in jjas/fuxi_combined/
+        # (built by preprocess_fuxi.py). Appears only for inits whose compact file
+        # exists; model-own clima is a follow-up (mean over years per MMDD).
+        ModelSpec(name="FuXi", adapter="fuxi_reforecast",
+                  kwargs={"root": HERE, "members": 50}),
     ]
     return ExperimentConfig(
         season_label=f"JJAS{year}",

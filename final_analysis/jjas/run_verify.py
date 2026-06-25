@@ -39,6 +39,7 @@ from core.adapters import get_adapter
 from core.aggregate import valid_dates_for
 
 import adapters_jjas        # noqa: F401  (registers ecmwf_reforecast[_clim])
+import adapters_fuxi        # noqa: F401  (registers fuxi_reforecast)
 import config as jcfg
 from config import CFG
 

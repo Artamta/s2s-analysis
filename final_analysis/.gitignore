@@ -1,5 +1,13 @@
 __pycache__/
 *.pyc
 # SLURM run logs
-verify_*.out
-verify_*.err
+jfm2026/verify_*.out
+jfm2026/verify_*.err
+# generated verification outputs (large; reproducible from the pipeline)
+jfm2026/results_*/
+jfm2026/skill_*.csv
+jfm2026/reliability.npz
+jfm2026/RUN_METADATA.txt
+# generated figures
+jfm2026/plots/figs/
+# small IMD region masks ARE committed (needed, tiny) -> masks/ not ignored

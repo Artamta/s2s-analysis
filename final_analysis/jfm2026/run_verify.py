@@ -50,7 +50,7 @@ from core.adapters import get_adapter
 from core.aggregate import valid_dates_for
 
 import adapters_jfm          # noqa: F401  (registers SPIRE/FuXi/ECMWF adapters)
-from config import CFG
+from config import CFG, build_config
 
 NB = N_RELIABILITY_BINS
 
@@ -126,7 +126,7 @@ def process_init(init, want_vars):
             pr = persf.where(rda) if persf is not None else None
             row = dict(season=CFG.season_label, variable=var, model=m, region=rg,
                        init_date=init, scale=scale, lead=lead, week=week,
-                       clim_basis=basis,
+                       clim_basis=basis, grid_res=CFG.grid.dgrid,
                        pcc       = M.acc(fr, orr, cf, w, clim_o=co),
                        rmse      = M.rmse(fr, orr, w),
                        bias      = M.bias(fr, orr, w),
@@ -176,6 +176,7 @@ def process_init(init, want_vars):
             prob_rows.append(dict(
                 season=CFG.season_label, variable=var, model=m, region=rg,
                 init_date=init, scale=scale, lead=lead, week=week, clim_basis="era5",
+                grid_res=CFG.grid.dgrid,
                 crps=crps_m, crps_clim=crps_cl, crps_pers=crps_p,
                 crpss_clim=M.crpss(crps_m, crps_cl), crpss_pers=M.crpss(crps_m, crps_p),
                 spread=spread_m, rmse=rmse_m, ssr=M.ssr(spread_m, rmse_m)))
@@ -186,7 +187,7 @@ def process_init(init, want_vars):
                     brier_rows.append(dict(
                         season=CFG.season_label, variable=var, model=m, region=rg,
                         init_date=init, scale=scale, lead=lead, week=week,
-                        clim_basis="era5", event=ev,
+                        clim_basis="era5", grid_res=CFG.grid.dgrid, event=ev,
                         brier=bs, brier_clim=bs_c, briss_clim=M.briss(bs, bs_c),
                         base_rate=M._f(M.wmean(muR.copy(data=yy), w))))
                     if rg == "All India":
@@ -266,19 +267,31 @@ def _full_series_on_grid(var, truth, GC):
 # DRIVER
 # ==============================================================================
 def main():
+    global CFG
     ap = argparse.ArgumentParser()
     ap.add_argument("--test", action="store_true", help="1 init smoke test")
     ap.add_argument("--workers", type=int, default=8)
-    ap.add_argument("--vars", nargs="+", default=list(CFG.variables), choices=list(CFG.variables))
+    ap.add_argument("--dgrid", type=float, default=None,
+                    help="verification resolution in deg (e.g. 1.5 common, 0.5 SPIRE-native)")
+    ap.add_argument("--vars", nargs="+", default=None)
     args = ap.parse_args()
 
+    # rebuild config at the requested resolution (forked workers inherit this CFG)
+    if args.dgrid is not None:
+        CFG = build_config(args.dgrid)
+    os.makedirs(CFG.out_dir, exist_ok=True)
+
+    want_vars = args.vars if args.vars else list(CFG.variables)
+    bad = [v for v in want_vars if v not in CFG.variables]
+    if bad:
+        ap.error(f"unknown vars {bad}; choices: {list(CFG.variables)}")
+
     inits = list(CFG.init_dates[:1] if args.test else CFG.init_dates)
-    want_vars = list(args.vars)
     n_workers = max(1, min(args.workers, len(inits)))
 
     from time import time
     t_start = time()
-    print(f"\nS2S verification — {CFG.season_label}", flush=True)
+    print(f"\nS2S verification — {CFG.season_label}  (grid={CFG.grid.dgrid}°)", flush=True)
     print(f"  models={CFG.model_names} (+MME,Persistence)  vars={want_vars}", flush=True)
     print(f"  inits={len(inits)} workers={n_workers} out={CFG.out_dir}\n", flush=True)
 

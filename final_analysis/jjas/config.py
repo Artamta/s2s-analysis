@@ -30,6 +30,9 @@ from core import ExperimentConfig, ModelSpec, GridSpec, Paths, Physics
 from jfm2026.config import region_mask_path             # reuse the resolution->mask map
 
 STORE = "/storage/raj.ayush"
+# Generated DATA (compact FuXi files, result CSVs) lives on /storage, NOT in the
+# home repo — only code is versioned in home.
+DATA_ROOT = f"{STORE}/s2s_final_data/jjas"
 ECMWF_ROOT = f"{STORE}/archive/All_Model_Data/models/ecmwf/data"
 WB2_ZARR = ("/storage/bedartha/public/datasets/as_downloaded/weatherbench2/era5/"
             "1959-2023_01_10-6h-240x121_equiangular_with_poles_conservative.zarr")
@@ -68,7 +71,7 @@ def build_config(year: int = 2019, dgrid: float = 1.5) -> ExperimentConfig:
         # (built by preprocess_fuxi.py). Appears only for inits whose compact file
         # exists; model-own clima is a follow-up (mean over years per MMDD).
         ModelSpec(name="FuXi", adapter="fuxi_reforecast",
-                  kwargs={"root": HERE, "members": 50}),
+                  kwargs={"root": DATA_ROOT, "members": 50}),
     ]
     return ExperimentConfig(
         season_label=f"JJAS{year}",
@@ -80,7 +83,7 @@ def build_config(year: int = 2019, dgrid: float = 1.5) -> ExperimentConfig:
         physics=Physics(),
         models=models,
         variables=("TP", "Z500"),
-        out_dir=os.path.join(HERE, f"results_{year}_{dgrid:g}deg"),
+        out_dir=os.path.join(DATA_ROOT, f"results_{year}_{dgrid:g}deg"),
     )
 
 

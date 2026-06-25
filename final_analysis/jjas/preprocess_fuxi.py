@@ -54,9 +54,11 @@ import pandas as pd
 import xarray as xr
 
 # ── PATHS ─────────────────────────────────────────────────────────────────────
+# Generated DATA lives on /storage (NOT in the home repo); only code stays here.
 HERE         = Path(__file__).resolve().parent
+DATA_ROOT    = Path("/storage/raj.ayush/s2s_final_data/jjas")
 ARCHIVE_DIR  = Path("/storage/raj.ayush/archive/All_Model_Data/models/fuxi/data")
-OUT_DIR      = HERE / "fuxi_combined"
+OUT_DIR      = DATA_ROOT / "fuxi_combined"
 LOG_DIR      = HERE / "logs"
 SCRATCH_ROOT = Path("/tmp/claude-1044/-home-raj-ayush-s2s-s2s-anlysis/"
                     "828db6f6-6de3-41fa-ba01-afd17f005080/scratchpad/fuxi_extract")

@@ -11,15 +11,19 @@ Legend: ✅ done · 🔄 in progress · ☐ todo · ⚠️ known issue
 
 ---
 
-## 0. RIGHT NOW — presentation plots (10-12 figures)
-- 🔄 **Agent A** — ERA5 long-term obs analysis → `analysis/era5_monsoon.py` +
-  figs in `analysis/figs/era5_monsoon/` (JJAS climatology maps, annual cycle,
-  interannual+trend, trend maps, MISO Hovmöller, variability). PARALLELIZED, `--quick`.
-- 🔄 **Agent B** — JJAS model eval (ECMWF vs ERA5, +FuXi where available) →
-  `jjas/plots/figs/model_eval/` (skill vs lead, dual-basis era5 vs model_own,
-  CRPSS/SSR, ECMWF bias map). Runs a SMALL ECMWF JJAS verify first.
-- 🔄 confirm-test: `jjas/run_verify.py --year 2019 --test` validating the to_grid fix.
-- ☐ collect the best ~12 into one slide folder once both agents land.
+## 0. RIGHT NOW — presentation plots (3 agents in parallel, ~18 figs to curate)
+- 🔄 **Agent A** — ERA5 obs (rainfall/temp/MISO) → `analysis/era5_monsoon.py`,
+  figs `analysis/figs/era5_monsoon/` (JJAS climatology, annual cycle, interannual
+  +trend, trend maps, MISO Hovmöller, variability). PARALLELIZED, `--quick`.
+- 🔄 **Agent B** — JJAS model eval (ECMWF vs ERA5, +FuXi where avail) →
+  `jjas/plots/figs/model_eval/` (skill vs lead, dual-basis, CRPSS/SSR, bias map).
+- 🔄 **Agent C** — monsoon DYNAMICS & teleconnections → `analysis/monsoon_dynamics.py`,
+  figs `analysis/figs/monsoon_dynamics/` (850/200 hPa circulation = Somali jet/TEJ,
+  Webster-Yang index, ENSO-ISMR & IOD-ISMR teleconnections, IVT moisture transport).
+- 🔄 confirm-test validating the to_grid fix (`run_verify --year 2019 --test`).
+- ☐ collect the best ~12 into one slide folder once agents land.
+- NOTE: WB2 ERA5 is RICH — winds(all levels), SST, MSLP, IVT, q, vorticity →
+  full monsoon-dynamics + teleconnection analysis is feasible.
 
 ---
 

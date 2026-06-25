@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+# SLURM run logs
+verify_*.out
+verify_*.err

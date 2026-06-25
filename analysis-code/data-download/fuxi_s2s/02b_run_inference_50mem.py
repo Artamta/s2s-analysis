@@ -1,28 +1,19 @@
 #!/usr/bin/env python3
 """
-02_run_inference.py
-===================
-Run FuXi-S2S inference for all JFM 2026 init dates.
-
-For each date, runs FuXi with 11 ensemble members and 42 lead steps (42 days).
-Skips dates where output is already complete (member/10/42.nc exists).
+02b_run_inference_50mem.py
+==========================
+Run FuXi-S2S inference for all JFM 2026 init dates with 50 ensemble members.
+Output goes to a SEPARATE directory (jfm2026_ens50/) to keep it distinct from
+the 11-member run (jfm2026/).
 
 Input  : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs/{YYYYMMDD}/input.nc
-Output : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026/raw/{YYYYMMDD}/member/{MM}/{SS}.nc
-           where MM = 00–10, SS = 01–42
+         (same inputs as 11-member run — no re-download needed)
+Output : /storage/raj.ayush/All_Model_Data/fuxi/jfm2026_ens50/raw/{YYYYMMDD}/member/{MM}/{SS}.nc
 
 Usage
 -----
-  # All 90 dates (skips complete ones)
-  python 02_run_inference.py
-
-  # Single date test
-  python 02_run_inference.py --date 20260102
-
-  # CPU mode (slow, for testing)
-  python 02_run_inference.py --date 20260102 --device cpu
-
-Requirements: conda activate fuxi_s2s  (needs CUDA GPU)
+  python 02b_run_inference_50mem.py            # all 90 dates
+  python 02b_run_inference_50mem.py --date 20260101
 """
 
 import argparse
@@ -36,8 +27,8 @@ from pathlib import Path
 import pandas as pd
 
 # ── PATHS ─────────────────────────────────────────────────────────────────────
-BASE_DIR    = Path("/storage/raj.ayush/All_Model_Data/fuxi/jfm2026")
-INPUT_DIR   = BASE_DIR / "inputs"
+INPUT_DIR   = Path("/storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs")   # shared inputs
+BASE_DIR    = Path("/storage/raj.ayush/All_Model_Data/fuxi/jfm2026_ens50")
 RAW_DIR     = BASE_DIR / "raw"
 FUXI_DIR    = Path(__file__).parent / "FuXi-S2S"
 MODEL_PATH  = FUXI_DIR / "model" / "fuxi_s2s.onnx"
@@ -45,8 +36,8 @@ LOG_DIR     = Path(__file__).parent / "logs"
 FUXI_PYTHON = "/home/raj.ayush/.conda/envs/fuxi_s2s/bin/python"
 FUXI_LIB    = "/home/raj.ayush/.conda/envs/fuxi_s2s/lib"
 
-TOTAL_STEPS   = 42   # 42-day lead time
-TOTAL_MEMBERS = 11   # 1 control + 10 perturbed
+TOTAL_STEPS   = 42
+TOTAL_MEMBERS = 50
 
 DATE_START = "2026-01-01"
 DATE_END   = "2026-03-31"
@@ -62,10 +53,27 @@ def setup_logging(log_file: Path) -> logging.Logger:
     return logging.getLogger(__name__)
 
 
+def expected_files(date: pd.Timestamp):
+    root = RAW_DIR / f"{date:%Y%m%d}" / "member"
+    for member in range(TOTAL_MEMBERS):
+        for step in range(1, TOTAL_STEPS + 1):
+            yield root / f"{member:02d}" / f"{step:02d}.nc"
+
+
+def raw_status(date: pd.Timestamp):
+    """Return (complete, present_count, missing_examples) for one init date."""
+    present = 0
+    missing = []
+    for path in expected_files(date):
+        if path.exists() and path.stat().st_size > 0:
+            present += 1
+        elif len(missing) < 5:
+            missing.append(path)
+    return present == TOTAL_MEMBERS * TOTAL_STEPS, present, missing
+
+
 def is_done(date: pd.Timestamp) -> bool:
-    """Complete when last member's last step file exists."""
-    final = RAW_DIR / f"{date:%Y%m%d}" / "member" / f"{TOTAL_MEMBERS-1:02d}" / f"{TOTAL_STEPS:02d}.nc"
-    return final.exists()
+    return raw_status(date)[0]
 
 
 def run_inference(date: pd.Timestamp, device: str, log: logging.Logger) -> bool:
@@ -74,7 +82,7 @@ def run_inference(date: pd.Timestamp, device: str, log: logging.Logger) -> bool:
     out_dir    = RAW_DIR / date_str
 
     if not input_file.exists():
-        log.error(f"SKIP   {date_str}  (no input.nc — run 01_download_inputs.py first)")
+        log.error(f"SKIP   {date_str}  (no input.nc)")
         return False
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -95,10 +103,32 @@ def run_inference(date: pd.Timestamp, device: str, log: logging.Logger) -> bool:
     env["OMP_PROC_BIND"]    = "false"
 
     log.info(f"START  {date_str}  ({TOTAL_MEMBERS} members × {TOTAL_STEPS} steps)")
+    # Keep threaded math libraries quiet on shared GPU nodes. ONNX Runtime can
+    # still emit affinity warnings on this cluster; output completeness below is
+    # the authoritative success criterion.
+    env["OPENBLAS_NUM_THREADS"] = "1"
+    env["MKL_NUM_THREADS"] = "1"
+    env["NUMEXPR_NUM_THREADS"] = "1"
+    env["KMP_AFFINITY"] = "disabled"
+
     result = subprocess.run(cmd, cwd=str(FUXI_DIR), env=env)
+    complete, present, missing = raw_status(date)
 
     if result.returncode != 0:
-        log.error(f"FAIL   {date_str}  (exit code {result.returncode})")
+        if complete:
+            log.warning(f"DONE   {date_str}  raw complete, but child exited "
+                        f"{result.returncode}; treating as usable")
+            return True
+        miss = ", ".join(str(p.relative_to(out_dir)) for p in missing)
+        log.error(f"FAIL   {date_str}  (exit code {result.returncode}; "
+                  f"{present}/{TOTAL_MEMBERS * TOTAL_STEPS} files present; "
+                  f"missing examples: {miss})")
+        return False
+
+    if not complete:
+        miss = ", ".join(str(p.relative_to(out_dir)) for p in missing)
+        log.error(f"FAIL   {date_str}  child exited 0 but raw is incomplete "
+                  f"({present}/{TOTAL_MEMBERS * TOTAL_STEPS}; missing examples: {miss})")
         return False
 
     log.info(f"DONE   {date_str}")
@@ -106,14 +136,14 @@ def run_inference(date: pd.Timestamp, device: str, log: logging.Logger) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run FuXi-S2S inference for JFM 2026")
-    parser.add_argument("--date",   type=str, default=None,   help="Single date YYYYMMDD")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--date",   type=str, default=None)
     parser.add_argument("--start",  type=str, default=DATE_START)
     parser.add_argument("--end",    type=str, default=DATE_END)
-    parser.add_argument("--device", type=str, default="cuda", help="cuda or cpu")
+    parser.add_argument("--device", type=str, default="cuda")
     args = parser.parse_args()
 
-    log_file = LOG_DIR / f"inference_{datetime.now():%Y%m%d_%H%M%S}.log"
+    log_file = LOG_DIR / f"ens50_{datetime.now():%Y%m%d_%H%M%S}.log"
     log = setup_logging(log_file)
 
     if args.date:
@@ -121,11 +151,11 @@ def main():
     else:
         dates = list(pd.date_range(args.start, args.end, freq="D"))
 
-    pending = [d for d in dates if not is_done(d)]
-    done_n  = len(dates) - len(pending)
+    pending  = [d for d in dates if not is_done(d)]
+    done_n   = len(dates) - len(pending)
 
     log.info("=" * 60)
-    log.info("FuXi-S2S Inference")
+    log.info("FuXi-S2S Inference — 50-member ensemble")
     log.info(f"  Model      : {MODEL_PATH}")
     log.info(f"  Input dir  : {INPUT_DIR}")
     log.info(f"  Output dir : {RAW_DIR}")
@@ -136,13 +166,15 @@ def main():
     log.info(f"  To run     : {len(pending)}")
     log.info("=" * 60)
 
+    success = 0
     failed = []
     for i, date in enumerate(pending, 1):
         ok = run_inference(date, args.device, log)
         if not ok:
             failed.append(f"{date:%Y%m%d}")
-        log.info(f"Progress {done_n + i}/{len(dates)}  "
-                 f"done={done_n + i - len(failed)}  fail={len(failed)}")
+        else:
+            success += 1
+        log.info(f"Progress {done_n + i}/{len(dates)}  done={done_n + success}  fail={len(failed)}")
 
     log.info("=" * 60)
     log.info("INFERENCE COMPLETE")
@@ -151,6 +183,7 @@ def main():
     for f in failed:
         log.info(f"    FAILED: {f}")
     log.info("=" * 60)
+    sys.exit(1 if failed else 0)
 
 
 if __name__ == "__main__":

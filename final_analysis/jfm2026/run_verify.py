@@ -281,12 +281,23 @@ def main():
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--dgrid", type=float, default=None,
                     help="verification resolution in deg (e.g. 1.5 common, 0.5 SPIRE-native)")
+    ap.add_argument("--fuxi-root", default=None,
+                    help="FuXi root containing combined/<YYYYMMDD>.nc; use jfm2026_ens50 for 50 members")
+    ap.add_argument("--fuxi-members", type=int, default=None,
+                    help="select the first N FuXi members from each combined file")
+    ap.add_argument("--out-suffix", default=None,
+                    help="append suffix to results_<dgrid>deg, e.g. ens50")
     ap.add_argument("--vars", nargs="+", default=None)
     args = ap.parse_args()
 
     # rebuild config at the requested resolution (forked workers inherit this CFG)
-    if args.dgrid is not None:
-        CFG = build_config(args.dgrid)
+    if any(x is not None for x in (args.dgrid, args.fuxi_root, args.fuxi_members, args.out_suffix)):
+        CFG = build_config(
+            args.dgrid if args.dgrid is not None else CFG.grid.dgrid,
+            fuxi_root=args.fuxi_root,
+            fuxi_members=args.fuxi_members,
+            out_suffix=args.out_suffix,
+        )
     os.makedirs(CFG.out_dir, exist_ok=True)
 
     want_vars = args.vars if args.vars else list(CFG.variables)
@@ -369,6 +380,8 @@ def _write_metadata(det, prob, brier, inits, want_vars):
         f"grid          : {CFG.grid.dgrid} deg, lat {CFG.grid.lat0}->{CFG.grid.lat1}, "
         f"lon {CFG.grid.lon0}->{CFG.grid.lon1}",
         f"models        : {', '.join(CFG.model_names)} (+ MME, Persistence)",
+        "model paths    :",
+        *[f"  {m.name}: adapter={m.adapter}, kwargs={m.kwargs}" for m in CFG.models],
         f"clim_basis    : era5 (all models vs ERA5 30-yr WMO DOY clim)",
         f"ERA5 clim     : {CFG.paths.clim_nc}",
         f"FuXi tp factor: x{CFG.physics.fuxi_tp_factor}",

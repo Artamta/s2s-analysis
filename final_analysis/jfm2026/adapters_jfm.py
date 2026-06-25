@@ -76,7 +76,12 @@ _FUXI_CHANNEL = {"TP": "tp", "Z500": "z500", "T2M": "t2m"}
 
 @register("fuxi_combined")
 def load_fuxi(init, var, spec, physics):
-    """FuXi 11-member ensemble from the single combined NetCDF for this init."""
+    """FuXi ensemble from the single combined NetCDF for this init.
+
+    `spec.kwargs["members"]` optionally selects the first N members. This lets
+    the same 50-member source be verified as all-50 or as an 11-member fair-size
+    subsample without copying data on disk.
+    """
     init_str = init.replace("-", "")
     path = os.path.join(spec.kwargs["root"], "combined", f"{init_str}.nc")
     if not os.path.exists(path):
@@ -89,6 +94,15 @@ def load_fuxi(init, var, spec, physics):
 
     # canonical dims: lead_time -> step ; keep 'member'
     da = da.rename({"lead_time": "step"})
+    requested_members = spec.kwargs.get("members")
+    if requested_members is not None and "member" in da.dims:
+        requested_members = int(requested_members)
+        available_members = int(da.sizes["member"])
+        if available_members < requested_members:
+            print(f"  [FuXi] {init_str}: requested {requested_members} members "
+                  f"but file has {available_members}", flush=True)
+            return None
+        da = da.isel(member=slice(0, requested_members))
     da = crop_box(da)                                   # global -> India box (speed)
 
     if var == "Z500":

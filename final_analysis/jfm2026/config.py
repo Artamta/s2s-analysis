@@ -36,9 +36,21 @@ def region_mask_path(dgrid) -> str:
     return os.path.join(os.path.dirname(HERE), "masks", f"imd_region_masks_{dgrid:g}deg.nc")
 
 
-def build_config(dgrid: float = 1.5) -> ExperimentConfig:
+def build_config(dgrid: float = 1.5, fuxi_root: str | None = None,
+                 fuxi_members: int | None = None,
+                 out_suffix: str | None = None) -> ExperimentConfig:
     """JFM2026 config at a chosen verification resolution.
-       dgrid=1.5 -> common/fair grid (default);  dgrid=0.5 -> SPIRE-native grid."""
+       dgrid=1.5 -> common/fair grid (default);  dgrid=0.5 -> SPIRE-native grid.
+
+       FuXi can be redirected to a larger ensemble directory without editing code:
+           python run_verify.py --fuxi-root /storage/.../fuxi/jfm2026_ens50 \
+                                --fuxi-members 50 --out-suffix ens50
+       The adapter expects <fuxi_root>/combined/<YYYYMMDD>.nc."""
+    fuxi_root = fuxi_root or os.environ.get("FUXI_JFM_ROOT") or f"{STORE}/All_Model_Data/fuxi/jfm2026"
+    fuxi_members = int(fuxi_members or os.environ.get("FUXI_JFM_MEMBERS") or 11)
+    out_suffix = out_suffix or os.environ.get("S2S_OUT_SUFFIX", "")
+    out_name = f"results_{dgrid:g}deg" + (f"_{out_suffix}" if out_suffix else "")
+
     paths = Paths(
         clim_nc        = f"{STORE}/benchmark(jfm)/era5_climatology.nc",
         region_mask_nc = region_mask_path(dgrid),
@@ -53,8 +65,7 @@ def build_config(dgrid: float = 1.5) -> ExperimentConfig:
                   kwargs={"zarr": f"{PREV}/spire/spire_hindcast_jfm.zarr",
                           "group": "mean_stddev"}),
         ModelSpec(name="FuXi", adapter="fuxi_combined",
-                  kwargs={"root": f"{STORE}/All_Model_Data/fuxi/jfm2026",
-                          "members": 11}),
+                  kwargs={"root": fuxi_root, "members": fuxi_members}),
         ModelSpec(name="ECMWF", adapter="ecmwf_byvar",
                   kwargs={"root": f"{STORE}/All_Model_Data/ecmwf/jfm2026",
                           "ens": "pf"}),
@@ -77,7 +88,7 @@ def build_config(dgrid: float = 1.5) -> ExperimentConfig:
         # is not on disk (analysis-only 2t, empty mx2t/mn2t) -> its adapter returns
         # None for T2M, so it is auto-excluded from the T2M track.
         variables=("TP", "Z500", "T2M"),
-        out_dir=os.path.join(HERE, f"results_{dgrid:g}deg"),   # per-resolution folder
+        out_dir=os.path.join(HERE, out_name),   # per-resolution/fuxi-ensemble folder
     )
 
 

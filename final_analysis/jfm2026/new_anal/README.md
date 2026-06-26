@@ -16,6 +16,7 @@ All figures land in `new_anal/figs/`.
 | `a2_skill_maps.py` | `A2_skill_map_<VAR>.png` | Grid-point anomaly correlation (ACC) across the 13 inits, one row per model × columns for Weeks 1,2,3,4,6. Shows *where* and *how far out* each model is skilful (area-mean ACC annotated per panel). |
 | `a3_region_profiles.py` | `A3_region_profiles_<VAR>.png`, `A3_region_scorecard_<VAR>_MME.png` | Skill (PCC vs lead) split across the 4 IMD homogeneous regions, plus a region × week scorecard. South Peninsula is the hardest region for rainfall; East/NE India the most predictable. |
 | `a4_sst.py` | `A4_S1_sst_bias_W{1,4}.png`, `A4_S2_sst_basin_skill.png`, `A4_S3_sst_skill_map.png` | **Sea-surface temperature**: FuXi SST forecast vs ERA5 SST (ARCO-ERA5 truth) over the north Indian Ocean. Spatial bias, basin-mean ACC/RMSE vs lead (Arabian Sea, Bay of Bengal, Equatorial Indian Ocean), and a grid-point SST skill map. Only FuXi carries an SST channel. |
+| `a5_wetdry_spells.py` | `A5_rainfall_lines.png`, `A5_index_lines.png`, `A5_event_scores.png` | **Winter wet/dry-spell rainfall** (the JFM analogue of the JJAS active/break figure, now including SPIRE): weekly all-India rainfall, ERA5 truth vs SPIRE/FuXi/ECMWF, with blue/red background bands for ERA5 wet-spell (>+1σ) / dry-spell (<−1σ) weeks. Companion standardised σ-index plot and a wet/dry-spell detection scorecard (POD/FAR). Index standardised by the 1990–2020 ERA5 calendar-week distribution (WeatherBench2 archive). |
 
 ## Run
 

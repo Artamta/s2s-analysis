@@ -56,6 +56,10 @@ def expected_raw_files(date: pd.Timestamp):
 
 
 def raw_status(date: pd.Timestamp):
+    root = RAW_DIR / f"{date:%Y%m%d}" / "member"
+    if not root.exists():
+        return False, 0, [root]
+
     present = 0
     missing = []
     for path in expected_raw_files(date):
@@ -133,30 +137,37 @@ def main():
     else:
         dates = list(pd.date_range(args.start, args.end, freq="D"))
 
-    ready   = [d for d in dates if raw_is_complete(d) and not combined_exists(d)]
-    skipped = [d for d in dates if combined_exists(d)]
-    missing = [d for d in dates if not raw_is_complete(d) and not combined_exists(d)]
-
     log.info("=" * 60)
     log.info("FuXi-S2S Output Combiner — 50-member")
     log.info(f"  Combined dir    : {COMBINED_DIR}")
     log.info(f"  Total dates     : {len(dates)}")
-    log.info(f"  Already done    : {len(skipped)}")
-    log.info(f"  Ready to combine: {len(ready)}")
-    log.info(f"  Missing raw     : {len(missing)}")
+    log.info("  Mode            : streaming resume")
     log.info("=" * 60)
 
     failed = []
-    for i, date in enumerate(ready, 1):
+    skipped = 0
+    missing = 0
+    combined_count = 0
+    for i, date in enumerate(dates, 1):
+        date_str = f"{date:%Y%m%d}"
+        if combined_exists(date):
+            skipped += 1
+            log.info(f"SKIP   {date_str}  already combined")
+            continue
+
         try:
             combine_one(date, args.keep_raw, log)
+            combined_count += 1
         except Exception as e:
-            log.error(f"FAIL   {date:%Y%m%d}: {e}")
-            failed.append(f"{date:%Y%m%d}")
-        log.info(f"Progress {i}/{len(ready)}")
+            msg = str(e)
+            log.error(f"FAIL   {date_str}: {msg}")
+            if "raw incomplete" in msg:
+                missing += 1
+            failed.append(date_str)
+        log.info(f"Progress {i}/{len(dates)}  skipped={skipped} combined={combined_count} failed={len(failed)}")
 
     log.info("=" * 60)
-    log.info(f"Done. Combined: {len(ready) - len(failed)}  Failed: {len(failed)}")
+    log.info(f"Done. Skipped: {skipped}  Combined: {combined_count}  Missing raw: {missing}  Failed: {len(failed)}")
     log.info("=" * 60)
 
 

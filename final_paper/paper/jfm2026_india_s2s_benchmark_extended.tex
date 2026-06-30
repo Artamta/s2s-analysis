@@ -92,21 +92,21 @@
             format=plain, justification=justified]{caption}
 
 %% -----------------------------------------------------------------------
-%%  SECTION HEADINGS  (sans-serif, navy, with accent rules)
+%%  SECTION HEADINGS  (Palatino serif, small-caps numbered, thin rule below)
 %% -----------------------------------------------------------------------
 \usepackage{titlesec}
 \titleformat{\section}
-  {\sffamily\large\bfseries\color{titleband}}
-  {\color{titleband}\thesection.}{0.55em}{}
-  [\vspace{1pt}{\color{accentrule}\titlerule[0.6pt]}\vspace{2pt}]
+  {\normalfont\large\bfseries\scshape}
+  {\thesection.}{0.55em}{}
+  [\vspace{2pt}{\color{accentrule!70}\titlerule[0.4pt]}\vspace{1pt}]
 \titleformat{\subsection}
-  {\sffamily\normalsize\bfseries\color{sectiongray}}
-  {\thesubsection}{0.5em}{}
+  {\normalfont\normalsize\bfseries}
+  {\thesubsection.}{0.5em}{}
 \titleformat{\subsubsection}
-  {\sffamily\small\itshape\color{sectiongray}}
-  {\thesubsubsection}{0.5em}{}
-\titlespacing*{\section}     {0pt}{2.0ex plus 0.5ex minus 0.2ex}{0.8ex}
-\titlespacing*{\subsection}  {0pt}{1.4ex plus 0.3ex}{0.4ex}
+  {\normalfont\normalsize\itshape}
+  {\thesubsubsection.}{0.5em}{}
+\titlespacing*{\section}     {0pt}{2.2ex plus 0.5ex minus 0.2ex}{0.6ex}
+\titlespacing*{\subsection}  {0pt}{1.4ex plus 0.3ex}{0.3ex}
 \titlespacing*{\subsubsection}{0pt}{1.0ex plus 0.2ex}{0.2ex}
 
 %% -----------------------------------------------------------------------
@@ -183,18 +183,20 @@
 %%  CUSTOM TITLE BLOCK
 %%  Call \printpreprint after \begin{document}
 %% -----------------------------------------------------------------------
-\newcommand{\printpreprint}[2]{%   #1=title lines, #2=subtitle line
-  % --- top navy band ---
+\newcommand{\printpreprint}[2]{%   #1=main title, #2=subtitle
   \noindent
   \colorbox{titleband}{%
     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-      \vspace{7pt}
+      \vspace{9pt}
       \centering
-      {\color{white}\sffamily\LARGE\bfseries #1}\\[5pt]
-      {\color{accentrule!60!white}\sffamily\large #2}
-      \vspace{7pt}}}\\[-1pt]
-  {\color{accentrule}\rule{\linewidth}{1.2pt}}
-  \vspace{6pt}
+      {\color{white}\sffamily\LARGE\bfseries #1}\\[6pt]
+      {\color{accentrule!55!white}\sffamily\large #2}\\[8pt]
+      {\color{white!60!titleband}\footnotesize\itshape
+        Preprint\enspace\textbullet\enspace\today\enspace\textbullet\enspace
+        Not peer reviewed}
+      \vspace{8pt}}}%
+  \\[-1pt]{\color{accentrule}\rule{\linewidth}{1.2pt}}%
+  \vspace{8pt}
 }
 
 \title[Weekly Precipitation and Circulation Skill in JFM~2026 and JJAS~2019]%
@@ -230,14 +232,9 @@
        {sandeep.juneja@ashoka.edu.in}
 \end{center}
 
-\vspace{3pt}
-\begin{center}
-  \footnotesize\color{sectiongray}
-  \textit{Preprint --- \today{} --- Not peer reviewed}
-\end{center}
-\vspace{4pt}
-{\color{accentrule}\rule{\linewidth}{0.4pt}}
-\vspace{4pt}
+\vspace{10pt}
+{\color{accentrule!40}\rule{\linewidth}{0.4pt}}
+\vspace{6pt}
 
 %% --- Abstract -----------------------------------------------------------
 \begin{abstractbox}

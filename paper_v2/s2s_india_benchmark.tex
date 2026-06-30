@@ -206,7 +206,19 @@ East/Northeast India---following the state grouping of \citet{pai2014}. The
 region masks are constructed from Survey-of-India state-boundary polygons by
 assigning each grid point to the region whose constituent states contain it,
 then intersecting with the land mask; the four regions are mutually
-exclusive.
+exclusive (Figure~\ref{fig:domain}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig01_domain.png}
+  \caption{(a)~The India study domain (land points only, common $1.5^{\circ}$
+  verification grid). (b)~The four IMD homogeneous rainfall regions
+  (Northwest, Central, South Peninsula, East/Northeast India), delineated by
+  Survey-of-India state boundaries following \citet{pai2014}. All aggregate
+  skill metrics in this paper are computed over land points only, using
+  cosine-latitude area weights.}
+  \label{fig:domain}
+\end{figure}
 
 \subsection{Verification references}\label{sec:truth}
 
@@ -538,29 +550,13 @@ the only system whose Z500 skill does not degrade monotonically with lead: its
 ACC is 0.69--0.77 across weeks~3--6, the highest of any individual system from
 week~4 onward, including the dynamical systems.
 
-\paragraph{T2M.}
-The T2M comparison is restricted to the three systems with a usable T2M
-product: Spire, FuXi-S2S, and DLESyM. Both excluded systems fail for the same
-underlying reason---a download-time error, not a true data gap. ECMWF's
-\texttt{2t} archive, like UKMO's (Section~\ref{sec:ukmo}), contains only a
-single forecast step per file across the full season (confirmed directly from
-the archived NetCDF files), so 538 of 628 weekly-window scoring attempts fail
-with ``insufficient leads for weekly mean'' and the remaining 90 fail outright;
-no week of ECMWF T2M can be scored. NCEP carries no T2M-equivalent channel in
-this archive at all. Both gaps are therefore data-retrieval artifacts specific
-to this download rather than properties of the underlying ECMWF or NCEP
-systems, and either could in principle be closed by a corrected
-re-download---which we have not pursued here because the present focus is
-precipitation and Z500 (Section~\ref{sec:limitations}). Among the three
-systems that do have usable T2M, Spire leads at every lead
-(Table~\ref{tab:jfm_acc_t2m}): ACC~0.75 at week~1 versus 0.49 for DLESyM and
-0.33 for FuXi-S2S, and it remains the only system with ACC~$>0.2$ from week~3
-onward. DLESyM's T2M skill follows the same long-lead pattern as its Z500
-skill, turning negative by week~4.
+T2M results for JFM~2026 are deferred to the appendix
+(Section~\ref{app:t2m}), since only three of six systems have a usable T2M
+product in this archive and the comparison is consequently narrower than for
+precipitation and Z500.
 \input{tables/tab_jfm_acc}
 \input{tables/tab_jfm_rmse_tp}
 \input{tables/tab_jfm_acc_z500}
-\input{tables/tab_jfm_acc_t2m}
 
 \subsection{Monsoon (JJAS 2019): the great equalizer}\label{sec:jjas}
 
@@ -590,13 +586,8 @@ week~4 ($-0.12$), and remains the most negative system through week~6
 ($-0.18$). FuXi-S2S shows an irregular trajectory (0.91, 0.64, 0.29, 0.31,
 $-0.11$, 0.11) that does not improve on the dynamical systems at any lead.
 
-\paragraph{T2M.}
-DLESyM is the only system with a usable T2M product in JJAS~2019. Its skill
-declines from ACC~0.78 at week~1 to 0.41 by week~6---a smoother, more
-gradual decay than either its own Z500 trajectory or any system's
-precipitation trajectory in this season, consistent with the comparatively
-high autocorrelation of near-surface temperature anomalies relative to
-rainfall and circulation at subseasonal lead.
+T2M results for JJAS~2019 (DLESyM only) are likewise deferred to the
+appendix (Section~\ref{app:t2m}).
 \input{tables/tab_jjas_acc_tp}
 \input{tables/tab_jjas_acc_z500}
 
@@ -926,15 +917,15 @@ in particular limits the precision of its probabilistic scores
 \textbf{Variable coverage gaps.} T2M is the most affected variable: UKMO and
 ECMWF 2-m temperature are both excluded because their archived files contain
 only a single forecast step per initialization (Sections~\ref{sec:ukmo}
-and~\ref{sec:jfm}), and NCEP carries no T2M-equivalent channel in this
+and~\ref{app:t2m}), and NCEP carries no T2M-equivalent channel in this
 archive at all, leaving only Spire, FuXi-S2S, and DLESyM with a scoreable T2M
 product. DLESyM does not provide a precipitation channel
 (Section~\ref{sec:delysm}). None of these four gaps is a property of the
 underlying forecast system---the UKMO/ECMWF T2M gap in particular is a
 download-time error that a corrected re-download could close---but all four
 reduce the number of systems available for the T2M and precipitation
-comparisons respectively, and the T2M comparison in particular should be read
-as a three-system rather than six-system result.
+comparisons respectively, and the full T2M comparison (Appendix~\ref{app:t2m})
+should be read as a three-system rather than six-system result.
 
 \textbf{FuXi-S2S T2M bias.} FuXi-S2S 2-m temperature carries an approximately
 4\,K cold bias relative to ERA5 at all leads, consistent with a mismatch
@@ -1020,6 +1011,114 @@ drafting, table/figure generation scripting, and editorial refinement; all
 scientific content, analysis, and conclusions are solely the authors'
 responsibility, and all LLM-assisted text was reviewed and verified by the
 authors.
+
+% ======================================================================
+% APPENDIX
+% ======================================================================
+\appendix
+\section{Supplementary Figures and T2M Results}\label{app:supp}
+
+This appendix contains the 2-m temperature (T2M) results referenced in
+Sections~\ref{sec:jfm}--\ref{sec:jjas}, together with supplementary spatial
+and scatter diagnostics that support, but are not essential to, the main-text
+findings.
+
+\subsection{2-m temperature}\label{app:t2m}
+
+\paragraph{JFM~2026.}
+The T2M comparison is restricted to the three systems with a usable T2M
+product: Spire, FuXi-S2S, and DLESyM. ECMWF and UKMO are both excluded for
+the same underlying reason---a download-time error, not a true data gap.
+Their \texttt{2t} archives contain only a single forecast step per file across
+the full season (confirmed directly from the archived NetCDF files), so 538
+of 628 weekly-window scoring attempts for ECMWF fail with ``insufficient
+leads for weekly mean'' and the remainder fail outright; no week of ECMWF or
+UKMO T2M can be scored. NCEP carries no T2M-equivalent channel in this
+archive at all. All three gaps are data-retrieval artifacts specific to this
+download rather than properties of the underlying forecast systems, and the
+ECMWF/UKMO gap in particular could in principle be closed by a corrected
+re-download (Section~\ref{sec:limitations}). Among the three systems that do
+have usable T2M, Spire leads at every lead (Table~\ref{tab:jfm_acc_t2m}):
+ACC~0.75 at week~1 versus 0.49 for DLESyM and 0.33 for FuXi-S2S, and it
+remains the only system with ACC~$>0.2$ from week~3 onward. DLESyM's T2M
+skill follows the same long-lead pattern as its Z500 skill, turning negative
+by week~4.
+\input{tables/tab_jfm_acc_t2m}
+
+\paragraph{JJAS~2019.}
+DLESyM is the only system with a usable T2M product in JJAS~2019. Its skill
+declines from ACC~0.78 at week~1 to 0.41 by week~6---a smoother, more
+gradual decay than either its own Z500 trajectory or any system's
+precipitation trajectory in this season, consistent with the comparatively
+high autocorrelation of near-surface temperature anomalies relative to
+rainfall and circulation at subseasonal lead. With only one scoreable system,
+no cross-model T2M comparison is possible for the monsoon season.
+
+\subsection{Spatial pattern correlation}\label{app:spatial}
+
+Figures~\ref{fig:spatial_tp} and~\ref{fig:spatial_z500} show the local
+temporal pattern correlation at each grid point---the Pearson correlation,
+across all 90 JFM~2026 initializations, between the forecast and observed
+week-1 anomaly at that grid cell---for Spire, ECMWF, and the MME. This is a
+spatial complement to the domain-aggregated ACC of Section~\ref{sec:jfm}: with
+90 samples per grid cell the maps are far less noisy than the 13-initialization
+spatial maps possible in earlier single-season analyses, and the spatial
+structure is consistent with the regional breakdown of
+Section~\ref{sec:regional}. For precipitation (Figure~\ref{fig:spatial_tp}),
+all three systems show their lowest local correlation over the southern tip
+of the peninsula, consistent with the South Peninsula being the hardest IMD
+region in the domain-aggregated scores (Table~\ref{tab:reg_jfm_tp_w1}); the
+rest of the domain is more uniformly skillful. For Z500
+(Figure~\ref{fig:spatial_z500}), correlation is high and spatially smooth
+across nearly the entire domain for all three systems, consistent with the
+much narrower regional spread already documented for Z500 relative to
+precipitation (Section~\ref{sec:regional}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_spatial_acc_tp.pdf}
+  \caption{Local temporal ACC (Pearson correlation across the 90 JFM~2026
+  initializations) for week-1 precipitation anomaly at each $1.5^{\circ}$
+  grid cell, for Spire AI-S2S, ECMWF, and the multi-model ensemble (MME).
+  All three systems are weakest over the southern tip of the peninsula.}
+  \label{fig:spatial_tp}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_spatial_acc_z500.pdf}
+  \caption{As Figure~\ref{fig:spatial_tp} but for week-1 Z500 anomaly. Note
+  the different color scale (0.4--1.0 versus $-0.4$--1.0 for precipitation),
+  reflecting the much higher and more spatially uniform circulation skill.}
+  \label{fig:spatial_z500}
+\end{figure}
+
+\subsection{Pooled forecast-versus-truth scatter}\label{app:scatter}
+
+Figure~\ref{fig:scatter_r2} pools every grid cell, lead week (1--6), and
+initialization into a single forecast-versus-truth anomaly scatter for the
+multi-model ensemble, summarized by the coefficient of determination
+$R^2$. Unlike the week-1-only ACC values reported in the main text, these
+$R^2$ values are dominated by the long-lead weeks, where skill is lowest, and
+should be read as a pooled, lead-averaged diagnostic rather than a headline
+skill score. The ordering across panels is nonetheless informative: Z500
+$R^2$ exceeds precipitation $R^2$ in both seasons (JFM: 0.33 versus 0.12;
+JJAS: 0.21 versus 0.01), consistent with the longer Z500 skill horizon
+documented throughout Section~\ref{sec:results}, and JJAS precipitation
+($R^2=0.01$) is essentially uncorrelated once all six lead weeks are pooled
+together---a pooled-data confirmation of the monsoon precipitation collapse
+of Section~\ref{sec:jjas}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figs/fig_scatter_r2.pdf}
+  \caption{Forecast versus observed weekly anomaly for the multi-model
+  ensemble (MME), pooled over all grid cells, lead weeks~1--6, and
+  initializations. Hexbin shading shows point density (log scale); the
+  dashed line is the 1:1 reference. $R^2$ is the squared Pearson correlation
+  of the pooled pairs.}
+  \label{fig:scatter_r2}
+\end{figure}
 
 % ======================================================================
 % Bibliography (32 entries carried over from the prior draft).

@@ -644,9 +644,10 @@ calibration.
 
 \subsection{Regional structure of skill}\label{sec:regional}
 
-Figure~\ref{fig:scorecard} breaks down week-1 JFM~2026 precipitation ACC by
-the four IMD homogeneous regions. Predictability is markedly unequal across
-India: Central India, East/Northeast India, and Northwest India are all
+Figure~\ref{fig:scorecard} and Table~\ref{tab:reg_jfm_tp_w1} break down
+week-1 JFM~2026 precipitation ACC by the four IMD homogeneous regions
+(Section~\ref{sec:domain}). Predictability is markedly unequal across India:
+Central India, East/Northeast India, and Northwest India are all
 well-predicted at week~1 by every system (ACC~0.61--0.80), while the South
 Peninsula is uniformly the hardest region (ACC~0.20--0.46 across all six
 systems)---roughly half the skill level of the other three regions for every
@@ -667,6 +668,36 @@ broad-domain property rather than a regional artifact.
   \caption{JFM~2026 week-1 precipitation ACC by IMD homogeneous region.}
   \label{fig:scorecard}
 \end{figure}
+\input{tables/tab_jfm_regional_tp_w1}
+
+The same regional split is visible for Z500 (Table~\ref{tab:reg_jfm_z500_w1}),
+though the gap between regions is much smaller than for precipitation: every
+system scores ACC~0.68--0.95 across all four regions at week~1, and even the
+hardest region (South Peninsula) remains highly skillful for every system
+(ACC~0.68--0.89). ECMWF leads in all four regions for Z500 at week~1, which is
+consistent with its domain-mean lead at this lead (Section~\ref{sec:jfm}); the
+much narrower spread between regions for Z500 than for precipitation reflects
+the larger spatial decorrelation scale of the 500-hPa height field relative to
+rainfall.
+\input{tables/tab_jfm_regional_z500_w1}
+
+The monsoon precipitation collapse of Section~\ref{sec:jjas} is also a
+broad-domain property rather than a regional artifact. At week~1
+(Table~\ref{tab:reg_jjas_tp_w1}) JJAS~2019 regional skill is already lower and
+flatter than JFM~2026: ACC ranges only 0.25--0.44 across all four regions and
+all four scored systems, versus the much wider 0.20--0.80 range in JFM
+(Table~\ref{tab:reg_jfm_tp_w1}). By week~3 (Table~\ref{tab:reg_jjas_tp_w3})
+every region for every system has fallen to ACC~$\le$~0.20, with most
+region--model combinations at or below zero; no region retains the kind of
+useful skill that Northwest, Central, and East/Northeast India still show in
+JFM~2026 at the same lead. East/Northeast India is a partial, model-dependent
+exception---ECMWF (0.20) and UKMO (0.16) retain some skill there at week~3
+while collapsing elsewhere---but no system or region combination approaches
+the JFM~2026 winter skill level. The regional data therefore reinforce the
+domain-mean finding of Section~\ref{sec:jjas}: the monsoon equalizes skill
+across the whole of India, not just in the domain average.
+\input{tables/tab_jjas_regional_tp_w1}
+\input{tables/tab_jjas_regional_tp_w3}
 
 \subsection{Robustness: larger initialization set}\label{sec:robust}
 

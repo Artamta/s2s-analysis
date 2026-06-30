@@ -123,6 +123,65 @@ def make_skill_table(season: str, variable: str, value: str, caption: str,
     """)
 
 
+REGION_LABEL = {
+    "northwest_india": "Northwest",
+    "central_india": "Central",
+    "south_peninsula": "South Pen.",
+    "east_northeast_india": "East/NE",
+}
+REGION_ORDER = ["northwest_india", "central_india", "south_peninsula",
+                "east_northeast_india"]
+
+
+def make_regional_table(season: str, variable: str, week: int, value: str,
+                        caption: str, label: str, higher_is_better: bool = True,
+                        nd: int = 2, exclude_mme_from_bold: bool = True) -> str:
+    """Model x IMD-region table at a single fixed lead week."""
+    path = DET[season] if value in ("acc", "rmse", "bias", "mae") else PROB[season]
+    df = pd.read_csv(path)
+    df = df[(df["variable"] == variable) & (df["week"] == week)
+            & (df["region"].isin(REGION_ORDER))]
+    piv = df.pivot_table(index="model", columns="region", values=value, aggfunc="mean")
+    models = [m for m in MODEL_ORDER if m in piv.index]
+    cols = [c for c in REGION_ORDER if c in piv.columns]
+    piv = piv.reindex(models)[cols]
+    if piv.empty:
+        return f"% no data for {season} {variable} week{week} {value} (regional)\n"
+
+    bold_index = [m for m in piv.index if not (exclude_mme_from_bold and m == "mme")]
+    formatted = {}
+    for c in piv.columns:
+        sub = piv.loc[bold_index, c]
+        fb = _bold_best(sub, higher_is_better, nd)
+        for m in piv.index:
+            formatted[(m, c)] = fb.get(m, _fmt(piv.loc[m, c], nd))
+
+    header = " & ".join([REGION_LABEL[c] for c in piv.columns])
+    rows = []
+    for m in piv.index:
+        cells = " & ".join(formatted[(m, c)] for c in piv.columns)
+        rows.append(f"    {MODEL_LABEL[m]:<14} & {cells} \\\\")
+    body = "\n".join(rows)
+    ncol = len(piv.columns)
+    colspec = "l" + "c" * ncol
+
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[t]
+      \\centering
+      \\caption{{{caption}}}
+      \\label{{{label}}}
+      \\small
+      \\begin{{tabular}}{{{colspec}}}
+        \\toprule
+        Model & {header} \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+    \\end{{table}}
+    """)
+
+
 def main():
     artifacts = []
 
@@ -174,6 +233,30 @@ def main():
         "jfm", "z500", "crpss_clim",
         "JFM~2026 all-India Z500 CRPSS versus climatology by lead week.",
         "tab:jfm_crpss_z500")))
+
+    # --- IMD regional breakdown (model x region, fixed week) ---
+    artifacts.append(("tab_jfm_regional_tp_w1.tex", make_regional_table(
+        "jfm", "tp", 1, "acc",
+        "JFM~2026 week-1 precipitation ACC by IMD homogeneous region. "
+        "Best individual-model score in each column is bold.",
+        "tab:reg_jfm_tp_w1")))
+
+    artifacts.append(("tab_jfm_regional_z500_w1.tex", make_regional_table(
+        "jfm", "z500", 1, "acc",
+        "JFM~2026 week-1 Z500 ACC by IMD homogeneous region.",
+        "tab:reg_jfm_z500_w1")))
+
+    artifacts.append(("tab_jjas_regional_tp_w1.tex", make_regional_table(
+        "jjas", "tp", 1, "acc",
+        "JJAS~2019 week-1 precipitation ACC by IMD homogeneous region "
+        "(IMD truth, 17 common initializations).",
+        "tab:reg_jjas_tp_w1")))
+
+    artifacts.append(("tab_jjas_regional_tp_w3.tex", make_regional_table(
+        "jjas", "tp", 3, "acc",
+        "JJAS~2019 week-3 precipitation ACC by IMD homogeneous region, "
+        "showing the monsoon skill collapse is uniform across regions.",
+        "tab:reg_jjas_tp_w3")))
 
     for fname, tex in artifacts:
         with open(os.path.join(OUT, fname), "w") as fh:

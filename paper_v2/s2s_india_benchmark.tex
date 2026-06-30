@@ -384,6 +384,22 @@ precipitation, and the IMD 1991--2020 daily rainfall climatology
 computed over decades independent of the verification season, it avoids the
 amplitude inflation that a same-season baseline would introduce.
 
+\textbf{The precipitation climatology always matches the precipitation truth
+source, never the reverse.} JFM~2026 precipitation is verified against ERA5
+(Section~\ref{sec:truth}), so JFM precipitation anomalies use the ERA5
+day-of-year climatology, converted from m to mm\,day$^{-1}$. JJAS~2019
+precipitation is verified against IMD, so JJAS precipitation anomalies use the
+IMD daily climatology. This pairing is enforced in the verification pipeline
+for every model and every initialization; no run mixes an ERA5 truth with an
+IMD climatology or vice versa. This matters because anomaly correlation is
+sensitive to the climatology baseline: pairing the wrong climatology with a
+truth source would inflate or deflate ACC by introducing a spurious mean
+offset, independent of forecast quality. We flag this explicitly because it is
+the most common silent error in cross-reference S2S verification, and because
+the two seasons in this study deliberately use \emph{different} truth sources
+(Section~\ref{sec:truth}), so getting this pairing wrong in either direction
+would have been easy.
+
 \subsection{Deterministic and probabilistic metrics}\label{sec:metrics}
 
 The anomaly correlation coefficient (ACC) at lead $\ell$ is the
@@ -445,7 +461,12 @@ season.
         contributing to the longer lead windows shrinks at weeks~5--6 (the
         latest initializations cannot yet be verified at day~35--42); this
         does not bias the reported scores but reduces their precision at the
-        longest leads, and we treat week-5--6 results accordingly.
+        longest leads, and we treat week-5--6 results accordingly. Using all
+        90 daily initializations, rather than a sparser weekly subset, gives a
+        larger and more representative sample of the season; scores reported
+        here are consequently more conservative (closer to the seasonal mean,
+        less sensitive to any single favorable initialization) than an
+        estimate from a small weekly subsample of the same season would be.
   \item \textbf{JJAS~2019:} 17 common Thursday initializations (6~June--26~September~2019)
         on which all five non-Spire models provide usable forecasts; this
         matched set is the basis of all cross-model JJAS comparisons in
@@ -524,6 +545,10 @@ in our archive). Spire again leads at every lead (Table~\ref{tab:jfm_acc_t2m}):
 ACC~0.75 at week~1 versus 0.49 for DLESyM and 0.33 for FuXi-S2S, and it remains
 the only system with ACC~$>0.2$ from week~3 onward. DLESyM's T2M skill follows
 the same long-lead pattern as its Z500 skill, turning negative by week~4.
+\input{tables/tab_jfm_acc}
+\input{tables/tab_jfm_rmse_tp}
+\input{tables/tab_jfm_acc_z500}
+\input{tables/tab_jfm_acc_t2m}
 
 \subsection{Monsoon (JJAS 2019): the great equalizer}\label{sec:jjas}
 
@@ -560,6 +585,8 @@ gradual decay than either its own Z500 trajectory or any system's
 precipitation trajectory in this season, consistent with the comparatively
 high autocorrelation of near-surface temperature anomalies relative to
 rainfall and circulation at subseasonal lead.
+\input{tables/tab_jjas_acc_tp}
+\input{tables/tab_jjas_acc_z500}
 
 \subsection{Divergence among the ML systems}\label{sec:ml_divergence}
 

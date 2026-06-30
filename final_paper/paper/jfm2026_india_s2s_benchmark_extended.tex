@@ -33,91 +33,184 @@
 
 \documentclass[11pt,a4paper]{article}
 
-%% --- Encoding & fonts ---------------------------------------------------
+%% -----------------------------------------------------------------------
+%%  FONTS  (Palatino body + Helvetica sans for titles = classic preprint)
+%% -----------------------------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{microtype}          % better justification; fixes most overfull hbox
+\usepackage{mathpazo}           % Palatino for body + math
+\usepackage[scaled=0.92]{helvet}
+\usepackage{microtype}
 
-%% --- Page layout --------------------------------------------------------
-\usepackage[a4paper, top=1in, bottom=1in, left=1.1in, right=1.1in,
-            headheight=14pt]{geometry}
+%% -----------------------------------------------------------------------
+%%  PAGE GEOMETRY  (wider text column, generous margins)
+%% -----------------------------------------------------------------------
+\usepackage[a4paper,
+            top=22mm, bottom=24mm,
+            left=22mm, right=22mm,
+            headheight=15pt]{geometry}
 \usepackage{setspace}
-\setstretch{1.10}               % slight stretch for readability
+\setstretch{1.12}
 
-%% --- Headers/footers ----------------------------------------------------
+%% -----------------------------------------------------------------------
+%%  COLOURS
+%% -----------------------------------------------------------------------
+\usepackage{xcolor}
+\definecolor{titleband}{RGB}{15,55,120}      % deep navy
+\definecolor{accentrule}{RGB}{60,130,200}    % sky blue rule
+\definecolor{abstractbg}{RGB}{240,245,252}   % very light blue tint
+\definecolor{linkblue}{RGB}{25,85,170}
+\definecolor{sectiongray}{RGB}{55,55,65}
+
+%% -----------------------------------------------------------------------
+%%  HEADERS / FOOTERS
+%% -----------------------------------------------------------------------
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{Raj et al.\ --- S2S Benchmark over India}}
-\fancyhead[R]{\small\textit{Draft \today}}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{%
+  \footnotesize\color{sectiongray}\textit{Raj et al.}\ \
+  \textbf{S2S Forecast Benchmark over India (JFM\,2026 \& JJAS\,2019)}}
+\fancyhead[R]{\footnotesize\color{sectiongray}\textit{Preprint --- \today}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accentrule}\leaders\hrule height\headrulewidth\hfill}}
 
-%% --- Mathematics --------------------------------------------------------
+%% -----------------------------------------------------------------------
+%%  MATHEMATICS
+%% -----------------------------------------------------------------------
 \usepackage{amsmath,amssymb}
 
-%% --- Tables & figures ---------------------------------------------------
+%% -----------------------------------------------------------------------
+%%  TABLES & FIGURES
+%% -----------------------------------------------------------------------
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{tabularx}
-\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\usepackage[font=small, labelfont=bf, labelsep=period,
+            format=plain, justification=justified]{caption}
 
-%% --- Section heading style ----------------------------------------------
+%% -----------------------------------------------------------------------
+%%  SECTION HEADINGS  (sans-serif, navy, with accent rules)
+%% -----------------------------------------------------------------------
 \usepackage{titlesec}
-\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}[\vspace{-2pt}\rule{\linewidth}{0.5pt}]
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
-\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.5em}{}
-\titlespacing*{\section}{0pt}{1.4ex plus 0.4ex}{0.6ex}
-\titlespacing*{\subsection}{0pt}{1.0ex plus 0.3ex}{0.3ex}
+\titleformat{\section}
+  {\sffamily\large\bfseries\color{titleband}}
+  {\color{titleband}\thesection.}{0.55em}{}
+  [\vspace{1pt}{\color{accentrule}\titlerule[0.6pt]}\vspace{2pt}]
+\titleformat{\subsection}
+  {\sffamily\normalsize\bfseries\color{sectiongray}}
+  {\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}
+  {\sffamily\small\itshape\color{sectiongray}}
+  {\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}     {0pt}{2.0ex plus 0.5ex minus 0.2ex}{0.8ex}
+\titlespacing*{\subsection}  {0pt}{1.4ex plus 0.3ex}{0.4ex}
+\titlespacing*{\subsubsection}{0pt}{1.0ex plus 0.2ex}{0.2ex}
 
-%% --- Bibliography -------------------------------------------------------
+%% -----------------------------------------------------------------------
+%%  BIBLIOGRAPHY
+%% -----------------------------------------------------------------------
 \usepackage[round,authoryear]{natbib}
-\setlength{\bibsep}{3pt}
+\setlength{\bibsep}{2.5pt}
 
-%% --- Colours & hyperlinks -----------------------------------------------
-\usepackage{xcolor}
-\definecolor{linkblue}{RGB}{30,80,160}
+%% -----------------------------------------------------------------------
+%%  HYPERLINKS
+%% -----------------------------------------------------------------------
 \usepackage[colorlinks=true,
             linkcolor=linkblue,
             citecolor=linkblue,
-            urlcolor=linkblue]{hyperref}
+            urlcolor=linkblue,
+            pdfauthor={Raj et al.},
+            pdftitle={S2S Forecast Benchmark over India}]{hyperref}
 \providecommand{\doi}[1]{\href{https://doi.org/#1}{doi:#1}}
 
-%% --- Line numbers (uncomment for review) --------------------------------
+%% -----------------------------------------------------------------------
+%%  LINE NUMBERS  (uncomment for review)
+%% -----------------------------------------------------------------------
 \usepackage{lineno}
 % \linenumbers
 
-%% ----- Placeholder machinery -------------------------------------------
+%% -----------------------------------------------------------------------
+%%  PLACEHOLDER MACHINERY
+%% -----------------------------------------------------------------------
 \newcommand{\ph}[1]{\textcolor{red}{[#1]}}
 \newcommand{\phnum}{\textcolor{red}{[X.XX]}}
 \newcommand{\figbox}[2]{%
   \fbox{\parbox[c][#1][c]{0.94\linewidth}{\centering
     {\color{red}\textbf{FIGURE PLACEHOLDER}}\\[4pt]
     {\color{red}#2}}}}
-%% -----------------------------------------------------------------------
 
-%% ----- Author-block helper ---------------------------------------------
-%  \auth{Name}{Affiliation}{Email}
+%% -----------------------------------------------------------------------
+%%  TITLE-PAGE MACHINERY
+%%  Suppress the default \maketitle; we build a custom title block
+%% -----------------------------------------------------------------------
+\usepackage{environ}
+\makeatletter
+% Store \title, \author, \date as usual — we use them in \printpreprint
+\newcommand{\preprint@title}{}
+\newcommand{\preprint@subtitle}{}
+\renewcommand{\title}[2][]{\renewcommand{\preprint@title}{#2}%
+                            \renewcommand{\preprint@subtitle}{#1}}
+\makeatother
+
+%% -----------------------------------------------------------------------
+%%  ABSTRACT ENVIRONMENT  (styled box)
+%% -----------------------------------------------------------------------
+\usepackage{mdframed}
+\newmdenv[
+  backgroundcolor=abstractbg,
+  linecolor=accentrule,
+  linewidth=1.2pt,
+  leftline=true, rightline=false, topline=false, bottomline=false,
+  innerleftmargin=10pt, innerrightmargin=8pt,
+  innertopmargin=7pt, innerbottommargin=7pt,
+  skipabove=6pt, skipbelow=6pt
+]{abstractbox}
+
+%% -----------------------------------------------------------------------
+%%  AUTHOR HELPER
+%%  \auth{Name}{Affil}{Email}
+%% -----------------------------------------------------------------------
 \newcommand{\auth}[3]{%
   \parbox[t]{0.31\textwidth}{\centering
-    \textbf{#1}\\[2pt]
-    \small #2\\[1pt]
-    \footnotesize\url{#3}}}
-%% -----------------------------------------------------------------------
+    {\sffamily\bfseries #1}\\[3pt]
+    {\small #2}\\[2pt]
+    {\footnotesize\url{#3}}}}
 
-\title{%
-  \vspace{-0.8cm}
-  {\color{linkblue}\rule{\linewidth}{2pt}}\\[0.5em]
-  \LARGE\bfseries Benchmarking AI and Operational Subseasonal\\[0.2em]
-  Forecast Systems over India:\\[0.3em]
-  \large Weekly Precipitation and Circulation Skill\\
-  in JFM~2026 and JJAS~2019\\[0.5em]
-  {\color{linkblue}\rule{\linewidth}{0.6pt}}
+%% -----------------------------------------------------------------------
+%%  CUSTOM TITLE BLOCK
+%%  Call \printpreprint after \begin{document}
+%% -----------------------------------------------------------------------
+\newcommand{\printpreprint}[2]{%   #1=title lines, #2=subtitle line
+  % --- top navy band ---
+  \noindent
+  \colorbox{titleband}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \vspace{7pt}
+      \centering
+      {\color{white}\sffamily\LARGE\bfseries #1}\\[5pt]
+      {\color{accentrule!60!white}\sffamily\large #2}
+      \vspace{7pt}}}\\[-1pt]
+  {\color{accentrule}\rule{\linewidth}{1.2pt}}
+  \vspace{6pt}
 }
 
-\author{%
+\title[Weekly Precipitation and Circulation Skill in JFM~2026 and JJAS~2019]%
+      {Benchmarking AI and Operational Subseasonal Forecast Systems over India}
+
+\date{}
+
+\begin{document}
+
+%% --- Custom title band ---------------------------------------------------
+\printpreprint
+  {Benchmarking AI and Operational Subseasonal Forecast Systems over India}
+  {Weekly Precipitation and Circulation Skill in JFM\,2026 and JJAS\,2019}
+
+%% --- Author block -------------------------------------------------------
+\begin{center}
   \auth{Ayush Raj}{Ashoka University \& IISER Pune, India}%
        {raj.ayush@students.iiserpune.ac.in}
   \hfill
@@ -126,7 +219,7 @@
   \hfill
   \auth{Saptarishi Dhanuka}{Ashoka University, India}%
        {saptarishi.dhanuka@ashoka.edu.in}
-  \\[1.4em]
+  \\[1.2em]
   \auth{Parthasarathi Mukhopadhyay}{Ashoka University, India}%
        {parthasarathi.mukhopadhyay@ashoka.edu.in}
   \hfill
@@ -135,16 +228,20 @@
   \hfill
   \auth{Sandeep Juneja}{Ashoka University, India}%
        {sandeep.juneja@ashoka.edu.in}
-}
+\end{center}
 
-\date{\small\today}
+\vspace{3pt}
+\begin{center}
+  \footnotesize\color{sectiongray}
+  \textit{Preprint --- \today{} --- Not peer reviewed}
+\end{center}
+\vspace{4pt}
+{\color{accentrule}\rule{\linewidth}{0.4pt}}
+\vspace{4pt}
 
-\begin{document}
-
-\maketitle
-
-\begin{abstract}
-\noindent
+%% --- Abstract -----------------------------------------------------------
+\begin{abstractbox}
+\noindent{\sffamily\bfseries\small Abstract.}\enspace
 Subseasonal-to-seasonal (S2S) forecasts at two-to-six-week leads
 support planning in agriculture, water resources, and disaster
 preparedness, yet precipitation skill at these leads remains limited,
@@ -178,12 +275,16 @@ daily total---which must be reconciled before anomaly skill scores are
 comparable. The results provide an early, real-time assessment of
 AI-based S2S forecasts for the Indian winter and a reproducible
 verification template extensible to further systems and seasons.
-\end{abstract}
+\end{abstractbox}
 
-\vspace{0.5em}
-\noindent\textbf{Keywords:} subseasonal-to-seasonal prediction;
+\vspace{3pt}
+\noindent{\sffamily\small\bfseries\color{sectiongray}Keywords:\enspace}%
+{\small subseasonal-to-seasonal prediction;
 machine-learning weather forecasting; precipitation verification;
-India; western disturbances; ensemble forecasting
+India; western disturbances; ensemble forecasting}
+\vspace{6pt}
+{\color{accentrule!50}\rule{\linewidth}{0.4pt}}
+\vspace{2pt}
 
 \section{Introduction}\label{sec:intro}
 

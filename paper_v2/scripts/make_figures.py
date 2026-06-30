@@ -122,16 +122,16 @@ def _style_axis(ax):
 
 # ----------------------------------------------------------------------
 def fig_acc_lead():
-    """2x3 grid: ACC vs lead for TP / Z500 / T2M, JFM (top) & JJAS (bottom)."""
+    """2x2 grid: ACC vs lead for TP / Z500, JFM (top) & JJAS (bottom).
+    T2M is excluded here (3 systems, no JJAS cross-model comparison) and
+    shown separately in the appendix (fig_acc_lead_t2m)."""
     djfm, djjas = _allindia(DET["jfm"]), _allindia(DET["jjas"])
-    fig, axes = plt.subplots(2, 3, figsize=(9.4, 5.6), sharex=True)
+    fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.6), sharex=True)
     panels = [
         (axes[0, 0], djfm, "tp", "JFM 2026 — Precipitation"),
         (axes[0, 1], djfm, "z500", "JFM 2026 — Z500"),
-        (axes[0, 2], djfm, "t2m", "JFM 2026 — T2M"),
         (axes[1, 0], djjas, "tp", "JJAS 2019 — Precipitation"),
         (axes[1, 1], djjas, "z500", "JJAS 2019 — Z500"),
-        (axes[1, 2], djjas, "t2m", "JJAS 2019 — T2M"),
     ]
     letters = string.ascii_lowercase
     for k, (ax, df, var, title) in enumerate(panels):
@@ -147,13 +147,38 @@ def fig_acc_lead():
     for ax in axes[:, 0]:
         ax.set_ylabel("ACC")
     handles, labels = axes[0, 1].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=7,
-               bbox_to_anchor=(0.5, -0.02), frameon=False,
+    fig.legend(handles, labels, loc="lower center", ncol=4,
+               bbox_to_anchor=(0.5, -0.04), frameon=False,
                columnspacing=1.4, handletextpad=0.5)
-    fig.tight_layout(rect=(0, 0.045, 1, 1), h_pad=2.6, w_pad=1.8)
+    fig.tight_layout(rect=(0, 0.06, 1, 1), h_pad=2.8, w_pad=2.4)
     fig.savefig(f"{OUT}/fig_acc_lead.pdf")
     plt.close(fig)
     print("wrote fig_acc_lead.pdf")
+
+
+def fig_acc_lead_t2m():
+    """Appendix figure: JJAS 2019 T2M ACC vs lead (DLESyM only).
+    JFM 2026 T2M is intentionally omitted: the full_jfm2026_daily_spire run
+    no longer scores t2m while its verification truth is being rebuilt."""
+    djjas = _allindia(DET["jjas"])
+    fig, ax = plt.subplots(figsize=(4.2, 3.6))
+    _curve(ax, djjas, "t2m", "acc")
+    ax.set_title("JJAS 2019 — T2M", pad=14)
+    ax.axhspan(0.5, 1.05, color="#0072B2", alpha=0.04, zorder=0)
+    ax.axhline(0.5, color="grey", lw=0.6, ls=":", zorder=0)
+    ax.axhline(0.0, color="grey", lw=0.7, zorder=0)
+    ax.set_ylim(-0.3, 1.0)
+    ax.set_xlim(0.6, 6.4)
+    _style_axis(ax)
+    ax.set_ylabel("ACC")
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=2,
+               bbox_to_anchor=(0.5, -0.18), frameon=False,
+               columnspacing=1.4, handletextpad=0.5)
+    fig.tight_layout(rect=(0, 0.14, 1, 1))
+    fig.savefig(f"{OUT}/fig_acc_lead_t2m.pdf")
+    plt.close(fig)
+    print("wrote fig_acc_lead_t2m.pdf")
 
 
 def fig_crpss():
@@ -248,6 +273,7 @@ def fig_spread_skill():
 
 def main():
     fig_acc_lead()
+    fig_acc_lead_t2m()
     fig_crpss()
     fig_regional_scorecard()
     fig_spread_skill()

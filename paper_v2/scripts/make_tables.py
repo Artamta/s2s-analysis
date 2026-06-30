@@ -312,10 +312,10 @@ def main():
         "JFM~2026 all-India Z500 ACC by lead week (ERA5 truth).",
         "tab:jfm_acc_z500")))
 
-    artifacts.append(("tab_jfm_acc_t2m.tex", make_skill_table(
-        "jfm", "t2m", "acc",
-        "JFM~2026 all-India 2-m temperature ACC by lead week (ERA5 truth).",
-        "tab:jfm_acc_t2m")))
+    # NOTE: JFM 2026 T2M is intentionally omitted. The T2M verification truth
+    # is being rebuilt (daily-mean reconstruction) as of the latest pipeline
+    # run, and the JFM run used for this paper (full_jfm2026_daily_spire) no
+    # longer scores t2m at all. Re-add once a fresh JFM T2M run lands.
 
     # --- JJAS 2019 deterministic ACC ---
     artifacts.append(("tab_jjas_acc_tp.tex", make_skill_table(

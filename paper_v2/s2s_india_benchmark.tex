@@ -83,16 +83,19 @@ against ERA5 and IMD gridded rainfall using cosine-weighted anomaly
 correlation (ACC), RMSE, bias, and a common probabilistic framework (CRPSS,
 spread--skill ratio). Four findings emerge. (i)~In winter, Spire AI-S2S is the
 most skillful system for precipitation at every lead (week-1 ACC~0.78 versus
-0.73 for ECMWF and UKMO) and is the only system that retains Z500 skill to
-week~6 (ACC~0.75), while the other two ML systems---FuXi-S2S and
-DLESyM---collapse to negative Z500 ACC by week~3--4. (ii)~In the monsoon, this
-ML advantage disappears entirely: every system, ML and dynamical alike, loses
-precipitation skill by week~3 (all-India ACC~$\le$~0.06), and the result is
-unchanged on an independent 35-initialization robustness check. (iii)~The
-three ML systems do not behave alike: Spire's long-lead stability is not
-shared by FuXi-S2S or DLESyM, so a week-1 leaderboard is a poor predictor of
-week-6 performance. (iv)~Deterministic and probabilistic rankings disagree---
-ECMWF leads precipitation CRPSS from week~2 onward despite Spire's higher
+0.73 for ECMWF and UKMO) and remains the most skillful or second-most
+skillful individual system for Z500 from week~3 onward (ACC~0.39--0.51 at
+weeks~4--6), while the other two ML systems---FuXi-S2S and DLESyM---collapse
+to negative Z500 ACC by week~3--4; no system, including Spire, holds Z500
+skill flat to week~6, but Spire degrades more gracefully than every other
+system. (ii)~In the monsoon, the winter ML advantage disappears entirely:
+every system, ML and dynamical alike, loses precipitation skill by week~3
+(all-India ACC~$\le$~0.06), and the result is unchanged on an independent
+35-initialization robustness check. (iii)~The three ML systems do not behave
+alike: Spire's comparatively graceful long-lead Z500 decay is not shared by
+FuXi-S2S or DLESyM, so a week-1 leaderboard is a poor predictor of week-6
+performance. (iv)~Deterministic and probabilistic rankings disagree---ECMWF
+leads precipitation CRPSS from week~2 onward despite Spire's higher
 ACC---showing that ensemble calibration is a distinct axis of forecast
 quality. Together these results give an early, honest assessment of where ML
 S2S systems help over India and where the forecasting problem remains hard for
@@ -194,19 +197,20 @@ Sections~\ref{sec:limitations}--\ref{sec:conclusions}.
 
 The study domain covers the Indian region, $5^{\circ}$--$38^{\circ}$N,
 $65^{\circ}$--$100^{\circ}$E, with all aggregate skill metrics computed over
-\emph{land points only}. Land points are identified on the common
-$1.5^{\circ}$ verification grid with an offline coastline land--sea mask,
-independent of ERA5 and fully reproducible; ocean grid cells (Arabian Sea, Bay
-of Bengal) are excluded from every area average, since they otherwise dominate
-the domain mean and distort precipitation skill. Spatial means are weighted by
-the cosine of latitude throughout (Section~\ref{sec:metrics}). Skill is
-additionally partitioned into the four India Meteorological Department (IMD)
-homogeneous rainfall regions---Northwest, Central, South Peninsula, and
-East/Northeast India---following the state grouping of \citet{pai2014}. The
-region masks are constructed from Survey-of-India state-boundary polygons by
-assigning each grid point to the region whose constituent states contain it,
-then intersecting with the land mask; the four regions are mutually
-exclusive (Figure~\ref{fig:domain}).
+\emph{land points only}. Land points are defined as the union of the four
+India Meteorological Department (IMD) homogeneous rainfall regions---
+Northwest, Central, South Peninsula, and East/Northeast India---following the
+state grouping of \citet{pai2014}; the region masks are constructed by
+assigning each $1.5^{\circ}$ grid point to the region whose constituent
+Survey-of-India state polygons contain it, so land/ocean separation is a
+byproduct of the state-boundary geometry rather than a separate coastline
+product. Ocean grid cells (Arabian Sea, Bay of Bengal) are therefore
+automatically excluded from every area average, since they would otherwise
+dominate the domain mean and distort precipitation skill. Spatial means are
+weighted by the cosine of latitude throughout (Section~\ref{sec:metrics}).
+The four regions are mutually exclusive and their union is the ``All India''
+land mask used for every domain-aggregated score in this paper
+(Figure~\ref{fig:domain}).
 
 \begin{figure}[t]
   \centering
@@ -289,12 +293,20 @@ JJAS~2019 comparison.
 
 FuXi-S2S \citep{chen2024} is a transformer-based ML subseasonal forecasting
 system trained on ERA5 reanalysis. The published system generates 42-day
-global forecasts on a $1.5^{\circ}$ grid as an 11-member ensemble (1 control
-forecast, 10 perturbed forecasts), initialized from 00~UTC ERA5 fields; we use
-the ensemble mean for deterministic scores and the member spread for
-probabilistic verification. The FuXi-S2S precipitation channel is archived as
-a mean rate (mm\,h$^{-1}$) rather than a daily total and is multiplied by 24
-before scoring to convert to mm\,day$^{-1}$ (Section~\ref{sec:metrics}).
+global forecasts on a $1.5^{\circ}$ grid, initialized from 00~UTC ERA5 fields;
+we use the ensemble mean for deterministic scores and the member spread for
+probabilistic verification. \textbf{The archived ensemble size differs between
+the two seasons evaluated here}: 11 members (1 control, 10 perturbed) for
+JFM~2026, versus 50 members for JJAS~2019. This reflects what was available in
+the archive obtained for each season rather than a deliberate experimental
+design choice, and it means the JJAS~2019 FuXi-S2S probabilistic scores
+(CRPS, spread--skill ratio) are built from a substantially larger ensemble
+than the JFM~2026 scores; we flag this explicitly in
+Section~\ref{sec:limitations} rather than treat FuXi-S2S as a single
+fixed-configuration system across seasons. The FuXi-S2S precipitation channel
+is archived as a mean rate (mm\,h$^{-1}$) rather than a daily total and is
+multiplied by 24 before scoring to convert to mm\,day$^{-1}$
+(Section~\ref{sec:metrics}).
 
 \subsection{DLESyM}\label{sec:delysm}
 
@@ -318,9 +330,12 @@ The ECMWF Integrated Forecasting System (IFS) extended-range ensemble
 \citep{vitart2014} is a fully coupled atmosphere--ocean--land--sea-ice model
 run twice weekly to day~46. We use the 00~UTC runs archived on the S2S
 database \citep{vitart2017} at $1.5^{\circ}$ (interpolated from the native
-Tco319, $\approx$36\,km, spectral grid), with 100 perturbed-forecast members
-per initialization; we use the ensemble mean for deterministic scores and the
-full ensemble for probabilistic verification. ECMWF archives total
+Tco319, $\approx$36\,km, spectral grid); we use the ensemble mean for
+deterministic scores and the full ensemble for probabilistic verification.
+\textbf{As with FuXi-S2S, the archived ensemble size differs between seasons}:
+101 members (1 control, 100 perturbed) for JFM~2026 versus 51 members for
+JJAS~2019, again reflecting archive availability rather than a deliberate
+design choice (Section~\ref{sec:limitations}). ECMWF archives total
 precipitation as a running cumulative accumulation from initialization; the
 weekly-mean rate is recovered by differencing the cumulative totals at the
 start and end of each lead window and dividing by the number of days
@@ -349,9 +364,10 @@ The NCEP Climate Forecast System version~2 \citep{saha2014} is a fully coupled
 atmosphere--ocean--land system, operational since 2011, resolved at T126
 ($\approx$100\,km) with 64 hybrid sigma-pressure levels. Forecasts are
 archived on the S2S database at $1.5^{\circ}$ to a 44-day horizon; we use the
-15-member perturbed-forecast ensemble from each 00~UTC initialization.
-Precipitation is archived as a cumulative accumulation and de-accumulated
-identically to ECMWF and UKMO.
+archived 16-member ensemble (1 control, 15 perturbed) from each 00~UTC
+initialization, stable across both seasons evaluated here. Precipitation is
+archived as a cumulative accumulation and de-accumulated identically to
+ECMWF and UKMO.
 
 % ======================================================================
 \section{Verification Framework}\label{sec:methods}
@@ -362,12 +378,16 @@ Each forecast is partitioned into six nonoverlapping weekly lead
 windows---week~1 to forecast days 1--7, week~2 to days 8--14, and so on
 through week~6 (days 36--42), where day~1 denotes the first 24\,h after
 initialization. For each lead window, daily fields are averaged to a
-weekly-mean field. All forecasts and the observational references are
-remapped to a common $1.5^{\circ}$ latitude--longitude grid (matching the
-coarsest delivered system) prior to verification, so that no high-resolution
-system is penalized for representing fine scales the others cannot. Spatial
-means use $\cos\varphi$ area weights and are restricted to Indian land points
-(Section~\ref{sec:domain}).
+weekly-mean field; a weekly mean is scored only if at least two daily values
+fall inside the window (otherwise the model/init/week cell is dropped and
+logged), so a small number of weekly means in the published tables may be
+built from fewer than the full seven days where a forecast archive has
+isolated missing days, rather than from a complete week. All forecasts and
+the observational references are remapped to a common $1.5^{\circ}$
+latitude--longitude grid (matching the coarsest delivered system) prior to
+verification, so that no high-resolution system is penalized for
+representing fine scales the others cannot. Spatial means use $\cos\varphi$
+area weights and are restricted to Indian land points (Section~\ref{sec:domain}).
 
 Because the six systems deliver precipitation in different native forms, each
 is reconciled to a common weekly-mean rate (mm\,day$^{-1}$) before scoring.
@@ -382,9 +402,13 @@ days $N$:
   \overline{P}_{w} = \frac{\mathrm{TP}(d_e) - \mathrm{TP}(d_s-1)}{N},
   \label{eq:deaccum}
 \end{equation}
-with $\mathrm{TP}(d_s-1)=0$ for week~1. The ERA5 and IMD truth references are
-constructed from true 24-hour daily totals and then averaged over the same
-lead window.
+with $\mathrm{TP}(d_s-1)=0$ for week~1. The resulting weekly-mean rate is
+clipped at zero (negative values, which can arise from numerical noise or an
+accumulation-counter reset in the archive, are set to zero rather than
+reported as negative precipitation); this clip is rarely binding in practice
+but is disclosed here as it is not visually distinguishable from an unclipped
+value in the result tables. The ERA5 and IMD truth references are constructed
+from true 24-hour daily totals and then averaged over the same lead window.
 
 \subsection{Anomalies and climatology}\label{sec:anom}
 
@@ -439,27 +463,61 @@ for T2M):
   \label{eq:rmse_bias}
 \end{equation}
 
-For probabilistic verification, each system is placed on a common footing by
-treating it as a Gaussian forecast with ensemble mean $\mu$ and spread
-(standard deviation) $\sigma$ at each grid point and lead day, regardless of
-whether the underlying product is individual members (FuXi-S2S, ECMWF, UKMO,
-NCEP, DLESyM) or a delivered mean-and-spread product (Spire). The continuous
-ranked probability score (CRPS) then has the closed form
+For probabilistic verification, each system contributes an ensemble mean
+$\mu$ and spread (standard deviation) $\sigma$ at each grid point and lead
+day. The continuous ranked probability score (CRPS) is computed differently
+depending on the native form of each system's forecast, rather than forcing
+every system onto a single Gaussian summary. For the five systems delivered
+as individual members (FuXi-S2S, ECMWF, UKMO, NCEP, DLESyM), CRPS is the
+empirical finite-sample estimator \citep{hersbach2000},
 \begin{equation}
-  \mathrm{CRPS}(\mu,\sigma,y) = \sigma\!\left[\omega\,(2\Phi(\omega)-1)
+  \mathrm{CRPS}_{\mathrm{ens}} = \frac{1}{N}\sum_{n=1}^{N}\bigl|x_n - y\bigr|
+  - \frac{1}{2N^{2}}\sum_{n=1}^{N}\sum_{m=1}^{N}\bigl|x_n - x_m\bigr|\,,
+  \label{eq:crps_ens}
+\end{equation}
+computed directly from the $N$ archived members $x_n$ and the observation
+$y$, with no Gaussian assumption. Spire AI-S2S is delivered only as a mean
+and standard deviation, with no individual members available, so it alone is
+scored with the closed-form Gaussian CRPS,
+\begin{equation}
+  \mathrm{CRPS}_{\mathrm{Gauss}}(\mu,\sigma,y) = \sigma\!\left[\omega\,(2\Phi(\omega)-1)
   + 2\phi(\omega) - \tfrac{1}{\sqrt{\pi}}\right],\quad \omega=\tfrac{y-\mu}{\sigma},
   \label{eq:crps}
 \end{equation}
-with $y$ the observation and $\Phi,\phi$ the standard-normal CDF and PDF
-\citep{gneiting2007}. The skill score $\mathrm{CRPSS}=1-\mathrm{CRPS}/\mathrm{CRPS}_{\mathrm{clim}}$
-is taken against a Gaussian climatological reference. Calibration is
-summarized by the spread--skill ratio
-$\mathrm{SSR}=\overline{\sigma}/\mathrm{RMSE}(\mu)$, which equals one for a
-perfectly reliable ensemble and is below one when the ensemble is
-overconfident (under-dispersive). Brier scores for precipitation exceedance
-events use the Gaussian exceedance probability
-$P(y>\tau)=1-\Phi\!\left(\tfrac{\tau-\mu}{\sigma}\right)$ for thresholds
-$\tau=1$ and $10$\,mm\,day$^{-1}$.
+with $\Phi,\phi$ the standard-normal CDF and PDF. Ensemble spread is clipped
+to a small per-variable floor ($\sigma\geq0.05$\,mm\,day$^{-1}$ for
+precipitation, $1$\,m for Z500, $0.1$\,K for T2M) before use in
+Eq.~(\ref{eq:crps}) and in the spread--skill ratio below, to avoid
+ill-conditioned scores at grid points with near-zero ensemble spread; this
+floor is well below the smallest spreads encountered in practice and does not
+materially affect the reported scores. The skill score
+$\mathrm{CRPSS}=1-\mathrm{CRPS}/\mathrm{CRPS}_{\mathrm{clim}}$ is taken
+against a deterministic-climatology reference, $\mathrm{CRPS}_{\mathrm{clim}}
+= \overline{|c - y|}$, the cosine-weighted mean absolute error of the
+climatological field $c$ against the observation---not a Gaussian
+climatological distribution---so CRPSS values reported here should be read
+as skill relative to a zero-spread climatology baseline rather than a
+calibrated probabilistic one; because every system shares the same
+reference, cross-system CRPSS \emph{rankings} are unaffected; only the
+absolute CRPSS level is comparatively generous. Calibration is summarized by
+the spread--skill ratio $\mathrm{SSR}=\overline{\sigma}/\mathrm{RMSE}(\mu)$,
+which equals one for a perfectly reliable ensemble and is below one when the
+ensemble is overconfident (under-dispersive). Brier scores for precipitation
+exceedance events use the empirical ensemble exceedance fraction for the
+five member-based systems and the Gaussian exceedance probability
+$P(y>\tau)=1-\Phi\!\left(\tfrac{\tau-\mu}{\sigma}\right)$ for Spire, for
+thresholds $\tau=1$ and $10$\,mm\,day$^{-1}$.
+
+\textbf{Multi-model ensemble (MME).} The MME reported throughout this paper
+is the unweighted mean of the ensemble-mean fields of whichever individual
+systems successfully scored for a given variable, lead week, and
+initialization (a minimum of two contributing systems is required). Its
+membership is therefore not fixed: it excludes DLESyM for precipitation
+(no precipitation channel), excludes Spire for JJAS~2019 (unavailable that
+season), and can vary cell-to-cell wherever an individual system fails to
+open or score (Section~\ref{sec:limitations}). The JFM~2026 MME accordingly
+includes Spire alongside the other five systems, so MME comparisons in that
+season are not fully independent of Spire's own performance.
 
 \subsection{Initialization sets and matched comparison}\label{sec:inits}
 
@@ -468,17 +526,16 @@ availability and the goal of a fair, common-init comparison within each
 season.
 \begin{itemize}\setlength{\itemsep}{1pt}
   \item \textbf{JFM~2026:} 90 daily 00\,UTC initializations (1~January--31~March~2026)
-        for the six-system comparison. Because the ERA5 daily truth record
-        used for JFM currently ends 31~March~2026, the sample of initializations
-        contributing to the longer lead windows shrinks at weeks~5--6 (the
-        latest initializations cannot yet be verified at day~35--42); this
-        does not bias the reported scores but reduces their precision at the
-        longest leads, and we treat week-5--6 results accordingly. Using all
-        90 daily initializations, rather than a sparser weekly subset, gives a
-        larger and more representative sample of the season; scores reported
-        here are consequently more conservative (closer to the seasonal mean,
-        less sensitive to any single favorable initialization) than an
-        estimate from a small weekly subsample of the same season would be.
+        for the six-system comparison. The ERA5 daily truth record used for
+        JFM extends through 12~May~2026, covering the full week-6 (day-42)
+        verification window of the latest (31~March) initialization, so all
+        six lead weeks are scored on the complete, identical 90-initialization
+        sample (Section~\ref{sec:limitations}). Using all 90 daily
+        initializations, rather than a sparser weekly subset, gives a larger
+        and more representative sample of the season; scores reported here are
+        consequently more conservative (closer to the seasonal mean, less
+        sensitive to any single favorable initialization) than an estimate
+        from a small weekly subsample of the same season would be.
   \item \textbf{JJAS~2019:} 17 common Thursday initializations (6~June--26~September~2019)
         on which all five non-Spire models provide usable forecasts; this
         matched set is the basis of all cross-model JJAS comparisons in
@@ -493,30 +550,32 @@ season.
 
 \subsection{Overview: skill across variables and seasons}\label{sec:overview}
 
-Figure~\ref{fig:acc_lead} summarizes the whole benchmark: anomaly correlation
-versus lead week for all six systems, three variables, and both seasons. Three
-features stand out immediately. First, in the top row (JFM~2026), the
-precipitation and T2M panels show Spire AI-S2S (blue) sitting visibly above
-every other system at every lead, while in the Z500 panel Spire is the only
-curve that does not bend downward after week~2---FuXi-S2S (orange) and DLESyM
-(green) instead fall through ACC$=0$ by week~3--4. Second, the bottom row
-(JJAS~2019) looks qualitatively different: all six precipitation and Z500
-curves converge toward, and then below, ACC$=0$ by week~3, with no system
-maintaining the winter-season separation between ML and dynamical systems.
-Third, the two AI systems that are evaluated in both seasons, FuXi-S2S and
-DLESyM, show the steepest skill loss of any system in \emph{either} season for
-Z500---a pattern we examine directly in Section~\ref{sec:ml_divergence}. The
-following subsections quantify each of these features in turn.
+Figure~\ref{fig:acc_lead} summarizes the core benchmark: anomaly correlation
+versus lead week for all six systems, for precipitation and Z500, in both
+seasons (the corresponding T2M comparison, restricted to three systems, is
+shown separately in Figure~\ref{fig:acc_lead_t2m}). Three features stand out
+immediately. First, in the top row (JFM~2026), the precipitation panel shows
+Spire AI-S2S (blue) sitting visibly above every other system at every lead,
+while in the Z500 panel Spire is the only curve that does not bend downward
+after week~2---FuXi-S2S (orange) and DLESyM (green) instead fall through
+ACC$=0$ by week~3--4. Second, the bottom row (JJAS~2019) looks qualitatively
+different: all six precipitation and Z500 curves converge toward, and then
+below, ACC$=0$ by week~3, with no system maintaining the winter-season
+separation between ML and dynamical systems. Third, the two AI systems that
+are evaluated in both seasons, FuXi-S2S and DLESyM, show the steepest skill
+loss of any system in \emph{either} season for Z500---a pattern we examine
+directly in Section~\ref{sec:ml_divergence}. The following subsections
+quantify each of these features in turn.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figs/fig_acc_lead.pdf}
   \caption{All-India anomaly correlation (ACC) versus lead week for six S2S
   systems. Top row: JFM~2026 (winter); bottom row: JJAS~2019 (monsoon).
-  Columns: precipitation, Z500, 2-m temperature. Dotted line ACC$=0.5$; solid
-  line ACC$=0$. DLESyM provides no precipitation; UKMO and ECMWF T2M are
-  unscoreable (single-step archive files, Section~\ref{sec:limitations});
-  NCEP has no T2M channel in this archive; Spire is unavailable for JJAS.}
+  Columns: precipitation, Z500. Dotted line ACC$=0.5$; solid line ACC$=0$;
+  shaded band marks ACC$\geq0.5$. DLESyM provides no precipitation; Spire is
+  unavailable for JJAS. The T2M comparison (three systems only) is shown in
+  Figure~\ref{fig:acc_lead_t2m}.}
   \label{fig:acc_lead}
 \end{figure}
 
@@ -538,17 +597,23 @@ Section~\ref{sec:fuxi}, is competitive with the operational dynamical systems
 \paragraph{Z500.}
 The clearest separation in the entire benchmark appears in Z500
 (Table~\ref{tab:jfm_acc_z500}). At week~1 the field is tightly clustered
-(ACC~0.90--0.97 across all six systems, with ECMWF and the MME marginally
+(ACC~0.89--0.97 across all six systems, with ECMWF and the MME marginally
 ahead at 0.97), and all three ML systems are essentially indistinguishable
 from the dynamical systems. By week~3 the field has split sharply: Spire,
-ECMWF, UKMO, and NCEP all remain skillful (ACC~0.51--0.69), while FuXi-S2S has
-fallen to 0.05 and DLESyM to 0.19. By week~4 both FuXi-S2S and DLESyM have
-crossed into \emph{negative} ACC ($-0.24$ and $-0.18$) and remain negative
-through week~6 ($-0.40$ and $-0.62$)---meaning their week-4--6 Z500 forecasts
-are anticorrelated with the true anomaly pattern more often than not. Spire is
-the only system whose Z500 skill does not degrade monotonically with lead: its
-ACC is 0.69--0.77 across weeks~3--6, the highest of any individual system from
-week~4 onward, including the dynamical systems.
+ECMWF, UKMO, and NCEP all remain skillful (ACC~0.40--0.66), while FuXi-S2S has
+fallen to 0.11 and DLESyM to 0.25. By week~4 both FuXi-S2S and DLESyM have
+crossed into \emph{negative} ACC ($-0.15$ and $-0.19$) and remain negative
+through week~6 ($-0.18$ and $-0.33$)---meaning their week-4--6 Z500 forecasts
+are anticorrelated with the true anomaly pattern more often than not.
+Every system, including Spire, loses further skill between week~4 and week~6:
+none of the six holds Z500 skill flat to the end of the forecast horizon. The
+distinguishing feature of Spire (and, less consistently, NCEP) is not the
+absence of decay but its slower rate: Spire is the highest- or second-highest
+individual system at every lead from week~3 onward (ACC~0.39--0.51 at
+weeks~4--6, versus ECMWF's fall to 0.13 by week~6 and FuXi-S2S/DLESyM's
+collapse into negative territory), so it degrades more gracefully than either
+the operational systems or the other two ML systems, without being immune to
+lead-time decay itself.
 
 T2M results for JFM~2026 are deferred to the appendix
 (Section~\ref{app:t2m}), since only three of six systems have a usable T2M
@@ -596,24 +661,29 @@ appendix (Section~\ref{app:t2m}).
 The Z500 results above contain a finding that is easy to miss when comparing
 ML systems only to dynamical baselines: the three ML systems do not behave
 like a single class of model. At week~1 in JFM~2026, Spire, FuXi-S2S, and
-DLESyM are all skillful and mutually close (Z500 ACC 0.94, 0.91, and 0.92
+DLESyM are all skillful and mutually close (Z500 ACC 0.94, 0.89, and 0.92
 respectively; Table~\ref{tab:jfm_acc_z500})---a week-1 leaderboard would rank
 the three ML systems as roughly interchangeable. By week~4 this is no longer
-true: Spire is at 0.73, while FuXi-S2S and DLESyM are at $-0.24$ and $-0.18$.
-The same divergence recurs in JJAS~2019, where DLESyM starts second only to
-ECMWF (week-1 ACC~0.85) but is the first system of either season to fall
-below the dynamical baselines (Table~\ref{tab:jjas_acc_z500}).
+true: Spire is at 0.51 and remains positive through week~6 (0.41), while
+FuXi-S2S and DLESyM have already crossed into negative territory at week~4
+($-0.15$ and $-0.19$) and stay negative through week~6. The same divergence
+recurs in JJAS~2019, where DLESyM starts second only to ECMWF (week-1
+ACC~0.85) but is the first system of either season to fall below the
+dynamical baselines (Table~\ref{tab:jjas_acc_z500}).
 
 The practical implication is that \emph{long-lead stability is a separate
 property from headline (week-1) skill}, and the three ML systems in this
 benchmark do not share it. Spire is the only ML system whose Z500 forecasts
-remain informative beyond week~3 in either season; FuXi-S2S and DLESyM, despite
+remain positively correlated with the truth at every lead through week~6 in
+either season; it still loses skill with lead (Section~\ref{sec:jfm}), but it
+does not collapse the way FuXi-S2S and DLESyM do. FuXi-S2S and DLESyM, despite
 being built on different architectures (transformer and diffusion-based,
 respectively) and trained on different data, share a qualitatively similar
-failure mode at long lead. We do not have access to the internals of either
-system and so cannot attribute this directly to a specific architectural or
-training choice, but the pattern is consistent with the broader concern that
-ML systems optimized for short-range accuracy can develop compounding error
+failure mode at long lead---turning anticorrelated with the truth rather than
+merely losing skill. We do not have access to the internals of either system
+and so cannot attribute this directly to a specific architectural or training
+choice, but the pattern is consistent with the broader concern that ML
+systems optimized for short-range accuracy can develop compounding error
 growth once integrated well beyond their primary training horizon
 (Section~\ref{sec:discussion}). The practical caution for anyone selecting an
 S2S system based on a short evaluation window is that a single week-1 score is
@@ -627,13 +697,15 @@ Spire has the highest CRPSS at week~1 (0.61, narrowly ahead of ECMWF's 0.59),
 but ECMWF overtakes it from week~2 onward and leads for the remainder of the
 forecast horizon (e.g.\ 0.51 versus 0.40 at week~2, 0.30 versus 0.18 at
 week~5). For Z500 (Table~\ref{tab:jfm_crpss_z500}), ECMWF leads more clearly
-at short lead (CRPSS~0.83 at week~1 versus 0.59 for Spire) and remains ahead
-through week~3, but Spire becomes the most probabilistically skillful
-individual system from week~4 onward (0.28--0.30 versus ECMWF's 0.23),
-mirroring its deterministic Z500 advantage at the same leads. FuXi-S2S and
-NCEP show the least stable CRPSS trajectories: FuXi-S2S Z500 CRPSS falls to
-$-0.26$ at week~3 before partially recovering, and NCEP Z500 CRPSS is
-negative at weeks~2--4.
+at short lead (CRPSS~0.82 at week~1 versus 0.59 for Spire) and remains ahead
+through week~5, but the gap narrows steadily with lead (0.38 versus 0.29 at
+week~3, 0.26 versus 0.26 tied at week~4, 0.24 versus 0.23 at week~5) and Spire
+edges ahead at week~6 (0.24 versus 0.22), consistent with its more graceful
+deterministic Z500 decay at the same leads (Section~\ref{sec:ml_divergence}).
+FuXi-S2S and NCEP show the least stable CRPSS trajectories: FuXi-S2S Z500
+CRPSS falls to $-0.23$ at week~3 before partially recovering, and NCEP Z500
+CRPSS is negative from week~2 onward and reaches $-0.30$ by week~6, the worst
+probabilistic Z500 trajectory of any system.
 
 Figure~\ref{fig:spread_skill} shows why ECMWF's probabilistic precipitation
 skill exceeds its deterministic ranking. Every system is under-dispersive
@@ -642,15 +714,17 @@ calibrated (SSR~0.63) while FuXi-S2S is the most overconfident (SSR~0.11).
 By week~3, ECMWF's ensemble has grown to near-ideal calibration for
 precipitation (SSR~0.70) while Spire has \emph{over}-corrected into
 over-dispersion (SSR~1.43, indicating its spread now exceeds its error). For
-Z500 the same pattern is sharper still: Spire's spread--skill ratio exceeds
-1.8 by week~4, meaning its ensemble spread is now substantially larger than
-its actual error---a sign of growing overdispersion that does not by itself
-harm CRPSS (an overdispersive ensemble can still be skillful) but indicates
-that Spire's stated uncertainty should not be taken as quantitatively
-calibrated at long lead. ECMWF's Z500 spread--skill ratio stays closest to
-one across the full lead range (0.92 to 1.46 and back to 0.94), consistent
-with its century-scale ensemble design and dedicated reforecast-based
-calibration.
+Z500 the same pattern is sharper still: Spire's spread--skill ratio rises to
+1.75 by week~4 and stays above 1.3 through week~6, meaning its ensemble
+spread is substantially larger than its actual error from mid-range lead
+onward---a sign of growing overdispersion that does not by itself harm CRPSS
+(an overdispersive ensemble can still be skillful) but indicates that Spire's
+stated uncertainty should not be taken as quantitatively calibrated at long
+lead. ECMWF's Z500 spread--skill ratio is the closest to one of any system
+across most of the lead range (0.89 at week~1, peaking at 1.39 by week~3,
+settling to 1.04 by week~6), consistent with its large ensemble and
+operational calibration heritage, though it too overshoots unity at
+mid-range lead rather than holding exactly at one throughout.
 \input{tables/tab_jfm_crpss_tp}
 \input{tables/tab_jfm_crpss_z500}
 
@@ -680,25 +754,27 @@ forecast that is reliably too wet or too dry is correctable even if its
 pattern skill is otherwise good). Table~\ref{tab:bias_tp} shows that Spire's
 precipitation bias is the smallest in magnitude at most leads and changes sign
 across the lead range ($-0.04$ at week~1, peaking at $+0.12$ at week~3, back
-to $-0.02$ by week~6), rather than drifting monotonically in one direction.
+to $-0.01$ by week~6), rather than drifting monotonically in one direction.
 ECMWF and FuXi-S2S both develop a growing \emph{dry} bias with lead
-($-0.15\to-0.45$ and $-0.14\to-0.51$\,mm\,day$^{-1}$ respectively, week~1 to
+($-0.15\to-0.44$ and $-0.14\to-0.51$\,mm\,day$^{-1}$ respectively, week~1 to
 week~6), consistent with the general tendency of MSE-trained forecast systems
 to smooth toward the climatological mean at long lead. UKMO carries a small,
-fairly stable \emph{wet} bias throughout ($+0.05$ to $+0.22$).
+fairly stable \emph{wet} bias throughout ($+0.04$ to $+0.22$).
 
 For Z500 (Table~\ref{tab:bias_z500}), the systems separate into two clear
 groups. Spire and DLESyM start with a sizeable \emph{positive} height bias at
-week~1 ($+11.4$ and $+8.5$\,m) that decays toward zero with lead (Spire to
-$+1.9$\,m, DLESyM to $-14.1$\,m by week~6, the latter changing sign en route).
-ECMWF, UKMO, and especially NCEP and FuXi-S2S instead develop an increasingly
-\emph{negative} height bias with lead (NCEP reaches $-32$\,m by week~4 and
-stays there; FuXi-S2S reaches $-27.6$\,m at week~4 before partially
-recovering). Spire is the system closest to zero bias at every lead from
-week~3 onward, which is consistent with, but methodologically distinct from,
-its ACC advantage at the same leads (Section~\ref{sec:jfm})---low bias does
-not by itself imply high pattern correlation, but the two are mutually
-reinforcing evidence here.
+week~1 ($+11.3$ and $+8.8$\,m) that decays with lead; DLESyM crosses zero by
+week~3 and is the system closest to zero bias at weeks~3--5 ($-0.9$ to
+$-4.9$\,m), while Spire's bias decays more slowly and remains positive
+throughout ($+6.0$ to $+7.6$\,m at weeks~4--6). ECMWF, UKMO, and especially
+NCEP and FuXi-S2S instead develop a \emph{negative} height bias with lead
+(NCEP reaches $-29$\,m by week~4 and stays there; FuXi-S2S reaches
+$-23$\,m at weeks~3--4 before partially recovering to $-9$\,m by week~6).
+UKMO is closest to zero at week~1 ($-0.3$\,m) and again at week~6 ($+1.3$\,m).
+No single system is closest to zero across the entire lead range: DLESyM's
+small mid-range bias does not carry over to its ACC, which collapses at the
+same leads (Section~\ref{sec:jfm})---a reminder that low bias and high
+pattern correlation are distinct properties and need not coincide.
 \input{tables/tab_jfm_bias_tp}
 \input{tables/tab_jfm_bias_z500}
 
@@ -715,13 +791,18 @@ model without exception. This regional gap is consistent with the synoptic
 character of winter precipitation in northern/central India versus the more
 locally forced, lower-amplitude rainfall the peninsula receives outside the
 northeast-monsoon season. Spire's domain-mean lead over the other systems
-(Section~\ref{sec:jfm}) is not concentrated in any one region: it is tied or
-within 0.01 of ECMWF in Central India (0.75 vs.\ 0.79) and Northwest India
-(0.80 vs.\ 0.79), and leads outright in East/Northeast India (0.80 vs.\ 0.75)
-and the South Peninsula (0.46, tied with ECMWF). No system---including
-Spire---shows a clear advantage specific to the hardest (South Peninsula)
-region, indicating that the winter ML advantage documented above is a
-broad-domain property rather than a regional artifact.
+(Section~\ref{sec:jfm}) is not concentrated in any one region: at week~1 it is
+tied or within 0.01 of ECMWF in Central India (0.75 vs.\ 0.79) and Northwest
+India (0.80 vs.\ 0.79), and leads outright in East/Northeast India (0.80
+vs.\ 0.75) and the South Peninsula (0.46, tied with ECMWF). No
+system---including Spire---shows a clear advantage specific to the hardest
+(South Peninsula) region, indicating that the winter ML advantage documented
+above is a broad-domain property rather than a regional artifact. The same
+regional split is visible for Z500 at week~1: every system scores
+ACC~0.69--0.96 across all four regions, and even the hardest region (South
+Peninsula) remains highly skillful for every system (ACC~0.69--0.88), a much
+narrower spread than for precipitation, reflecting the larger spatial
+decorrelation scale of the 500-hPa height field relative to rainfall.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.8\linewidth]{figs/fig_regional_scorecard.pdf}
@@ -730,39 +811,35 @@ broad-domain property rather than a regional artifact.
 \end{figure}
 \input{tables/tab_jfm_regional_tp_w1}
 
-The same regional split is visible for Z500 (Table~\ref{tab:reg_jfm_z500_w1}),
-though the gap between regions is much smaller than for precipitation: every
-system scores ACC~0.68--0.95 across all four regions at week~1, and even the
-hardest region (South Peninsula) remains highly skillful for every system
-(ACC~0.68--0.89). ECMWF leads in all four regions for Z500 at week~1, which is
-consistent with its domain-mean lead at this lead (Section~\ref{sec:jfm}); the
-much narrower spread between regions for Z500 than for precipitation reflects
-the larger spatial decorrelation scale of the 500-hPa height field relative to
-rainfall.
-\input{tables/tab_jfm_regional_z500_w1}
-
 Averaging over the full week~1--6 lead range gives the season-long regional
 picture (Table~\ref{tab:reg_pcc}). For precipitation, Spire leads or ties in
 three of four regions (Northwest~0.43, East/NE~0.55, narrowly tying ECMWF in
 the South Peninsula at 0.38) but is overtaken by NCEP and ECMWF in Central
-India (0.56 versus 0.58 and 0.57); the All-India mean nonetheless favors Spire
-(0.51) because the other systems' Central India strength does not offset their
-weaker performance elsewhere. For Z500, Spire's seasonal-mean advantage is
-broader: it leads in Northwest, Central, and is competitive in East/NE India,
-losing only narrowly to ECMWF in the South Peninsula---consistent with
-Spire's long-lead Z500 stability (Section~\ref{sec:jfm}) showing up
-domain-wide rather than in one region. RMSE (Table~\ref{tab:reg_rmse}) and
-bias (Table~\ref{tab:reg_bias}) tell a complementary story: Spire's lowest
-All-India precipitation RMSE (1.75\,mm\,day$^{-1}$) and near-zero All-India
-bias ($+0.05$) hold up regionally except in East/Northeast India, where every
-ML and dynamical system other than UKMO under-forecasts substantially (Spire
-$-0.88$; FuXi-S2S and ECMWF $-1.64$ to $-1.65$; NCEP $-1.34$), a known
+India (0.56 versus 0.57 each); the All-India mean nonetheless favors Spire
+(0.51) because the other systems' Central India strength does not offset
+their weaker performance elsewhere. For Z500, Spire leads in two of four
+regions (Northwest~0.54, Central~0.55) and is competitive in East/NE
+(0.53 versus ECMWF's region-leading 0.59), but ECMWF leads outright in the
+South Peninsula (0.45) and East/NE, so the seasonal-mean Z500 picture is
+more evenly split between Spire and ECMWF than the week-1--3 results alone
+would suggest---consistent with the more graceful-but-not-flat long-lead
+decay documented in Section~\ref{sec:ml_divergence}. RMSE
+(Table~\ref{tab:reg_rmse}) shows a similar split: Spire has the lowest
+All-India precipitation RMSE (1.75\,mm\,day$^{-1}$) and is best in two of
+four regions, but ECMWF has the lowest All-India and regional Z500 RMSE
+everywhere except Northwest India, where Spire is marginally better. Bias
+(Table~\ref{tab:reg_bias}) again shows East/Northeast India as the region
+where every system except UKMO under-forecasts precipitation substantially
+(Spire $-0.88$; FuXi-S2S and ECMWF $-1.64$; NCEP $-1.33$), a known
 orographic-smoothing effect at $1.5^{\circ}$ resolution; UKMO is the
-exception, with a small positive bias there ($+0.29$) rather than the
-dry bias every other system shares. Spire's Z500 bias is uniformly positive and modest
-across all four regions ($+1.7$ to $+12.6$\,m), while FuXi-S2S and NCEP carry
-large, region-dependent negative biases (FuXi-S2S reaches $-35.8$\,m in
-Northwest India; NCEP exceeds $-18$\,m in every region).
+exception, with a small positive bias there ($+0.30$) rather than the dry
+bias every other system shares. For Z500, no single system is closest to
+zero bias in every region: DLESyM is closest at the All-India and Central
+scales ($+0.2$ and $+4.8$\,m), Spire is closest in Northwest India
+($+5.6$\,m), UKMO in the South Peninsula ($-0.3$\,m), and ECMWF in
+East/Northeast India ($+1.8$\,m)---bias and pattern skill are clearly
+separate properties at the regional scale, just as they are domain-wide
+(Section~\ref{sec:bias}).
 \input{tables/tab_jfm_reg_acc_full}
 \input{tables/tab_jfm_reg_rmse_full}
 \input{tables/tab_jfm_reg_bias_full}
@@ -908,46 +985,104 @@ some of the long-lead skill loss documented in Section~\ref{sec:results} may
 reflect uncorrected mean-state drift rather than loss of anomaly information
 per se.
 
-\textbf{Unequal ensemble sizes.} Ensemble size ranges from 4 (UKMO) to 100
-(ECMWF) members across the dynamical systems, and Spire delivers a
-mean-and-spread product rather than individual members. UKMO's small ensemble
-in particular limits the precision of its probabilistic scores
-(Section~\ref{sec:prob}) independent of the underlying forecast quality.
+\textbf{Unequal and season-dependent ensemble sizes.} Ensemble size ranges
+from 4 (UKMO) to 101 (ECMWF) members across the dynamical and ML-ensemble
+systems (Table~\ref{tab:models}), and Spire delivers a mean-and-spread
+product rather than individual members. UKMO's small ensemble in particular
+limits the precision of its probabilistic scores (Section~\ref{sec:prob})
+independent of the underlying forecast quality. More importantly, ECMWF and
+FuXi-S2S were archived with materially different ensemble sizes in the two
+seasons evaluated here (ECMWF: 101 members in JFM~2026, 51 in JJAS~2019;
+FuXi-S2S: 11 members in JFM~2026, 50 in JJAS~2019; Sections~\ref{sec:fuxi}
+and~\ref{sec:ecmwf}), reflecting what was available in each season's archive
+rather than a controlled experimental design. Probabilistic scores (CRPS,
+spread--skill ratio) for these two systems are consequently not built from a
+constant ensemble configuration across seasons, and any apparent change in
+their calibration between JFM and JJAS should be interpreted with this
+confound in mind.
+
+\textbf{No formal significance testing.} All reported skill differences
+between systems (e.g., Spire's week-1 precipitation ACC of 0.78 versus
+ECMWF's 0.73) are point estimates from a single season's sample of
+initializations, without bootstrap confidence intervals or a paired
+significance test. Several comparisons described in the text as a system
+``leading,'' being ``tied,'' or being ``narrowly ahead'' correspond to
+differences of 0.01--0.05 in ACC, which is plausibly within sampling
+uncertainty given 17--90 initializations per season; these should be read as
+descriptive rankings of the verified sample rather than as statistically
+established differences. Adding bootstrap resampling across initializations
+is a direct and tractable extension that we did not implement in this
+version of the pipeline.
+
+\textbf{JFM~2026 truth source selection.} For JFM~2026, the ERA5 truth field
+used for a given variable and verification window is selected automatically
+from among several candidate ERA5 archive files (a primary JFM-specific daily
+file and one or more fallback daily archives) based on which candidate has
+the most complete day coverage for that window; the file actually used is
+recorded per row in the \texttt{truth\_source} column of the result data but
+is not summarized in this paper. In the published runs this fallback
+resolves to a single consistent source for the great majority of
+initializations, but a reader reproducing this analysis from a different or
+incomplete local archive state could in principle select a different
+candidate file for some windows and obtain marginally different truth values
+at the margins of the JFM~2026 record.
+
+\textbf{Fixed initialization sample across lead weeks.} An earlier version of
+the JFM~2026 verification pipeline scored fewer initializations at the
+longest lead weeks, because the ERA5 truth record available at that time
+ended before some late-March initializations could be verified out to
+day~42; this risked mixing genuine skill decay with a shrinking, systematically
+later-weighted sample at long lead. The JFM~2026 results reported in this
+paper use a corrected run with the ERA5 truth record extended so that the
+full 90-initialization sample is scored identically at every lead week
+(verified directly against the result data), so the week-by-week ACC
+trajectories in Section~\ref{sec:jfm} reflect skill decay on a fixed cohort
+rather than a changing sample composition.
 
 \textbf{Variable coverage gaps.} T2M is the most affected variable: UKMO and
-ECMWF 2-m temperature are both excluded because their archived files contain
-only a single forecast step per initialization (Sections~\ref{sec:ukmo}
-and~\ref{app:t2m}), and NCEP carries no T2M-equivalent channel in this
-archive at all, leaving only Spire, FuXi-S2S, and DLESyM with a scoreable T2M
-product. DLESyM does not provide a precipitation channel
-(Section~\ref{sec:delysm}). None of these four gaps is a property of the
+ECMWF 2-m temperature are excluded in both seasons because their archived
+files contain only a single forecast step per initialization
+(Sections~\ref{sec:ukmo} and~\ref{app:t2m}), and NCEP carries no
+T2M-equivalent channel in this archive at all, leaving at most Spire,
+FuXi-S2S, and DLESyM with a scoreable T2M product. JFM~2026 T2M is omitted
+from this version of the paper entirely while its verification truth is
+rebuilt (Appendix~\ref{app:t2m}); only the JJAS~2019 T2M result (DLESyM
+alone) is currently reported. DLESyM does not provide a precipitation
+channel (Section~\ref{sec:delysm}). None of these gaps is a property of the
 underlying forecast system---the UKMO/ECMWF T2M gap in particular is a
-download-time error that a corrected re-download could close---but all four
-reduce the number of systems available for the T2M and precipitation
-comparisons respectively, and the full T2M comparison (Appendix~\ref{app:t2m})
-should be read as a three-system rather than six-system result.
+download-time error that a corrected re-download could close---but they
+substantially reduce the scope of the T2M comparison relative to
+precipitation and Z500.
 
-\textbf{FuXi-S2S T2M bias.} FuXi-S2S 2-m temperature carries an approximately
-4\,K cold bias relative to ERA5 at all leads, consistent with a mismatch
-between its 00~UTC initialization-time snapshot and the daily-mean reference
-used for verification. We report FuXi-S2S T2M scores as computed but flag this
-known offset; a systematic reference-time correction is a direct target for
-future work rather than a correction applied here.
+\textbf{FuXi-S2S T2M bias.} In the most recent JFM~2026 run available prior
+to the truth rebuild noted above, FuXi-S2S 2-m temperature carried an
+approximately 4\,K cold bias relative to ERA5 at all leads, consistent with a
+mismatch between its 00~UTC initialization-time snapshot and the daily-mean
+reference used for verification. We flag this known offset here since it
+will affect the forthcoming JFM~2026 T2M comparison; a systematic
+reference-time correction is a direct target for future work rather than a
+correction applied retroactively to this version of the paper.
 
 % ======================================================================
 \section{Conclusions}\label{sec:conclusions}
 
 We presented a two-season subseasonal benchmark over India, evaluating six S2S
 forecast systems---three machine-learning (Spire AI-S2S, FuXi-S2S, DLESyM) and
-three operational dynamical (ECMWF, UKMO, NCEP)---for precipitation, Z500, and
-T2M across the synoptically driven winter (JFM~2026) and the convectively
-dominated summer monsoon (JJAS~2019). The main conclusions are as follows.
+three operational dynamical (ECMWF, UKMO, NCEP)---for precipitation and Z500
+across the synoptically driven winter (JFM~2026) and the convectively
+dominated summer monsoon (JJAS~2019), with a supplementary T2M comparison in
+the appendix (Appendix~\ref{app:t2m}). The main conclusions are as follows.
 
-\textbf{(1) Spire AI-S2S leads winter forecasting over India across every
-variable and lead.} It attains the highest precipitation ACC and lowest RMSE
-at every lead week (week-1 ACC~0.78 versus 0.73 for ECMWF/UKMO), leads T2M
-throughout, and is the only system whose Z500 skill does not collapse with
-lead, remaining the most skillful individual system from week~4 onward.
+\textbf{(1) Spire AI-S2S leads winter precipitation forecasting over India at
+every lead, and degrades most gracefully for Z500.} It attains the highest
+precipitation ACC and lowest RMSE at every lead week (week-1 ACC~0.78 versus
+0.73 for ECMWF/UKMO). For Z500, no individual system---including
+Spire---holds skill flat through week~6, but Spire is the highest- or
+second-highest individual system at every lead from week~3 onward
+(ACC~0.39--0.66, versus ECMWF's fall to 0.13 by week~6 and FuXi-S2S/DLESyM's
+collapse into negative territory by week~4), making it the most consistently
+skillful system across the full six-week horizon without being immune to
+lead-time decay.
 
 \textbf{(2) The winter ML advantage does not survive the monsoon.} Evaluated
 on a matched set of common initializations and confirmed on an independent
@@ -957,9 +1092,10 @@ no system retaining a meaningful edge over the others.
 
 \textbf{(3) The three ML systems are not interchangeable.} Spire, FuXi-S2S,
 and DLESyM look similar at week~1 but diverge sharply by week~3--4: FuXi-S2S
-and DLESyM both fall to negative Z500 ACC in both seasons, while Spire does
-not in either. Long-lead stability is therefore a property that must be
-evaluated directly and cannot be inferred from short-lead skill alone.
+and DLESyM both fall to negative Z500 ACC in both seasons, while Spire
+remains positive at every lead in both seasons even as its own skill
+declines. Long-lead stability is therefore a property that must be evaluated
+directly and cannot be inferred from short-lead skill alone.
 
 \textbf{(4) Deterministic and probabilistic rankings disagree.} ECMWF leads
 precipitation CRPSS from week~2 onward despite Spire's higher ACC throughout,
@@ -1025,34 +1161,40 @@ findings.
 
 \subsection{2-m temperature}\label{app:t2m}
 
-\paragraph{JFM~2026.}
-The T2M comparison is restricted to the three systems with a usable T2M
-product: Spire, FuXi-S2S, and DLESyM. ECMWF and UKMO are both excluded for
-the same underlying reason---a download-time error, not a true data gap.
-Their \texttt{2t} archives contain only a single forecast step per file across
-the full season (confirmed directly from the archived NetCDF files), so 538
-of 628 weekly-window scoring attempts for ECMWF fail with ``insufficient
-leads for weekly mean'' and the remainder fail outright; no week of ECMWF or
-UKMO T2M can be scored. NCEP carries no T2M-equivalent channel in this
-archive at all. All three gaps are data-retrieval artifacts specific to this
-download rather than properties of the underlying forecast systems, and the
-ECMWF/UKMO gap in particular could in principle be closed by a corrected
-re-download (Section~\ref{sec:limitations}). Among the three systems that do
-have usable T2M, Spire leads at every lead (Table~\ref{tab:jfm_acc_t2m}):
-ACC~0.75 at week~1 versus 0.49 for DLESyM and 0.33 for FuXi-S2S, and it
-remains the only system with ACC~$>0.2$ from week~3 onward. DLESyM's T2M
-skill follows the same long-lead pattern as its Z500 skill, turning negative
-by week~4.
-\input{tables/tab_jfm_acc_t2m}
+T2M is the most data-limited variable in this benchmark. In both seasons,
+ECMWF and UKMO 2-m temperature are unscoreable because their archived
+\texttt{2t} files contain only a single forecast step per initialization
+(confirmed directly from the archived NetCDF files)---a download-time error
+rather than a true data gap, and one that could in principle be closed by a
+corrected re-download (Section~\ref{sec:limitations})---and NCEP carries no
+T2M-equivalent channel in this archive at all. JFM~2026 T2M results are
+omitted from this version of the paper: the verification truth used for
+JFM~2026 T2M is undergoing a daily-mean reconstruction at the time of
+writing, and the headline JFM~2026 run used throughout this paper
+(Section~\ref{sec:jfm}) does not currently score T2M. We will report the JFM
+T2M comparison (Spire, FuXi-S2S, DLESyM) once a verified daily-mean truth is
+available, rather than publish T2M numbers built on a truth source under
+active revision.
 
-\paragraph{JJAS~2019.}
-DLESyM is the only system with a usable T2M product in JJAS~2019. Its skill
-declines from ACC~0.78 at week~1 to 0.41 by week~6---a smoother, more
-gradual decay than either its own Z500 trajectory or any system's
-precipitation trajectory in this season, consistent with the comparatively
-high autocorrelation of near-surface temperature anomalies relative to
-rainfall and circulation at subseasonal lead. With only one scoreable system,
-no cross-model T2M comparison is possible for the monsoon season.
+\paragraph{JJAS~2019.} DLESyM is the only system with a usable T2M product in
+JJAS~2019, where the verification truth (WeatherBench2 ERA5,
+Section~\ref{sec:truth}) is unaffected by the JFM reconstruction.
+Figure~\ref{fig:acc_lead_t2m} shows its skill declining from ACC~0.78 at
+week~1 to 0.41 by week~6---a smoother, more gradual decay than either its own
+Z500 trajectory or any system's precipitation trajectory in this season,
+consistent with the comparatively high autocorrelation of near-surface
+temperature anomalies relative to rainfall and circulation at subseasonal
+lead. With only one scoreable system, no cross-model T2M comparison is
+possible for the monsoon season.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.55\linewidth]{figs/fig_acc_lead_t2m.pdf}
+  \caption{JJAS~2019 all-India T2M ACC versus lead week (DLESyM only; the
+  only system with a scoreable T2M product in this season). The MME is
+  identical to DLESyM here since no other system contributes.}
+  \label{fig:acc_lead_t2m}
+\end{figure}
 
 \subsection{Spatial pattern correlation}\label{app:spatial}
 

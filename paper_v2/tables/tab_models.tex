@@ -3,19 +3,23 @@
   \caption{Forecast systems evaluated. ``Native res.'' is each model's own
   horizontal grid; all are regridded to the common $1.5^\circ$ verification
   grid before scoring. CF\,=\,control, PF\,=\,perturbed member. ``Both'' =
-  evaluated in JFM\,2026 and JJAS\,2019.}
+  evaluated in JFM\,2026 and JJAS\,2019. Members are the actual archived
+  ensemble size used for scoring (Section~\ref{sec:limitations}); ECMWF and
+  FuXi-S2S differ between seasons.}
   \label{tab:models}
   \small
   \begin{tabular}{llcccc}
     \toprule
     System & Type & Native res. & Members & Horizon & Seasons \\
     \midrule
-    Spire AI-S2S & ML (data-driven)    & $0.5^\circ$        & mean+s.d. & 46\,d & JFM\,2026 \\
-    FuXi-S2S     & ML (transformer)    & $1.5^\circ$        & 1CF+10PF  & 42\,d & Both \\
-    DLESyM       & ML (diffusion)      & $0.25^\circ$       & 80\,PF    & 48\,d & Both \\
-    ECMWF        & Dynamical, coupled  & Tco319 ($\sim$36\,km) & 100\,PF & 46\,d & Both \\
-    UKMO GloSea6 & Dynamical, coupled  & N216 ($\sim$60\,km)   & 1CF+3PF & 60\,d & Both \\
-    NCEP CFSv2   & Dynamical, coupled  & T126 ($\sim$100\,km)  & 15\,PF  & 44\,d & Both \\
+    Spire AI-S2S & ML (data-driven)    & $0.5^\circ$        & mean+s.d.        & 46\,d & JFM\,2026 \\
+    FuXi-S2S     & ML (transformer)    & $1.5^\circ$        & 11 / 50$^{\ast}$ & 42\,d & Both \\
+    DLESyM       & ML (diffusion)      & $0.25^\circ$       & 80               & 48\,d & Both \\
+    ECMWF        & Dynamical, coupled  & Tco319 ($\sim$36\,km) & 101 / 51$^{\ast}$ & 46\,d & Both \\
+    UKMO GloSea6 & Dynamical, coupled  & N216 ($\sim$60\,km)   & 4              & 60\,d & Both \\
+    NCEP CFSv2   & Dynamical, coupled  & T126 ($\sim$100\,km)  & 16             & 44\,d & Both \\
     \bottomrule
   \end{tabular}
+  \vspace{2pt}
+  {\footnotesize $^{\ast}$JFM\,2026~/~JJAS\,2019 (archived ensemble size differs by season).}
 \end{table}

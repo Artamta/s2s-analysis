@@ -31,61 +31,113 @@
 %%     Leads: Benchmarking Spire AI-S2S, FuXi-S2S, ECMWF, and NCEP CFSv2
 %% ====================================================================
 
-\documentclass[11pt]{article}
+\documentclass[11pt,a4paper]{article}
 
+%% --- Encoding & fonts ---------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\IfFileExists{lmodern.sty}{\usepackage{lmodern}}{} % Latin Modern if available (Overleaf: yes)
-\usepackage[a4paper,margin=1in]{geometry}
-\usepackage{graphicx}
+\usepackage{lmodern}
+\usepackage{microtype}          % better justification; fixes most overfull hbox
+
+%% --- Page layout --------------------------------------------------------
+\usepackage[a4paper, top=1in, bottom=1in, left=1.1in, right=1.1in,
+            headheight=14pt]{geometry}
+\usepackage{setspace}
+\setstretch{1.10}               % slight stretch for readability
+
+%% --- Headers/footers ----------------------------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Raj et al.\ --- S2S Benchmark over India}}
+\fancyhead[R]{\small\textit{Draft \today}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%% --- Mathematics --------------------------------------------------------
 \usepackage{amsmath,amssymb}
+
+%% --- Tables & figures ---------------------------------------------------
+\usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+
+%% --- Section heading style ----------------------------------------------
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}[\vspace{-2pt}\rule{\linewidth}{0.5pt}]
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.4ex plus 0.4ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.3ex}{0.3ex}
+
+%% --- Bibliography -------------------------------------------------------
 \usepackage[round,authoryear]{natbib}
+\setlength{\bibsep}{3pt}
+
+%% --- Colours & hyperlinks -----------------------------------------------
 \usepackage{xcolor}
-\usepackage{lineno}
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\definecolor{linkblue}{RGB}{30,80,160}
+\usepackage[colorlinks=true,
+            linkcolor=linkblue,
+            citecolor=linkblue,
+            urlcolor=linkblue]{hyperref}
 \providecommand{\doi}[1]{\href{https://doi.org/#1}{doi:#1}}
 
-% \linenumbers   % uncomment for internal review versions
+%% --- Line numbers (uncomment for review) --------------------------------
+\usepackage{lineno}
+% \linenumbers
 
-%% ----- Placeholder machinery -----------------------------------------
-% \ph{...}  : red bracketed placeholder text (instructions or values)
-% \phnum    : red [X.XX] numeric placeholder for skill scores
-% \figbox{height}{text} : framed placeholder box standing in for a figure
+%% ----- Placeholder machinery -------------------------------------------
 \newcommand{\ph}[1]{\textcolor{red}{[#1]}}
 \newcommand{\phnum}{\textcolor{red}{[X.XX]}}
 \newcommand{\figbox}[2]{%
   \fbox{\parbox[c][#1][c]{0.94\linewidth}{\centering
     {\color{red}\textbf{FIGURE PLACEHOLDER}}\\[4pt]
     {\color{red}#2}}}}
-%% ---------------------------------------------------------------------
+%% -----------------------------------------------------------------------
+
+%% ----- Author-block helper ---------------------------------------------
+%  \auth{Name}{Affiliation}{Email}
+\newcommand{\auth}[3]{%
+  \parbox[t]{0.31\textwidth}{\centering
+    \textbf{#1}\\[2pt]
+    \small #2\\[1pt]
+    \footnotesize\url{#3}}}
+%% -----------------------------------------------------------------------
 
 \title{%
-  \vspace{-1.2cm}
-  \noindent\rule{\linewidth}{2.5pt}\\[0.6em]
-  \LARGE\bfseries Benchmarking AI and Operational Subseasonal
+  \vspace{-0.8cm}
+  {\color{linkblue}\rule{\linewidth}{2pt}}\\[0.5em]
+  \LARGE\bfseries Benchmarking AI and Operational Subseasonal\\[0.2em]
   Forecast Systems over India:\\[0.3em]
-  \Large Weekly Precipitation and Circulation Skill in JFM 2026\\[0.6em]
-  \noindent\rule{\linewidth}{0.8pt}%
+  \large Weekly Precipitation and Circulation Skill\\
+  in JFM~2026 and JJAS~2019\\[0.5em]
+  {\color{linkblue}\rule{\linewidth}{0.6pt}}
 }
 
 \author{%
-  \normalsize
-  \begin{tabular}{c@{\hspace{2cm}}c}
-    \textbf{Ayush Raj} & \textbf{Manmeet Singh} \\
-    Ashoka University \& IISER Pune, India & Western Kentucky University, USA \\
-    raj.ayush@students.iiserpune.ac.in & manmeet.singh@wku.edu \\[1.2em]
-    \textbf{Parthasarathi Mukhopadhyay} & \textbf{Bedartha Goswami} \\
-    Ashoka University, India & IISER Pune, India \\
-    parthasarathi.mukhopadhyay@ashoka.edu.in & bedartha.goswami@iiserpune.ac.in \\[1.2em]
-    \multicolumn{2}{c}{\textbf{Sandeep Juneja}} \\
-    \multicolumn{2}{c}{Ashoka University, India} \\
-    \multicolumn{2}{c}{sandeep.juneja@ashoka.edu.in} \\
-  \end{tabular}
+  \auth{Ayush Raj}{Ashoka University \& IISER Pune, India}%
+       {raj.ayush@students.iiserpune.ac.in}
+  \hfill
+  \auth{Manmeet Singh}{Western Kentucky University, USA}%
+       {manmeet.singh@wku.edu}
+  \hfill
+  \auth{Saptarishi Dhanuka}{Ashoka University, India}%
+       {saptarishi.dhanuka@ashoka.edu.in}
+  \\[1.4em]
+  \auth{Parthasarathi Mukhopadhyay}{Ashoka University, India}%
+       {parthasarathi.mukhopadhyay@ashoka.edu.in}
+  \hfill
+  \auth{Bedartha Goswami}{IISER Pune, India}%
+       {bedartha.goswami@iiserpune.ac.in}
+  \hfill
+  \auth{Sandeep Juneja}{Ashoka University, India}%
+       {sandeep.juneja@ashoka.edu.in}
 }
 
-\date{}
+\date{\small\today}
 
 \begin{document}
 
@@ -464,18 +516,18 @@ five (excluding Spire) participate in the extended JJAS~2019 case study
   from the delivered files.}
   \label{tab:models}
   \centering
-  \small
-  \setlength{\tabcolsep}{6pt}
-  \begin{tabular}{llcccl}
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{llcccc}
     \toprule
     System & Type & Native res. & Members & Horizon & Seasons \\
     \midrule
-    Spire AI-S2S    & AI (data-driven)       & $0.5^{\circ}$          & mean\,$+$\,s.d.      & 46\,d & JFM\,2026 \\
-    FuXi-S2S        & AI (data-driven)       & $1.5^{\circ}$          & 1\,CF\,$+$\,10\,PF   & 42\,d & JFM\,2026, JJAS\,2019 \\
-    DLESyM          & AI (diffusion-based)   & $0.25^{\circ}$         & 80\,PF               & 48\,d & JFM\,2026, JJAS\,2019 \\
-    ECMWF ext-range & Dynamical, coupled     & Tco319 ($\sim$36\,km)  & 100\,PF              & 46\,d & JFM\,2026, JJAS\,2019 \\
-    UKMO GloSea6    & Dynamical, coupled     & N216 ($\sim$60\,km)    & 1\,CF\,$+$\,3\,PF    & 60\,d & JFM\,2026, JJAS\,2019 \\
-    NCEP CFSv2      & Dynamical, coupled     & T126 ($\sim$100\,km)   & 15\,PF               & 44\,d & JFM\,2026, JJAS\,2019 \\
+    Spire AI-S2S    & AI (data-driven)       & $0.5^{\circ}$         & mean\,+\,s.d.      & 46\,d & JFM\,2026 \\
+    FuXi-S2S        & AI (data-driven)       & $1.5^{\circ}$         & 1CF+10PF            & 42\,d & Both \\
+    DLESyM          & AI (diffusion-based)   & $0.25^{\circ}$        & 80\,PF              & 48\,d & Both \\
+    ECMWF ext-range & Dynamical, coupled     & Tco319 (${\sim}36$km) & 100\,PF             & 46\,d & Both \\
+    UKMO GloSea6    & Dynamical, coupled     & N216 (${\sim}60$km)   & 1CF+3PF             & 60\,d & Both \\
+    NCEP CFSv2      & Dynamical, coupled     & T126 (${\sim}100$km)  & 15\,PF              & 44\,d & Both \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -1545,7 +1597,7 @@ this is suggestive rather than definitive, but SPIRE's advantage is
 consistent across variables, metrics, and all four IMD subregions
 (Tables~\ref{tab:reg_pcc}--\ref{tab:reg_bias}). The JJAS~2019 comparison
 (Section~\ref{sec:jjas2019}), while lacking Spire data, additionally reveals
-that DLESyM---a diffusion-based AI system---achieves the highest Z500 ACC at
+that DLESyM (a diffusion-based AI system) achieves the highest Z500 ACC at
 week~1 of any single system across both seasons.
 
 \paragraph{Deterministic metrics favour smooth forecasts.}

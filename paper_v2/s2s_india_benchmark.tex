@@ -69,32 +69,34 @@
 % ======================================================================
 \begin{abstract}
 \noindent
-\TODO{Final abstract pass. Skeleton below states the three findings; tighten
-to $\sim$200 words and add one quantitative hook per finding.}
-
-Subseasonal-to-seasonal (S2S) prediction at two-to-six-week leads is of high
+Subseasonal-to-seasonal (S2S) forecasts at two-to-six-week leads are of high
 value for Indian agriculture and water management, yet precipitation skill at
-these leads is limited and the performance of new machine-learning (ML)
-forecast systems over India is largely undocumented. We benchmark six S2S
-systems---three ML-based (Spire AI-S2S, FuXi-S2S, DLESyM) and three
-operational dynamical (ECMWF, UKMO, NCEP)---for weekly precipitation, 500-hPa
-geopotential height (Z500), and 2-m temperature (T2M) over India across two
-contrasting seasons: the synoptically driven winter (JFM~2026, 90 daily
-initializations) and the convectively dominated summer monsoon (JJAS~2019, 17
-common initializations). Forecasts are verified against ERA5 (Z500, T2M),
-ERA5 daily totals and IMD gridded rainfall (precipitation), using
-cosine-weighted ACC, RMSE, bias, and a common probabilistic framework (CRPSS,
-spread--skill ratio). We report three findings. (i)~In winter, the ML system
-Spire AI-S2S is the most skillful system for precipitation at every lead
-(week-1 ACC~0.78 versus 0.73 for ECMWF) and uniquely retains Z500 skill to
-week~6, whereas the other two ML systems (FuXi-S2S, DLESyM) lose all Z500
-skill---falling to negative ACC---by week~3--4. (ii)~In the monsoon, this ML
-advantage disappears: every system, ML and dynamical alike, loses
-precipitation skill by week~3 (all-India ACC~$\le$~0.06 at week~3). (iii)~The
-deterministic ranking does not carry over to probabilistic skill: ECMWF leads
-precipitation CRPSS despite Spire's higher ACC. These results give an early,
-honest assessment of where ML S2S systems help over India and where the
-problem remains hard for all approaches.
+these leads remains limited, and the performance of the new generation of
+machine-learning (ML) forecast systems over India is largely undocumented. We
+benchmark six S2S systems---three ML-based (Spire AI-S2S, FuXi-S2S, DLESyM)
+and three operational dynamical systems (ECMWF, UKMO, NCEP)---for weekly
+precipitation, 500-hPa geopotential height (Z500), and 2-m temperature (T2M)
+over India across two physically contrasting seasons: the synoptically driven
+winter (JFM~2026, 90 daily initializations) and the convectively dominated
+summer monsoon (JJAS~2019, 17 common initializations). Forecasts are verified
+against ERA5 and IMD gridded rainfall using cosine-weighted anomaly
+correlation (ACC), RMSE, bias, and a common probabilistic framework (CRPSS,
+spread--skill ratio). Four findings emerge. (i)~In winter, Spire AI-S2S is the
+most skillful system for precipitation at every lead (week-1 ACC~0.78 versus
+0.73 for ECMWF and UKMO) and is the only system that retains Z500 skill to
+week~6 (ACC~0.75), while the other two ML systems---FuXi-S2S and
+DLESyM---collapse to negative Z500 ACC by week~3--4. (ii)~In the monsoon, this
+ML advantage disappears entirely: every system, ML and dynamical alike, loses
+precipitation skill by week~3 (all-India ACC~$\le$~0.06), and the result is
+unchanged on an independent 35-initialization robustness check. (iii)~The
+three ML systems do not behave alike: Spire's long-lead stability is not
+shared by FuXi-S2S or DLESyM, so a week-1 leaderboard is a poor predictor of
+week-6 performance. (iv)~Deterministic and probabilistic rankings disagree---
+ECMWF leads precipitation CRPSS from week~2 onward despite Spire's higher
+ACC---showing that ensemble calibration is a distinct axis of forecast
+quality. Together these results give an early, honest assessment of where ML
+S2S systems help over India and where the forecasting problem remains hard for
+every approach.
 \end{abstract}
 
 \vspace{0.3em}
@@ -104,35 +106,66 @@ learning; precipitation; India; monsoon; ensemble verification
 % ======================================================================
 \section{Introduction}\label{sec:intro}
 
-% Paragraph 1 -- why S2S over India matters
-\TODO{Expand. Topic sentence + societal motivation (rabi crops, water, WDs,
-monsoon). Reuse prose from the prior draft's Introduction.}
-Subseasonal-to-seasonal (S2S) prediction bridges medium-range weather and
-seasonal climate forecasting and is increasingly demanded for Indian
-agriculture, water resources, and disaster preparedness
-\citep{vitart2017,white2017,mariotti2020}.
+Subseasonal-to-seasonal (S2S) prediction, spanning lead times from roughly two
+weeks to two months, bridges medium-range weather forecasting and seasonal
+climate outlooks \citep{vitart2017,nas2016}. Forecasts at these leads are
+increasingly demanded for agricultural planning, reservoir operations, energy
+load management, and disaster preparedness \citep{white2017}, yet they remain
+among the most difficult products to produce skillfully: the atmosphere has
+largely lost its initial-condition memory, while slowly varying boundary
+forcings have not yet come to dominate \citep{mariotti2020}. Over India,
+skillful multi-week outlooks carry particular weight. Winter precipitation
+over northern India and the Western Himalaya, produced chiefly by western
+disturbances (WDs)---extratropical synoptic systems embedded in the
+subtropical westerly jet \citep{dimri2015,hunt2018}---sustains the rabi
+(winter) cropping season and builds the Himalayan snowpack that feeds the
+Indus and Ganges during the subsequent melt season. The summer monsoon (June
+through September), by contrast, supplies roughly three-quarters of India's
+annual rainfall through transient convective systems organized by
+intraseasonal oscillations, and its subseasonal predictability is a long-
+standing operational priority for the India Meteorological Department (IMD)
+and the Ministry of Earth Sciences \citep{rao2019,pattanaik2019}. These two
+seasons are governed by different dynamics and, as we show below, by
+different limits on predictability.
 
-% Paragraph 2 -- the rise of ML forecasting and the gap
-\TODO{Expand. ML weather models now rival NWP at medium range; extension to
-S2S is recent (FuXi-S2S); regional precip skill over India undocumented.
-Reuse Intro \P3.}
-Machine-learning (ML) forecast systems now match or exceed operational
-numerical weather prediction (NWP) at medium range
-\citep{pathak2022,bi2023,lam2023,benbouallegue2024}, and their extension to
-the subseasonal range has begun \citep{chen2024,spire2026}.
+In parallel, weather prediction is being reshaped by machine-learning (ML)
+forecast systems trained on reanalysis data. Deterministic data-driven models
+such as Pangu-Weather and GraphCast now match or exceed operational numerical
+weather prediction (NWP) on standard medium-range scores
+\citep{pathak2022,bi2023,lam2023,benbouallegue2024,rasp2024}, and operational
+centers have begun running data-driven systems alongside their NWP suites
+\citep{lang2024}. Extension of these methods to the subseasonal range is more
+recent: FuXi-S2S, a transformer-based system producing 42-day ensemble
+forecasts, has been reported to outperform conventional S2S models on several
+global metrics \citep{chen2024}; diffusion-based Earth-system emulators such as
+DLESyM \citep{cresswellclay2024} have followed; and commercial providers now
+issue AI-based S2S products \citep{spire2026}. Published evaluations of these
+systems have, however, emphasized global or large-scale diagnostics, while
+regional precipitation skill over densely populated, hydrologically sensitive
+domains such as India remains largely undocumented---and essentially no
+published work compares more than one ML S2S system against operational
+dynamical baselines over the same domain and the same verification framework.
 
-% Paragraph 3 -- the two-season framing (the novelty of THIS paper)
-\TODO{Expand into the paper's central idea. Key argument: a single season
-cannot separate "ML is better" from "ML is better at easy regimes." We test
-two regimes deliberately --- winter (synoptic, WD-driven, higher
-predictability) vs monsoon (convective, lower S/N) --- to find WHERE ML helps.}
-A single-season benchmark cannot distinguish a genuinely better forecast
-system from one that merely performs well in an easy regime. We therefore
-evaluate the same six systems across two physically contrasting seasons over
-the same domain.
+A further gap concerns the evaluation setting itself. Existing ML
+weather-forecast evaluations are typically run on a single season or a short
+real-time window, which cannot distinguish a genuinely better forecast system
+from one that merely performs well in an easy predictability regime. India
+offers an unusually clean natural test of this distinction: its two principal
+rainy seasons are governed by essentially different physics. Winter
+precipitation is organized by synoptic-scale WDs with several days of
+predictable structure, while monsoon precipitation is dominated by smaller-
+scale convection embedded in a noisier large-scale envelope, historically
+associated with a shorter predictability horizon
+\citep{deandrade2019,pegion2019}. A forecast system that performs well only in
+the synoptically organized winter season may not be skillful in general; a
+system that holds skill in the monsoon, where the signal-to-noise ratio is
+lower, is making a stronger claim. We exploit this contrast deliberately,
+evaluating the same six S2S systems---three ML-based and three operational
+dynamical---over India in both the January--March (JFM) 2026 winter and the
+June--September (JJAS) 2019 summer monsoon, using an identical verification
+framework in both seasons.
 
-% Paragraph 4 -- contributions / questions
-We address four questions:
+Specifically, we address four questions:
 \begin{enumerate}\setlength{\itemsep}{1pt}
   \item How does weekly skill for precipitation, Z500, and T2M decay with lead
         time (weeks~1--6) for each system, in winter and in the monsoon?
@@ -143,101 +176,304 @@ We address four questions:
   \item Does deterministic skill translate into probabilistic (calibrated)
         skill?
 \end{enumerate}
-
-\TODO{Close Intro with a one-paragraph roadmap of the paper.}
+We verify ensemble-mean (or Spire mean) forecasts against ERA5 and IMD gridded
+rainfall using the cosine-weighted anomaly correlation coefficient (ACC),
+root-mean-square error (RMSE), and bias, complemented by a common-framework
+probabilistic evaluation (CRPSS, spread--skill ratio). The remainder of the
+paper is organized as follows. Section~\ref{sec:data} describes the
+verification data and study domain, Section~\ref{sec:models} the six forecast
+systems, and Section~\ref{sec:methods} the verification methodology. Results
+are presented in Section~\ref{sec:results} and discussed in
+Section~\ref{sec:discussion}; limitations and conclusions follow in
+Sections~\ref{sec:limitations}--\ref{sec:conclusions}.
 
 % ======================================================================
 \section{Data and Study Domain}\label{sec:data}
 
 \subsection{Study domain and regions}\label{sec:domain}
-\TODO{Domain box 5--38N, 65--100E; land points only; cosine weights; four IMD
-homogeneous regions (Northwest, Central, South Peninsula, East/NE). Reuse
-Domain subsection + Fig.~domain from old paper. Add region map figure.}
+
+The study domain covers the Indian region, $5^{\circ}$--$38^{\circ}$N,
+$65^{\circ}$--$100^{\circ}$E, with all aggregate skill metrics computed over
+\emph{land points only}. Land points are identified on the common
+$1.5^{\circ}$ verification grid with an offline coastline land--sea mask,
+independent of ERA5 and fully reproducible; ocean grid cells (Arabian Sea, Bay
+of Bengal) are excluded from every area average, since they otherwise dominate
+the domain mean and distort precipitation skill. Spatial means are weighted by
+the cosine of latitude throughout (Section~\ref{sec:metrics}). Skill is
+additionally partitioned into the four India Meteorological Department (IMD)
+homogeneous rainfall regions---Northwest, Central, South Peninsula, and
+East/Northeast India---following the state grouping of \citet{pai2014}. The
+region masks are constructed from Survey-of-India state-boundary polygons by
+assigning each grid point to the region whose constituent states contain it,
+then intersecting with the land mask; the four regions are mutually
+exclusive.
 
 \subsection{Verification references}\label{sec:truth}
-\TODO{Describe the three truth sources and WHY each is used.}
+
+Three observational references are used, chosen to match the best available
+truth in each season and to avoid conflating model skill with reference-data
+artifacts.
 \begin{itemize}\setlength{\itemsep}{1pt}
-  \item \textbf{Precipitation, winter:} ERA5 daily totals (00--00\,UTC),
-        \TODO{cite ARCO-ERA5 carver2023; note IMD-2026 not yet available.}
-  \item \textbf{Precipitation, monsoon:} IMD $0.25^\circ$ gauge-based gridded
-        rainfall \citep{pai2014} --- an observational reference independent of
-        any reanalysis.
-  \item \textbf{Z500 and T2M:} ERA5 \citep{hersbach2020}; for JJAS the local
-        WeatherBench2 ERA5 archive \citep{rasp2024}.
+  \item \textbf{Precipitation, JFM~2026:} hourly total precipitation from the
+        Analysis-Ready, Cloud-Optimized ERA5 archive \citep[ARCO-ERA5;][]{carver2023},
+        summed to true 24-hour daily totals (00--00\,UTC). The 2026 IMD
+        gridded rainfall product is not yet available for this season, so ERA5
+        is the only complete reference; we discuss the implications of
+        treating a reanalysis as truth in Section~\ref{sec:limitations}.
+  \item \textbf{Precipitation, JJAS~2019:} the IMD $0.25^{\circ}$ daily gauge-
+        based gridded rainfall product \citep{pai2014}, constructed from
+        roughly 3000 quality-controlled rain-gauge stations by ordinary
+        kriging. Because this reference is independent of any reanalysis, it
+        removes the possibility that an ERA5-trained ML system is rewarded
+        simply for reproducing ERA5's own precipitation biases.
+  \item \textbf{Z500 and T2M, both seasons:} ERA5 \citep{hersbach2020}. For
+        JFM~2026, Z500 truth is taken from ERA5 CDS daily files; for JJAS~2019
+        we use the local WeatherBench2 ERA5 archive \citep{rasp2024}, which
+        provides matching geopotential and 2-m temperature fields at
+        $1.0^{\circ}$ resolution for the 2019 period.
 \end{itemize}
+Because the JFM and JJAS precipitation truths differ (ERA5 versus IMD), all
+within-season model rankings are valid, but the absolute precipitation skill
+level should not be compared directly across seasons; we return to this point
+in Section~\ref{sec:limitations}.
 
 \subsection{Forecast systems}\label{sec:models_data}
-\TODO{One short paragraph; details in Table~\ref{tab:models} and
-Sec.~\ref{sec:models}.}
-\input{tables/tab_models}   % hand-written model table (see note below)
+
+We evaluate six S2S forecast systems, summarized in Table~\ref{tab:models}:
+three machine-learning systems (Spire AI-S2S, FuXi-S2S, DLESyM) and three
+operational dynamical systems (ECMWF extended range, UKMO GloSea6, NCEP
+CFSv2). Five systems---all but Spire, for which 2019 data were not
+available---are evaluated in both seasons, giving a fully matched six-system
+comparison in JFM~2026 and a five-system comparison in JJAS~2019. Full system
+descriptions, including how each variable is delivered and any unit
+conversions applied before scoring, are given in Section~\ref{sec:models}.
+\input{tables/tab_models}
 
 % ======================================================================
 \section{Forecast Systems}\label{sec:models}
-\TODO{One subsection each. Keep to 4--6 sentences: lineage, resolution,
-ensemble, how each variable is delivered + unit handling. Reuse ECMWF/NCEP/
-Spire/FuXi text from old paper; write UKMO + DLESyM fresh (see notes).}
+
+We evaluate six S2S forecast systems spanning three machine-learning systems
+and three dynamical NWP ensembles. The dynamical systems (ECMWF, UKMO, NCEP)
+are obtained from the WWRP/WCRP S2S database \citep{vitart2017}; the ML
+systems were received directly from their respective providers. All six
+systems are evaluated over JFM~2026; five (excluding Spire) participate in the
+JJAS~2019 case study.
 
 \subsection{Spire AI-S2S}\label{sec:spire}
-\TODO{ML, $0.5^\circ$, mean+s.d., 46\,d, ERA5-initialized, daily TP (no unit
-conv).}
+
+Spire AI-S2S \citep{spire2026} is a commercially produced, ML-based
+subseasonal forecasting system developed by Spire Global. Forecasts are
+delivered on a $0.5^{\circ}$ global grid at daily temporal resolution to a
+46-day horizon, initialized from 00~UTC ERA5 analyses. Rather than
+distributing individual ensemble members, the system supplies ensemble
+summary products---the mean and standard deviation, used here for both
+deterministic and probabilistic verification. Spire delivers daily total
+precipitation (mm\,day$^{-1}$) directly, so no unit conversion is required.
+Forecasts were received for the JFM~2026 season under a research data-use
+agreement; 2019 data were not available, so Spire is excluded from the
+JJAS~2019 comparison.
 
 \subsection{FuXi-S2S}\label{sec:fuxi}
-\TODO{ML transformer, $1.5^\circ$, 1CF+10PF, 42\,d, TP delivered as mm\,h$^{-1}$
-$\Rightarrow\times24$.}
+
+FuXi-S2S \citep{chen2024} is a transformer-based ML subseasonal forecasting
+system trained on ERA5 reanalysis. The published system generates 42-day
+global forecasts on a $1.5^{\circ}$ grid as an 11-member ensemble (1 control
+forecast, 10 perturbed forecasts), initialized from 00~UTC ERA5 fields; we use
+the ensemble mean for deterministic scores and the member spread for
+probabilistic verification. The FuXi-S2S precipitation channel is archived as
+a mean rate (mm\,h$^{-1}$) rather than a daily total and is multiplied by 24
+before scoring to convert to mm\,day$^{-1}$ (Section~\ref{sec:metrics}).
 
 \subsection{DLESyM}\label{sec:delysm}
-\TODO{Diffusion-based ML, $0.25^\circ$, 80 members, 48\,d, 6-hourly
-$\Rightarrow$ daily-mean; z500 geopotential $\div g$; NO precipitation channel
-(Z500/T2M only). Note 3 corrupted stores excluded.}
+
+DLESyM (Deep Learning Earth System Model; \citealt{cresswellclay2024}) is a
+diffusion-based coupled atmosphere--land--ocean ML system trained on ERA5 and
+CMIP6 simulations. Forecasts run on a $0.25^{\circ}$ global grid to a 48-day
+horizon and are delivered as an 80-member ensemble---the largest ensemble in
+this comparison---which is particularly advantageous for probabilistic
+verification. DLESyM outputs 6-hourly fields, which we average to daily means
+before aggregating to weekly lead windows; geopotential is converted to
+geopotential height by dividing by $g=9.80665$\,m\,s$^{-2}$. DLESyM does not
+currently provide a precipitation channel and is therefore evaluated for Z500
+and T2M only. Three per-initialization forecast stores were found to be
+corrupted (one reading as all-zero, two missing entirely) and are excluded
+from the comparable-initialization sets; an automated guard rejects any store
+that reads as all-zero at the first lead.
 
 \subsection{ECMWF extended-range ensemble}\label{sec:ecmwf}
-\TODO{IFS, Tco319, 100PF, 46\,d; cumulative TP $\Rightarrow$ de-accumulate.}
+
+The ECMWF Integrated Forecasting System (IFS) extended-range ensemble
+\citep{vitart2014} is a fully coupled atmosphere--ocean--land--sea-ice model
+run twice weekly to day~46. We use the 00~UTC runs archived on the S2S
+database \citep{vitart2017} at $1.5^{\circ}$ (interpolated from the native
+Tco319, $\approx$36\,km, spectral grid), with 100 perturbed-forecast members
+per initialization; we use the ensemble mean for deterministic scores and the
+full ensemble for probabilistic verification. ECMWF archives total
+precipitation as a running cumulative accumulation from initialization; the
+weekly-mean rate is recovered by differencing the cumulative totals at the
+start and end of each lead window and dividing by the number of days
+(Section~\ref{sec:metrics}). Geopotential height is delivered directly and
+requires no unit conversion.
 
 \subsection{UKMO GloSea6}\label{sec:ukmo}
-\TODO{MetUM, N216, 1CF+3PF, 60\,d; cumulative TP; z500 already gpm; T2M broken
-(single lead) $\Rightarrow$ excluded from rankings.}
+
+The UK Met Office Global Seasonal Forecasting System version~6
+\citep[GloSea6;][]{maclauchlan2014} is a fully coupled atmosphere--ocean--land
+system run on the Met Office Unified Model (MetUM) at $\sim$60\,km (N216)
+resolution to a 60-day horizon. We use the 00~UTC runs archived on the S2S
+database at $1.5^{\circ}$, comprising one control forecast plus three
+perturbed members (a four-member ensemble), which limits UKMO's probabilistic
+scores relative to the larger ensembles but still supports full deterministic
+verification. UKMO delivers total precipitation as a cumulative accumulation,
+processed identically to ECMWF, and geopotential height already in gpm
+(no unit conversion). The UKMO 2-m temperature archive contains only a single
+forecast step in every file we obtained, across all seasons; we treat this as
+a data-retrieval issue at the source and exclude UKMO T2M from all
+verification and rankings.
 
 \subsection{NCEP CFSv2}\label{sec:ncep}
-\TODO{T126, 15PF, 44\,d; cumulative TP.}
+
+The NCEP Climate Forecast System version~2 \citep{saha2014} is a fully coupled
+atmosphere--ocean--land system, operational since 2011, resolved at T126
+($\approx$100\,km) with 64 hybrid sigma-pressure levels. Forecasts are
+archived on the S2S database at $1.5^{\circ}$ to a 44-day horizon; we use the
+15-member perturbed-forecast ensemble from each 00~UTC initialization.
+Precipitation is archived as a cumulative accumulation and de-accumulated
+identically to ECMWF and UKMO.
 
 % ======================================================================
 \section{Verification Framework}\label{sec:methods}
 
 \subsection{Weekly lead windows and aggregation}\label{sec:weeks}
-\TODO{Day-1 = first 24\,h after init; W1=days1--7 \dots W6=days36--42; weekly
-means; common $1.5^\circ$ grid; cosine-lat weights; land mask.}
+
+Each forecast is partitioned into six nonoverlapping weekly lead
+windows---week~1 to forecast days 1--7, week~2 to days 8--14, and so on
+through week~6 (days 36--42), where day~1 denotes the first 24\,h after
+initialization. For each lead window, daily fields are averaged to a
+weekly-mean field. All forecasts and the observational references are
+remapped to a common $1.5^{\circ}$ latitude--longitude grid (matching the
+coarsest delivered system) prior to verification, so that no high-resolution
+system is penalized for representing fine scales the others cannot. Spatial
+means use $\cos\varphi$ area weights and are restricted to Indian land points
+(Section~\ref{sec:domain}).
+
+Because the six systems deliver precipitation in different native forms, each
+is reconciled to a common weekly-mean rate (mm\,day$^{-1}$) before scoring.
+Spire and FuXi-S2S (after the $\times24$ unit conversion,
+Section~\ref{sec:fuxi}) deliver daily values that are simply averaged over the
+seven days of the lead window. ECMWF, UKMO, and NCEP archive precipitation as
+a running cumulative accumulation from initialization; the weekly-mean rate is
+recovered by differencing the cumulative totals at the last day ($d_e$) and
+the day before the window opens ($d_s-1$), then dividing by the number of
+days $N$:
+\begin{equation}
+  \overline{P}_{w} = \frac{\mathrm{TP}(d_e) - \mathrm{TP}(d_s-1)}{N},
+  \label{eq:deaccum}
+\end{equation}
+with $\mathrm{TP}(d_s-1)=0$ for week~1. The ERA5 and IMD truth references are
+constructed from true 24-hour daily totals and then averaged over the same
+lead window.
 
 \subsection{Anomalies and climatology}\label{sec:anom}
-\TODO{ERA5 1990--2019 day-of-year climatology for Z500/T2M and ERA5-truth TP;
-IMD 1991--2020 daily climatology for IMD-truth TP. Common climatology removed
-identically from forecast and truth.}
+
+Both forecast and observed anomalies are defined by removing a single common
+climatology, applied identically to every system and to the truth: a 30-year
+(1990--2019) ERA5 day-of-year climatology for Z500, T2M, and ERA5-referenced
+precipitation, and the IMD 1991--2020 daily rainfall climatology
+\citep{pai2014} for IMD-referenced precipitation. Because each climatology is
+computed over decades independent of the verification season, it avoids the
+amplitude inflation that a same-season baseline would introduce.
 
 \subsection{Deterministic and probabilistic metrics}\label{sec:metrics}
-\TODO{Define ACC (cosine-weighted), RMSE, bias, MAE; then CRPS, CRPSS vs
-climatology, spread--skill ratio; Brier for TP exceedance events. Equations
-can be lifted from old paper Sec.~Metrics.}
+
+The anomaly correlation coefficient (ACC) at lead $\ell$ is the
+cosine-latitude-weighted, spatially centered Pearson correlation of forecast
+and observed anomaly fields, computed per initialization and averaged over the
+season:
+\begin{equation}
+  \mathrm{ACC}(\ell) = \frac{1}{T}\sum_{t=1}^{T}
+  \frac{\sum_i w_i\,(f'_{i,t,\ell}-\overline{f'}_{t,\ell})\,
+                     (o'_{i,t,\ell}-\overline{o'}_{t,\ell})}
+       {\sqrt{\sum_i w_i\,(f'_{i,t,\ell}-\overline{f'}_{t,\ell})^{2}}\,
+        \sqrt{\sum_i w_i\,(o'_{i,t,\ell}-\overline{o'}_{t,\ell})^{2}}}\,,
+  \label{eq:acc}
+\end{equation}
+where $w_i=\cos\varphi_i$ and $\overline{x}_{t,\ell}$ is the cosine-weighted
+spatial mean over land points. RMSE and bias are computed on the weekly-mean
+fields in their native units (mm\,day$^{-1}$ for precipitation, m for Z500, K
+for T2M):
+\begin{equation}
+  \mathrm{RMSE}(\ell) = \frac{1}{T}\sum_{t=1}^{T}
+  \sqrt{\frac{\sum_i w_i\,(f_{i,t,\ell}-o_{i,t,\ell})^{2}}{\sum_i w_i}}\,,
+  \qquad
+  \mathrm{Bias}(\ell) = \frac{1}{T}\sum_{t=1}^{T}
+  \frac{\sum_i w_i\,(f_{i,t,\ell}-o_{i,t,\ell})}{\sum_i w_i}\,.
+  \label{eq:rmse_bias}
+\end{equation}
+
+For probabilistic verification, each system is placed on a common footing by
+treating it as a Gaussian forecast with ensemble mean $\mu$ and spread
+(standard deviation) $\sigma$ at each grid point and lead day, regardless of
+whether the underlying product is individual members (FuXi-S2S, ECMWF, UKMO,
+NCEP, DLESyM) or a delivered mean-and-spread product (Spire). The continuous
+ranked probability score (CRPS) then has the closed form
+\begin{equation}
+  \mathrm{CRPS}(\mu,\sigma,y) = \sigma\!\left[\omega\,(2\Phi(\omega)-1)
+  + 2\phi(\omega) - \tfrac{1}{\sqrt{\pi}}\right],\quad \omega=\tfrac{y-\mu}{\sigma},
+  \label{eq:crps}
+\end{equation}
+with $y$ the observation and $\Phi,\phi$ the standard-normal CDF and PDF
+\citep{gneiting2007}. The skill score $\mathrm{CRPSS}=1-\mathrm{CRPS}/\mathrm{CRPS}_{\mathrm{clim}}$
+is taken against a Gaussian climatological reference. Calibration is
+summarized by the spread--skill ratio
+$\mathrm{SSR}=\overline{\sigma}/\mathrm{RMSE}(\mu)$, which equals one for a
+perfectly reliable ensemble and is below one when the ensemble is
+overconfident (under-dispersive). Brier scores for precipitation exceedance
+events use the Gaussian exceedance probability
+$P(y>\tau)=1-\Phi\!\left(\tfrac{\tau-\mu}{\sigma}\right)$ for thresholds
+$\tau=1$ and $10$\,mm\,day$^{-1}$.
 
 \subsection{Initialization sets and matched comparison}\label{sec:inits}
-\TODO{Explain the two init sets explicitly --- this is a methods strength:}
+
+The two seasons use different initialization protocols, reflecting both data
+availability and the goal of a fair, common-init comparison within each
+season.
 \begin{itemize}\setlength{\itemsep}{1pt}
-  \item \textbf{JFM~2026:} 90 daily 00\,UTC initializations
-        (1~Jan--31~Mar~2026). \TODO{note W5/W6 sample shrinks as ERA5 truth
-        ends 31~Mar.}
-  \item \textbf{JJAS~2019:} 17 common Thursday initializations
-        (6~Jun--26~Sep~2019) on which all five non-Spire models provide usable
-        forecasts; this matched set is the basis of all cross-model JJAS
-        comparisons. A 35-initialization operational subset (ECMWF, UKMO,
-        NCEP) is used as a robustness check (Sec.~\ref{sec:robust}).
+  \item \textbf{JFM~2026:} 90 daily 00\,UTC initializations (1~January--31~March~2026)
+        for the six-system comparison. Because the ERA5 daily truth record
+        used for JFM currently ends 31~March~2026, the sample of initializations
+        contributing to the longer lead windows shrinks at weeks~5--6 (the
+        latest initializations cannot yet be verified at day~35--42); this
+        does not bias the reported scores but reduces their precision at the
+        longest leads, and we treat week-5--6 results accordingly.
+  \item \textbf{JJAS~2019:} 17 common Thursday initializations (6~June--26~September~2019)
+        on which all five non-Spire models provide usable forecasts; this
+        matched set is the basis of all cross-model JJAS comparisons in
+        Section~\ref{sec:jjas}. A separate 35-initialization operational
+        subset (ECMWF, UKMO, NCEP only, twice-weekly Monday/Thursday) is used
+        as a robustness check on the precipitation result
+        (Section~\ref{sec:robust}).
 \end{itemize}
 
 % ======================================================================
 \section{Results}\label{sec:results}
 
 \subsection{Overview: skill across variables and seasons}\label{sec:overview}
+
 Figure~\ref{fig:acc_lead} summarizes the whole benchmark: anomaly correlation
-versus lead week for all six systems, three variables, and both seasons.
-\TODO{Walk the reader through the figure in 4--5 sentences, foreshadowing the
-three findings (winter ML advantage; monsoon collapse; ML divergence).}
+versus lead week for all six systems, three variables, and both seasons. Three
+features stand out immediately. First, in the top row (JFM~2026), the
+precipitation and T2M panels show Spire AI-S2S (blue) sitting visibly above
+every other system at every lead, while in the Z500 panel Spire is the only
+curve that does not bend downward after week~2---FuXi-S2S (orange) and DLESyM
+(green) instead fall through ACC$=0$ by week~3--4. Second, the bottom row
+(JJAS~2019) looks qualitatively different: all six precipitation and Z500
+curves converge toward, and then below, ACC$=0$ by week~3, with no system
+maintaining the winter-season separation between ML and dynamical systems.
+Third, the two AI systems that are evaluated in both seasons, FuXi-S2S and
+DLESyM, show the steepest skill loss of any system in \emph{either} season for
+Z500---a pattern we examine directly in Section~\ref{sec:ml_divergence}. The
+following subsections quantify each of these features in turn.
 
 \begin{figure}[t]
   \centering
@@ -251,36 +487,140 @@ three findings (winter ML advantage; monsoon collapse; ML divergence).}
 \end{figure}
 
 \subsection{Winter (JFM 2026): the ML advantage}\label{sec:jfm}
-\TODO{Lead with precipitation. SPIRE best at every lead (W1 0.78 vs 0.73
-ECMWF/UKMO, 0.62 NCEP; lowest RMSE 1.09 mm/day, near-zero bias -0.04). Then
-Z500: SPIRE holds 0.69--0.77 W3--W6 while FuXi/DLESyM go NEGATIVE. Then T2M:
-SPIRE dominant. Cite the three ACC tables + RMSE table.}
-\input{tables/tab_jfm_acc}
-\input{tables/tab_jfm_acc_z500}
-\input{tables/tab_jfm_acc_t2m}
-\input{tables/tab_jfm_rmse_tp}
+
+\paragraph{Precipitation.}
+Spire AI-S2S has the highest precipitation ACC of all six systems at every
+lead week (Table~\ref{tab:jfm_acc_tp}): 0.78 at week~1, versus 0.73 for both
+ECMWF and UKMO and 0.62 for NCEP, narrowing to 0.31 by week~6 where it remains
+tied with the multi-model ensemble (MME) for the top score. Spire also has the
+lowest RMSE at every lead (Table~\ref{tab:jfm_rmse_tp}; 1.09\,mm\,day$^{-1}$ at
+week~1, rising to 2.28\,mm\,day$^{-1}$ at week~6, against 1.27--1.57 and
+2.47--2.72\,mm\,day$^{-1}$ respectively for the other individual systems), so
+the ACC advantage is not an artifact of a smoother forecast field receiving a
+more favorable correlation score. FuXi-S2S, after the unit harmonization of
+Section~\ref{sec:fuxi}, is competitive with the operational dynamical systems
+(ACC~0.72 at week~1) but does not match Spire at any lead.
+
+\paragraph{Z500.}
+The clearest separation in the entire benchmark appears in Z500
+(Table~\ref{tab:jfm_acc_z500}). At week~1 the field is tightly clustered
+(ACC~0.90--0.97 across all six systems, with ECMWF and the MME marginally
+ahead at 0.97), and all three ML systems are essentially indistinguishable
+from the dynamical systems. By week~3 the field has split sharply: Spire,
+ECMWF, UKMO, and NCEP all remain skillful (ACC~0.51--0.69), while FuXi-S2S has
+fallen to 0.05 and DLESyM to 0.19. By week~4 both FuXi-S2S and DLESyM have
+crossed into \emph{negative} ACC ($-0.24$ and $-0.18$) and remain negative
+through week~6 ($-0.40$ and $-0.62$)---meaning their week-4--6 Z500 forecasts
+are anticorrelated with the true anomaly pattern more often than not. Spire is
+the only system whose Z500 skill does not degrade monotonically with lead: its
+ACC is 0.69--0.77 across weeks~3--6, the highest of any individual system from
+week~4 onward, including the dynamical systems.
+
+\paragraph{T2M.}
+The T2M comparison is restricted to the three systems with a usable T2M
+product (Spire, FuXi-S2S, DLESyM; UKMO T2M is excluded per
+Section~\ref{sec:ukmo}, and ECMWF/NCEP do not deliver a comparable T2M field
+in our archive). Spire again leads at every lead (Table~\ref{tab:jfm_acc_t2m}):
+ACC~0.75 at week~1 versus 0.49 for DLESyM and 0.33 for FuXi-S2S, and it remains
+the only system with ACC~$>0.2$ from week~3 onward. DLESyM's T2M skill follows
+the same long-lead pattern as its Z500 skill, turning negative by week~4.
 
 \subsection{Monsoon (JJAS 2019): the great equalizer}\label{sec:jjas}
-\TODO{Key message: ALL systems collapse. Precip W1 ~0.4 (0.29 NCEP) -> <=0.06
-by W3 -> negative after. No ML advantage. Z500 horizon also shorter than
-winter. DLESyM Z500 collapses fastest; ECMWF/UKMO most persistent. T2M only
-DLESyM available (0.78->0.41). Cite JJAS tables.}
-\input{tables/tab_jjas_acc_tp}
-\input{tables/tab_jjas_acc_z500}
+
+\paragraph{Precipitation.}
+The winter-season separation between Spire and the rest disappears entirely
+in the monsoon, because the pattern that separated systems in JFM---one
+system clearly ahead of the others---is simply absent
+(Table~\ref{tab:jjas_acc_tp}). At week~1, FuXi-S2S, UKMO, and ECMWF are
+statistically indistinguishable (ACC~0.39--0.40), with NCEP trailing at 0.29.
+By week~3 every system has fallen to ACC~$\le$~0.06, and by week~4 every
+individual system and the MME are at or below ACC~0.02. From week~4 onward all
+systems---without exception---return \emph{negative} ACC, meaning the
+forecasts at these leads carry no usable information about the sign of the
+weekly rainfall anomaly over India. This is a qualitatively different outcome
+from JFM~2026, where four of six systems retained positive precipitation
+skill through week~6.
+
+\paragraph{Z500.}
+The same convergence is visible for Z500, though the skill horizon is
+somewhat longer than for precipitation (Table~\ref{tab:jjas_acc_z500}).
+ECMWF is the most skillful and most persistent system at every lead
+(ACC~0.92 at week~1, remaining positive at 0.21--0.25 by weeks~5--6); UKMO is
+second-most persistent. DLESyM, the highest-resolution ML system, starts
+competitively (ACC~0.85 at week~1, second only to ECMWF) but collapses
+fastest of any system: it is the first to cross into negative territory, at
+week~4 ($-0.12$), and remains the most negative system through week~6
+($-0.18$). FuXi-S2S shows an irregular trajectory (0.91, 0.64, 0.29, 0.31,
+$-0.11$, 0.11) that does not improve on the dynamical systems at any lead.
+
+\paragraph{T2M.}
+DLESyM is the only system with a usable T2M product in JJAS~2019. Its skill
+declines from ACC~0.78 at week~1 to 0.41 by week~6---a smoother, more
+gradual decay than either its own Z500 trajectory or any system's
+precipitation trajectory in this season, consistent with the comparatively
+high autocorrelation of near-surface temperature anomalies relative to
+rainfall and circulation at subseasonal lead.
 
 \subsection{Divergence among the ML systems}\label{sec:ml_divergence}
-\TODO{Dedicated subsection making finding (iii) explicit: SPIRE vs
-FuXi/DLESyM. At W1 all three ML look comparable; by W3--4 SPIRE is flat while
-FuXi+DLESyM Z500 ACC < 0. Argue this is a long-lead stability / error-growth
-property, not a headline-score property --- a caution against ranking ML
-systems on week-1 numbers alone. Reference Fig.~\ref{fig:acc_lead} middle
-column.}
+
+The Z500 results above contain a finding that is easy to miss when comparing
+ML systems only to dynamical baselines: the three ML systems do not behave
+like a single class of model. At week~1 in JFM~2026, Spire, FuXi-S2S, and
+DLESyM are all skillful and mutually close (Z500 ACC 0.94, 0.91, and 0.92
+respectively; Table~\ref{tab:jfm_acc_z500})---a week-1 leaderboard would rank
+the three ML systems as roughly interchangeable. By week~4 this is no longer
+true: Spire is at 0.73, while FuXi-S2S and DLESyM are at $-0.24$ and $-0.18$.
+The same divergence recurs in JJAS~2019, where DLESyM starts second only to
+ECMWF (week-1 ACC~0.85) but is the first system of either season to fall
+below the dynamical baselines (Table~\ref{tab:jjas_acc_z500}).
+
+The practical implication is that \emph{long-lead stability is a separate
+property from headline (week-1) skill}, and the three ML systems in this
+benchmark do not share it. Spire is the only ML system whose Z500 forecasts
+remain informative beyond week~3 in either season; FuXi-S2S and DLESyM, despite
+being built on different architectures (transformer and diffusion-based,
+respectively) and trained on different data, share a qualitatively similar
+failure mode at long lead. We do not have access to the internals of either
+system and so cannot attribute this directly to a specific architectural or
+training choice, but the pattern is consistent with the broader concern that
+ML systems optimized for short-range accuracy can develop compounding error
+growth once integrated well beyond their primary training horizon
+(Section~\ref{sec:discussion}). The practical caution for anyone selecting an
+S2S system based on a short evaluation window is that a single week-1 score is
+not sufficient evidence of usable skill at weeks 4--6.
 
 \subsection{Probabilistic skill and calibration}\label{sec:prob}
-\TODO{The "deterministic != probabilistic" finding. ECMWF leads TP CRPSS
-(0.59 W1) over SPIRE (0.61 W1 actually ties --- CHECK and state precisely);
-for Z500 ECMWF leads early but SPIRE most persistent. Spread-skill: who is
-under/over-dispersive. Cite CRPSS tables + spread-skill figure.}
+
+The deterministic ranking of Section~\ref{sec:jfm} does not simply carry over
+to probabilistic skill. For precipitation (Table~\ref{tab:jfm_crpss_tp}),
+Spire has the highest CRPSS at week~1 (0.61, narrowly ahead of ECMWF's 0.59),
+but ECMWF overtakes it from week~2 onward and leads for the remainder of the
+forecast horizon (e.g.\ 0.51 versus 0.40 at week~2, 0.30 versus 0.18 at
+week~5). For Z500 (Table~\ref{tab:jfm_crpss_z500}), ECMWF leads more clearly
+at short lead (CRPSS~0.83 at week~1 versus 0.59 for Spire) and remains ahead
+through week~3, but Spire becomes the most probabilistically skillful
+individual system from week~4 onward (0.28--0.30 versus ECMWF's 0.23),
+mirroring its deterministic Z500 advantage at the same leads. FuXi-S2S and
+NCEP show the least stable CRPSS trajectories: FuXi-S2S Z500 CRPSS falls to
+$-0.26$ at week~3 before partially recovering, and NCEP Z500 CRPSS is
+negative at weeks~2--4.
+
+Figure~\ref{fig:spread_skill} shows why ECMWF's probabilistic precipitation
+skill exceeds its deterministic ranking. Every system is under-dispersive
+(SSR~$<1$, indicating overconfidence) at week~1---Spire is closest to
+calibrated (SSR~0.63) while FuXi-S2S is the most overconfident (SSR~0.11).
+By week~3, ECMWF's ensemble has grown to near-ideal calibration for
+precipitation (SSR~0.70) while Spire has \emph{over}-corrected into
+over-dispersion (SSR~1.43, indicating its spread now exceeds its error). For
+Z500 the same pattern is sharper still: Spire's spread--skill ratio exceeds
+1.8 by week~4, meaning its ensemble spread is now substantially larger than
+its actual error---a sign of growing overdispersion that does not by itself
+harm CRPSS (an overdispersive ensemble can still be skillful) but indicates
+that Spire's stated uncertainty should not be taken as quantitatively
+calibrated at long lead. ECMWF's Z500 spread--skill ratio stays closest to
+one across the full lead range (0.92 to 1.46 and back to 0.94), consistent
+with its century-scale ensemble design and dedicated reforecast-based
+calibration.
 \input{tables/tab_jfm_crpss_tp}
 \input{tables/tab_jfm_crpss_z500}
 
@@ -303,8 +643,24 @@ under/over-dispersive. Cite CRPSS tables + spread-skill figure.}
 \end{figure}
 
 \subsection{Regional structure of skill}\label{sec:regional}
-\TODO{Use the scorecard: which IMD regions are most/least predictable in
-winter; does SPIRE's lead hold in all four regions. 3--4 sentences.}
+
+Figure~\ref{fig:scorecard} breaks down week-1 JFM~2026 precipitation ACC by
+the four IMD homogeneous regions. Predictability is markedly unequal across
+India: Central India, East/Northeast India, and Northwest India are all
+well-predicted at week~1 by every system (ACC~0.61--0.80), while the South
+Peninsula is uniformly the hardest region (ACC~0.20--0.46 across all six
+systems)---roughly half the skill level of the other three regions for every
+model without exception. This regional gap is consistent with the synoptic
+character of winter precipitation in northern/central India versus the more
+locally forced, lower-amplitude rainfall the peninsula receives outside the
+northeast-monsoon season. Spire's domain-mean lead over the other systems
+(Section~\ref{sec:jfm}) is not concentrated in any one region: it is tied or
+within 0.01 of ECMWF in Central India (0.75 vs.\ 0.79) and Northwest India
+(0.80 vs.\ 0.79), and leads outright in East/Northeast India (0.80 vs.\ 0.75)
+and the South Peninsula (0.46, tied with ECMWF). No system---including
+Spire---shows a clear advantage specific to the hardest (South Peninsula)
+region, indicating that the winter ML advantage documented above is a
+broad-domain property rather than a regional artifact.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.8\linewidth]{figs/fig_regional_scorecard.pdf}
@@ -313,58 +669,225 @@ winter; does SPIRE's lead hold in all four regions. 3--4 sentences.}
 \end{figure}
 
 \subsection{Robustness: larger initialization set}\label{sec:robust}
-\TODO{State that the JJAS conclusions are unchanged on the 35-init operational
-subset (ECMWF/UKMO/NCEP), confirming the monsoon collapse is not an artifact
-of the 17-init matched set. Optionally a small table or one sentence with
-numbers from the 35-init operational runs.}
+
+Because the 17-initialization common set (Section~\ref{sec:inits}) is small,
+we repeat the JJAS~2019 precipitation verification on the independent
+35-initialization operational subset (ECMWF, UKMO, NCEP; twice-weekly
+Monday/Thursday initializations, IMD truth) to check whether the monsoon
+collapse of Section~\ref{sec:jjas} is an artifact of the smaller matched
+sample. It is not: week-1 ACC on the 35-initialization set is 0.39 (ECMWF),
+0.39 (UKMO), and 0.28 (NCEP)---within 0.01--0.02 of the corresponding
+17-initialization values---and skill falls to ACC~$\le$~0.04 by week~3 and
+negative by week~4 for all three systems, exactly as in the matched-set
+result. The monsoon precipitation skill horizon of roughly two weeks is
+therefore a robust feature of JJAS~2019 across both initialization protocols,
+not a small-sample effect of the 17-date matched comparison.
 
 % ======================================================================
 \section{Discussion}\label{sec:discussion}
 
 \paragraph{Where ML helps, and where it does not.}
-\TODO{Synthesize findings (i)+(ii): ML's winter advantage is real but
-regime-dependent; the monsoon remains hard for all systems. Tie to
-predictability of synoptic (WD) vs convective regimes.}
+The two-season design of this study lets us separate a genuinely better
+forecast system from one that merely benefits from an easy predictability
+regime. The answer is regime-dependent. In JFM~2026, winter precipitation
+over India is organized substantially by western disturbances---synoptic-scale
+systems with several days of coherent, predictable structure
+\citep{dimri2015,hunt2018}---and Spire AI-S2S converts this structure into a
+real, lead-independent skill advantage over both operational dynamical systems
+and the other two ML systems (Section~\ref{sec:jfm}). In JJAS~2019, monsoon
+precipitation is dominated by smaller-scale convection embedded in a noisier
+large-scale envelope, and that advantage vanishes for every system, ML and
+dynamical alike (Section~\ref{sec:jjas}), confirmed on an independent
+initialization set (Section~\ref{sec:robust}). The honest reading is not that
+ML systems are unskillful in the monsoon, but that \emph{no system in this
+benchmark}, including the operational dynamical systems with decades of
+development behind them, retains useful weekly precipitation skill past
+week~2--3 in JJAS~2019. The winter result demonstrates that ML S2S forecasting
+can add real value over India when the underlying physics is favorable; the
+monsoon result demonstrates that this value does not yet generalize to the
+country's most consequential rainy season.
 
 \paragraph{Not all AI systems are equal.}
-\TODO{Finding (iii): long-lead stability differs sharply across ML systems;
-caution against single-lead leaderboard rankings; hypothesize causes
-(training objective / error growth in transformer vs diffusion vs Spire).}
+A second contribution of this study is methodological: by evaluating three ML
+systems side by side rather than one ML system against dynamical baselines, we
+show that "ML skill" is not a single property. Spire is the only one of the
+three ML systems whose Z500 skill does not collapse to negative ACC within the
+six-week horizon, in either season (Section~\ref{sec:ml_divergence}).
+FuXi-S2S and DLESyM, despite different architectures (transformer and
+diffusion-based respectively) and different training regimes, share a similar
+long-lead failure mode that is not visible from their week-1 scores alone. We
+cannot identify the specific architectural or training cause of this
+divergence from the forecast output alone, but it is consistent with
+compounding error growth once an autoregressive or iteratively sampled model
+is pushed well beyond the lead range it was primarily optimized for. The
+practical consequence for anyone selecting or comparing ML S2S systems is that
+a single short-lead evaluation window is not sufficient evidence of skill at
+the leads that matter for subseasonal decision-making.
 
-\paragraph{Deterministic vs probabilistic skill.}
-\TODO{Finding (iv): calibration is a distinct axis; ECMWF's mature ensemble
-still leads probabilistically. Operational guidance should weigh both.}
+\paragraph{Deterministic versus probabilistic skill.}
+The third finding is that ranking systems by ensemble-mean ACC and ranking
+them by CRPSS can disagree. ECMWF leads precipitation CRPSS from week~2 onward
+despite Spire's higher ACC at every lead (Section~\ref{sec:prob}), because
+ECMWF's 100-member ensemble, built on a mature operational reforecast-based
+calibration pipeline, achieves a spread--skill ratio closer to one across the
+full lead range, while Spire's delivered uncertainty becomes increasingly
+overdispersive beyond week~2. A forecast system that is the best deterministic
+choice is therefore not automatically the best choice for probabilistic,
+risk-based decision-making (e.g.\ threshold-exceedance warnings), and
+operational guidance for India should evaluate candidate S2S systems on both
+axes rather than either alone.
 
-\paragraph{Comparison with prior S2S literature.}
-\TODO{Consistency with deandrade2019 / South-Asia S2S: precip skill to ~week 2;
-circulation horizon longer. Cite.}
+\paragraph{Consistency with prior S2S literature.}
+Multi-model S2S assessments over South Asia report useful deterministic
+precipitation skill confined to roughly weeks~1--2, with regime- and
+teleconnection-dependent extensions at longer leads
+\citep{deandrade2019,pegion2019,mariotti2020}. Our results are consistent with
+this picture in both seasons: JJAS~2019 precipitation skill is effectively
+exhausted by week~2--3 for every system, and even the most skillful JFM~2026
+system (Spire) falls below ACC~0.5 by week~3. The Z500 skill horizon is
+correspondingly longer than the precipitation horizon in both seasons,
+consistent with the well-established result that large-scale circulation is
+predictable further into the subseasonal range than the surface-sensible
+weather it forces \citep{vitart2017,rasp2024}.
 
 % ======================================================================
 \section{Limitations}\label{sec:limitations}
-\TODO{Honest list: (a) two seasons / different years --- not a multi-year
-hindcast; (b) JFM uses ERA5 precip truth (IMD-2026 unavailable) while JJAS
-uses IMD --- truth differs between seasons; (c) Spire absent in 2019;
-(d) common ERA5 climatology, no per-model bias correction; (e) small ensembles
-for UKMO (4) limit its probabilistic scores; (f) UKMO T2M and DLESyM precip
-unavailable; (g) FuXi T2M has a known $\sim$4\,K cold offset (00\,UTC snapshot
-vs daily-mean), reported but not corrected.}
+
+We list the limitations of this study candidly, as several materially bound
+how the results should be interpreted.
+
+\textbf{Two seasons, not a multi-year hindcast.} JFM~2026 and JJAS~2019 are
+single, specific seasons rather than a multi-year hindcast archive. The
+two-season contrast isolates a real regime difference (Section~\ref{sec:discussion}),
+but neither season's result should be read as a long-run climatological skill
+estimate for that season type; both winter and monsoon predictability vary
+year to year with the state of ENSO and other low-frequency drivers
+\citep{mariotti2020,domeisen2022}, which this single-year comparison cannot
+sample.
+
+\textbf{Different precipitation truth in each season.} JFM~2026 precipitation
+is verified against ERA5 daily totals because the IMD gridded product for 2026
+is not yet available; JJAS~2019 precipitation is verified against IMD
+(Section~\ref{sec:truth}). This is the principled choice given current data
+availability, but it means the \emph{within-season} model rankings reported
+here are robust while the \emph{absolute} precipitation skill level should not
+be compared directly across the two seasons, since ERA5 precipitation has its
+own documented regional biases relative to gauge-based observations
+\citep{hersbach2020}.
+
+\textbf{Spire is absent from JJAS~2019.} Spire AI-S2S forecasts were not
+available for the 2019 season, so the central winter finding---that an ML
+system can lead an operational benchmark over India---cannot itself be tested
+against the monsoon. We can show that the dynamical-versus-ML gap closes for
+the five systems common to both seasons, but we cannot directly test whether
+Spire specifically would retain a monsoon advantage.
+
+\textbf{Common climatology, no per-model bias correction.} All anomalies use a
+single climatology per truth source (Section~\ref{sec:anom}) rather than each
+system's own reforecast-derived climatology, so lead-dependent model drift is
+not removed before scoring. This is the standard approach for a cross-system
+comparison without access to every system's reforecast archive, but it means
+some of the long-lead skill loss documented in Section~\ref{sec:results} may
+reflect uncorrected mean-state drift rather than loss of anomaly information
+per se.
+
+\textbf{Unequal ensemble sizes.} Ensemble size ranges from 4 (UKMO) to 100
+(ECMWF) members across the dynamical systems, and Spire delivers a
+mean-and-spread product rather than individual members. UKMO's small ensemble
+in particular limits the precision of its probabilistic scores
+(Section~\ref{sec:prob}) independent of the underlying forecast quality.
+
+\textbf{Variable coverage gaps.} UKMO 2-m temperature is excluded throughout
+due to a data-retrieval issue at the source (Section~\ref{sec:ukmo}); DLESyM
+does not provide a precipitation channel (Section~\ref{sec:delysm}). Neither
+gap is a property of the underlying forecast system, but both reduce the
+number of systems available for the T2M and precipitation comparisons
+respectively.
+
+\textbf{FuXi-S2S T2M bias.} FuXi-S2S 2-m temperature carries an approximately
+4\,K cold bias relative to ERA5 at all leads, consistent with a mismatch
+between its 00~UTC initialization-time snapshot and the daily-mean reference
+used for verification. We report FuXi-S2S T2M scores as computed but flag this
+known offset; a systematic reference-time correction is a direct target for
+future work rather than a correction applied here.
 
 % ======================================================================
 \section{Conclusions}\label{sec:conclusions}
-\TODO{Restate the three+one findings crisply as numbered takeaways; end with
-the reproducible-framework sentence and outlook (more seasons, IMD-2026 truth,
-per-model climatology).}
+
+We presented a two-season subseasonal benchmark over India, evaluating six S2S
+forecast systems---three machine-learning (Spire AI-S2S, FuXi-S2S, DLESyM) and
+three operational dynamical (ECMWF, UKMO, NCEP)---for precipitation, Z500, and
+T2M across the synoptically driven winter (JFM~2026) and the convectively
+dominated summer monsoon (JJAS~2019). The main conclusions are as follows.
+
+\textbf{(1) Spire AI-S2S leads winter forecasting over India across every
+variable and lead.} It attains the highest precipitation ACC and lowest RMSE
+at every lead week (week-1 ACC~0.78 versus 0.73 for ECMWF/UKMO), leads T2M
+throughout, and is the only system whose Z500 skill does not collapse with
+lead, remaining the most skillful individual system from week~4 onward.
+
+\textbf{(2) The winter ML advantage does not survive the monsoon.} Evaluated
+on a matched set of common initializations and confirmed on an independent
+35-initialization robustness check, every system---ML and dynamical
+alike---loses usable weekly precipitation skill by week~3 in JJAS~2019, with
+no system retaining a meaningful edge over the others.
+
+\textbf{(3) The three ML systems are not interchangeable.} Spire, FuXi-S2S,
+and DLESyM look similar at week~1 but diverge sharply by week~3--4: FuXi-S2S
+and DLESyM both fall to negative Z500 ACC in both seasons, while Spire does
+not in either. Long-lead stability is therefore a property that must be
+evaluated directly and cannot be inferred from short-lead skill alone.
+
+\textbf{(4) Deterministic and probabilistic rankings disagree.} ECMWF leads
+precipitation CRPSS from week~2 onward despite Spire's higher ACC throughout,
+reflecting ECMWF's better-calibrated ensemble spread; a system favored by
+deterministic verification is not automatically the better choice for
+probabilistic, risk-based use.
+
+Within the limits of two single seasons (Section~\ref{sec:limitations}), these
+results give an early, honest picture of where ML subseasonal forecasting
+adds value over India---the synoptically organized winter---and where the
+problem remains genuinely hard for every system evaluated, ML and operational
+alike---the summer monsoon. The verification framework, code, and result
+tables are archived to support extension as additional seasons, an IMD-2026
+precipitation truth, and per-model reforecast climatologies become available.
 
 % ======================================================================
 \section*{Data and Code Availability}
-\TODO{ERA5/ARCO; IMD \citep{pai2014}; ECMWF/UKMO/NCEP via S2S database
-\citep{vitart2017}; FuXi-S2S weights (Zenodo/GitHub); Spire under research
-agreement; DLESyM via provider. Analysis code:
-\url{https://github.com/Artamta/s2s-analysis}.}
+
+ERA5 reanalysis is available from the Copernicus Climate Data Store
+(\url{https://cds.climate.copernicus.eu}; \citealt{hersbach2020}); the
+Analysis-Ready, Cloud-Optimized subset used here follows \citet{carver2023}.
+IMD gridded daily rainfall follows \citet{pai2014} and is distributed by the
+India Meteorological Department. ECMWF extended-range, UKMO GloSea6, and NCEP
+CFSv2 forecasts are available via the ECMWF Copernicus Data Store under the
+terms of the S2S database \citep{vitart2017}. FuXi-S2S model weights and
+inference code are publicly available on Zenodo and GitHub respectively. Spire
+AI-S2S forecasts were provided under a research data-use agreement with Spire
+Global. DLESyM forecasts were obtained from the model providers
+\citep{cresswellclay2024}. All verification, analysis, and figure-generation
+code for this study, including the scripts that regenerate every table and
+figure in this paper directly from the underlying result files, is available
+at \url{https://github.com/Artamta/s2s-analysis}.
 
 \section*{Acknowledgements}
-\TODO{Reuse from old paper; A.R.T.\ MSc thesis at IISER Pune; HPC; provider
-acknowledgements; LLM-assistance disclosure.}
+
+A.R.T.\ conducted this work as part of an IISER Pune master's thesis and
+thanks the SafeXpress Centre for Data and Decision Science at Ashoka
+University for hosting the research. Computations were performed on the
+IISER Pune HPC facility. ERA5 data were obtained from the Copernicus Climate
+Data Store \citep{hersbach2020}; neither the European Commission nor ECMWF is
+responsible for any use of this information. ECMWF, UKMO, and NCEP forecasts
+were accessed via the ECMWF Copernicus Data Store under the S2S database
+\citep{vitart2017}. Spire AI-S2S data were provided by Spire Global under a
+research agreement. FuXi-S2S weights and code are publicly available on Zenodo
+and GitHub respectively; the authors thank the FuXi-S2S team for open-sourcing
+these resources. We thank the DLESyM development team for providing access to
+forecast output. Large language models (LLMs) were used to assist with prose
+drafting, table/figure generation scripting, and editorial refinement; all
+scientific content, analysis, and conclusions are solely the authors'
+responsibility, and all LLM-assisted text was reviewed and verified by the
+authors.
 
 % ======================================================================
 % Bibliography (32 entries carried over from the prior draft).

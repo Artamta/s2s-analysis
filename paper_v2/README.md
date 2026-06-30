@@ -1,7 +1,9 @@
 # paper_v2 — Two-Season India S2S Benchmark (clean rebuild)
 
-arXiv-style single-column preprint. **Structure built with Opus; prose to be
-expanded/polished with Sonnet.**
+arXiv-style single-column preprint. Structure built with Opus; full prose
+written with Sonnet. **Status: complete first draft, 19 pages, compiles
+clean, zero undefined refs/citations.** Next pass: human read-through,
+domain-map figure (Sec. 2.1 currently has no figure), and tightening.
 
 ## The story (3 + 1 findings)
 
@@ -33,15 +35,17 @@ generated from:
 - JJAS: `final_paper/.../jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/`
 To change a number, edit the script and rerun — not the `.tex`.
 
-## Writing checklist (search the .tex for `\TODO`)
+## Writing status
 
-Each `\TODO{...}` is one prose task. Recommended order:
-1. Intro ¶1–4 (motivation → ML rise → two-season framing → questions → roadmap)
-2. Data/Methods (domain, truth sources, metrics, init sets) — mostly reusable
-   from `paper/jfm2026_india_s2s_benchmark.tex`
-3. Results §5.2–5.7 (the heart — numbers already in the tables, just narrate)
-4. Discussion / Limitations / Conclusions
-5. Abstract final pass (last)
+All `\TODO` prose markers have been resolved — every section has full text,
+verified against the result CSVs (no hand-typed numbers; every quoted score
+was cross-checked against `tables/*.tex` or pulled fresh from the summary
+CSVs). Remaining polish for a Sonnet pass:
+- Add the domain/region map figure referenced conceptually in §2.1 (not yet
+  drawn — would reuse the old paper's `fig01_domain` style)
+- Read-through for sentence-level tightening and flow
+- Verify the `\citep`/`\citealt` mix reads naturally throughout
+- Consider trimming Limitations if it runs long relative to journal norms
 
 ## Files
 

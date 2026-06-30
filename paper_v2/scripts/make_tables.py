@@ -226,6 +226,62 @@ def make_regional_table(season: str, variable: str, week: int, value: str,
     """)
 
 
+def make_regional_multiweek_table(season: str, variable: str, weeks: list[int],
+                                  value: str, caption: str, label: str,
+                                  higher_is_better: bool = True, nd: int = 2,
+                                  exclude_mme_from_bold: bool = True) -> str:
+    """Model x (region, week) table: one \\multirow region block per region,
+    one column per requested week. Consolidates what would otherwise be N
+    separate single-week regional tables into one."""
+    path = DET[season] if value in ("acc", "rmse", "bias", "mae") else PROB[season]
+    df = pd.read_csv(path)
+    df = df[(df["variable"] == variable) & (df["week"].isin(weeks))
+            & (df["region"].isin(REGION_ORDER))]
+    models = [m for m in MODEL_ORDER if m in df["model"].unique()]
+
+    rows = []
+    for i, region in enumerate(REGION_ORDER):
+        sub = df[df["region"] == region]
+        piv = sub.pivot_table(index="model", columns="week", values=value, aggfunc="mean")
+        piv = piv.reindex(models)
+        cells_per_model = {m: [] for m in models}
+        for w in weeks:
+            if w not in piv.columns:
+                for m in models:
+                    cells_per_model[m].append("--")
+                continue
+            col = piv[w]
+            bold_index = [m for m in models if not (exclude_mme_from_bold and m == "mme")]
+            fb = _bold_best(col.reindex(bold_index), higher_is_better, nd)
+            for m in models:
+                v = col.get(m, float("nan"))
+                cells_per_model[m].append(fb.get(m, _fmt(v, nd)))
+        for j, m in enumerate(models):
+            rowprefix = f"\\multirow{{{len(models)}}}{{*}}{{{REGION_LABEL[region]}}}" if j == 0 else ""
+            cells = " & ".join(cells_per_model[m])
+            rows.append(f"{rowprefix} & {MODEL_LABEL[m]:<14} & {cells} \\\\")
+        if i < len(REGION_ORDER) - 1:
+            rows.append("\\midrule")
+    body = "\n".join(rows)
+    header = " & ".join([f"W{w}" for w in weeks])
+    ncol = len(weeks)
+    colspec = "ll" + "c" * ncol
+
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[t]\\centering
+    \\small
+    \\setlength{{\\tabcolsep}}{{4pt}}
+    \\caption{{{caption}}}
+    \\label{{{label}}}
+    \\begin{{tabular}}{{{colspec}}}\\toprule
+    Region & Model & {header} \\\\
+    \\midrule
+    {body}
+    \\bottomrule
+    \\end{{tabular}}\\end{{table}}
+    """)
+
+
 ALLREGIONS = ["All India", "northwest_india", "central_india",
               "south_peninsula", "east_northeast_india"]
 ALLREGION_LABEL = {
@@ -355,22 +411,17 @@ def main():
         "Best individual-model score in each column is bold.",
         "tab:reg_jfm_tp_w1")))
 
-    artifacts.append(("tab_jfm_regional_z500_w1.tex", make_regional_table(
-        "jfm", "z500", 1, "acc",
-        "JFM~2026 week-1 Z500 ACC by IMD homogeneous region.",
-        "tab:reg_jfm_z500_w1")))
+    # NOTE: a JFM week-1 Z500 regional table is intentionally not generated.
+    # That data is summarized in prose only (Sec 5.6) and folded into the
+    # weeks-1-6-mean stacked table (tab_jfm_reg_acc_full) to avoid a
+    # redundant near-duplicate table.
 
-    artifacts.append(("tab_jjas_regional_tp_w1.tex", make_regional_table(
-        "jjas", "tp", 1, "acc",
-        "JJAS~2019 week-1 precipitation ACC by IMD homogeneous region "
-        "(IMD truth, 17 common initializations).",
-        "tab:reg_jjas_tp_w1")))
-
-    artifacts.append(("tab_jjas_regional_tp_w3.tex", make_regional_table(
-        "jjas", "tp", 3, "acc",
-        "JJAS~2019 week-3 precipitation ACC by IMD homogeneous region, "
-        "showing the monsoon skill collapse is uniform across regions.",
-        "tab:reg_jjas_tp_w3")))
+    artifacts.append(("tab_jjas_regional_tp_w1w3.tex", make_regional_multiweek_table(
+        "jjas", "tp", [1, 3], "acc",
+        "JJAS~2019 precipitation ACC by IMD homogeneous region at week~1 "
+        "and week~3 (IMD truth, 17 common initializations), showing the "
+        "monsoon skill collapse is uniform across regions by week~3.",
+        "tab:reg_jjas_tp_w1w3")))
 
     # --- Old-paper-style stacked regional scorecards (weeks 1-6 mean) ---
     var_label = {"tp": "Precipitation", "z500": "Z500"}

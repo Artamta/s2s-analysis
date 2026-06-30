@@ -80,6 +80,50 @@ def _bold_best(col: pd.Series, higher_is_better: bool = True, nd: int = 2):
     return out
 
 
+def make_bias_table(season: str, variable: str, caption: str, label: str,
+                    nd: int = 2) -> str:
+    """Model x week bias table, bold = closest to zero per column."""
+    df = _load(DET[season])
+    piv = _pivot(df, variable, "bias")
+    if piv.empty:
+        return f"% no data for {season} {variable} bias\n"
+
+    bold_index = [m for m in piv.index if m != "mme"]
+    formatted = {}
+    for w in piv.columns:
+        sub = piv.loc[bold_index, w]
+        best = sub.abs().idxmin() if not sub.empty else None
+        for m in piv.index:
+            v = piv.loc[m, w]
+            s = f"{v:+.{nd}f}" if pd.notna(v) else "--"
+            formatted[(m, w)] = f"\\textbf{{{s}}}" if m == best else s
+
+    header = " & ".join([f"W{w}" for w in piv.columns])
+    rows = []
+    for m in piv.index:
+        cells = " & ".join(formatted[(m, w)] for w in piv.columns)
+        rows.append(f"    {MODEL_LABEL[m]:<14} & {cells} \\\\")
+    body = "\n".join(rows)
+    ncol = len(piv.columns)
+    colspec = "l" + "c" * ncol
+
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[t]
+      \\centering
+      \\caption{{{caption}}}
+      \\label{{{label}}}
+      \\small
+      \\begin{{tabular}}{{{colspec}}}
+        \\toprule
+        Model & {header} \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+    \\end{{table}}
+    """)
+
+
 def make_skill_table(season: str, variable: str, value: str, caption: str,
                      label: str, higher_is_better: bool = True, nd: int = 2,
                      exclude_mme_from_bold: bool = True) -> str:
@@ -182,6 +226,76 @@ def make_regional_table(season: str, variable: str, week: int, value: str,
     """)
 
 
+ALLREGIONS = ["All India", "northwest_india", "central_india",
+              "south_peninsula", "east_northeast_india"]
+ALLREGION_LABEL = {
+    "All India": "All India", "northwest_india": "Northwest",
+    "central_india": "Central", "south_peninsula": "S. Peninsula",
+    "east_northeast_india": "East/NE",
+}
+
+
+def make_stacked_regional_table(season: str, value: str, variables: list[str],
+                                var_label: dict, caption: str, label: str,
+                                models_subset: list[str] | None = None,
+                                higher_is_better: bool = True, nd: int = 2,
+                                bold_closest_zero: bool = False) -> str:
+    """Old-paper style table*: \\multirow variable blocks x (All India + 4
+    regions) rows, one column per model, weeks-1-6 mean. Matches the format
+    in paper/jfm2026_india_s2s_benchmark.tex tab:reg_pcc / tab:reg_bias."""
+    path = DET[season] if value in ("acc", "rmse", "bias", "mae") else PROB[season]
+    df = pd.read_csv(path)
+    df = df[df["region"].isin(ALLREGIONS)]
+    models = models_subset or [m for m in MODEL_ORDER if m in df["model"].unique()
+                                and m != "mme"] + ["mme"]
+    models = [m for m in models if m in df["model"].unique()]
+
+    blocks = []
+    for var in variables:
+        sub = df[df["variable"] == var]
+        if sub.empty:
+            continue
+        g = sub.groupby(["model", "region"])[value].mean().unstack("region")
+        present = [r for r in ALLREGIONS if r in g.columns]
+        rows = []
+        for i, region in enumerate(present):
+            col = g[region].reindex(models)
+            if bold_closest_zero:
+                best_idx = col.abs().idxmin()
+            else:
+                best_idx = col.idxmax() if higher_is_better else col.idxmin()
+            cells = []
+            for m in models:
+                v = col.get(m, float("nan"))
+                if pd.isna(v):
+                    cells.append("--")
+                else:
+                    s = f"{v:+.{nd}f}" if bold_closest_zero else f"{v:.{nd}f}"
+                    cells.append(f"\\textbf{{{s}}}" if m == best_idx else s)
+            prefix = f"\\multirow{{{len(present)}}}{{*}}{{\\emph{{{var_label[var]}}}}}" if i == 0 else ""
+            rows.append(f"{prefix} & {ALLREGION_LABEL[region]:<12} & " + " & ".join(cells) + " \\\\")
+        blocks.append("\n".join(rows))
+
+    header_models = " & ".join(MODEL_LABEL[m] for m in models)
+    body = "\n\\midrule\n".join(blocks)
+    ncol = len(models)
+    colspec = "l" + "c" * ncol
+
+    return textwrap.dedent(f"""\
+    \\begin{{table*}}[t]\\centering
+    \\small
+    \\setlength{{\\tabcolsep}}{{5pt}}
+    \\caption{{{caption}}}
+    \\label{{{label}}}
+    \\begin{{tabular}}{{l{colspec}}}\\toprule
+    Region & & {header_models} \\\\
+    \\midrule
+    {body}
+    \\bottomrule
+    \\end{{tabular}}\\end{{table*}}
+    """)
+
+
 def main():
     artifacts = []
 
@@ -257,6 +371,44 @@ def main():
         "JJAS~2019 week-3 precipitation ACC by IMD homogeneous region, "
         "showing the monsoon skill collapse is uniform across regions.",
         "tab:reg_jjas_tp_w3")))
+
+    # --- Old-paper-style stacked regional scorecards (weeks 1-6 mean) ---
+    var_label = {"tp": "Precipitation", "z500": "Z500"}
+    jfm_models = ["spire", "fuxi", "delysm", "ecmwf", "ukmo", "ncep", "mme"]
+
+    artifacts.append(("tab_jfm_reg_acc_full.tex", make_stacked_regional_table(
+        "jfm", "acc", ["tp", "z500"], var_label,
+        "JFM~2026 region-wise ACC by IMD homogeneous region, weeks~1--6 mean "
+        "(90-initialization average). Best system per region in bold.",
+        "tab:reg_pcc", models_subset=jfm_models)))
+
+    artifacts.append(("tab_jfm_reg_rmse_full.tex", make_stacked_regional_table(
+        "jfm", "rmse", ["tp", "z500"], var_label,
+        "JFM~2026 region-wise RMSE by IMD homogeneous region, weeks~1--6 mean. "
+        "Precipitation in mm\\,day$^{-1}$; Z500 in m. Best (lowest) system per "
+        "region in bold.",
+        "tab:reg_rmse", models_subset=jfm_models, higher_is_better=False)))
+
+    artifacts.append(("tab_jfm_reg_bias_full.tex", make_stacked_regional_table(
+        "jfm", "bias", ["tp", "z500"], var_label,
+        "JFM~2026 region-wise mean bias (forecast minus ERA5) by IMD "
+        "homogeneous region, weeks~1--6 mean. Precipitation bias in "
+        "mm\\,day$^{-1}$; Z500 bias in m. Value closest to zero per region "
+        "in bold.",
+        "tab:reg_bias", models_subset=jfm_models, bold_closest_zero=True)))
+
+    # --- Bias-by-week tables (All India) ---
+    artifacts.append(("tab_jfm_bias_tp.tex", make_bias_table(
+        "jfm", "tp",
+        "JFM~2026 all-India precipitation bias (mm\\,day$^{-1}$, forecast "
+        "minus ERA5) by lead week. Bold = closest to zero.",
+        "tab:bias_tp")))
+
+    artifacts.append(("tab_jfm_bias_z500.tex", make_bias_table(
+        "jfm", "z500",
+        "JFM~2026 all-India Z500 bias (m, forecast minus ERA5) by lead week. "
+        "Bold = closest to zero.",
+        "tab:bias_z500")))
 
     for fname, tex in artifacts:
         with open(os.path.join(OUT, fname), "w") as fh:

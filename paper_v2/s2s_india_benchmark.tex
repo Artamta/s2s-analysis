@@ -642,6 +642,36 @@ calibration.
   \label{fig:spread_skill}
 \end{figure}
 
+\subsection{Bias analysis}\label{sec:bias}
+
+ACC and CRPSS measure pattern agreement and probabilistic skill but not the
+sign or magnitude of systematic error, which matters operationally (e.g.\ a
+forecast that is reliably too wet or too dry is correctable even if its
+pattern skill is otherwise good). Table~\ref{tab:bias_tp} shows that Spire's
+precipitation bias is the smallest in magnitude at most leads and changes sign
+across the lead range ($-0.04$ at week~1, peaking at $+0.12$ at week~3, back
+to $-0.02$ by week~6), rather than drifting monotonically in one direction.
+ECMWF and FuXi-S2S both develop a growing \emph{dry} bias with lead
+($-0.15\to-0.45$ and $-0.14\to-0.51$\,mm\,day$^{-1}$ respectively, week~1 to
+week~6), consistent with the general tendency of MSE-trained forecast systems
+to smooth toward the climatological mean at long lead. UKMO carries a small,
+fairly stable \emph{wet} bias throughout ($+0.05$ to $+0.22$).
+
+For Z500 (Table~\ref{tab:bias_z500}), the systems separate into two clear
+groups. Spire and DLESyM start with a sizeable \emph{positive} height bias at
+week~1 ($+11.4$ and $+8.5$\,m) that decays toward zero with lead (Spire to
+$+1.9$\,m, DLESyM to $-14.1$\,m by week~6, the latter changing sign en route).
+ECMWF, UKMO, and especially NCEP and FuXi-S2S instead develop an increasingly
+\emph{negative} height bias with lead (NCEP reaches $-32$\,m by week~4 and
+stays there; FuXi-S2S reaches $-27.6$\,m at week~4 before partially
+recovering). Spire is the system closest to zero bias at every lead from
+week~3 onward, which is consistent with, but methodologically distinct from,
+its ACC advantage at the same leads (Section~\ref{sec:jfm})---low bias does
+not by itself imply high pattern correlation, but the two are mutually
+reinforcing evidence here.
+\input{tables/tab_jfm_bias_tp}
+\input{tables/tab_jfm_bias_z500}
+
 \subsection{Regional structure of skill}\label{sec:regional}
 
 Figure~\ref{fig:scorecard} and Table~\ref{tab:reg_jfm_tp_w1} break down
@@ -680,6 +710,32 @@ much narrower spread between regions for Z500 than for precipitation reflects
 the larger spatial decorrelation scale of the 500-hPa height field relative to
 rainfall.
 \input{tables/tab_jfm_regional_z500_w1}
+
+Averaging over the full week~1--6 lead range gives the season-long regional
+picture (Table~\ref{tab:reg_pcc}). For precipitation, Spire leads or ties in
+three of four regions (Northwest~0.43, East/NE~0.55, narrowly tying ECMWF in
+the South Peninsula at 0.38) but is overtaken by NCEP and ECMWF in Central
+India (0.56 versus 0.58 and 0.57); the All-India mean nonetheless favors Spire
+(0.51) because the other systems' Central India strength does not offset their
+weaker performance elsewhere. For Z500, Spire's seasonal-mean advantage is
+broader: it leads in Northwest, Central, and is competitive in East/NE India,
+losing only narrowly to ECMWF in the South Peninsula---consistent with
+Spire's long-lead Z500 stability (Section~\ref{sec:jfm}) showing up
+domain-wide rather than in one region. RMSE (Table~\ref{tab:reg_rmse}) and
+bias (Table~\ref{tab:reg_bias}) tell a complementary story: Spire's lowest
+All-India precipitation RMSE (1.75\,mm\,day$^{-1}$) and near-zero All-India
+bias ($+0.05$) hold up regionally except in East/Northeast India, where every
+ML and dynamical system other than UKMO under-forecasts substantially (Spire
+$-0.88$; FuXi-S2S and ECMWF $-1.64$ to $-1.65$; NCEP $-1.34$), a known
+orographic-smoothing effect at $1.5^{\circ}$ resolution; UKMO is the
+exception, with a small positive bias there ($+0.29$) rather than the
+dry bias every other system shares. Spire's Z500 bias is uniformly positive and modest
+across all four regions ($+1.7$ to $+12.6$\,m), while FuXi-S2S and NCEP carry
+large, region-dependent negative biases (FuXi-S2S reaches $-35.8$\,m in
+Northwest India; NCEP exceeds $-18$\,m in every region).
+\input{tables/tab_jfm_reg_acc_full}
+\input{tables/tab_jfm_reg_rmse_full}
+\input{tables/tab_jfm_reg_bias_full}
 
 The monsoon precipitation collapse of Section~\ref{sec:jjas} is also a
 broad-domain property rather than a regional artifact. At week~1

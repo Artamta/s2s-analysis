@@ -1,0 +1,21 @@
+    \begin{table*}[t]\centering
+    \small
+    \setlength{\tabcolsep}{5pt}
+    \caption{JFM~2026 region-wise mean bias (forecast minus ERA5) by IMD homogeneous region, weeks~1--6 mean. Precipitation bias in mm\,day$^{-1}$; Z500 bias in m. Value closest to zero per region in bold.}
+    \label{tab:reg_bias}
+    \begin{tabular}{llccccccc}\toprule
+    Region & & Spire AI-S2S & FuXi-S2S & DLESyM & ECMWF & UKMO & NCEP & MME \\
+    \midrule
+    \multirow{5}{*}{\emph{Precipitation}} & All India    & \textbf{+0.05} & -0.25 & -- & -0.23 & +0.12 & -0.08 & -0.08 \\
+ & Northwest    & +0.23 & \textbf{+0.02} & -- & +0.04 & -0.02 & +0.37 & +0.13 \\
+ & Central      & +0.25 & +0.05 & -- & -0.03 & +0.17 & \textbf{-0.00} & +0.09 \\
+ & S. Peninsula & +0.13 & -0.14 & -- & +0.05 & +0.12 & \textbf{-0.00} & +0.03 \\
+ & East/NE      & -0.88 & -1.64 & -- & -1.65 & \textbf{+0.29} & -1.34 & -1.04 \\
+\midrule
+\multirow{5}{*}{\emph{Z500}} & All India    & +6.75 & -17.67 & \textbf{-4.30} & -7.06 & -9.36 & -27.85 & -9.91 \\
+ & Northwest    & \textbf{+1.65} & -35.84 & -19.01 & -15.62 & -15.91 & -32.49 & -19.54 \\
+ & Central      & +7.58 & -9.87 & \textbf{+1.71} & -5.46 & -7.27 & -27.14 & -6.74 \\
+ & S. Peninsula & +12.61 & +2.64 & +15.18 & \textbf{+0.87} & -1.88 & -18.11 & +1.89 \\
+ & East/NE      & +8.71 & -21.10 & -10.13 & \textbf{-1.89} & -9.12 & -31.45 & -10.83 \\
+    \bottomrule
+    \end{tabular}\end{table*}

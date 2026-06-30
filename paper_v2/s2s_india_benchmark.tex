@@ -502,8 +502,9 @@ following subsections quantify each of these features in turn.
   \caption{All-India anomaly correlation (ACC) versus lead week for six S2S
   systems. Top row: JFM~2026 (winter); bottom row: JJAS~2019 (monsoon).
   Columns: precipitation, Z500, 2-m temperature. Dotted line ACC$=0.5$; solid
-  line ACC$=0$. DLESyM provides no precipitation; UKMO T2M and Spire (JJAS)
-  are unavailable.}
+  line ACC$=0$. DLESyM provides no precipitation; UKMO and ECMWF T2M are
+  unscoreable (single-step archive files, Section~\ref{sec:limitations});
+  NCEP has no T2M channel in this archive; Spire is unavailable for JJAS.}
   \label{fig:acc_lead}
 \end{figure}
 
@@ -539,12 +540,23 @@ week~4 onward, including the dynamical systems.
 
 \paragraph{T2M.}
 The T2M comparison is restricted to the three systems with a usable T2M
-product (Spire, FuXi-S2S, DLESyM; UKMO T2M is excluded per
-Section~\ref{sec:ukmo}, and ECMWF/NCEP do not deliver a comparable T2M field
-in our archive). Spire again leads at every lead (Table~\ref{tab:jfm_acc_t2m}):
-ACC~0.75 at week~1 versus 0.49 for DLESyM and 0.33 for FuXi-S2S, and it remains
-the only system with ACC~$>0.2$ from week~3 onward. DLESyM's T2M skill follows
-the same long-lead pattern as its Z500 skill, turning negative by week~4.
+product: Spire, FuXi-S2S, and DLESyM. Both excluded systems fail for the same
+underlying reason---a download-time error, not a true data gap. ECMWF's
+\texttt{2t} archive, like UKMO's (Section~\ref{sec:ukmo}), contains only a
+single forecast step per file across the full season (confirmed directly from
+the archived NetCDF files), so 538 of 628 weekly-window scoring attempts fail
+with ``insufficient leads for weekly mean'' and the remaining 90 fail outright;
+no week of ECMWF T2M can be scored. NCEP carries no T2M-equivalent channel in
+this archive at all. Both gaps are therefore data-retrieval artifacts specific
+to this download rather than properties of the underlying ECMWF or NCEP
+systems, and either could in principle be closed by a corrected
+re-download---which we have not pursued here because the present focus is
+precipitation and Z500 (Section~\ref{sec:limitations}). Among the three
+systems that do have usable T2M, Spire leads at every lead
+(Table~\ref{tab:jfm_acc_t2m}): ACC~0.75 at week~1 versus 0.49 for DLESyM and
+0.33 for FuXi-S2S, and it remains the only system with ACC~$>0.2$ from week~3
+onward. DLESyM's T2M skill follows the same long-lead pattern as its Z500
+skill, turning negative by week~4.
 \input{tables/tab_jfm_acc}
 \input{tables/tab_jfm_rmse_tp}
 \input{tables/tab_jfm_acc_z500}
@@ -911,12 +923,18 @@ mean-and-spread product rather than individual members. UKMO's small ensemble
 in particular limits the precision of its probabilistic scores
 (Section~\ref{sec:prob}) independent of the underlying forecast quality.
 
-\textbf{Variable coverage gaps.} UKMO 2-m temperature is excluded throughout
-due to a data-retrieval issue at the source (Section~\ref{sec:ukmo}); DLESyM
-does not provide a precipitation channel (Section~\ref{sec:delysm}). Neither
-gap is a property of the underlying forecast system, but both reduce the
-number of systems available for the T2M and precipitation comparisons
-respectively.
+\textbf{Variable coverage gaps.} T2M is the most affected variable: UKMO and
+ECMWF 2-m temperature are both excluded because their archived files contain
+only a single forecast step per initialization (Sections~\ref{sec:ukmo}
+and~\ref{sec:jfm}), and NCEP carries no T2M-equivalent channel in this
+archive at all, leaving only Spire, FuXi-S2S, and DLESyM with a scoreable T2M
+product. DLESyM does not provide a precipitation channel
+(Section~\ref{sec:delysm}). None of these four gaps is a property of the
+underlying forecast system---the UKMO/ECMWF T2M gap in particular is a
+download-time error that a corrected re-download could close---but all four
+reduce the number of systems available for the T2M and precipitation
+comparisons respectively, and the T2M comparison in particular should be read
+as a three-system rather than six-system result.
 
 \textbf{FuXi-S2S T2M bias.} FuXi-S2S 2-m temperature carries an approximately
 4\,K cold bias relative to ERA5 at all leads, consistent with a mismatch

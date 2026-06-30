@@ -1,0 +1,123 @@
+{
+  "created_at": "2026-06-30T15:16:11",
+  "init_date": "20260623",
+  "valid_start": "2026-06-24",
+  "valid_end": "2026-08-04",
+  "lead_days": 42,
+  "figure_files": [
+    "figures/01_all_india_cumulative_rainfall_fuxi_ecmwf_imd.png",
+    "figures/02_imd_regions_cumulative_rainfall_fuxi_ecmwf_imd.png",
+    "figures/03_spatial_42day_accumulation_india.png",
+    "figures/04_spatial_bias_vs_imd_climatology_india.png"
+  ],
+  "data_files": [
+    "data/20260623_all_india_cumulative_timeseries.csv",
+    "data/20260623_regional_cumulative_timeseries.csv",
+    "data/20260623_summary_final_totals.csv"
+  ],
+  "input_paths": {
+    "fuxi_daily_mm": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2026/tp/comparable_fuxi_op2026_ens50/fuxi_20260623_tp_ens50_lead42_india_1p5deg_daily_mm.nc",
+    "ecmwf_daily_mm": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2026/tp/comparable_fuxi_op2026_ens50/ecmwf_20260623_tp_ens50_lead42_india_1p5deg_daily_mm.nc",
+    "imd_daily_climatology": "/storage/raj.ayush/All_Model_Data/ground_truth/imd_rainfall/climatology/imd_rain_1991_2020_daily_climatology.nc",
+    "imd_region_masks": "/storage/raj.ayush/s2s-forecast-data-prev/era5/daily/imd_region_masks.nc",
+    "spatial_fields_cache": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2026/tp/comparable_fuxi_op2026_ens50/20260623_tp_42day_spatial_fields.nc"
+  },
+  "spatial_all_india_totals_mm": {
+    "IMD climatology": 321.978945962588,
+    "FuXi-S2S": 292.5865173339844,
+    "ECMWF S2S": 383.6069145715316
+  },
+  "bias_map_display_grid_means_mm": {
+    "FuXi minus IMD": -70.77912139892578,
+    "ECMWF minus IMD": 20.24122883247474
+  },
+  "era5": {
+    "included_in_figures": false,
+    "reason": "ERA5 is not included in the finalized figures. A candidate file exists at /storage/raj.ayush/benchmark(jfm)/era5_climatology.nc with tp on dayofyear and units of meters, but its baseline years are not documented in the NetCDF metadata. It can be added later as an optional sensitivity comparison after labeling that caveat clearly.",
+    "checked_files": [
+      {
+        "path": "/storage/raj.ayush/benchmark(jfm)/era5_climatology.nc",
+        "time_span": [
+          null,
+          null
+        ],
+        "variables": [
+          "t2m",
+          "tp",
+          "z500"
+        ]
+      },
+      {
+        "path": "/storage/raj.ayush/s2s-forecast-data-prev/era5/daily/era5_daily_tp.nc",
+        "time_span": [
+          "2025-12-25",
+          "2026-05-10"
+        ],
+        "variables": [
+          "tp"
+        ]
+      },
+      {
+        "path": "/storage/raj.ayush/All_Model_Data/ground_truth/era5_daily/jfm2026/era5_daily_202601.nc",
+        "time_span": [
+          "2026-01-01",
+          "2026-01-31"
+        ],
+        "variables": [
+          "tp",
+          "t2m",
+          "z500"
+        ]
+      },
+      {
+        "path": "/storage/raj.ayush/All_Model_Data/ground_truth/era5_daily/jfm2026/era5_daily_202602.nc",
+        "time_span": [
+          "2026-02-01",
+          "2026-02-28"
+        ],
+        "variables": [
+          "tp",
+          "t2m",
+          "z500"
+        ]
+      },
+      {
+        "path": "/storage/raj.ayush/All_Model_Data/ground_truth/era5_daily/jfm2026/era5_daily_202603.nc",
+        "time_span": [
+          "2026-03-01",
+          "2026-03-31"
+        ],
+        "variables": [
+          "tp",
+          "t2m",
+          "z500"
+        ]
+      },
+      {
+        "path": "/storage/raj.ayush/All_Model_Data/ground_truth/era5_daily/jfm2026/era5_daily_202604.nc",
+        "time_span": [
+          "2026-04-01",
+          "2026-04-30"
+        ],
+        "variables": [
+          "tp",
+          "t2m",
+          "z500"
+        ]
+      },
+      {
+        "path": "/storage/raj.ayush/All_Model_Data/ground_truth/era5_daily/jfm2026/era5_daily_202605.nc",
+        "time_span": [
+          "2026-05-01",
+          "2026-05-31"
+        ],
+        "variables": [
+          "tp",
+          "t2m",
+          "z500"
+        ]
+      }
+    ]
+  },
+  "note": "Cumulative time-series totals use the prepared CSV summaries. Bias maps compare each forecast grid with IMD climatology interpolated to that same grid; exact regional/all-India cumulative totals are in 20260623_summary_final_totals.csv."
+}

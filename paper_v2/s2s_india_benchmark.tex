@@ -166,7 +166,10 @@ lower, is making a stronger claim.
 We exploit this contrast through two complementary, deliberately asymmetric
 case studies rather than through a single homogeneous hindcast archive. The
 JFM~2026 case is a daily initialized real-time winter benchmark that includes
-Spire AI-S2S, making it the main novelty of this study. The JJAS~2019 case is a
+Spire AI-S2S, making it the main novelty of this study. The Spire archive
+available at the time of analysis is treated here as a newly available,
+season-limited product for early benchmarking, not as a mature multi-year
+hindcast archive. The JJAS~2019 case is a
 monsoon benchmark on common operational initialization dates for ECMWF, UKMO,
 NCEP, and FuXi-S2S, with DLESyM used only where its available forecasts support
 a matched sensitivity comparison. Both cases use the same India domain,
@@ -1146,13 +1149,15 @@ own documented regional biases relative to gauge-based observations
 \citep{hersbach2020}.
 
 \textbf{Spire is absent from JJAS~2019.} Spire AI-S2S forecasts were not
-available for the 2019 season, so the central winter finding---that an ML
-system can lead an operational benchmark over India---cannot itself be tested
-against the monsoon. The JJAS~2019 results show that the operational systems
-and FuXi-S2S do not retain useful monsoon rainfall skill beyond weeks~2--3,
-and the smaller DLESyM-inclusive subset shows no hidden long-lead circulation
-advantage for DLESyM, but we cannot directly test whether Spire specifically
-would retain a monsoon advantage.
+available for the 2019 season, reflecting the current limits of the archive
+available to us rather than a deliberate exclusion from the monsoon comparison.
+The central winter finding---that an ML system can lead an operational
+benchmark over India---therefore cannot itself be tested against the monsoon.
+The JJAS~2019 results show that the operational systems and FuXi-S2S do not
+retain useful monsoon rainfall skill beyond weeks~2--3, and the smaller
+DLESyM-inclusive subset shows no hidden long-lead circulation advantage for
+DLESyM, but we cannot directly test whether Spire specifically would retain a
+monsoon advantage.
 
 \textbf{Common climatology, no per-model bias correction.} All anomalies use a
 single climatology per truth source (Section~\ref{sec:anom}) rather than each

@@ -27,17 +27,8 @@ paper_v2/
   arXiv-ready manuscript, generated tables, figures, and build scripts.
 
 final_paper/
-  Current analysis pipeline and result products used to generate paper_v2.
-
-analysis-code/
-  Data-download utilities, exploratory analysis, earlier experiments, and
-  supporting scripts. Some paths point to local or restricted storage.
-
-paper/
-  Legacy JFM-only paper generation workflow retained for provenance.
-
-final_analysis/
-  Earlier analysis framework and diagnostics retained for provenance.
+  Current verification package: reusable analysis code, pipeline scripts,
+  checks, masks, documentation, and SLURM launchers.
 ```
 
 ## Reproduce The Current Preprint
@@ -64,6 +55,14 @@ paper_v2/arxiv_submission.tar.gz
 The paper scripts expect the processed result products under
 `final_paper/outputs/s2s_paper_outputs/`. Raw forecast and truth data are not
 redistributed in this repository.
+
+## What Is Intentionally Not Tracked
+
+The GitHub repository intentionally excludes exploratory notebooks, old paper
+drafts, legacy analysis directories, raw forecasts, model weights, provider
+downloads, scratch figures, scheduler logs, and local storage products. Keep
+those locally or archive them separately if needed; this repository is scoped to
+the current paper and the code needed to rebuild its generated artifacts.
 
 ## Data And Licenses
 

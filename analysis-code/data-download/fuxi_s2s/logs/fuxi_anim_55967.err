@@ -1,2 +1,0 @@
-/home/raj.ayush/.conda/envs/s2s-hind/lib/python3.11/site-packages/pyproj/network.py:59: UserWarning: pyproj unable to set PROJ database path.
-  _set_context_ca_bundle_path(ca_bundle_path)

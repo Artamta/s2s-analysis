@@ -31,7 +31,8 @@ python scripts/make_spatial_cache.py # -> cache/spatial_cells_*.csv
 # 3. regenerate tables and figures (idempotent)
 python scripts/make_tables.py        # -> tables/*.tex (incl. tab_jfm_sig_*.tex)
 python scripts/make_figures.py       # -> figs/*.pdf (ACC CI bands, regional, spatial)
-python scripts/make_case_study.py    # -> figs/fig_case_study_jfm.pdf
+python scripts/make_case_study.py    # -> figs/fig_case_study_{jfm,jjas}.pdf
+python scripts/make_scatter.py       # -> figs/fig_scatter_{tp,z500}.pdf (appendix)
 
 # 4. compile, then assemble the arXiv upload tarball
 conda run -n tectonic_env tectonic s2s_india_benchmark.tex

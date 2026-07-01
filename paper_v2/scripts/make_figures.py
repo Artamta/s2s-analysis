@@ -400,6 +400,48 @@ def _load_spatial(season):
     return pd.read_csv(path)
 
 
+# India land outline + IMD homogeneous-region boundaries, drawn from the same
+# Survey-of-India-derived region masks used for every score in the paper (more
+# correct for an India-focused study than a generic global coastline product).
+_MASK_PATH = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/masks/imd_region_masks_0.25deg.nc"
+_MASK_CACHE = {}
+
+
+def _india_overlay(ax, regions=True):
+    """Overlay the India land boundary (and optionally IMD region borders) on a
+    cartopy axis, using the SOI-derived region masks. Degrades silently if the
+    mask or xarray is unavailable."""
+    try:
+        import xarray as xr
+    except Exception:
+        return
+    if "ds" not in _MASK_CACHE:
+        if not os.path.exists(_MASK_PATH):
+            _MASK_CACHE["ds"] = None
+        else:
+            _MASK_CACHE["ds"] = xr.open_dataset(_MASK_PATH)
+    ds = _MASK_CACHE["ds"]
+    if ds is None:
+        return
+    region_vars = list(ds.data_vars)
+    lat = ds["lat"].values
+    lon = ds["lon"].values
+    # integer region id (0 = ocean/non-India, 1..N = regions), and a land mask
+    region_id = np.zeros((len(lat), len(lon)))
+    for k, rv in enumerate(region_vars, start=1):
+        m = np.nan_to_num(ds[rv].values) > 0
+        region_id[m] = k
+    land = (region_id > 0).astype(float)
+    # India land outline
+    ax.contour(lon, lat, land, levels=[0.5], colors="k", linewidths=0.8,
+               transform=ccrs.PlateCarree(), zorder=6)
+    if regions:
+        # boundaries between adjacent regions
+        ax.contour(lon, lat, region_id, levels=np.arange(1.5, len(region_vars)),
+                   colors="k", linewidths=0.35, alpha=0.5,
+                   transform=ccrs.PlateCarree(), zorder=6)
+
+
 def _grid_from_cells(sub, value):
     """Turn a (lat, lon, value) long frame into a full 2-D array on the
     regular 1.5-degree grid, NaN where there is no land cell, plus the cell-edge
@@ -423,8 +465,8 @@ def _spatial_panel(ax, sub, value, cmap, vmin, vmax, center=None):
     else:
         im = ax.pcolormesh(lon_e, lat_e, grid, cmap=cmap, vmin=vmin, vmax=vmax,
                            transform=ccrs.PlateCarree(), shading="flat")
-    ax.add_feature(cfeature.COASTLINE, linewidth=0.5, edgecolor="#333")
-    ax.add_feature(cfeature.BORDERS, linewidth=0.4, edgecolor="#555")
+    ax.add_feature(cfeature.COASTLINE, linewidth=0.4, edgecolor="#888")
+    _india_overlay(ax, regions=True)
     ax.set_extent([66, 99, 6, 38], crs=ccrs.PlateCarree())
     ax.set_facecolor("#f2f2f2")
     return im
@@ -502,7 +544,6 @@ def fig_spatial_bias_tp():
 
 def main():
     fig_acc_lead()
-    fig_acc_lead_t2m()
     fig_crpss()
     fig_regional_scorecard()
     fig_regional_acc_lead(variable="tp", season="jfm", tag="tp")

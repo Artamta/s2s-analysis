@@ -500,10 +500,11 @@ def main():
     # redundant near-duplicate table.
 
     artifacts.append(("tab_jjas_regional_tp_w1w3.tex", make_regional_multiweek_table(
-        "jjas_tp", "tp", [1, 3], "acc",
-        "JJAS~2019 precipitation ACC by IMD homogeneous region at week~1 "
-        "and week~3 (IMD truth, 35 common Monday/Thursday initializations), showing the "
-        "monsoon skill collapse is uniform across regions by week~3.",
+        "jjas_tp", "tp", [1, 2, 3, 4, 5, 6], "acc",
+        "JJAS~2019 precipitation ACC by IMD homogeneous region for every lead "
+        "week~1--6 (IMD truth, 35 common Monday/Thursday initializations), showing "
+        "that the monsoon skill collapse is uniform across regions: no "
+        "region--model combination retains useful skill beyond week~2--3.",
         "tab:reg_jjas_tp_w1w3")))
 
     # --- Old-paper-style stacked regional scorecards (weeks 1-6 mean) ---

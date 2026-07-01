@@ -43,11 +43,11 @@
 
 
 \title{\vspace{-1.0cm}\bfseries
-  Subseasonal Forecast Skill over India: Two Case Studies of
-  AI-Based and Operational Models}
+  Machine-Learning and Operational Subseasonal Forecasts over India:
+  A Two-Season Benchmark across Winter and Monsoon Regimes}
 
 \author{%
-  Ayush Raj Tamta$^{1,2}$, Manmeet Singh$^{3}$, Saptarishi Dhanuka$^{1}$,\\
+  Ayush Raj$^{1,2}$, Manmeet Singh$^{3}$, Saptarishi Dhanuka$^{1}$,\\
   Parthasarathi Mukhopadhyay$^{1}$, Bedartha Goswami$^{2}$, Sandeep Juneja$^{1}$\\[0.4em]
   \small $^{1}$Ashoka University, India \quad
   $^{2}$IISER Pune, India \quad
@@ -244,10 +244,10 @@ artifacts.
         kriging. Because this reference is independent of any reanalysis, it
         removes the possibility that an ERA5-trained ML system is rewarded
         simply for reproducing ERA5's own precipitation biases.
-  \item \textbf{Z500 and T2M, both seasons:} ERA5 \citep{hersbach2020}. For
+  \item \textbf{Z500, both seasons:} ERA5 \citep{hersbach2020}. For
         JFM~2026, Z500 truth is taken from ERA5 CDS daily files; for JJAS~2019
         we use the local WeatherBench2 ERA5 archive \citep{rasp2024}, which
-        provides matching geopotential and 2-m temperature fields at
+        provides matching geopotential fields at
         $1.0^{\circ}$ resolution for the 2019 period.
 \end{itemize}
 Because the JFM and JJAS precipitation truths differ (ERA5 versus IMD), all
@@ -326,7 +326,7 @@ verification. DLESyM outputs 6-hourly fields, which we average to daily means
 before aggregating to weekly lead windows; geopotential is converted to
 geopotential height by dividing by $g=9.80665$\,m\,s$^{-2}$. DLESyM does not
 currently provide a precipitation channel and is therefore evaluated for Z500
-and T2M only. Three per-initialization forecast stores were found to be
+only in this study. Three per-initialization forecast stores were found to be
 corrupted (one reading as all-zero, two missing entirely) and are excluded
 from the comparable-initialization sets; an automated guard rejects any store
 that reads as all-zero at the first lead.
@@ -360,10 +360,7 @@ perturbed members (a four-member ensemble), which limits UKMO's probabilistic
 scores relative to the larger ensembles but still supports full deterministic
 verification. UKMO delivers total precipitation as a cumulative accumulation,
 processed identically to ECMWF, and geopotential height already in gpm
-(no unit conversion). The UKMO 2-m temperature archive contains only a single
-forecast step in every file we obtained, across all seasons; we treat this as
-a data-retrieval issue at the source and exclude UKMO T2M from all
-verification and rankings.
+(no unit conversion).
 
 \subsection{NCEP CFSv2}\label{sec:ncep}
 
@@ -421,7 +418,7 @@ from true 24-hour daily totals and then averaged over the same lead window.
 
 Both forecast and observed anomalies are defined by removing a single common
 climatology, applied identically to every system and to the truth: a 30-year
-(1990--2019) ERA5 day-of-year climatology for Z500, T2M, and ERA5-referenced
+(1990--2019) ERA5 day-of-year climatology for Z500 and ERA5-referenced
 precipitation, and the IMD 1991--2020 daily rainfall climatology
 \citep{pai2014} for IMD-referenced precipitation. Because each climatology is
 computed over decades independent of the verification season, it avoids the
@@ -459,8 +456,7 @@ season:
 \end{equation}
 where $w_i=\cos\varphi_i$ and $\overline{x}_{t,\ell}$ is the cosine-weighted
 spatial mean over land points. RMSE and bias are computed on the weekly-mean
-fields in their native units (mm\,day$^{-1}$ for precipitation, m for Z500, K
-for T2M):
+fields in their native units (mm\,day$^{-1}$ for precipitation, m for Z500):
 \begin{equation}
   \mathrm{RMSE}(\ell) = \frac{1}{T}\sum_{t=1}^{T}
   \sqrt{\frac{\sum_i w_i\,(f_{i,t,\ell}-o_{i,t,\ell})^{2}}{\sum_i w_i}}\,,
@@ -508,7 +504,7 @@ anything, a conservative estimate of its probabilistic precipitation skill
 relative to the member-based systems (Section~\ref{sec:prob},
 Section~\ref{sec:limitations}). Ensemble spread is clipped
 to a small per-variable floor ($\sigma\geq0.05$\,mm\,day$^{-1}$ for
-precipitation, $1$\,m for Z500, $0.1$\,K for T2M) before use in
+precipitation, $1$\,m for Z500) before use in
 Eq.~(\ref{eq:crps}) and in the spread--skill ratio below, to avoid
 ill-conditioned scores at grid points with near-zero ensemble spread; this
 floor is well below the smallest spreads encountered in practice and does not
@@ -565,7 +561,7 @@ season.
         benchmark because it gives the largest exact common-initialization
         sample including FuXi-S2S and the three operational systems. DLESyM is
         not part of the main monsoon precipitation comparison because it lacks a
-        precipitation channel; its Z500/T2M behavior is described only as a
+        precipitation channel; its Z500 behavior is described only as a
         smaller DLESyM-inclusive sensitivity comparison
         (Section~\ref{sec:robust}).
 \end{itemize}
@@ -625,8 +621,7 @@ remains. The following subsections quantify each of these features in turn.
   Spire (blue) and ECMWF (grey) curves are 95\% paired-bootstrap confidence
   intervals over initializations (Section~\ref{sec:boot}); bands for the other
   systems are omitted for legibility. DLESyM provides no precipitation and
-  Spire is unavailable for JJAS. The T2M sensitivity comparison is shown in
-  Figure~\ref{fig:acc_lead_t2m}.}
+  Spire is unavailable for JJAS.}
   \label{fig:acc_lead}
 \end{figure}
 
@@ -684,9 +679,6 @@ through week~5 and separate significantly only at week~6, consistent with
 describing Spire as the most \emph{consistently} skillful system rather than the
 uniquely best one at every individual lead.
 
-T2M is not used as a headline JFM~2026 result because the verified analysis
-reported here scores only precipitation and Z500; the T2M verification gap is
-discussed as a data-availability limitation in Appendix~\ref{app:t2m}.
 \input{tables/tab_jfm_acc}
 \input{tables/tab_jfm_rmse_tp}
 \input{tables/tab_jfm_acc_z500}
@@ -723,8 +715,6 @@ a complete loss of large-scale circulation information; rather, useful weekly
 rainfall skill is lost faster than Z500 skill, consistent with the difficulty
 of translating monsoon circulation anomalies into regional rainfall.
 
-T2M is not used as a cross-model JJAS result because only DLESyM has a usable
-T2M product in the matched archive (Appendix~\ref{app:t2m}).
 \input{tables/tab_jjas_acc_tp}
 \input{tables/tab_jjas_acc_z500}
 
@@ -974,7 +964,7 @@ domain-mean finding of Section~\ref{sec:jjas}: the monsoon equalizes skill
 across the whole of India, not just in the domain average.
 \input{tables/tab_jjas_regional_tp_w1w3}
 
-\subsection{A winter rainfall case study}\label{sec:case}
+\subsection{Rainfall case studies: winter and monsoon}\label{sec:case}
 
 The aggregate scores above are complemented by a single concrete event, chosen
 as the strongest positive domain-mean precipitation anomaly of the JFM~2026
@@ -1005,6 +995,33 @@ season-long scores above remain the basis for every quantitative claim.
   $1.5^{\circ}$ verification grid and colour scale. DLESyM has no precipitation
   channel and Spire is included as its ensemble mean.}
   \label{fig:case_study}
+\end{figure}
+
+The monsoon counterpart (Figure~\ref{fig:case_study_jjas}) is the strongest
+active-monsoon spell of JJAS~2019, verifying 6--12~August~2019, when heavy rain
+fell along the Western Ghats and across central India (IMD truth, top-left
+panel). The event-level behaviour mirrors the seasonal scores of
+Section~\ref{sec:jjas}: at week-1 lead the dynamical systems (ECMWF, UKMO, NCEP)
+reproduce the Western-Ghats and central-India rainfall bands with roughly
+correct location if smoothed amplitude, whereas FuXi-S2S substantially
+under-represents the spell almost everywhere; by week-2 lead all systems weaken
+further and the correspondence with the observed pattern is largely lost. The
+contrast between the two case studies is the same one the aggregate ACC draws:
+the winter western-disturbance event stays partially forecastable into week~2,
+while the monsoon active spell is already poorly captured at week-1 lead by the
+ML system and only moderately by the dynamical systems---a single-event view of
+why monsoon rainfall is the harder subseasonal target. As with the winter case,
+these panels are qualitative illustrations, not an additional ranking.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_case_study_jjas.pdf}
+  \caption{JJAS~2019 monsoon rainfall case study: precipitation
+  (mm\,day$^{-1}$) verifying 6--12~August~2019. Columns: IMD gridded-rainfall
+  truth and each precipitation-capable system available for JJAS~2019 (ECMWF,
+  UKMO, NCEP, FuXi-S2S). Rows: week-1 lead (initialized 5~August) and week-2
+  lead (initialized 29~July). All panels share the common $1.5^{\circ}$
+  verification grid and colour scale.}
+  \label{fig:case_study_jjas}
 \end{figure}
 
 \subsection{DLESyM-inclusive monsoon sensitivity}\label{sec:robust}
@@ -1210,19 +1227,19 @@ full 90-initialization sample is scored identically at every lead week
 trajectories in Section~\ref{sec:jfm} reflect skill decay on a fixed cohort
 rather than a changing sample composition.
 
-\textbf{Variable coverage gaps.} T2M is the most affected variable: UKMO and
-ECMWF 2-m temperature are excluded in both seasons because their archived
-files contain only a single forecast step per initialization
-(Sections~\ref{sec:ukmo} and~\ref{app:t2m}), and NCEP carries no
-T2M-equivalent channel in this archive at all, leaving at most Spire,
-FuXi-S2S, and DLESyM with a scoreable T2M product. JFM~2026 T2M is omitted
-because a verified daily-mean reference and valid-time convention were not
-available for the analysis reported here; only the JJAS~2019 T2M result
-(DLESyM alone) is reported. DLESyM does not provide a precipitation channel
-(Section~\ref{sec:delysm}). None of these gaps is a property of the underlying
-forecast system---the UKMO/ECMWF T2M gap in particular is a download-time error
-that a corrected re-download could close---but they substantially reduce the
-scope of the T2M comparison relative to precipitation and Z500.
+\textbf{Variable coverage: precipitation and Z500 only.} This study scores
+precipitation and Z500 and does not report a 2-m temperature (T2M) comparison.
+T2M is the most data-limited variable in the available archives: UKMO and ECMWF
+2-m temperature files contain only a single forecast step per initialization
+(a download-time error rather than a true data gap; Section~\ref{sec:ukmo}),
+NCEP carries no T2M-equivalent channel, and although Spire, FuXi-S2S, and DLESyM
+do provide T2M, a verified daily-mean reference and valid-time convention were
+not established for these fields in time for this analysis. Rather than report a
+T2M comparison we could not yet fully verify, we restrict the paper to the two
+variables (precipitation and Z500) for which the truth, climatology, and
+valid-time conventions are confirmed. DLESyM additionally does not provide a
+precipitation channel (Section~\ref{sec:delysm}). A verified T2M comparison is a
+natural extension once these reference issues are closed.
 
 % ======================================================================
 \section{Conclusions}\label{sec:conclusions}
@@ -1233,8 +1250,7 @@ AI-S2S, FuXi-S2S, DLESyM) and three operational dynamical systems (ECMWF,
 UKMO, NCEP)---for precipitation and Z500 on 90 daily initializations. The
 JJAS~2019 monsoon case evaluates ECMWF, UKMO, NCEP, and FuXi-S2S on 35 common
 Monday/Thursday initializations, with DLESyM treated as a smaller sensitivity
-comparison where its available variables permit. A limited T2M result is
-reported only in the appendix (Appendix~\ref{app:t2m}). The main conclusions
+comparison where its available variables permit. The main conclusions
 are as follows.
 
 \textbf{(1) Spire AI-S2S leads winter precipitation forecasting over India, and
@@ -1297,7 +1313,7 @@ files, is available at \url{https://github.com/Artamta/s2s-analysis}.
 
 \section*{Acknowledgements}
 
-Ayush Raj Tamta conducted this work as part of an IISER Pune master's thesis
+Ayush Raj conducted this work as part of an IISER Pune master's thesis
 and thanks the SafeXpress Centre for Data and Decision Science at Ashoka
 University for hosting the research. Computations were performed on the
 IISER Pune HPC facility. ERA5 data were obtained from the Copernicus Climate
@@ -1320,42 +1336,8 @@ authors.
 \appendix
 \section{Supplementary Results}\label{app:supp}
 
-This appendix collects the 2-m temperature (T2M) result and the supplementary
-regional and spatial diagnostics referenced in
-Sections~\ref{sec:jfm}--\ref{sec:regional}.
-
-\subsection{2-m temperature}\label{app:t2m}
-
-T2M is the most data-limited variable in this benchmark. In both seasons,
-ECMWF and UKMO 2-m temperature are unscoreable because their archived
-\texttt{2t} files contain only a single forecast step per initialization
-(confirmed directly from the archived NetCDF files)---a download-time error
-rather than a true data gap, and one that could in principle be closed by a
-corrected re-download (Section~\ref{sec:limitations})---and NCEP carries no
-T2M-equivalent channel in this archive at all. JFM~2026 T2M results are
-omitted because a verified daily-mean reference and valid-time convention were
-not available for the analysis reported here; publishing those numbers without
-that check would make the T2M comparison less defensible than the
-precipitation and Z500 results.
-
-\paragraph{JJAS~2019.} DLESyM is the only system with a usable T2M product in
-JJAS~2019, where the verification truth (WeatherBench2 ERA5,
-Section~\ref{sec:truth}) is available independently.
-Figure~\ref{fig:acc_lead_t2m} shows its skill declining from ACC~0.78 at
-week~1 to 0.41 by week~6---a smoother, more gradual decay than either its own
-Z500 trajectory or any system's precipitation trajectory in this season,
-consistent with the comparatively high autocorrelation of near-surface
-temperature anomalies relative to rainfall and circulation at subseasonal
-lead. With only one scoreable system, no cross-model T2M comparison is
-possible for the monsoon season.
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.55\linewidth]{figs/fig_acc_lead_t2m.pdf}
-  \caption{JJAS~2019 all-India T2M ACC versus lead week (DLESyM only; the
-  only system with a scoreable T2M product in this season).}
-  \label{fig:acc_lead_t2m}
-\end{figure}
+This appendix collects the supplementary regional, spatial, and scatter
+diagnostics referenced in Sections~\ref{sec:jfm}--\ref{sec:regional}.
 
 \subsection{Supplementary regional and spatial diagnostics}\label{app:spatial}
 
@@ -1396,6 +1378,39 @@ and NCEP carry a broader wet tint over central and peninsular India.
   every $1.5^{\circ}$ land grid point, per system. Brown is dry, teal wet.
   DLESyM has no precipitation channel.}
   \label{fig:spatial_bias}
+\end{figure}
+
+\subsection{Forecast-versus-observed scatter}\label{app:scatter}
+
+Figures~\ref{fig:scatter_tp} and~\ref{fig:scatter_z500} show, for JFM~2026,
+the grid-level density scatter of forecast anomaly against observed (ERA5)
+anomaly, pooling all Indian land points and all initializations within each
+lead week (rows: weeks~1, 3, 6). A skilful forecast concentrates along the 1:1
+line; the annotated pooled Pearson correlation $r$ (distinct from the
+domain-mean, per-initialization ACC of the main text) contracts toward zero with
+lead. For precipitation (Figure~\ref{fig:scatter_tp}) Spire has the tightest
+week-1 relationship ($r=0.73$) and all systems degrade to $r\approx0.1$--$0.16$
+by week~6; for Z500 (Figure~\ref{fig:scatter_z500}) the near-Gaussian anomalies
+scatter more symmetrically, and the FuXi-S2S and DLESyM collapse into
+weak/negative correlation by week~6 is visible as a rotation of the point cloud
+away from the 1:1 line.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_scatter_tp.pdf}
+  \caption{JFM~2026 precipitation-anomaly forecast versus observed (ERA5)
+  density scatter, grid points and initializations pooled within each lead week.
+  Rows: weeks~1, 3, 6; columns: systems. Dashed line 1:1; $r$ is the pooled
+  Pearson correlation.}
+  \label{fig:scatter_tp}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_scatter_z500.pdf}
+  \caption{As Figure~\ref{fig:scatter_tp}, for Z500 anomaly (m). DLESyM is
+  included here (it provides Z500).}
+  \label{fig:scatter_z500}
 \end{figure}
 
 % ======================================================================

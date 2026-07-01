@@ -1017,12 +1017,21 @@ def probabilistic_rows(
         sig = region_context.mask(forecast.spread, region).clip(min=SIGMA_FLOOR[forecast.variable])
         obs = region_context.mask(truth.field, region)
         cm = region_context.mask(clim.field, region)
+        # Gaussian CRPS computed from the ensemble mean+spread for *every*
+        # model, regardless of kind. For Spire (gaussian kind) this equals the
+        # headline CRPS; for member-based systems it is a diagnostic that lets
+        # us quantify how much the Gaussian scoring convention used for Spire
+        # would change a score relative to the empirical member CRPS on
+        # identical fields (see the CRPS-convention sanity check in the paper).
+        crps_gauss_diag = crps_gaussian(
+            mu, sig, obs, region_context.weights, SIGMA_FLOOR[forecast.variable]
+        )
         if forecast.kind == "ensemble" and forecast.ensemble is not None:
             ens = region_context.mask(forecast.ensemble, region)
             crps = crps_ensemble_sorted(ens, obs, region_context.weights)
         else:
             ens = None
-            crps = crps_gaussian(mu, sig, obs, region_context.weights, SIGMA_FLOOR[forecast.variable])
+            crps = crps_gauss_diag
         crps_ref = weighted_mean(abs(cm - obs), region_context.weights)
         rmse_mean = rmse(mu, obs, region_context.weights)
         spread_mean = weighted_mean(sig, region_context.weights)
@@ -1038,6 +1047,7 @@ def probabilistic_rows(
                 "climatology_source": clim.source,
                 "unit": VARIABLE_UNITS[variable_label(forecast.variable)],
                 "crps": crps,
+                "crps_gauss_diag": crps_gauss_diag,
                 "crps_clim": crps_ref,
                 "crpss_clim": crps_skill_score(crps, crps_ref),
                 "spread": spread_mean,

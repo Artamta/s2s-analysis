@@ -41,7 +41,7 @@
             urlcolor=linkblue]{hyperref}
 \hypersetup{
   pdftitle={Machine-Learning and Operational Subseasonal Forecasts over India:
-            A Two-Season Benchmark across Winter and Monsoon Regimes},
+            An Early Two-Season Benchmark across Winter and Monsoon Regimes},
   pdfauthor={Ayush Raj, Manmeet Singh, Saptarishi Dhanuka,
              Parthasarathi Mukhopadhyay, Bedartha Goswami, Sandeep Juneja},
   pdfkeywords={subseasonal-to-seasonal prediction, machine learning,
@@ -52,7 +52,7 @@
 
 \title{\vspace{-1.0cm}\bfseries
   Machine-Learning and Operational Subseasonal Forecasts over India:
-  A Two-Season Benchmark across Winter and Monsoon Regimes}
+  An Early Two-Season Benchmark across Winter and Monsoon Regimes}
 
 \author{%
   Ayush Raj$^{1,2}$, Manmeet Singh$^{3}$, Saptarishi Dhanuka$^{1}$,\\
@@ -175,6 +175,15 @@ NCEP, and FuXi-S2S, with DLESyM used only where its available forecasts support
 a matched sensitivity comparison. Both cases use the same India domain,
 weekly-lead definitions, land mask, climatology construction, and verification
 metrics, but the available model set is not identical across seasons.
+
+The contribution is therefore deliberately scoped. First, we provide an
+India-focused, review-style benchmark framework for emerging AI and
+operational S2S systems under common verification choices. Second, we give an
+early evaluation of newly available Spire AI-S2S guidance over India alongside
+FuXi-S2S, DLESyM, ECMWF, UKMO, and NCEP where the archives overlap. Third, we
+use the winter--monsoon contrast to separate model ranking from physical
+predictability regime. The paper's headline claims, evidence base, and caveats
+are summarized explicitly in Table~\ref{tab:claim_scope}.
 
 Specifically, we address four questions:
 \begin{enumerate}\setlength{\itemsep}{1pt}
@@ -599,6 +608,45 @@ treatment: it quantifies robustness to \emph{which initializations happened to
 fall in this one season}, but it cannot, of course, quantify the additional and
 larger uncertainty of having sampled only a single winter and a single monsoon
 (Section~\ref{sec:limitations}).
+
+\begin{table}[t]
+  \centering
+  \caption{Scope of the headline claims. The table is intended as a guide to
+  what the present data do, and do not, establish.}
+  \label{tab:claim_scope}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.27\linewidth}
+                  >{\raggedright\arraybackslash}p{0.36\linewidth}
+                  >{\raggedright\arraybackslash}p{0.27\linewidth}}
+    \toprule
+    Claim & Evidence used here & Scope and caveat \\
+    \midrule
+    Spire leads winter precipitation in JFM~2026.
+      & All-India ACC/RMSE plus paired bootstrap; Spire is significant versus
+        ECMWF at every lead and versus precipitation-capable individual
+        systems through week~3.
+      & A JFM~2026 result, not a climatological winter ranking; the JFM MME
+        includes Spire and is not an independent comparator. \\
+    Spire has the most stable ML Z500 trajectory in JFM~2026.
+      & Z500 ACC and paired bootstrap; FuXi-S2S and DLESyM become significantly
+        negative by weeks~4--6, while Spire remains positive through week~6.
+      & All systems decay with lead; the result identifies behavior in this
+        winter case, not universal superiority. \\
+    JJAS~2019 monsoon rainfall skill collapses for the available systems.
+      & The 35-date common-initialization benchmark shows no individual-model
+        all-India precipitation ACC significantly different from zero by
+        week~3.
+      & Spire is unavailable for 2019, so this is a statement about ECMWF,
+        UKMO, NCEP, and FuXi-S2S in one monsoon season. \\
+    Deterministic and probabilistic rankings need not agree.
+      & CRPSS and spread--skill ratio show ECMWF leading several probabilistic
+        scores despite Spire's higher deterministic precipitation ACC.
+      & Precipitation CRPSS is less convention-robust because Spire is scored
+        with Gaussian CRPS; the Z500 comparison is cleaner. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 % ======================================================================
 \section{Results}\label{sec:results}

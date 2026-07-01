@@ -17,10 +17,19 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import numpy as np
 import pandas as pd
+
+try:
+    import cartopy.crs as ccrs
+    import cartopy.feature as cfeature
+    _HAS_CARTOPY = True
+except Exception:  # pragma: no cover - spatial figures degrade gracefully
+    _HAS_CARTOPY = False
 
 ROOT = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs"
 OUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "figs"))
+CACHE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cache"))
 os.makedirs(OUT, exist_ok=True)
 
 # Paired-bootstrap 95% CIs (produced by make_bootstrap.py). Loaded lazily so
@@ -291,6 +300,69 @@ def fig_regional_scorecard():
     print("wrote fig_regional_scorecard.pdf")
 
 
+REGION_PANEL = {
+    "northwest_india": "Northwest India",
+    "central_india": "Central India",
+    "south_peninsula": "South Peninsula",
+    "east_northeast_india": "East/NE India",
+}
+
+
+def _regional_curve(ax, df, variable, region, value="acc"):
+    """One region panel: metric vs lead for every model, filtered to a region."""
+    sub = df[(df["variable"] == variable) & (df["region"] == region)]
+    piv = sub.pivot_table(index="model", columns="week", values=value, aggfunc="mean")
+    for m in ORDER:
+        if m not in piv.index:
+            continue
+        y = [piv.loc[m, w] if w in piv.columns else None for w in WEEKS]
+        if m == "mme":
+            ls, lw, alpha, zorder = "--", 1.3, 0.85, 1
+        elif m == "spire":
+            ls, lw, alpha, zorder = "-", 2.4, 1.0, 5
+        else:
+            ls, lw, alpha, zorder = "-", 1.5, 0.95, 2
+        ax.plot(WEEKS, y, ls, color=COLOR[m], lw=lw, alpha=alpha,
+                marker="o", ms=3.2 if m != "spire" else 4.0,
+                markeredgewidth=0, label=LABEL[m], zorder=zorder)
+    ax.set_xticks(WEEKS)
+    ax.xaxis.set_minor_locator(mticker.NullLocator())
+
+
+def fig_regional_acc_lead(variable="tp", season="jfm", tag="tp"):
+    """2x2 grid of the four IMD homogeneous regions: ACC vs lead for every
+    system, one season/variable. Shows how the domain-mean skill of
+    fig_acc_lead is distributed across India's rainfall regions."""
+    df = pd.read_csv(DET[season])
+    fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.4), sharex=True, sharey=True)
+    letters = string.ascii_lowercase
+    regions = list(REGION_PANEL.keys())
+    for k, region in enumerate(regions):
+        ax = axes[k // 2, k % 2]
+        _regional_curve(ax, df, variable, region, "acc")
+        ax.set_title(REGION_PANEL[region], pad=14)
+        _panel_label(ax, letters[k])
+        ax.axhspan(0.5, 1.05, color="#0072B2", alpha=0.04, zorder=0)
+        ax.axhline(0.5, color="grey", lw=0.6, ls=":", zorder=0)
+        ax.axhline(0.0, color="grey", lw=0.7, zorder=0)
+        ax.set_ylim(-0.7, 1.0)
+        ax.set_xlim(0.6, 6.4)
+        _style_axis(ax)
+    for ax in axes[:, 0]:
+        ax.set_ylabel("ACC")
+    for ax in axes[1, :]:
+        ax.set_xlabel("Lead week")
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4,
+               bbox_to_anchor=(0.5, -0.04), frameon=False,
+               columnspacing=1.4, handletextpad=0.5)
+    fig.tight_layout(rect=(0, 0.06, 1, 1), h_pad=2.8, w_pad=2.0)
+    out = f"{OUT}/fig_regional_acc_{tag}.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"wrote fig_regional_acc_{tag}.pdf")
+
+
 def fig_spread_skill():
     """Spread-skill ratio vs lead (calibration), JFM precip & Z500."""
     d = _allindia(PROB["jfm"])
@@ -317,12 +389,127 @@ def fig_spread_skill():
     print("wrote fig_spread_skill.pdf")
 
 
+# ----------------------------------------------------------------------
+# Spatial maps (India, 1.5-degree common grid, land points only).
+# Reads the compact per-cell cache written by make_spatial_cache.py.
+# ----------------------------------------------------------------------
+def _load_spatial(season):
+    path = os.path.join(CACHE, f"spatial_cells_{season}.csv")
+    if not os.path.exists(path):
+        return None
+    return pd.read_csv(path)
+
+
+def _grid_from_cells(sub, value):
+    """Turn a (lat, lon, value) long frame into a full 2-D array on the
+    regular 1.5-degree grid, NaN where there is no land cell, plus the cell-edge
+    coordinates for pcolormesh."""
+    piv = sub.pivot_table(index="lat", columns="lon", values=value, aggfunc="mean")
+    lats = np.sort(sub["lat"].unique())
+    lons = np.sort(sub["lon"].unique())
+    piv = piv.reindex(index=lats, columns=lons)
+    d = 1.5
+    lat_edges = np.concatenate([lats - d / 2, [lats[-1] + d / 2]])
+    lon_edges = np.concatenate([lons - d / 2, [lons[-1] + d / 2]])
+    return piv.values, lon_edges, lat_edges
+
+
+def _spatial_panel(ax, sub, value, cmap, vmin, vmax, center=None):
+    grid, lon_e, lat_e = _grid_from_cells(sub, value)
+    if center is not None:
+        norm = matplotlib.colors.TwoSlopeNorm(vcenter=center, vmin=vmin, vmax=vmax)
+        im = ax.pcolormesh(lon_e, lat_e, grid, cmap=cmap, norm=norm,
+                           transform=ccrs.PlateCarree(), shading="flat")
+    else:
+        im = ax.pcolormesh(lon_e, lat_e, grid, cmap=cmap, vmin=vmin, vmax=vmax,
+                           transform=ccrs.PlateCarree(), shading="flat")
+    ax.add_feature(cfeature.COASTLINE, linewidth=0.5, edgecolor="#333")
+    ax.add_feature(cfeature.BORDERS, linewidth=0.4, edgecolor="#555")
+    ax.set_extent([66, 99, 6, 38], crs=ccrs.PlateCarree())
+    ax.set_facecolor("#f2f2f2")
+    return im
+
+
+def _spatial_grid_figure(season, variable, week, value, models, cmap, vmin, vmax,
+                         center, cbar_label, title, outname, agg_weeks=None):
+    """Grid of per-model spatial maps for one metric. If agg_weeks is given,
+    the metric is averaged over those weeks (used for the weeks-1--6 mean bias);
+    otherwise a single lead week is shown."""
+    if not _HAS_CARTOPY:
+        print(f"[skip] {outname}: cartopy unavailable")
+        return
+    df = _load_spatial(season)
+    if df is None:
+        print(f"[skip] {outname}: spatial cache for {season} missing")
+        return
+    df = df[df["variable"] == variable]
+    models = [m for m in models if m in df["model"].unique()]
+    if not models:
+        print(f"[skip] {outname}: no models for {season}/{variable}")
+        return
+
+    ncol = 3 if len(models) > 4 else len(models)
+    nrow = int(np.ceil(len(models) / ncol))
+    proj = ccrs.PlateCarree()
+    fig, axes = plt.subplots(nrow, ncol, figsize=(2.5 * ncol, 2.9 * nrow),
+                             subplot_kw={"projection": proj})
+    axes = np.atleast_1d(axes).ravel()
+    im = None
+    for k, m in enumerate(models):
+        ax = axes[k]
+        if agg_weeks is not None:
+            sub = df[(df["model"] == m) & (df["week"].isin(agg_weeks))]
+            sub = sub.groupby(["lat", "lon"], as_index=False)[value].mean()
+        else:
+            sub = df[(df["model"] == m) & (df["week"] == week)]
+        im = _spatial_panel(ax, sub, value, cmap, vmin, vmax, center)
+        ax.set_title(LABEL[m], fontsize=9, fontweight="bold", pad=3)
+    for j in range(len(models), len(axes)):
+        axes[j].axis("off")
+    fig.suptitle(title, fontsize=10.5, fontweight="bold", y=0.99)
+    cbar = fig.colorbar(im, ax=axes.tolist(), fraction=0.025, pad=0.02,
+                        aspect=30)
+    cbar.set_label(cbar_label, fontsize=9)
+    cbar.ax.tick_params(labelsize=8)
+    fig.savefig(f"{OUT}/{outname}.pdf", bbox_inches="tight")
+    plt.close(fig)
+    print(f"wrote {outname}.pdf")
+
+
+def fig_spatial_localacc_z500():
+    """Per-cell temporal anomaly correlation (local ACC), JFM Z500, week 3 -
+    where each system keeps circulation skill into the subseasonal range."""
+    _spatial_grid_figure(
+        "jfm", "z500", 3, "local_acc",
+        ["spire", "fuxi", "delysm", "ecmwf", "ukmo", "ncep"],
+        cmap="RdBu_r", vmin=-0.8, vmax=0.8, center=0.0,
+        cbar_label="Local anomaly correlation",
+        title="JFM 2026 Z500 week-3 local anomaly correlation",
+        outname="fig_spatial_localacc_z500")
+
+
+def fig_spatial_bias_tp():
+    """Per-cell mean precipitation bias (weeks 1-6 mean), JFM - spatial wet/dry
+    structure behind the domain-mean bias table."""
+    _spatial_grid_figure(
+        "jfm", "tp", None, "bias",
+        ["spire", "fuxi", "ecmwf", "ukmo", "ncep"],
+        cmap="BrBG", vmin=-3.0, vmax=3.0, center=0.0,
+        cbar_label="Bias (mm day$^{-1}$)",
+        title="JFM 2026 precipitation bias (weeks 1--6 mean, forecast $-$ ERA5)",
+        outname="fig_spatial_bias_tp", agg_weeks=[1, 2, 3, 4, 5, 6])
+
+
 def main():
     fig_acc_lead()
     fig_acc_lead_t2m()
     fig_crpss()
     fig_regional_scorecard()
+    fig_regional_acc_lead(variable="tp", season="jfm", tag="tp")
+    fig_regional_acc_lead(variable="z500", season="jfm", tag="z500")
     fig_spread_skill()
+    fig_spatial_localacc_z500()
+    fig_spatial_bias_tp()
     print(f"\nAll figures written to {OUT}")
 
 

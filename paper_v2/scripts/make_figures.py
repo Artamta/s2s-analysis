@@ -23,13 +23,35 @@ ROOT = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs"
 OUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "figs"))
 os.makedirs(OUT, exist_ok=True)
 
+# Paired-bootstrap 95% CIs (produced by make_bootstrap.py). Loaded lazily so
+# the figures degrade gracefully to no-band mode if the file is absent.
+_BOOT_CI_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tables", "bootstrap_ci.csv"))
+
+
+def _load_boot_ci():
+    if not os.path.exists(_BOOT_CI_PATH):
+        return None
+    return pd.read_csv(_BOOT_CI_PATH)
+
+
+# Maps the (det/prob summary) source key to the season key used in bootstrap_ci.
+_BOOT_SEASON = {
+    "jfm_tp": "jfm", "jfm_z500": "jfm",
+    "jjas_tp_tp": "jjas_tp", "jjas_z500_z500": "jjas_z500",
+    "jjas17_t2m": "jjas17",
+}
+
 DET = {
     "jfm": f"{ROOT}/jfm2026/05_tables/full_jfm2026_daily_spire/deterministic_summary.csv",
-    "jjas": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/deterministic_summary.csv",
+    "jjas_tp": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/deterministic_summary.csv",
+    "jjas_z500": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/deterministic_summary.csv",
+    "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/deterministic_summary.csv",
 }
 PROB = {
     "jfm": f"{ROOT}/jfm2026/05_tables/full_jfm2026_daily_spire/probabilistic_summary.csv",
-    "jjas": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/probabilistic_summary.csv",
+    "jjas_tp": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/probabilistic_summary.csv",
+    "jjas_z500": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/probabilistic_summary.csv",
+    "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/probabilistic_summary.csv",
 }
 
 # Okabe-Ito colour-blind-safe palette, fixed per model. Spire gets the
@@ -93,9 +115,17 @@ def _panel_label(ax, letter):
              fontsize=10, fontweight="bold", va="top", ha="left")
 
 
-def _curve(ax, df, variable, value):
+def _curve(ax, df, variable, value, boot_ci=None, boot_season=None, boot_metric=None):
+    """Plot metric-vs-lead curves. When ``boot_ci`` and ``boot_season`` are
+    given, overlay the paired-bootstrap 95% CI as a shaded band per model
+    (drawn only for the narrative-anchor systems to avoid clutter)."""
     sub = df[df["variable"] == variable]
     piv = sub.pivot_table(index="model", columns="week", values=value, aggfunc="mean")
+
+    # Systems whose CI band we actually shade: keep the plot readable by banding
+    # only the anchor (Spire) plus the leading dynamical reference (ECMWF).
+    band_models = {"spire", "ecmwf"}
+
     for m in ORDER:
         if m not in piv.index:
             continue
@@ -106,6 +136,19 @@ def _curve(ax, df, variable, value):
             ls, lw, alpha, zorder = "-", 2.4, 1.0, 5
         else:
             ls, lw, alpha, zorder = "-", 1.5, 0.95, 2
+
+        if boot_ci is not None and boot_season is not None and m in band_models:
+            bm = boot_metric if boot_metric is not None else value
+            bsub = boot_ci[(boot_ci["season"] == boot_season)
+                           & (boot_ci["variable"] == variable)
+                           & (boot_ci["metric"] == bm)
+                           & (boot_ci["model"] == m)].set_index("week")
+            if not bsub.empty:
+                lo = [bsub.loc[w, "ci_lo"] if w in bsub.index else None for w in WEEKS]
+                hi = [bsub.loc[w, "ci_hi"] if w in bsub.index else None for w in WEEKS]
+                ax.fill_between(WEEKS, lo, hi, color=COLOR[m], alpha=0.14,
+                                lw=0, zorder=zorder - 1)
+
         ax.plot(WEEKS, y, ls, color=COLOR[m], lw=lw, alpha=alpha,
                  marker="o", ms=3.2 if m != "spire" else 4.0,
                  markeredgewidth=0, label=LABEL[m], zorder=zorder)
@@ -125,17 +168,20 @@ def fig_acc_lead():
     """2x2 grid: ACC vs lead for TP / Z500, JFM (top) & JJAS (bottom).
     T2M is excluded here (3 systems, no JJAS cross-model comparison) and
     shown separately in the appendix (fig_acc_lead_t2m)."""
-    djfm, djjas = _allindia(DET["jfm"]), _allindia(DET["jjas"])
+    djfm = _allindia(DET["jfm"])
+    djjas = pd.concat([_allindia(DET["jjas_tp"]), _allindia(DET["jjas_z500"])],
+                      ignore_index=True)
+    boot = _load_boot_ci()
     fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.6), sharex=True)
     panels = [
-        (axes[0, 0], djfm, "tp", "JFM 2026 — Precipitation"),
-        (axes[0, 1], djfm, "z500", "JFM 2026 — Z500"),
-        (axes[1, 0], djjas, "tp", "JJAS 2019 — Precipitation"),
-        (axes[1, 1], djjas, "z500", "JJAS 2019 — Z500"),
+        (axes[0, 0], djfm, "tp", "JFM 2026 — Precipitation", "jfm"),
+        (axes[0, 1], djfm, "z500", "JFM 2026 — Z500", "jfm"),
+        (axes[1, 0], djjas, "tp", "JJAS 2019 — Precipitation", "jjas_tp"),
+        (axes[1, 1], djjas, "z500", "JJAS 2019 — Z500", "jjas_z500"),
     ]
     letters = string.ascii_lowercase
-    for k, (ax, df, var, title) in enumerate(panels):
-        _curve(ax, df, var, "acc")
+    for k, (ax, df, var, title, bseason) in enumerate(panels):
+        _curve(ax, df, var, "acc", boot_ci=boot, boot_season=bseason, boot_metric="acc")
         ax.set_title(title, pad=14)
         _panel_label(ax, letters[k])
         ax.axhspan(0.5, 1.05, color="#0072B2", alpha=0.04, zorder=0)
@@ -160,7 +206,7 @@ def fig_acc_lead_t2m():
     """Appendix figure: JJAS 2019 T2M ACC vs lead (DLESyM only).
     JFM 2026 T2M is intentionally omitted: the full_jfm2026_daily_spire run
     no longer scores t2m while its verification truth is being rebuilt."""
-    djjas = _allindia(DET["jjas"])
+    djjas = _allindia(DET["jjas17"])
     fig, ax = plt.subplots(figsize=(4.2, 3.6))
     _curve(ax, djjas, "t2m", "acc")
     ax.set_title("JJAS 2019 — T2M", pad=14)

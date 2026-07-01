@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate LaTeX result tables for the two-season India S2S benchmark paper.
+r"""Generate LaTeX result tables for the two-season India S2S benchmark paper.
 
 All numbers are read directly from the verification-pipeline CSVs so the paper
 never hand-transcribes a score. Run from anywhere:
@@ -23,11 +23,15 @@ os.makedirs(OUT, exist_ok=True)
 # Canonical runs (see make_tables provenance note in the paper methods).
 DET = {
     "jfm": f"{ROOT}/jfm2026/05_tables/full_jfm2026_daily_spire/deterministic_summary.csv",
-    "jjas": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/deterministic_summary.csv",
+    "jjas_tp": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/deterministic_summary.csv",
+    "jjas_z500": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/deterministic_summary.csv",
+    "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/deterministic_summary.csv",
 }
 PROB = {
     "jfm": f"{ROOT}/jfm2026/05_tables/full_jfm2026_daily_spire/probabilistic_summary.csv",
-    "jjas": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/probabilistic_summary.csv",
+    "jjas_tp": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/probabilistic_summary.csv",
+    "jjas_z500": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/probabilistic_summary.csv",
+    "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/probabilistic_summary.csv",
 }
 
 # Display names + a fixed, sensible model order.
@@ -339,8 +343,8 @@ def make_stacked_regional_table(season: str, value: str, variables: list[str],
 
     return textwrap.dedent(f"""\
     \\begin{{table*}}[t]\\centering
-    \\small
-    \\setlength{{\\tabcolsep}}{{5pt}}
+    \\footnotesize
+    \\setlength{{\\tabcolsep}}{{3pt}}
     \\caption{{{caption}}}
     \\label{{{label}}}
     \\begin{{tabular}}{{l{colspec}}}\\toprule
@@ -349,6 +353,72 @@ def make_stacked_regional_table(season: str, value: str, variables: list[str],
     {body}
     \\bottomrule
     \\end{{tabular}}\\end{{table*}}
+    """)
+
+
+BOOT_PAIR = os.path.join(OUT, "bootstrap_pairwise.csv")
+
+
+def make_significance_table(season: str, variable: str, reference: str,
+                            caption: str, label: str, metric: str = "acc",
+                            nd: int = 2) -> str:
+    """Paired-bootstrap significance of one system's lead over every other
+    system, by lead week. Each cell is the mean paired ACC difference
+    (reference minus competitor) with a marker: ** = 95% CI excludes zero
+    (significant), a dagger = does not. Reads bootstrap_pairwise.csv, which is
+    produced by make_bootstrap.py."""
+    if not os.path.exists(BOOT_PAIR):
+        return f"% bootstrap_pairwise.csv missing; run make_bootstrap.py first\n"
+    pw = pd.read_csv(BOOT_PAIR)
+    pw = pw[(pw["season"] == season) & (pw["variable"] == variable)
+            & (pw["metric"] == metric)]
+    if pw.empty:
+        return f"% no bootstrap rows for {season} {variable} {metric}\n"
+
+    others = [m for m in MODEL_ORDER if m not in (reference, "mme")
+              and m in set(pw["model_a"]).union(pw["model_b"])]
+    rows = []
+    for other in others:
+        cells = []
+        for w in WEEKS:
+            q = pw[(pw["week"] == w)
+                   & (((pw["model_a"] == reference) & (pw["model_b"] == other))
+                      | ((pw["model_a"] == other) & (pw["model_b"] == reference)))]
+            if q.empty:
+                cells.append("--")
+                continue
+            r = q.iloc[0]
+            # sign so that positive = reference is better (higher ACC)
+            d = r["diff"] if r["model_a"] == reference else -r["diff"]
+            mark = "^{*}" if bool(r["significant_95"]) else "^{\\dagger}"
+            cells.append(f"${d:+.{nd}f}{mark}$")
+        rows.append(f"    {MODEL_LABEL[other]:<14} & " + " & ".join(cells) + r" \\")
+    body = "\n".join(rows)
+    header = " & ".join([f"W{w}" for w in WEEKS])
+    colspec = "l" + "c" * len(WEEKS)
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[t]
+      \\centering
+      \\caption{{{caption}}}
+      \\label{{{label}}}
+      \\small
+      \\begin{{tabular}}{{{colspec}}}
+        \\toprule
+        vs.\\ {MODEL_LABEL[reference]} & {header} \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+
+      \\vspace{{2pt}}
+      \\footnotesize\\raggedright
+      Mean paired difference in ACC ({MODEL_LABEL[reference]} minus competitor)
+      over the season's initializations; positive favours
+      {MODEL_LABEL[reference]}. $^{{*}}$: 95\\% paired-bootstrap confidence
+      interval (10{{,}}000 resamples of initialization dates) excludes zero;
+      $^{{\\dagger}}$: interval includes zero (difference not distinguishable
+      from sampling noise).
+    \\end{{table}}
     """)
 
 
@@ -368,6 +438,19 @@ def main():
         "JFM~2026 all-India Z500 ACC by lead week (ERA5 truth).",
         "tab:jfm_acc_z500")))
 
+    # --- Paired-bootstrap significance of Spire's lead (JFM) ---
+    artifacts.append(("tab_jfm_sig_tp.tex", make_significance_table(
+        "jfm", "tp", "spire",
+        "JFM~2026 precipitation: paired-bootstrap significance of Spire "
+        "AI-S2S's all-India ACC lead over each other system, by lead week.",
+        "tab:jfm_sig_tp")))
+
+    artifacts.append(("tab_jfm_sig_z500.tex", make_significance_table(
+        "jfm", "z500", "spire",
+        "JFM~2026 Z500: paired-bootstrap significance of Spire AI-S2S's "
+        "all-India ACC difference against each other system, by lead week.",
+        "tab:jfm_sig_z500")))
+
     # NOTE: JFM 2026 T2M is intentionally omitted. The T2M verification truth
     # is being rebuilt (daily-mean reconstruction) as of the latest pipeline
     # run, and the JFM run used for this paper (full_jfm2026_daily_spire) no
@@ -375,15 +458,15 @@ def main():
 
     # --- JJAS 2019 deterministic ACC ---
     artifacts.append(("tab_jjas_acc_tp.tex", make_skill_table(
-        "jjas", "tp", "acc",
+        "jjas_tp", "tp", "acc",
         "JJAS~2019 all-India precipitation ACC by lead week, verified against "
-        "IMD gridded rainfall (17 common initializations).",
+        "IMD gridded rainfall (35 common Monday/Thursday initializations).",
         "tab:jjas_acc_tp")))
 
     artifacts.append(("tab_jjas_acc_z500.tex", make_skill_table(
-        "jjas", "z500", "acc",
-        "JJAS~2019 all-India Z500 ACC by lead week (ERA5 truth, 17 common "
-        "initializations).",
+        "jjas_z500", "z500", "acc",
+        "JJAS~2019 all-India Z500 ACC by lead week (ERA5 truth, 35 common "
+        "Monday/Thursday initializations).",
         "tab:jjas_acc_z500")))
 
     # --- RMSE companions (precip, both seasons) ---
@@ -417,9 +500,9 @@ def main():
     # redundant near-duplicate table.
 
     artifacts.append(("tab_jjas_regional_tp_w1w3.tex", make_regional_multiweek_table(
-        "jjas", "tp", [1, 3], "acc",
+        "jjas_tp", "tp", [1, 3], "acc",
         "JJAS~2019 precipitation ACC by IMD homogeneous region at week~1 "
-        "and week~3 (IMD truth, 17 common initializations), showing the "
+        "and week~3 (IMD truth, 35 common Monday/Thursday initializations), showing the "
         "monsoon skill collapse is uniform across regions by week~3.",
         "tab:reg_jjas_tp_w1w3")))
 

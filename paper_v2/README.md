@@ -7,8 +7,8 @@ ECMWF/UKMO/NCEP/FuXi, with DLESyM retained only as a smaller sensitivity.
 
 ## The story (3 + 1 findings)
 
-1. **Winter (JFM 2026): ML can win.** Spire AI-S2S leads precipitation at every
-   lead (W1 ACC 0.78 vs 0.73 ECMWF) and uniquely holds Z500 skill to week 6,
+1. **Winter (JFM 2026): ML can win.** Spire AI-S2S leads individual precipitation systems at every
+   lead (W1 ACC 0.78 vs 0.73 ECMWF) and, among ML systems, uniquely keeps Z500 ACC positive through week 6,
    while FuXi-S2S and DLESyM Z500 collapse to *negative* ACC by week 3–4.
 2. **Monsoon (JJAS 2019): the great equalizer.** In the 35-date benchmark,
    ECMWF/UKMO/NCEP/FuXi all lose useful precipitation skill by week 3-4. Spire
@@ -51,17 +51,14 @@ generated from:
 - JJAS DLESyM sensitivity/T2M: `final_paper/.../jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/`
 To change a number, edit the script and rerun — not the `.tex`.
 
-Spatial/scatter appendix PDFs are not included in the current paper draft
-because the current full JFM grid-level scatter CSV is empty. Regenerate
-grid-level diagnostics before reintroducing those figures.
+Spatial/scatter appendix PDFs are included in the current paper draft. The
+current appendix figures are regenerated from the cached per-cell diagnostics
+and the full grid-level scatter CSVs listed above.
 
 ## Writing status
 
-All prose placeholders have been resolved. Remaining polish:
-- Add bootstrap confidence intervals or avoid language that implies formal
-  significance.
-- Rebuild grid-level spatial diagnostics if those appendix figures are wanted.
-- Consider trimming Limitations if it runs long relative to journal norms.
+All prose placeholders have been resolved. Remaining polish before submission is
+limited to rebuilding the PDF/arXiv bundle after any manuscript or figure change.
 
 ## Files
 

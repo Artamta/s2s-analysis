@@ -80,10 +80,10 @@ ECMWF, UKMO, and NCEP, and a convectively dominated monsoon case (JJAS~2019,
 35 common initializations) for ECMWF, UKMO, NCEP, and FuXi-S2S. Forecasts are
 verified over Indian land against ERA5 and IMD rainfall using
 anomaly correlation (ACC), RMSE, bias, CRPSS, and
-spread--skill ratio. In JFM~2026, Spire AI-S2S has the highest precipitation
-ACC at every lead (week-1 ACC~0.78 versus 0.73 for ECMWF and UKMO); a paired
-bootstrap shows this lead is significant over every precipitation-capable
-system through week~3 and over ECMWF at every lead. Spire also degrades
+spread--skill ratio. In JFM~2026, Spire AI-S2S has the highest single-model
+precipitation ACC at every lead (week-1 ACC~0.78 versus 0.73 for ECMWF and UKMO); a paired
+bootstrap shows this lead is significant against other precipitation-capable
+individual systems through week~3 and against ECMWF at every lead. Spire also degrades
 most gracefully for Z500, significantly exceeding FuXi-S2S and DLESyM at all
 leads, with the gap widening after week~1; both cross into negative ACC by
 week~4. In
@@ -95,7 +95,7 @@ tightly coupled to organized large-scale circulation and western
 disturbances, whereas monsoon rainfall depends on multiscale convection and
 active--break variability that are harder to predict at weekly leads.
 Deterministic and probabilistic rankings, moreover, need not agree. We provide
-an early, truth-aware benchmark of AI and operational S2S guidance over India
+an early benchmark of AI and operational S2S guidance over India
 while making explicit the limits of two seasons and unequal model availability.
 \end{abstract}
 
@@ -505,7 +505,11 @@ scored with the closed-form Gaussian CRPS,
   + 2\phi(\omega) - \tfrac{1}{\sqrt{\pi}}\right],\quad \omega=\tfrac{y-\mu}{\sigma},
   \label{eq:crps}
 \end{equation}
-with $\Phi,\phi$ the standard-normal CDF and PDF. Because only Spire is scored
+with $\Phi,\phi$ the standard-normal CDF and PDF. For weekly scores, the
+member-based systems are evaluated from each member's seven-day mean field; for
+Spire, whose archive provides only daily mean and standard deviation, the weekly
+mean is the average of daily means and the weekly standard deviation is the
+average of daily standard deviations. Because only Spire is scored
 this way, we checked directly how much this Gaussian convention---rather than a
 genuine skill difference---could move a score, by additionally scoring the
 member-based systems (ECMWF, FuXi-S2S, NCEP) with the Gaussian CRPS built from
@@ -622,7 +626,7 @@ larger uncertainty of having sampled only a single winter and a single monsoon
     \toprule
     Claim & Evidence used here & Scope and caveat \\
     \midrule
-    Spire leads winter precipitation in JFM~2026.
+    Spire leads individual winter precipitation forecasts in JFM~2026.
       & All-India ACC/RMSE plus paired bootstrap; Spire is significant versus
         ECMWF at every lead and versus precipitation-capable individual
         systems through week~3.
@@ -686,8 +690,8 @@ remains. The following subsections quantify each of these features in turn.
 \subsection{Winter (JFM 2026): the ML advantage}\label{sec:jfm}
 
 \paragraph{Precipitation.}
-Spire AI-S2S has the highest precipitation ACC of all six systems at every
-lead week (Table~\ref{tab:jfm_acc_tp}): 0.78 at week~1, versus 0.73 for both
+Spire AI-S2S has the highest precipitation ACC among the precipitation-capable
+individual systems at every lead week (Table~\ref{tab:jfm_acc_tp}): 0.78 at week~1, versus 0.73 for both
 ECMWF and UKMO and 0.62 for NCEP, narrowing to 0.31 by week~6 where it remains
 tied with the multi-model ensemble (MME) for the top score. The paired bootstrap
 (Section~\ref{sec:boot}, Table~\ref{tab:jfm_sig_tp}) shows this lead is not
@@ -714,9 +718,10 @@ Section~\ref{sec:fuxi}, is competitive with the operational dynamical systems
 The clearest separation in the entire benchmark appears in Z500
 (Table~\ref{tab:jfm_acc_z500}). At week~1 the field is tightly clustered
 (ACC~0.89--0.97 across all six systems, with ECMWF and the MME marginally
-ahead at 0.97), and all three ML systems are essentially indistinguishable
-from the dynamical systems. By week~3 the field has split sharply: Spire,
-ECMWF, UKMO, and NCEP all remain skillful (ACC~0.40--0.66), while FuXi-S2S has
+ahead at 0.97), and all three ML systems remain in the same high-skill range as
+the dynamical systems, although the small week-1 differences are statistically
+detectable. By week~3 the field has split sharply: Spire, ECMWF, UKMO, and NCEP
+all remain skillful (ACC~0.40--0.66), while FuXi-S2S has
 fallen to 0.11 and DLESyM to 0.25. By week~4 both FuXi-S2S and DLESyM have
 crossed into \emph{negative} ACC ($-0.15$ and $-0.19$) and remain negative
 through week~6 ($-0.18$ and $-0.33$)---meaning their week-4--6 Z500 forecasts
@@ -1245,8 +1250,12 @@ systems, so ECMWF's week-2--5 precipitation-CRPSS lead over Spire
 (Section~\ref{sec:prob}) is in part a scoring-convention effect rather than a
 pure skill difference; the deterministic-versus-probabilistic contrast we draw
 (Section~\ref{sec:discussion}) is therefore stated most confidently for Z500,
-where the convention is immaterial. Closing this gap fully would require access
-to Spire's individual members, which were not provided.
+where the convention is immaterial. A second, separate asymmetry is aggregation:
+because individual Spire members are unavailable, the weekly Spire spread is an
+average of daily standard deviations rather than a standard deviation across
+weekly member-mean fields. This affects Spire CRPS and spread--skill ratio, not
+its deterministic ACC or RMSE. Closing these gaps fully would require access to
+Spire's individual members, which were not provided.
 
 \textbf{Significance is bootstrap-based, not analytic, and conditions on one
 season.} Reported skill differences are accompanied by a paired
@@ -1322,10 +1331,10 @@ comparison where its available variables permit. The main conclusions
 are as follows.
 
 \textbf{(1) Spire AI-S2S leads winter precipitation forecasting over India, and
-degrades most gracefully for Z500.} It attains the highest precipitation ACC
+degrades most gracefully for Z500.} It attains the highest individual-model precipitation ACC
 and lowest RMSE at every lead week (week-1 ACC~0.78 versus 0.73 for ECMWF/UKMO);
 a paired bootstrap confirms this lead over ECMWF is significant at every lead
-and over all precipitation-capable systems through week~3; at weeks~4--6 it remains highest by point
+and over all precipitation-capable individual systems through week~3; at weeks~4--6 it remains highest by point
 estimate but is statistically distinguishable only from ECMWF (and from NCEP
 at weeks~4 and~6). For Z500, no individual system---including Spire---holds skill flat
 through week~6, but Spire is the highest- or second-highest individual system at

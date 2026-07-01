@@ -23,14 +23,19 @@ ECMWF/UKMO/NCEP/FuXi, with DLESyM retained only as a smaller sensitivity.
 ```bash
 # 1. paired-bootstrap significance over initializations (writes the CSVs the
 #    tables/figures consume; run before make_tables/make_figures)
-python scripts/make_bootstrap.py   # -> tables/bootstrap_ci.csv, bootstrap_pairwise.csv
+python scripts/make_bootstrap.py     # -> tables/bootstrap_ci.csv, bootstrap_pairwise.csv
 
-# 2. regenerate tables and metric figures from the result CSVs (idempotent)
-python scripts/make_tables.py      # -> tables/*.tex (incl. tab_jfm_sig_*.tex)
-python scripts/make_figures.py     # -> figs/*.pdf (ACC fig gets CI bands)
+# 2. spatial cache: reduce the big grid-scatter CSVs to per-cell diagnostics
+python scripts/make_spatial_cache.py # -> cache/spatial_cells_*.csv
 
-# 3. compile
+# 3. regenerate tables and figures (idempotent)
+python scripts/make_tables.py        # -> tables/*.tex (incl. tab_jfm_sig_*.tex)
+python scripts/make_figures.py       # -> figs/*.pdf (ACC CI bands, regional, spatial)
+python scripts/make_case_study.py    # -> figs/fig_case_study_jfm.pdf
+
+# 4. compile, then assemble the arXiv upload tarball
 conda run -n tectonic_env tectonic s2s_india_benchmark.tex
+python scripts/make_arxiv_bundle.py  # -> arxiv_submission.tar.gz
 ```
 
 Note: analysis scripts run under the `s2s-hind` conda env (pandas/numpy/

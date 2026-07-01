@@ -491,7 +491,22 @@ scored with the closed-form Gaussian CRPS,
   + 2\phi(\omega) - \tfrac{1}{\sqrt{\pi}}\right],\quad \omega=\tfrac{y-\mu}{\sigma},
   \label{eq:crps}
 \end{equation}
-with $\Phi,\phi$ the standard-normal CDF and PDF. Ensemble spread is clipped
+with $\Phi,\phi$ the standard-normal CDF and PDF. Because only Spire is scored
+this way, we checked directly how much this Gaussian convention---rather than a
+genuine skill difference---could move a score, by additionally scoring the
+member-based systems (ECMWF, FuXi-S2S, NCEP) with the Gaussian CRPS built from
+their own ensemble mean and spread and comparing it, cell for cell, to their
+empirical member CRPS on the JFM~2026 data. For Z500 the two agree closely
+(median absolute difference $0.9\%$, at most $2.7\%$ across leads), so the
+Gaussian convention is immaterial for Z500 and all Z500 CRPSS comparisons
+involving Spire are robust to it. For precipitation, whose grid-point
+distribution is skewed and bounded below by zero, the Gaussian CRPS is
+systematically \emph{larger} than the empirical CRPS (by $\approx$20\% in the
+mean, growing with lead); the convention therefore mildly \emph{penalizes} the
+system it is applied to, so Spire's precipitation CRPSS reported below is, if
+anything, a conservative estimate of its probabilistic precipitation skill
+relative to the member-based systems (Section~\ref{sec:prob},
+Section~\ref{sec:limitations}). Ensemble spread is clipped
 to a small per-variable floor ($\sigma\geq0.05$\,mm\,day$^{-1}$ for
 precipitation, $1$\,m for Z500, $0.1$\,K for T2M) before use in
 Eq.~(\ref{eq:crps}) and in the spread--skill ratio below, to avoid
@@ -741,6 +756,28 @@ integrated well beyond their primary training horizon
 S2S system based on a short evaluation window is that a single week-1 score is
 not sufficient evidence of usable skill at weeks 4--6.
 
+This divergence is also spatially coherent, not an artifact of the domain
+average. Figure~\ref{fig:spatial_localacc} maps the per-grid-point temporal
+anomaly correlation (the correlation across the 90 initializations between each
+system's Z500 anomaly and the ERA5 anomaly at that cell) at week~3. Spire and
+ECMWF retain positive local correlation across essentially the whole of India;
+FuXi-S2S and, more so, DLESyM are already weak and patchy by week~3; and NCEP
+develops outright \emph{negative} local correlation over central and peninsular
+India. The ML systems thus diverge coherently in space, reinforcing that the
+long-lead separation among them is a real skill difference rather than a
+cancellation of regional signals in the domain mean.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_spatial_localacc_z500.pdf}
+  \caption{JFM~2026 week-3 Z500 local anomaly correlation---the temporal
+  correlation, across the 90 initializations, between each system's anomaly and
+  the ERA5 anomaly at every $1.5^{\circ}$ land grid point. Red is positive
+  (skillful), blue negative (anticorrelated). This per-cell diagnostic
+  complements the domain-mean, per-initialization ACC reported in the tables
+  (Section~\ref{sec:metrics}).}
+  \label{fig:spatial_localacc}
+\end{figure}
+
 \subsection{Probabilistic skill and calibration}\label{sec:prob}
 
 The deterministic ranking of Section~\ref{sec:jfm} does not simply carry over
@@ -748,7 +785,14 @@ to probabilistic skill. For precipitation (Table~\ref{tab:jfm_crpss_tp}),
 Spire has the highest CRPSS at week~1 (0.61, narrowly ahead of ECMWF's 0.59),
 but ECMWF overtakes it from week~2 through week~5 (e.g.\ 0.51 versus 0.40 at
 week~2, 0.30 versus 0.18 at week~5), while FuXi-S2S narrowly has the highest
-week-6 CRPSS. For Z500 (Table~\ref{tab:jfm_crpss_z500}), ECMWF leads more clearly
+week-6 CRPSS. This precipitation ranking should, however, be read with the
+scoring-convention check of Section~\ref{sec:metrics} in mind: because Spire is
+scored with the Gaussian CRPS, which inflates the score by $\approx$20\% for
+skewed precipitation relative to the empirical member CRPS used for ECMWF, part
+of ECMWF's apparent week-2--5 precipitation-CRPSS lead is attributable to the
+convention rather than to a genuine probabilistic-skill gap; the Z500 CRPSS
+comparison below, where the convention is immaterial ($<3\%$), is the more
+convention-robust probabilistic result. For Z500 (Table~\ref{tab:jfm_crpss_z500}), ECMWF leads more clearly
 at short lead (CRPSS~0.82 at week~1 versus 0.59 for Spire) and remains ahead
 through week~5, but the gap narrows steadily with lead (0.38 versus 0.29 at
 week~3, 0.26 versus 0.26 tied at week~4, 0.24 versus 0.23 at week~5) and Spire
@@ -855,11 +899,27 @@ ACC~0.69--0.96 across all four regions, and even the hardest region (South
 Peninsula) remains highly skillful for every system (ACC~0.69--0.88), a much
 narrower spread than for precipitation, reflecting the larger spatial
 decorrelation scale of the 500-hPa height field relative to rainfall.
+
+The full lead-time evolution of regional precipitation skill
+(Figure~\ref{fig:regional_acc}) refines this week-1 snapshot. Spire's regional
+lead is clearest and most persistent in East/Northeast India, where it stays
+above the other systems through week~3; in Central India the operational
+systems (notably NCEP and ECMWF) catch up to and slightly overtake it at
+weeks~4--6, and in the South Peninsula all systems decay to a common, low skill
+level within two to three weeks. The regional panels also make explicit that no
+system holds useful ($\mathrm{ACC}\gtrsim0.5$) precipitation skill past week~2--3
+in any single region, so the domain-mean decay of Section~\ref{sec:jfm} is not
+hiding a region that stays strongly predictable at long lead.
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.8\linewidth]{figs/fig_regional_scorecard.pdf}
-  \caption{JFM~2026 week-1 precipitation ACC by IMD homogeneous region.}
-  \label{fig:scorecard}
+  \includegraphics[width=\linewidth]{figs/fig_regional_acc_tp.pdf}
+  \caption{JFM~2026 precipitation ACC versus lead week for each of the four IMD
+  homogeneous regions (Section~\ref{sec:domain}), all systems. Dotted line
+  ACC$=0.5$; solid line ACC$=0$; shaded band marks ACC$\geq0.5$. DLESyM has no
+  precipitation channel. The corresponding week-1 scorecard and the Z500 version
+  are in Appendix~\ref{app:supp} (Figures~\ref{fig:scorecard}
+  and~\ref{fig:regional_acc_z500}).}
+  \label{fig:regional_acc}
 \end{figure}
 \input{tables/tab_jfm_regional_tp_w1}
 
@@ -913,6 +973,39 @@ the JFM~2026 winter skill level. The regional data therefore reinforce the
 domain-mean finding of Section~\ref{sec:jjas}: the monsoon equalizes skill
 across the whole of India, not just in the domain average.
 \input{tables/tab_jjas_regional_tp_w1w3}
+
+\subsection{A winter rainfall case study}\label{sec:case}
+
+The aggregate scores above are complemented by a single concrete event, chosen
+as the strongest positive domain-mean precipitation anomaly of the JFM~2026
+season: the wet spell verifying 15--21~March~2026, when a western disturbance
+produced heavy precipitation over northwest India and the Himalayan foothills
+together with rainfall over northeast India (Figure~\ref{fig:case_study}, top-
+left truth panel). Figure~\ref{fig:case_study} shows the ERA5 truth alongside
+each system's forecast of this week at two leads: week-1 (initialized
+14~March) and week-2 (initialized 7~March). At week-1 lead every system places
+the northwest-India rainfall maximum in broadly the correct location, with the
+dynamical systems (ECMWF, UKMO, NCEP) producing the sharpest local amplitudes
+and Spire a smoother, lower-amplitude field---consistent with its small
+negative precipitation bias and low RMSE (Sections~\ref{sec:jfm},
+\ref{sec:bias}) rather than a displaced pattern. At week-2 lead all systems
+weaken and smooth the event, but the northwest-India signal survives in every
+system, illustrating at the level of a single event the same conclusion the
+seasonal ACC gives: winter rainfall tied to organized western-disturbance
+circulation remains partially forecastable into the second week. The case study
+is a qualitative illustration and is not used to rank the systems; the
+season-long scores above remain the basis for every quantitative claim.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_case_study_jfm.pdf}
+  \caption{JFM~2026 winter rainfall case study: precipitation
+  (mm\,day$^{-1}$) verifying 15--21~March~2026. Columns: ERA5 truth and each
+  precipitation-capable system. Rows: week-1 lead (initialized 14~March) and
+  week-2 lead (initialized 7~March). All panels share the common
+  $1.5^{\circ}$ verification grid and colour scale. DLESyM has no precipitation
+  channel and Spire is included as its ensemble mean.}
+  \label{fig:case_study}
+\end{figure}
 
 \subsection{DLESyM-inclusive monsoon sensitivity}\label{sec:robust}
 
@@ -1204,10 +1297,11 @@ authors.
 % APPENDIX
 % ======================================================================
 \appendix
-\section{Supplementary T2M Result}\label{app:supp}
+\section{Supplementary Results}\label{app:supp}
 
-This appendix contains the 2-m temperature (T2M) result referenced in
-Sections~\ref{sec:jfm}--\ref{sec:jjas}.
+This appendix collects the 2-m temperature (T2M) result and the supplementary
+regional and spatial diagnostics referenced in
+Sections~\ref{sec:jfm}--\ref{sec:regional}.
 
 \subsection{2-m temperature}\label{app:t2m}
 
@@ -1240,6 +1334,47 @@ possible for the monsoon season.
   \caption{JJAS~2019 all-India T2M ACC versus lead week (DLESyM only; the
   only system with a scoreable T2M product in this season).}
   \label{fig:acc_lead_t2m}
+\end{figure}
+
+\subsection{Supplementary regional and spatial diagnostics}\label{app:spatial}
+
+Figure~\ref{fig:scorecard} is the week-1 JFM~2026 precipitation ACC scorecard
+by IMD region referenced in Section~\ref{sec:regional}, shown here as a
+model-by-region heatmap. Figure~\ref{fig:regional_acc_z500} is the Z500
+counterpart of the regional precipitation panels
+(Figure~\ref{fig:regional_acc}): regional Z500 skill is both higher and more
+uniform across regions than precipitation, and Spire's more graceful long-lead
+decay (Section~\ref{sec:ml_divergence}) is visible in every region.
+Figure~\ref{fig:spatial_bias} maps the JFM~2026 weeks-1--6 mean precipitation
+bias per system; the shared dry bias over the Northeast Himalayan foothills
+(Section~\ref{sec:regional}) is evident as a common brown feature, while UKMO
+and NCEP carry a broader wet tint over central and peninsular India.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.72\linewidth]{figs/fig_regional_scorecard.pdf}
+  \caption{JFM~2026 week-1 precipitation ACC by IMD homogeneous region
+  (model~$\times$~region heatmap). This is the scorecard referenced from
+  Section~\ref{sec:regional}.}
+  \label{fig:scorecard}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_regional_acc_z500.pdf}
+  \caption{JFM~2026 Z500 ACC versus lead week for each of the four IMD
+  homogeneous regions, all systems---the Z500 counterpart of
+  Figure~\ref{fig:regional_acc}. Dotted line ACC$=0.5$; solid line ACC$=0$.}
+  \label{fig:regional_acc_z500}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig_spatial_bias_tp.pdf}
+  \caption{JFM~2026 precipitation bias (weeks-1--6 mean, forecast $-$ ERA5) at
+  every $1.5^{\circ}$ land grid point, per system. Brown is dry, teal wet.
+  DLESyM has no precipitation channel.}
+  \label{fig:spatial_bias}
 \end{figure}
 
 % ======================================================================

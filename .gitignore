@@ -1,31 +1,62 @@
-*.nc
-*./
-*.zarr
-*.nc
-*.
-*.grib
+# Python caches
 __pycache__/
-*.pyc
-.*
-.*/*
-
-
-# --- large data & model weights (not stored in git; regenerate or download) ---
-analysis-code/data-download/fuxi_s2s/FuXi-S2S/
-analysis-code/experiments/spire_era5/
-analysis-code/experiments/temp/
-analysis-code/experiments/weekly_anomalies.nc
-*.pyc
-__pycache__/
-paper/tectonic
+*.py[cod]
+*$py.class
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local environments and secrets
+.env
+.env.*
+!.env.example
+.cdsapirc
+*.pem
+*.key
+*.token
+
+# Editor and assistant-local state
+.vscode/
+.idea/
+.claude/
+.codex/
+.agents/
+.gemini/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and scheduler output
 *.log
 *.err
 *.out
+slurm-*.out
 nohup.out
 analysis-code/data-download/fuxi_s2s/logs/
+final_analysis/**/slurm_logs/
+final_analysis/jjas/logs/
+
+# Large data and model products: regenerate or obtain from providers
+*.nc
+*.grib
+*.zarr/
+*.h5
+*.hdf5
+*.parquet
+*.npy
+*.npz
+analysis-code/data-download/fuxi_s2s/FuXi-S2S/
 analysis-code/data-download/fuxi_s2s/erpas_style/
 analysis-code/data-download/fuxi_s2s/forecast_animation/
 analysis-code/data-download/fuxi_s2s/test_plots/
-final_analysis/**/slurm_logs/
-final_analysis/jjas/logs/
+analysis-code/experiments/spire_era5/
+analysis-code/experiments/temp/
+analysis-code/experiments/weekly_anomalies.nc
+data_new/
+
+# Local binaries and generated submission bundles
+paper/tectonic
+paper_v2/arxiv_submission/
+paper_v2/arxiv_submission.tar.gz

@@ -15,6 +15,7 @@ Usage
 
 import argparse
 import logging
+import os
 import sys
 import tempfile
 import time
@@ -33,8 +34,8 @@ from data_util import make_input
 INPUT_DIR = Path("/storage/raj.ayush/All_Model_Data/fuxi/test/inputs")
 LOG_DIR   = Path(__file__).parent / "logs"
 
-CDS_URL = "https://cds.climate.copernicus.eu/api"
-CDS_KEY = "f628388c-5c81-44ae-a403-266655286ed0"
+CDS_URL = os.environ.get("CDSAPI_URL", "https://cds.climate.copernicus.eu/api")
+CDS_KEY = os.environ.get("CDSAPI_KEY")
 
 AREA = [90, 0, -90, 358.5]
 GRID = [1.5, 1.5]
@@ -233,7 +234,10 @@ def main():
     log.info(f"  Output dir : {INPUT_DIR}")
     log.info("=" * 60)
 
-    client = cdsapi.Client(url=CDS_URL, key=CDS_KEY, quiet=True)
+    client_kwargs = {"url": CDS_URL, "quiet": True}
+    if CDS_KEY:
+        client_kwargs["key"] = CDS_KEY
+    client = cdsapi.Client(**client_kwargs)
     download_one(client, init_date, log)
 
 

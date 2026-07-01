@@ -5,7 +5,13 @@ import cdsapi
 OUT_DIR = '/storage/raj.ayush/s2s-forecast-data/era5/data'
 os.makedirs(OUT_DIR, exist_ok=True)
 
-c = cdsapi.Client(url="https://cds.climate.copernicus.eu/api", key="f628388c-5c81-44ae-a403-266655286ed0")
+CDS_URL = os.environ.get("CDSAPI_URL", "https://cds.climate.copernicus.eu/api")
+CDS_KEY = os.environ.get("CDSAPI_KEY")
+
+client_kwargs = {"url": CDS_URL}
+if CDS_KEY:
+    client_kwargs["key"] = CDS_KEY
+c = cdsapi.Client(**client_kwargs)
 
 # Exact same domain and resolution as your S2S benchmark downloads!
 # This means NO interpolation is needed later when doing RMSE/ACC math!

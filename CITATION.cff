@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the paper and software archive."
+title: "India S2S AI and Operational Forecast Benchmark"
+type: software
+authors:
+  - family-names: "Raj"
+    given-names: "Ayush"
+  - family-names: "Singh"
+    given-names: "Manmeet"
+  - family-names: "Dhanuka"
+    given-names: "Saptarishi"
+  - family-names: "Mukhopadhyay"
+    given-names: "Parthasarathi"
+  - family-names: "Goswami"
+    given-names: "Bedartha"
+  - family-names: "Juneja"
+    given-names: "Sandeep"
+repository-code: "https://github.com/Artamta/s2s-analysis"
+date-released: "2026-07-02"
+license: "MIT"
+preferred-citation:
+  type: article
+  title: "Machine-Learning and Operational Subseasonal Forecasts over India: An Early Two-Season Benchmark across Winter and Monsoon Regimes"
+  authors:
+    - family-names: "Raj"
+      given-names: "Ayush"
+    - family-names: "Singh"
+      given-names: "Manmeet"
+    - family-names: "Dhanuka"
+      given-names: "Saptarishi"
+    - family-names: "Mukhopadhyay"
+      given-names: "Parthasarathi"
+    - family-names: "Goswami"
+      given-names: "Bedartha"
+    - family-names: "Juneja"
+      given-names: "Sandeep"
+  year: 2026
+  url: "https://github.com/Artamta/s2s-analysis"

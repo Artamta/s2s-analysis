@@ -22,6 +22,7 @@ Usage
 
 import argparse
 import logging
+import os
 import sys
 import tempfile
 import time
@@ -41,8 +42,8 @@ INPUT_DIR = Path("/storage/raj.ayush/All_Model_Data/fuxi/jfm2026/inputs")
 LOG_DIR   = Path(__file__).parent / "logs"
 
 # ── CDS CONFIG ────────────────────────────────────────────────────────────────
-CDS_URL = "https://cds.climate.copernicus.eu/api"
-CDS_KEY = "f628388c-5c81-44ae-a403-266655286ed0"
+CDS_URL = os.environ.get("CDSAPI_URL", "https://cds.climate.copernicus.eu/api")
+CDS_KEY = os.environ.get("CDSAPI_KEY")
 
 # Global 1.5° grid — exactly what FuXi expects
 AREA = [90, 0, -90, 358.5]   # global
@@ -281,7 +282,10 @@ def main():
         log.info("All input.nc files exist — nothing to do.")
         return
 
-    client = cdsapi.Client(url=CDS_URL, key=CDS_KEY, quiet=True)
+    client_kwargs = {"url": CDS_URL, "quiet": True}
+    if CDS_KEY:
+        client_kwargs["key"] = CDS_KEY
+    client = cdsapi.Client(**client_kwargs)
     failed = []
     for i, date in enumerate(pending, 1):
         try:

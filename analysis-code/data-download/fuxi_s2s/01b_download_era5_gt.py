@@ -25,6 +25,7 @@ Usage
 
 import argparse
 import logging
+import os
 import sys
 import time
 from datetime import datetime
@@ -39,6 +40,9 @@ import tempfile
 # ── PATHS ─────────────────────────────────────────────────────────────────────
 GT_DIR  = Path("/storage/raj.ayush/All_Model_Data/fuxi/jfm2026/ground_truth")
 LOG_DIR = Path(__file__).parent / "logs"
+
+CDS_URL = os.environ.get("CDSAPI_URL", "https://cds.climate.copernicus.eu/api")
+CDS_KEY = os.environ.get("CDSAPI_KEY")
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 DATE_START = "2026-01-01"
@@ -209,9 +213,11 @@ def main():
         log.info("All files exist — nothing to download.")
         return
 
-    # Must use CDS (not ECDS) — ~/.cdsapirc points to ECDS for S2S forecasts
-    client = cdsapi.Client(url="https://cds.climate.copernicus.eu/api",
-                           key="f628388c-5c81-44ae-a403-266655286ed0", quiet=True)
+    # Must use CDS (not ECDS). Set CDSAPI_KEY if ~/.cdsapirc points elsewhere.
+    client_kwargs = {"url": CDS_URL, "quiet": True}
+    if CDS_KEY:
+        client_kwargs["key"] = CDS_KEY
+    client = cdsapi.Client(**client_kwargs)
     failed = []
     for i, date in enumerate(pending, 1):
         ok = download_one(client, date, log)

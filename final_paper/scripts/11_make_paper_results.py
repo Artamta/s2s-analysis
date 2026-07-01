@@ -39,24 +39,40 @@ class RunConfig:
 PUBLICATION_RUNS = (
     RunConfig(
         season="jjas2019",
+        run_label="full_jjas2019_operational35_plus_fuxi_tp_imdtruth",
+        paper_case="jjas2019_operational35_plus_fuxi_tp_imd",
+        paper_title="JJAS2019 Common 35 TP, IMD Truth",
+        note=(
+            "Common 35 Monday/Thursday init dates for ECMWF/UKMO/NCEP/FuXi/MME; "
+            "TP verified against IMD."
+        ),
+    ),
+    RunConfig(
+        season="jjas2019",
+        run_label="full_jjas2019_operational35_plus_fuxi_tp_era5truth",
+        paper_case="jjas2019_operational35_plus_fuxi_tp_era5",
+        paper_title="JJAS2019 Common 35 TP, ERA5 Truth",
+        note=(
+            "Common 35 Monday/Thursday init dates for ECMWF/UKMO/NCEP/FuXi/MME; "
+            "TP verified against ERA5 for truth-source sensitivity."
+        ),
+    ),
+    RunConfig(
+        season="jjas2019",
+        run_label="full_jjas2019_operational35_plus_fuxi_z500",
+        paper_case="jjas2019_operational35_plus_fuxi_z500",
+        paper_title="JJAS2019 Common 35 Z500",
+        note="Common 35 Monday/Thursday init dates for ECMWF/UKMO/NCEP/FuXi/MME; Z500 verified against ERA5.",
+    ),
+    RunConfig(
+        season="jjas2019",
         run_label="full_jjas2019_common17_fuxi_imd",
-        paper_case="jjas2019_common17_all_models_imd",
-        paper_title="JJAS2019 Common 17 Init Dates",
-        note="All usable JJAS2019 models on the common 17 Thursday inits; TP verified against IMD.",
-    ),
-    RunConfig(
-        season="jjas2019",
-        run_label="full_jjas2019_operational35_tp_era5truth",
-        paper_case="jjas2019_operational35_tp_era5",
-        paper_title="JJAS2019 Operational 35 TP, ERA5 Truth",
-        note="Operational ECMWF/UKMO/NCEP/MME TP comparison on 35 Monday/Thursday inits; ERA5 truth.",
-    ),
-    RunConfig(
-        season="jjas2019",
-        run_label="full_jjas2019_operational35_tp_imdtruth",
-        paper_case="jjas2019_operational35_tp_imd",
-        paper_title="JJAS2019 Operational 35 TP, IMD Truth",
-        note="Operational ECMWF/UKMO/NCEP/MME TP comparison on 35 Monday/Thursday inits; IMD truth.",
+        paper_case="jjas2019_common17_delysm_sensitivity",
+        paper_title="JJAS2019 Common 17 DLESyM Sensitivity",
+        note=(
+            "Common 17 Thursday init dates used only for the DLESyM-inclusive sensitivity comparison; "
+            "TP verified against IMD."
+        ),
     ),
     RunConfig(
         season="jfm2026",

@@ -20,11 +20,30 @@ from datetime import date, timedelta
 from pathlib import Path
 
 
-DEFAULT_STAGED_ROOT = Path("/storage/raj.ayush/other/jjas2019_missing_forecasts/fuxi")
-DEFAULT_COMBINED_ROOT = Path("/storage/raj.ayush/s2s_final_data/jjas/fuxi_combined")
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_STAGED_ROOT = Path(
+    os.environ.get(
+        "S2S_FUXI_JJAS_STAGED_ROOT",
+        "/storage/raj.ayush/other/jjas2019_missing_forecasts/fuxi",
+    )
+)
+DEFAULT_COMBINED_ROOT = Path(
+    os.environ.get(
+        "S2S_FUXI_JJAS_COMBINED_ROOT",
+        "/storage/raj.ayush/s2s_final_data/jjas/fuxi_combined",
+    )
+)
 DEFAULT_OUTPUT_MANIFEST = Path(
-    "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/common/inventory/"
-    "fuxi_jjas2019_operational35_manifest.csv"
+    os.environ.get(
+        "S2S_FUXI_JJAS_MANIFEST",
+        str(
+            PROJECT_ROOT
+            / "outputs"
+            / "common"
+            / "inventory"
+            / "fuxi_jjas2019_operational35_manifest.csv"
+        ),
+    )
 )
 
 

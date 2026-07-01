@@ -31,6 +31,9 @@ The repository may contain scripts, derived aggregate metrics, generated tables,
 and generated figures. Those derived artifacts should not be read as granting
 permission to redistribute the underlying raw datasets.
 
+The conda environment file describes software dependencies only. It does not
+grant access to third-party data or override any provider license.
+
 ## Secrets And Credentials
 
 Do not commit API credentials or private configuration files. For CDS downloads,

@@ -29,20 +29,47 @@ paper_v2/
 final_paper/
   Current verification package: reusable analysis code, pipeline scripts,
   checks, masks, documentation, and SLURM launchers.
+
+REPRODUCIBILITY.md
+  Environment, data-root assumptions, rebuild commands, and archive guidance.
+
+DATA_AND_LICENSES.md
+  Dataset access boundaries and license notes.
 ```
+
+## Environment
+
+The portable environment is defined in [`environment.yml`](environment.yml):
+
+```bash
+conda env create -f environment.yml
+conda activate s2s-analysis
+```
+
+The analysis assumes local/provider data are available outside the Git checkout.
+Set these when your paths differ from the defaults:
+
+```bash
+export S2S_STORAGE_ROOT=/path/to/storage-root
+export S2S_DATA_ROOT=/path/to/All_Model_Data
+export S2S_PAPER_OUTPUT_ROOT=/path/to/s2s_paper_outputs
+```
+
+See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) for the full rebuild workflow.
 
 ## Reproduce The Current Preprint
 
-From `paper_v2/`:
+From the repository root:
 
 ```bash
-python scripts/make_bootstrap.py
-python scripts/make_spatial_cache.py
-python scripts/make_tables.py
-python scripts/make_figures.py
-python scripts/make_case_study.py
-python scripts/make_scatter.py
-conda run -n tectonic_env tectonic s2s_india_benchmark.tex
+python paper_v2/scripts/make_bootstrap.py
+python paper_v2/scripts/make_spatial_cache.py
+python paper_v2/scripts/make_tables.py
+python paper_v2/scripts/make_figures.py
+python paper_v2/scripts/make_case_study.py
+python paper_v2/scripts/make_scatter.py
+cd paper_v2
+tectonic s2s_india_benchmark.tex
 python scripts/make_arxiv_bundle.py
 ```
 
@@ -53,8 +80,9 @@ paper_v2/arxiv_submission.tar.gz
 ```
 
 The paper scripts expect the processed result products under
-`final_paper/outputs/s2s_paper_outputs/`. Raw forecast and truth data are not
-redistributed in this repository.
+`final_paper/outputs/s2s_paper_outputs/`, or the path specified by
+`S2S_PAPER_OUTPUT_ROOT`. Raw forecast and truth data are not redistributed in
+this repository.
 
 ## What Is Intentionally Not Tracked
 
@@ -63,6 +91,11 @@ drafts, legacy analysis directories, raw forecasts, model weights, provider
 downloads, scratch figures, scheduler logs, and local storage products. Keep
 those locally or archive them separately if needed; this repository is scoped to
 the current paper and the code needed to rebuild its generated artifacts.
+
+`.gitignore` prevents new local/generated files from entering Git; it does not
+remove files that are already tracked. The current tracked tree is intentionally
+small: manuscript, reusable code, scripts, small masks, generated publication
+figures/tables, and metadata.
 
 ## Data And Licenses
 

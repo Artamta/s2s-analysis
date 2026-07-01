@@ -23,25 +23,27 @@ ECMWF/UKMO/NCEP/FuXi, with DLESyM retained only as a smaller sensitivity.
 ```bash
 # 1. paired-bootstrap significance over initializations (writes the CSVs the
 #    tables/figures consume; run before make_tables/make_figures)
-python scripts/make_bootstrap.py     # -> tables/bootstrap_ci.csv, bootstrap_pairwise.csv
+python paper_v2/scripts/make_bootstrap.py     # -> paper_v2/tables/bootstrap_ci.csv, bootstrap_pairwise.csv
 
 # 2. spatial cache: reduce the big grid-scatter CSVs to per-cell diagnostics
-python scripts/make_spatial_cache.py # -> cache/spatial_cells_*.csv
+python paper_v2/scripts/make_spatial_cache.py # -> paper_v2/cache/spatial_cells_*.csv
 
 # 3. regenerate tables and figures (idempotent)
-python scripts/make_tables.py        # -> tables/*.tex (incl. tab_jfm_sig_*.tex)
-python scripts/make_figures.py       # -> figs/*.pdf (ACC CI bands, regional, spatial)
-python scripts/make_case_study.py    # -> figs/fig_case_study_{jfm,jjas}.pdf
-python scripts/make_scatter.py       # -> figs/fig_scatter_{tp,z500}.pdf (appendix)
+python paper_v2/scripts/make_tables.py        # -> paper_v2/tables/*.tex
+python paper_v2/scripts/make_figures.py       # -> paper_v2/figs/*.pdf
+python paper_v2/scripts/make_case_study.py    # -> paper_v2/figs/fig_case_study_{jfm,jjas}.pdf
+python paper_v2/scripts/make_scatter.py       # -> paper_v2/figs/fig_scatter_{tp,z500}.pdf
 
 # 4. compile, then assemble the arXiv upload tarball
-conda run -n tectonic_env tectonic s2s_india_benchmark.tex
+cd paper_v2
+tectonic s2s_india_benchmark.tex
 python scripts/make_arxiv_bundle.py  # -> arxiv_submission.tar.gz
 ```
 
-Note: analysis scripts run under the `s2s-hind` conda env (pandas/numpy/
-matplotlib); `tectonic_env` is LaTeX-only. Concretely:
-`/home/raj.ayush/.conda/envs/s2s-hind/bin/python3 scripts/make_bootstrap.py`.
+The portable environment is defined in `../environment.yml`. The scripts read
+processed verification products from `../final_paper/outputs/s2s_paper_outputs`
+by default. Override this with `S2S_PAPER_OUTPUT_ROOT=/path/to/s2s_paper_outputs`
+when rebuilding from archived outputs.
 
 **Never hand-type a score.** All numbers live in `tables/*.tex` and `figs/*.pdf`,
 generated from:

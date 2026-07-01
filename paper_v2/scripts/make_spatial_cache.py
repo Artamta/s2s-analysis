@@ -30,7 +30,9 @@ import os
 import numpy as np
 import pandas as pd
 
-ROOT = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs"
+from paper_paths import PAPER_OUTPUT_ROOT
+
+ROOT = str(PAPER_OUTPUT_ROOT)
 CACHE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cache"))
 os.makedirs(CACHE, exist_ok=True)
 

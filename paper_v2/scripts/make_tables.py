@@ -15,7 +15,9 @@ import textwrap
 
 import pandas as pd
 
-ROOT = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs"
+from paper_paths import PAPER_OUTPUT_ROOT
+
+ROOT = str(PAPER_OUTPUT_ROOT)
 OUT = os.path.join(os.path.dirname(__file__), "..", "tables")
 OUT = os.path.abspath(OUT)
 os.makedirs(OUT, exist_ok=True)

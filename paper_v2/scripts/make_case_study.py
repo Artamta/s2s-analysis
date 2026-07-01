@@ -27,6 +27,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from paper_paths import IMD_MASK_025, PAPER_OUTPUT_ROOT
+
 try:
     import cartopy.crs as ccrs
     import cartopy.feature as cfeature
@@ -34,9 +36,9 @@ try:
 except Exception:
     _HAS_CARTOPY = False
 
-ROOT = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs"
+ROOT = str(PAPER_OUTPUT_ROOT)
 OUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "figs"))
-MASK_PATH = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/masks/imd_region_masks_0.25deg.nc"
+MASK_PATH = str(IMD_MASK_025)
 _MASK = {}
 
 LABEL = {"spire": "Spire AI-S2S", "fuxi": "FuXi-S2S", "ecmwf": "ECMWF",

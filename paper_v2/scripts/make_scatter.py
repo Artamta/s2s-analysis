@@ -25,8 +25,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-GRID = ("/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs/"
-        "jfm2026/03_metrics/full_jfm2026_gridscatter/scatter_grid_weekly.csv")
+from paper_paths import PAPER_OUTPUT_ROOT
+
+GRID = str(
+    PAPER_OUTPUT_ROOT
+    / "jfm2026"
+    / "03_metrics"
+    / "full_jfm2026_gridscatter"
+    / "scatter_grid_weekly.csv"
+)
 OUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "figs"))
 
 LABEL = {"spire": "Spire AI-S2S", "fuxi": "FuXi-S2S", "delysm": "DLESyM",

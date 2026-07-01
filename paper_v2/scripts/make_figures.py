@@ -20,6 +20,8 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
+from paper_paths import IMD_MASK_025, PAPER_OUTPUT_ROOT
+
 try:
     import cartopy.crs as ccrs
     import cartopy.feature as cfeature
@@ -27,7 +29,7 @@ try:
 except Exception:  # pragma: no cover - spatial figures degrade gracefully
     _HAS_CARTOPY = False
 
-ROOT = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs"
+ROOT = str(PAPER_OUTPUT_ROOT)
 OUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "figs"))
 CACHE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cache"))
 os.makedirs(OUT, exist_ok=True)
@@ -416,7 +418,7 @@ def _load_spatial(season):
 # India land outline + IMD homogeneous-region boundaries, drawn from the same
 # Survey-of-India-derived region masks used for every score in the paper (more
 # correct for an India-focused study than a generic global coastline product).
-_MASK_PATH = "/home/raj.ayush/s2s/s2s_anlysis/final_paper/masks/imd_region_masks_0.25deg.nc"
+_MASK_PATH = str(IMD_MASK_025)
 _MASK_CACHE = {}
 
 

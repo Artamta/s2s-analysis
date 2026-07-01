@@ -25,8 +25,14 @@ import pandas as pd
 import zarr
 
 
-DEFAULT_DATA_ROOT = Path("/storage/raj.ayush/All_Model_Data")
-DEFAULT_OUTPUT_ROOT = Path("/home/raj.ayush/s2s/s2s_anlysis/final_paper/outputs/s2s_paper_outputs")
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_DATA_ROOT = Path(os.environ.get("S2S_DATA_ROOT", "/storage/raj.ayush/All_Model_Data"))
+DEFAULT_OUTPUT_ROOT = Path(
+    os.environ.get(
+        "S2S_PAPER_OUTPUT_ROOT",
+        str(PROJECT_ROOT / "outputs" / "s2s_paper_outputs"),
+    )
+)
 SEASONS = ("jfm2026", "jjas2019")
 MODELS = ("delysm", "ecmwf", "ukmo", "ncep", "fuxi")
 OPERATIONAL_MODELS = ("ecmwf", "ukmo", "ncep")

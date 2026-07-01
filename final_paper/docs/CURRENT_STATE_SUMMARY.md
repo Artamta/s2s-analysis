@@ -154,7 +154,7 @@ fully missing cells.
 Run these before overnight jobs:
 
 ```bash
-cd /home/raj.ayush/s2s/s2s_anlysis/final_paper
+cd final_paper
 python scripts/00_check_foundation.py
 python scripts/01_check_core.py
 python scripts/02_check_metrics_formulas.py

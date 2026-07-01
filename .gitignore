@@ -7,11 +7,19 @@ __pycache__/
 .ruff_cache/
 .ipynb_checkpoints/
 
-# Local environments and secrets
+# Local environments, build products, and secrets
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
 .env
 .env.*
 !.env.example
 .cdsapirc
+.netrc
 *.pem
 *.key
 *.token
@@ -34,19 +42,44 @@ Thumbs.db
 *.out
 slurm-*.out
 nohup.out
+logs/
 analysis-code/data-download/fuxi_s2s/logs/
 final_analysis/**/slurm_logs/
 final_analysis/jjas/logs/
 
+# LaTeX build byproducts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fls
+*.fdb_latexmk
+*.lof
+*.lot
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
 # Large data and model products: regenerate or obtain from providers
 *.nc
+*.nc4
 *.grib
+*.grib2
 *.zarr/
 *.h5
 *.hdf5
 *.parquet
+*.feather
 *.npy
 *.npz
+*.pkl
+*.pickle
+*.sqlite
+*.db
+*.tar
+*.tgz
+*.zip
 analysis-code/
 final_analysis/
 paper/
@@ -63,6 +96,10 @@ analysis-code/experiments/weekly_anomalies.nc
 final_paper/case-study/
 final_paper/paper/
 final_paper/prof_package_20260623/
+
+# Curated small masks required by the reproducible paper workflow.
+!final_paper/masks/
+!final_paper/masks/imd_region_masks_*.nc
 
 # Local binaries and generated submission bundles
 paper/tectonic

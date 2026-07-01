@@ -1,0 +1,19 @@
+name: s2s-analysis
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.11
+  - numpy
+  - pandas
+  - xarray
+  - dask
+  - zarr
+  - netcdf4
+  - cfgrib
+  - eccodes
+  - scipy
+  - matplotlib
+  - cartopy
+  - cdsapi
+  - tectonic
+  - pip

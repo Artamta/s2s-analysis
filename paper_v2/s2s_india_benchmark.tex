@@ -70,10 +70,10 @@
 % ======================================================================
 \begin{abstract}
 \noindent
-Subseasonal-to-seasonal (S2S) forecasts at two-to-six-week leads are valuable
-for Indian agriculture and water management, yet the skill of new
+Subseasonal-to-seasonal (S2S) forecasts at two-to-six-week leads support
+Indian agriculture and water management, yet the skill of new
 machine-learning (ML) S2S systems over India remains sparsely documented. We
-present two physically contrasting India case studies under a common
+present two contrasting Indian case studies with a common
 verification framework: a synoptically driven winter case (JFM~2026, 90 daily
 initializations), where Spire AI-S2S is evaluated alongside FuXi-S2S, DLESyM,
 ECMWF, UKMO, and NCEP, and a convectively dominated monsoon case (JJAS~2019,
@@ -84,8 +84,9 @@ spread--skill ratio. In JFM~2026, Spire AI-S2S has the highest precipitation
 ACC at every lead (week-1 ACC~0.78 versus 0.73 for ECMWF and UKMO); a paired
 bootstrap shows this lead is significant over every precipitation-capable
 system through week~3 and over ECMWF at every lead. Spire also degrades
-most gracefully for Z500, significantly exceeding FuXi-S2S and DLESyM---both
-of which cross into negative ACC by week~4---at all leads. In
+most gracefully for Z500, significantly exceeding FuXi-S2S and DLESyM at all
+leads, with the gap widening after week~1; both cross into negative ACC by
+week~4. In
 JJAS~2019, by contrast, precipitation skill collapses rapidly for all
 available systems: every individual-model ACC is at most 0.04 by week~3,
 where none differs significantly from zero. The contrast points to a physical
@@ -93,9 +94,9 @@ predictability difference rather than a model leaderboard: winter rainfall is
 tightly coupled to organized large-scale circulation and western
 disturbances, whereas monsoon rainfall depends on multiscale convection and
 active--break variability that are harder to predict at weekly leads.
-Deterministic and probabilistic rankings, moreover, need not agree. This provides an early, truth-aware benchmark of AI and
-operational S2S guidance over India while making explicit the limits of two
-case seasons and unequal model availability.
+Deterministic and probabilistic rankings, moreover, need not agree. We provide
+an early, truth-aware benchmark of AI and operational S2S guidance over India
+while making explicit the limits of two seasons and unequal model availability.
 \end{abstract}
 
 \vspace{0.3em}
@@ -1069,7 +1070,8 @@ the physical regime controls what kind of skill can be extracted. The winter
 case demonstrates that AI S2S guidance can add value over India when
 large-scale circulation and rainfall are tightly coupled; the monsoon case
 shows that this value does not automatically generalize to the country's most
-consequential rainy season.
+consequential rainy season. These results should therefore be read as a
+case-season benchmark, not as a climatological skill estimate.
 
 \paragraph{Not all AI systems are equal.}
 A second contribution of this study is methodological: the JFM~2026 case shows
@@ -1303,8 +1305,9 @@ results give an early, honest picture of where ML subseasonal forecasting
 adds value over India---the synoptically organized winter---and where the
 problem remains genuinely hard for the available ML and operational systems
 evaluated here---the summer monsoon. The verification framework, code, and result
-tables are archived to support extension as additional seasons, an IMD-2026
-precipitation truth, and per-model reforecast climatologies become available.
+tables are archived to support the next necessary extensions: multi-year
+hindcasts, IMD verification for 2026 rainfall when available, access to Spire's
+individual ensemble members, and per-model reforecast climatologies.
 
 % ======================================================================
 \section*{Data and Code Availability}

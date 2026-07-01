@@ -39,6 +39,14 @@
 \definecolor{linkblue}{RGB}{30,80,160}
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,
             urlcolor=linkblue]{hyperref}
+\hypersetup{
+  pdftitle={Machine-Learning and Operational Subseasonal Forecasts over India:
+            A Two-Season Benchmark across Winter and Monsoon Regimes},
+  pdfauthor={Ayush Raj, Manmeet Singh, Saptarishi Dhanuka,
+             Parthasarathi Mukhopadhyay, Bedartha Goswami, Sandeep Juneja},
+  pdfkeywords={subseasonal-to-seasonal prediction, machine learning,
+               precipitation, India, monsoon, ensemble verification},
+}
 \providecommand{\doi}[1]{\href{https://doi.org/#1}{doi:#1}}
 
 
@@ -63,38 +71,31 @@
 \begin{abstract}
 \noindent
 Subseasonal-to-seasonal (S2S) forecasts at two-to-six-week leads are valuable
-for Indian agriculture and water management, yet regional precipitation skill
-at these leads remains limited, and the performance of new machine-learning
-(ML) S2S systems over India is still sparsely documented. We present two
-physically contrasting India case studies using a common verification
-framework. The first is a synoptically driven winter case (JFM~2026) with 90
-daily initializations, where Spire AI-S2S is evaluated alongside FuXi-S2S,
-DLESyM, ECMWF, UKMO, and NCEP. The second is a convectively dominated monsoon
-case (JJAS~2019) using 35 common Monday/Thursday initializations for ECMWF,
-UKMO, NCEP, and FuXi-S2S; a smaller DLESyM-inclusive subset is treated as a
-sensitivity comparison because DLESyM availability is more limited and it does
-not provide precipitation. Forecasts are verified over Indian land points
-against ERA5 and IMD gridded rainfall using cosine-weighted anomaly
-correlation (ACC), RMSE, bias, CRPSS, and spread--skill ratio. In JFM~2026,
-Spire AI-S2S has the highest precipitation ACC at every lead (week-1
-ACC~0.78 versus 0.73 for ECMWF and UKMO); a paired bootstrap over
-initializations shows this lead over ECMWF is significant at every lead week,
-while its edge over the other systems is significant through week~3 and within
-sampling uncertainty thereafter. Spire also degrades more gracefully than the
-other ML systems for Z500, significantly exceeding FuXi-S2S and DLESyM---both of
-which cross into negative ACC by week~4---from week~2 onward. In JJAS~2019, by
-contrast, precipitation skill over India collapses rapidly for all available
-systems: in the 35-date monsoon benchmark, all individual-model ACC values are
-$\le$~0.04 by week~3, where none is significantly different from zero. The contrast points to a physical predictability difference rather
-than a simple model leaderboard: winter rainfall is more tightly coupled to
-organized large-scale circulation and western disturbances, whereas monsoon
-rainfall depends on multiscale convection, active--break variability, and
-regional rainfall processes that are harder to predict at weekly leads.
-Probabilistic scores further show that deterministic and calibrated
-probabilistic rankings need not agree. The study therefore provides an early,
-truth-aware benchmark of AI and operational S2S guidance over India while
-making explicit the limits imposed by two case-study seasons and unequal model
-availability.
+for Indian agriculture and water management, yet the skill of new
+machine-learning (ML) S2S systems over India remains sparsely documented. We
+present two physically contrasting India case studies under a common
+verification framework: a synoptically driven winter case (JFM~2026, 90 daily
+initializations), where Spire AI-S2S is evaluated alongside FuXi-S2S, DLESyM,
+ECMWF, UKMO, and NCEP, and a convectively dominated monsoon case (JJAS~2019,
+35 common initializations) for ECMWF, UKMO, NCEP, and FuXi-S2S. Forecasts are
+verified over Indian land against ERA5 and IMD rainfall using
+anomaly correlation (ACC), RMSE, bias, CRPSS, and
+spread--skill ratio. In JFM~2026, Spire AI-S2S has the highest precipitation
+ACC at every lead (week-1 ACC~0.78 versus 0.73 for ECMWF and UKMO); a paired
+bootstrap shows this lead is significant over every precipitation-capable
+system through week~3 and over ECMWF at every lead. Spire also degrades
+most gracefully for Z500, significantly exceeding FuXi-S2S and DLESyM---both
+of which cross into negative ACC by week~4---at all leads. In
+JJAS~2019, by contrast, precipitation skill collapses rapidly for all
+available systems: every individual-model ACC is at most 0.04 by week~3,
+where none differs significantly from zero. The contrast points to a physical
+predictability difference rather than a model leaderboard: winter rainfall is
+tightly coupled to organized large-scale circulation and western
+disturbances, whereas monsoon rainfall depends on multiscale convection and
+active--break variability that are harder to predict at weekly leads.
+Deterministic and probabilistic rankings, moreover, need not agree. This provides an early, truth-aware benchmark of AI and
+operational S2S guidance over India while making explicit the limits of two
+case seasons and unequal model availability.
 \end{abstract}
 
 \vspace{0.3em}
@@ -120,8 +121,9 @@ subtropical westerly jet \citep{dimri2015,hunt2018}---sustains the rabi
 Indus and Ganges during the subsequent melt season. The summer monsoon (June
 through September), by contrast, supplies roughly three-quarters of India's
 annual rainfall through transient convective systems organized by
-intraseasonal oscillations, and its subseasonal predictability is a long-
-standing operational priority for the India Meteorological Department (IMD)
+intraseasonal oscillations \citep{zhang2005,wheelerhendon2004}, and its
+subseasonal predictability is a long-standing operational priority for the
+India Meteorological Department (IMD)
 and the Ministry of Earth Sciences \citep{rao2019,pattanaik2019}. These two
 seasons are governed by different dynamics and, as we show below, by
 different limits on predictability.
@@ -130,9 +132,10 @@ In parallel, weather prediction is being reshaped by machine-learning (ML)
 forecast systems trained on reanalysis data. Deterministic data-driven models
 such as Pangu-Weather and GraphCast now match or exceed operational numerical
 weather prediction (NWP) on standard medium-range scores
-\citep{pathak2022,bi2023,lam2023,benbouallegue2024,rasp2024}, and operational
-centers have begun running data-driven systems alongside their NWP suites
-\citep{lang2024}. Extension of these methods to the subseasonal range is more
+\citep{pathak2022,bi2023,lam2023,benbouallegue2024,rasp2024}, probabilistic
+and hybrid successors have followed \citep{price2025,kochkov2024}, and
+operational centers have begun running data-driven systems alongside their
+NWP suites \citep{lang2024}. Extension of these methods to the subseasonal range is more
 recent: FuXi-S2S, a transformer-based system producing 42-day ensemble
 forecasts, has been reported to outperform conventional S2S models on several
 global metrics \citep{chen2024}; diffusion-based Earth-system emulators such as
@@ -151,8 +154,8 @@ from one that merely performs well in an easy predictability regime. India
 offers an unusually clean natural test of this distinction: its two principal
 rainy seasons are governed by essentially different physics. Winter
 precipitation is organized by synoptic-scale WDs with several days of
-predictable structure, while monsoon precipitation is dominated by smaller-
-scale convection embedded in a noisier large-scale envelope, historically
+predictable structure, while monsoon precipitation is dominated by
+smaller-scale convection embedded in a noisier large-scale envelope, historically
 associated with a shorter predictability horizon
 \citep{deandrade2019,pegion2019}. A forecast system that performs well only in
 the synoptically organized winter season may not be skillful in general; a
@@ -200,8 +203,9 @@ Sections~\ref{sec:limitations}--\ref{sec:conclusions}.
 The study domain covers the Indian region, $5^{\circ}$--$38^{\circ}$N,
 $65^{\circ}$--$100^{\circ}$E, with all aggregate skill metrics computed over
 \emph{land points only}. Land points are defined as the union of the four
-India Meteorological Department (IMD) homogeneous rainfall regions---
-Northwest, Central, South Peninsula, and East/Northeast India---following the
+India Meteorological Department (IMD) homogeneous rainfall
+regions---Northwest, Central, South Peninsula, and East/Northeast
+India---following the
 state grouping of \citet{pai2014}; the region masks are constructed by
 assigning each $1.5^{\circ}$ grid point to the region whose constituent
 Survey-of-India state polygons contain it, so land/ocean separation is a
@@ -238,8 +242,8 @@ artifacts.
         gridded rainfall product is not yet available for this season, so ERA5
         is the only complete reference; we discuss the implications of
         treating a reanalysis as truth in Section~\ref{sec:limitations}.
-  \item \textbf{Precipitation, JJAS~2019:} the IMD $0.25^{\circ}$ daily gauge-
-        based gridded rainfall product \citep{pai2014}, constructed from
+  \item \textbf{Precipitation, JJAS~2019:} the IMD $0.25^{\circ}$ daily
+        gauge-based gridded rainfall product \citep{pai2014}, constructed from
         roughly 3000 quality-controlled rain-gauge stations by ordinary
         kriging. Because this reference is independent of any reanalysis, it
         removes the possibility that an ERA5-trained ML system is rewarded
@@ -442,10 +446,10 @@ would have been easy.
 
 \subsection{Deterministic and probabilistic metrics}\label{sec:metrics}
 
-The anomaly correlation coefficient (ACC) at lead $\ell$ is the
-cosine-latitude-weighted, spatially centered Pearson correlation of forecast
-and observed anomaly fields, computed per initialization and averaged over the
-season:
+The anomaly correlation coefficient \citep[ACC; cf.][]{murphy1988} at lead
+$\ell$ is the cosine-latitude-weighted, spatially centered Pearson correlation
+of forecast and observed anomaly fields, computed per initialization and
+averaged over the season:
 \begin{equation}
   \mathrm{ACC}(\ell) = \frac{1}{T}\sum_{t=1}^{T}
   \frac{\sum_i w_i\,(f'_{i,t,\ell}-\overline{f'}_{t,\ell})\,
@@ -468,7 +472,8 @@ fields in their native units (mm\,day$^{-1}$ for precipitation, m for Z500):
 
 For probabilistic verification, each system contributes an ensemble mean
 $\mu$ and spread (standard deviation) $\sigma$ at each grid point and lead
-day. The continuous ranked probability score (CRPS) is computed differently
+day. The continuous ranked probability score \citep[CRPS;][]{gneiting2007} is
+computed differently
 depending on the native form of each system's forecast, rather than forcing
 every system onto a single Gaussian summary. For the five systems delivered
 as individual members (FuXi-S2S, ECMWF, UKMO, NCEP, DLESyM), CRPS is the
@@ -570,7 +575,8 @@ season.
 
 Every headline skill difference in this paper is a point estimate from a single
 season's finite sample of initializations, so we attach sampling uncertainty to
-it with a \emph{paired} bootstrap over initialization dates. Because the season
+it with a \emph{paired} bootstrap over initialization dates
+\citep[cf.][]{wilks2019}. Because the season
 ACC is defined as the mean over initializations of the per-initialization
 spatial ACC (Eq.~\ref{eq:acc}), and CRPSS is aggregated as the mean of the
 per-initialization skill score, resampling the initialization index and
@@ -636,12 +642,14 @@ tied with the multi-model ensemble (MME) for the top score. The paired bootstrap
 uniform in strength across the lead range. Spire's advantage over ECMWF is
 statistically significant at \emph{every} lead week (mean paired ACC difference
 $+0.03$ to $+0.08$; 95\% interval excludes zero at all six weeks), and its lead
-over every individual system is significant through week~3. From week~4 onward,
-however, Spire remains the highest-scoring individual system by point estimate
-but its margin over FuXi-S2S, UKMO, and NCEP falls within the paired-bootstrap
-confidence interval (differences of $0.00$--$0.05$), so at weeks~4--6 it is best
-against ECMWF but statistically tied with the other three individual systems and
-the MME. Spire also has the lowest RMSE at every lead
+over every precipitation-capable individual system is significant through
+week~3. From week~4 onward Spire remains the highest-scoring individual system
+by point estimate, but its margin over FuXi-S2S and UKMO falls within the paired-bootstrap confidence
+interval (differences of $0.00$--$0.04$), while its lead over NCEP remains
+significant at weeks~4 and~6 ($+0.05$ each) though not at week~5. At weeks~4--6
+Spire is therefore clearly best against ECMWF, intermittently so against NCEP,
+and not distinguishable from FuXi-S2S or UKMO; the MME remains nearly identical
+by point estimate. Spire also has the lowest RMSE at every lead
 (Table~\ref{tab:jfm_rmse_tp}; 1.09\,mm\,day$^{-1}$ at week~1, rising to
 2.28\,mm\,day$^{-1}$ at week~6, against 1.27--1.57 and
 2.47--2.72\,mm\,day$^{-1}$ respectively for the other individual systems), so
@@ -670,14 +678,16 @@ weeks~4--6, versus ECMWF's fall to 0.13 by week~6 and FuXi-S2S/DLESyM's
 collapse into negative territory), so it degrades more gracefully than either
 the operational systems or the other two ML systems, without being immune to
 lead-time decay itself. The paired bootstrap confirms that Spire's Z500
-advantage over the two other ML systems is both large and significant: Spire
-exceeds FuXi-S2S and DLESyM at every lead from week~2 onward with 95\% intervals
+advantage over the two other ML systems is significant at every lead and large
+after week~1: Spire
+exceeds FuXi-S2S and DLESyM at every lead with 95\% intervals
 that exclude zero (Table~\ref{tab:jfm_sig_z500}), and the negative week-4--6
 FuXi-S2S and DLESyM ACC values are themselves significantly below zero. Spire
-and ECMWF, by contrast, are statistically indistinguishable in Z500 from week~2
-through week~5 and separate significantly only at week~6, consistent with
-describing Spire as the most \emph{consistently} skillful system rather than the
-uniquely best one at every individual lead.
+and ECMWF, by contrast, separate significantly only at the two ends of the
+horizon---in ECMWF's favour at week~1 and in Spire's at week~6---and are
+statistically indistinguishable in Z500 from week~2 through week~5, consistent
+with describing Spire as the most \emph{consistently} skillful system rather
+than the uniquely best one at every individual lead.
 
 \input{tables/tab_jfm_acc}
 \input{tables/tab_jfm_rmse_tp}
@@ -771,7 +781,8 @@ cancellation of regional signals in the domain mean.
 \subsection{Probabilistic skill and calibration}\label{sec:prob}
 
 The deterministic ranking of Section~\ref{sec:jfm} does not simply carry over
-to probabilistic skill. For precipitation (Table~\ref{tab:jfm_crpss_tp}),
+to probabilistic skill. For precipitation (Table~\ref{tab:jfm_crpss_tp};
+Figure~\ref{fig:crpss}a),
 Spire has the highest CRPSS at week~1 (0.61, narrowly ahead of ECMWF's 0.59),
 but ECMWF overtakes it from week~2 through week~5 (e.g.\ 0.51 versus 0.40 at
 week~2, 0.30 versus 0.18 at week~5), while FuXi-S2S narrowly has the highest
@@ -782,7 +793,8 @@ skewed precipitation relative to the empirical member CRPS used for ECMWF, part
 of ECMWF's apparent week-2--5 precipitation-CRPSS lead is attributable to the
 convention rather than to a genuine probabilistic-skill gap; the Z500 CRPSS
 comparison below, where the convention is immaterial ($<3\%$), is the more
-convention-robust probabilistic result. For Z500 (Table~\ref{tab:jfm_crpss_z500}), ECMWF leads more clearly
+convention-robust probabilistic result. For Z500
+(Table~\ref{tab:jfm_crpss_z500}; Figure~\ref{fig:crpss}b), ECMWF leads more clearly
 at short lead (CRPSS~0.82 at week~1 versus 0.59 for Spire) and remains ahead
 through week~5, but the gap narrows steadily with lead (0.38 versus 0.29 at
 week~3, 0.26 versus 0.26 tied at week~4, 0.24 versus 0.23 at week~5) and Spire
@@ -970,8 +982,8 @@ The aggregate scores above are complemented by a single concrete event, chosen
 as the strongest positive domain-mean precipitation anomaly of the JFM~2026
 season: the wet spell verifying 15--21~March~2026, when a western disturbance
 produced heavy precipitation over northwest India and the Himalayan foothills
-together with rainfall over northeast India (Figure~\ref{fig:case_study}, top-
-left truth panel). Figure~\ref{fig:case_study} shows the ERA5 truth alongside
+together with rainfall over northeast India (Figure~\ref{fig:case_study},
+top-left truth panel). Figure~\ref{fig:case_study} shows the ERA5 truth alongside
 each system's forecast of this week at two leads: week-1 (initialized
 14~March) and week-2 (initialized 7~March). At week-1 lead every system places
 the northwest-India rainfall maximum in broadly the correct location, with the
@@ -1186,9 +1198,10 @@ season.} Reported skill differences are accompanied by a paired
 bootstrap over initialization dates (Section~\ref{sec:boot}), which is what
 underwrites the significance language used in Section~\ref{sec:results}: it
 establishes, for example, that Spire's precipitation-ACC lead over ECMWF is
-significant at every lead, while its lead over FuXi-S2S, UKMO, and NCEP is
+significant at every lead, while its lead over FuXi-S2S and UKMO is
 significant only through week~3 and is within sampling uncertainty at
-weeks~4--6. Two caveats bound this. First, the bootstrap resamples
+weeks~4--6 (the lead over NCEP remains significant at weeks~4 and~6 but not
+week~5). Two caveats bound this. First, the bootstrap resamples
 \emph{initializations within a season}; it therefore quantifies robustness to
 which dates happened to fall in this winter or this monsoon, but it does
 \emph{not} and cannot represent the larger uncertainty of having sampled only a
@@ -1256,10 +1269,10 @@ are as follows.
 \textbf{(1) Spire AI-S2S leads winter precipitation forecasting over India, and
 degrades most gracefully for Z500.} It attains the highest precipitation ACC
 and lowest RMSE at every lead week (week-1 ACC~0.78 versus 0.73 for ECMWF/UKMO);
-a paired bootstrap confirms this lead over ECMWF is significant at every lead,
-and over all systems through week~3, becoming statistically indistinguishable
-from the other individual systems (though still highest by point estimate) at
-weeks~4--6. For Z500, no individual system---including Spire---holds skill flat
+a paired bootstrap confirms this lead over ECMWF is significant at every lead
+and over all precipitation-capable systems through week~3; at weeks~4--6 it remains highest by point
+estimate but is statistically distinguishable only from ECMWF (and from NCEP
+at weeks~4 and~6). For Z500, no individual system---including Spire---holds skill flat
 through week~6, but Spire is the highest- or second-highest individual system at
 every lead from week~3 onward (ACC~0.39--0.66, versus ECMWF's fall to 0.13 by
 week~6 and FuXi-S2S/DLESyM's significant collapse into negative territory by

@@ -172,6 +172,19 @@ def _style_axis(ax):
     ax.spines["bottom"].set_linewidth(0.8)
 
 
+def _legend_union(axes):
+    """Handles/labels from every axis, deduped and in canonical model ORDER,
+    so a model plotted in only one panel (e.g. DLESyM, Z500-only) still gets
+    a legend entry."""
+    by_label = {}
+    for ax in np.ravel(axes):
+        for h, l in zip(*ax.get_legend_handles_labels()):
+            by_label.setdefault(l, h)
+    order = [LABEL[m] for m in ORDER]
+    labels = sorted(by_label, key=lambda l: order.index(l) if l in order else 99)
+    return [by_label[l] for l in labels], labels
+
+
 # ----------------------------------------------------------------------
 def fig_acc_lead():
     """2x2 grid: ACC vs lead for TP / Z500, JFM (top) & JJAS (bottom).
@@ -251,7 +264,7 @@ def fig_crpss():
         ax.set_xlim(0.6, 6.4)
         _style_axis(ax)
     axes[0].set_ylabel("CRPSS vs. climatology")
-    handles, labels = axes[0].get_legend_handles_labels()
+    handles, labels = _legend_union(axes)
     fig.legend(handles, labels, loc="lower center", ncol=6,
                bbox_to_anchor=(0.5, -0.1), frameon=False,
                columnspacing=1.4, handletextpad=0.5)
@@ -379,7 +392,7 @@ def fig_spread_skill():
         ax.set_xlim(0.6, 6.4)
         _style_axis(ax)
     axes[0].set_ylabel("Spread–skill ratio")
-    handles, labels = axes[0].get_legend_handles_labels()
+    handles, labels = _legend_union(axes)
     fig.legend(handles, labels, loc="lower center", ncol=6,
                bbox_to_anchor=(0.5, -0.1), frameon=False,
                columnspacing=1.4, handletextpad=0.5)
@@ -538,7 +551,7 @@ def fig_spatial_bias_tp():
         ["spire", "fuxi", "ecmwf", "ukmo", "ncep"],
         cmap="BrBG", vmin=-3.0, vmax=3.0, center=0.0,
         cbar_label="Bias (mm day$^{-1}$)",
-        title="JFM 2026 precipitation bias (weeks 1--6 mean, forecast $-$ ERA5)",
+        title="JFM 2026 precipitation bias (weeks 1–6 mean, forecast $-$ ERA5)",
         outname="fig_spatial_bias_tp", agg_weeks=[1, 2, 3, 4, 5, 6])
 
 

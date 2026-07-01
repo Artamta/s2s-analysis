@@ -61,10 +61,19 @@ def _pivot(df: pd.DataFrame, variable: str, value: str) -> pd.DataFrame:
     return piv.reindex(models)[[w for w in WEEKS if w in piv.columns]]
 
 
-def _fmt(x: float, nd: int = 2) -> str:
+def _num(x: float, nd: int = 2, signed: bool = False, bold: bool = False) -> str:
+    """Math-mode numeric cell: proper minus sign, no negative zero (-0.00)."""
     if pd.isna(x):
         return "--"
-    return f"{x:.{nd}f}"
+    v = round(float(x), nd)
+    if v == 0:
+        v = 0.0
+    s = f"{v:.{nd}f}" if v == 0 else (f"{v:+.{nd}f}" if signed else f"{v:.{nd}f}")
+    return f"$\\mathbf{{{s}}}$" if bold else f"${s}$"
+
+
+def _fmt(x: float, nd: int = 2) -> str:
+    return _num(x, nd)
 
 
 def _bold_best(col: pd.Series, higher_is_better: bool = True, nd: int = 2):
@@ -77,10 +86,8 @@ def _bold_best(col: pd.Series, higher_is_better: bool = True, nd: int = 2):
     for i, v in col.items():
         if pd.isna(v):
             out[i] = "--"
-        elif v == best:
-            out[i] = f"\\textbf{{{_fmt(v, nd)}}}"
         else:
-            out[i] = _fmt(v, nd)
+            out[i] = _num(v, nd, bold=(v == best))
     return out
 
 
@@ -99,8 +106,7 @@ def make_bias_table(season: str, variable: str, caption: str, label: str,
         best = sub.abs().idxmin() if not sub.empty else None
         for m in piv.index:
             v = piv.loc[m, w]
-            s = f"{v:+.{nd}f}" if pd.notna(v) else "--"
-            formatted[(m, w)] = f"\\textbf{{{s}}}" if m == best else s
+            formatted[(m, w)] = _num(v, nd, signed=True, bold=(m == best))
 
     header = " & ".join([f"W{w}" for w in piv.columns])
     rows = []
@@ -327,11 +333,8 @@ def make_stacked_regional_table(season: str, value: str, variables: list[str],
             cells = []
             for m in models:
                 v = col.get(m, float("nan"))
-                if pd.isna(v):
-                    cells.append("--")
-                else:
-                    s = f"{v:+.{nd}f}" if bold_closest_zero else f"{v:.{nd}f}"
-                    cells.append(f"\\textbf{{{s}}}" if m == best_idx else s)
+                cells.append(_num(v, nd, signed=bold_closest_zero,
+                                  bold=(m == best_idx)))
             prefix = f"\\multirow{{{len(present)}}}{{*}}{{\\emph{{{var_label[var]}}}}}" if i == 0 else ""
             rows.append(f"{prefix} & {ALLREGION_LABEL[region]:<12} & " + " & ".join(cells) + " \\\\")
         blocks.append("\n".join(rows))
@@ -390,8 +393,12 @@ def make_significance_table(season: str, variable: str, reference: str,
             r = q.iloc[0]
             # sign so that positive = reference is better (higher ACC)
             d = r["diff"] if r["model_a"] == reference else -r["diff"]
+            d = round(float(d), nd)
+            if d == 0:
+                d = 0.0
+            s = f"{d:.{nd}f}" if d == 0 else f"{d:+.{nd}f}"
             mark = "^{*}" if bool(r["significant_95"]) else "^{\\dagger}"
-            cells.append(f"${d:+.{nd}f}{mark}$")
+            cells.append(f"${s}{mark}$")
         rows.append(f"    {MODEL_LABEL[other]:<14} & " + " & ".join(cells) + r" \\")
     body = "\n".join(rows)
     header = " & ".join([f"W{w}" for w in WEEKS])

@@ -1065,11 +1065,16 @@ to~5 despite Spire's higher ACC at every lead (Section~\ref{sec:prob}), because
 ECMWF's 100-member ensemble, built on a mature operational reforecast-based
 calibration pipeline, achieves a spread--skill ratio closer to one across the
 full lead range, while Spire's delivered uncertainty becomes increasingly
-overdispersive beyond week~2. A forecast system that is the best deterministic
-choice is therefore not automatically the best choice for probabilistic,
-risk-based decision-making (e.g.\ threshold-exceedance warnings), and
-operational guidance for India should evaluate candidate S2S systems on both
-axes rather than either alone.
+overdispersive beyond week~2. This deterministic-versus-probabilistic contrast
+holds most cleanly for Z500, where the empirical and Gaussian CRPS estimators
+agree to within a few percent; for precipitation, part of ECMWF's CRPSS lead
+reflects the Gaussian scoring convention applied to Spire rather than a pure
+skill gap (Sections~\ref{sec:metrics},~\ref{sec:limitations}), so we lean on the
+Z500 result for the qualitative claim. The broader point survives either way:
+a forecast system that is the best deterministic choice is not automatically the
+best choice for probabilistic, risk-based decision-making (e.g.\
+threshold-exceedance warnings), and operational guidance for India should
+evaluate candidate S2S systems on both axes rather than either alone.
 
 \paragraph{Consistency with prior S2S literature.}
 Multi-model S2S assessments over South Asia report useful deterministic
@@ -1142,6 +1147,22 @@ spread--skill ratio) for these two systems are consequently not built from a
 constant ensemble configuration across seasons, and any apparent change in
 their calibration between JFM and JJAS should be interpreted with this
 confound in mind.
+
+\textbf{Spire's CRPS uses a Gaussian convention.} Because Spire is delivered
+only as a mean and standard deviation, it alone is scored with the closed-form
+Gaussian CRPS, whereas the member-based systems use the empirical estimator
+(Section~\ref{sec:metrics}). We quantified the effect of this asymmetry by
+scoring the member-based systems both ways: for Z500 it is negligible (median
+difference under 1\%, at most 2.7\%), so Z500 CRPSS comparisons are robust, but
+for skewed precipitation the Gaussian score is systematically higher
+($\approx$20\% in the mean, growing with lead). The Gaussian convention
+therefore penalizes Spire's precipitation CRPSS relative to the member-based
+systems, so ECMWF's week-2--5 precipitation-CRPSS lead over Spire
+(Section~\ref{sec:prob}) is in part a scoring-convention effect rather than a
+pure skill difference; the deterministic-versus-probabilistic contrast we draw
+(Section~\ref{sec:discussion}) is therefore stated most confidently for Z500,
+where the convention is immaterial. Closing this gap fully would require access
+to Spire's individual members, which were not provided.
 
 \textbf{Significance is bootstrap-based, not analytic, and conditions on one
 season.} Reported skill differences are accompanied by a paired

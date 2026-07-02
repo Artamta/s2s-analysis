@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Make quick-look plots from a weekly metrics run.
-
-The plots are intentionally simple: they are smoke-test diagnostics and plotting
-fixtures, not publication figures.
-"""
+"""Make quick-look diagnostic plots from a weekly metrics run."""
 
 from __future__ import annotations
 

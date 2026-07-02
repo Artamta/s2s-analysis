@@ -1,20 +1,16 @@
-# Python caches
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .ipynb_checkpoints/
 
-# Local environments, build products, and secrets
+# Environments and secrets
 .venv/
 venv/
 env/
 ENV/
-build/
-dist/
-*.egg-info/
 .env
 .env.*
 !.env.example
@@ -24,7 +20,7 @@ dist/
 *.key
 *.token
 
-# Editor and assistant-local state
+# Editors and local assistant state
 .vscode/
 .idea/
 .claude/
@@ -32,36 +28,15 @@ dist/
 .agents/
 .gemini/
 
-# OS files
+# OS / logs
 .DS_Store
 Thumbs.db
-
-# Logs and scheduler output
 *.log
 *.err
 *.out
-slurm-*.out
-nohup.out
 logs/
-analysis-code/data-download/fuxi_s2s/logs/
-final_analysis/**/slurm_logs/
-final_analysis/jjas/logs/
 
-# LaTeX build byproducts
-*.aux
-*.bbl
-*.bcf
-*.blg
-*.fls
-*.fdb_latexmk
-*.lof
-*.lot
-*.run.xml
-*.synctex.gz
-*.toc
-*.xdv
-
-# Large data and model products: regenerate or obtain from providers
+# Large/local data and generated products
 *.nc
 *.nc4
 *.grib
@@ -80,25 +55,13 @@ final_analysis/jjas/logs/
 *.tar
 *.tgz
 *.zip
+outputs/
 analysis-code/
 final_analysis/
 data_new/
 verify_all_datasets.py
 verify_t2m_comparability.py
-analysis-code/data-download/fuxi_s2s/FuXi-S2S/
-analysis-code/data-download/fuxi_s2s/erpas_style/
-analysis-code/data-download/fuxi_s2s/forecast_animation/
-analysis-code/data-download/fuxi_s2s/test_plots/
-analysis-code/experiments/spire_era5/
-analysis-code/experiments/temp/
-analysis-code/experiments/weekly_anomalies.nc
 
-# Curated small masks required by the reproducible workflow.
+# Keep curated masks in Git despite the NetCDF ignore rule.
 !masks/
 !masks/imd_region_masks_*.nc
-
-# Generated verification outputs stay local unless explicitly curated.
-outputs/*
-!outputs/.gitkeep
-
-# Local binaries

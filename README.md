@@ -1,125 +1,105 @@
-# India S2S AI and Operational Forecast Benchmark
+# India S2S Forecast Benchmark
 
-This repository supports the preprint:
+Code companion for the preprint:
 
 **Machine-Learning and Operational Subseasonal Forecasts over India: An Early
 Two-Season Benchmark across Winter and Monsoon Regimes**
 
-The current paper lives in [`paper_v2/`](paper_v2/). It benchmarks AI and
-operational subseasonal-to-seasonal forecast systems over India using a common
-verification framework for:
+This repository contains the verification code, workflow scripts, small region
+masks, scheduler launchers, and reproducibility notes for the India S2S
+benchmark. Manuscript source, arXiv bundles, generated figures, generated
+tables, raw forecasts, and provider datasets are intentionally not tracked here.
 
-- JFM 2026 winter forecasts, including Spire AI-S2S, FuXi-S2S, DLESyM, ECMWF,
-  UKMO, and NCEP where available.
-- JJAS 2019 monsoon forecasts for the systems with overlapping hindcast
-  availability.
-- Deterministic metrics: ACC, RMSE, bias.
-- Probabilistic metrics: CRPSS and spread-skill ratio.
-- India-wide and IMD homogeneous-region verification.
+The scientific scope is intentionally limited: this is an early two-season
+benchmark, not a climatological ranking of all forecast systems.
 
-The key framing is intentionally limited: this is an early two-season benchmark,
-not a climatological ranking of all systems.
-
-## Repository Map
+## Repository Layout
 
 ```text
-paper_v2/
-  arXiv-ready manuscript, generated tables, figures, and build scripts.
+src/s2s_benchmark/
+  Reusable Python package: path registry, grid utilities, region masks, metrics,
+  and weekly verification pipeline.
 
-final_paper/
-  Current verification package: reusable analysis code, pipeline scripts,
-  checks, masks, documentation, and SLURM launchers.
+scripts/
+  Command-line checks, data inventory tools, forecast openers, pipeline runners,
+  validation scripts, and result builders.
 
-REPRODUCIBILITY.md
-  Environment, data-root assumptions, rebuild commands, and archive guidance.
+docs/
+  Methodology notes, data-flow notes, study decisions, and output conventions.
 
-DATA_AND_LICENSES.md
-  Dataset access boundaries and license notes.
+masks/
+  Small IMD homogeneous-region masks used by the verification code.
+
+slurm/
+  Optional HPC launchers for smoke tests and full verification runs.
+
+outputs/
+  Local/generated verification outputs. Only `.gitkeep` is tracked.
 ```
 
 ## Environment
-
-The portable environment is defined in [`environment.yml`](environment.yml):
 
 ```bash
 conda env create -f environment.yml
 conda activate s2s-analysis
 ```
 
-The analysis assumes local/provider data are available outside the Git checkout.
-Set these when your paths differ from the defaults:
+Useful path overrides:
 
 ```bash
 export S2S_STORAGE_ROOT=/path/to/storage-root
 export S2S_DATA_ROOT=/path/to/All_Model_Data
-export S2S_PAPER_OUTPUT_ROOT=/path/to/s2s_paper_outputs
+export S2S_OUTPUT_ROOT=/path/to/verification-outputs
 ```
 
-See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) for the full rebuild workflow.
-
-## Reproduce The Current Preprint
-
-From the repository root:
+## Quick Checks
 
 ```bash
-python paper_v2/scripts/make_bootstrap.py
-python paper_v2/scripts/make_spatial_cache.py
-python paper_v2/scripts/make_tables.py
-python paper_v2/scripts/make_figures.py
-python paper_v2/scripts/make_case_study.py
-python paper_v2/scripts/make_scatter.py
-cd paper_v2
-tectonic s2s_india_benchmark.tex
-python scripts/make_arxiv_bundle.py
+python scripts/01_check_core.py
+python scripts/02_check_metrics_formulas.py
 ```
 
-The generated arXiv upload bundle is:
+Foundation checks and full pipeline runs require the local/provider datasets
+described in [`DATA_AND_LICENSES.md`](DATA_AND_LICENSES.md):
 
-```text
-paper_v2/arxiv_submission.tar.gz
+```bash
+python scripts/00_check_foundation.py
+python scripts/04_audit_model_usability.py
+python scripts/07_run_weekly_metrics_pipeline.py --season jfm2026 --include-spire --run-label full_daily_spire
 ```
 
-The paper scripts expect the processed result products under
-`final_paper/outputs/s2s_paper_outputs/`, or the path specified by
-`S2S_PAPER_OUTPUT_ROOT`. Raw forecast and truth data are not redistributed in
-this repository.
+See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) and [`docs/PIPELINE.md`](docs/PIPELINE.md)
+for the full workflow.
 
-## What Is Intentionally Not Tracked
+## Repository Boundary
 
-The GitHub repository intentionally excludes exploratory notebooks, old paper
-drafts, legacy analysis directories, raw forecasts, model weights, provider
-downloads, scratch figures, scheduler logs, and local storage products. Keep
-those locally or archive them separately if needed; this repository is scoped to
-the current paper and the code needed to rebuild its generated artifacts.
+Tracked:
 
-`.gitignore` prevents new local/generated files from entering Git; it does not
-remove files that are already tracked. The current tracked tree is intentionally
-small: manuscript, reusable code, scripts, small masks, generated publication
-figures/tables, and metadata.
+- Verification source code and CLI scripts.
+- Small, derived IMD region masks required by the code.
+- Documentation, licensing, citation, and security metadata.
+- Empty output-directory placeholder.
+
+Not tracked:
+
+- Manuscript source/PDF, arXiv bundles, generated figures, generated tables.
+- Raw or provider-delivered forecasts and truth datasets.
+- Intermediate pipeline outputs, scheduler logs, notebooks, scratch analyses,
+  credentials, and local environment files.
 
 ## Data And Licenses
 
-License boundaries are explicit:
-
-- Code in this repository is licensed under the MIT License; see
-  [`LICENSE`](LICENSE).
-- Manuscript text, generated figures, generated tables, and documentation that
-  are authored for this project are licensed under CC BY 4.0; see
-  [`LICENSE-DOCS.md`](LICENSE-DOCS.md).
-- Raw or provider-delivered datasets are not relicensed here. Users must obtain
-  Spire, FuXi-S2S, DLESyM, ECMWF, UKMO, NCEP, ERA5, and IMD data under their own
-  applicable access terms.
-
-More detail is in [`DATA_AND_LICENSES.md`](DATA_AND_LICENSES.md).
+Code is MIT licensed. Project-authored documentation is CC BY 4.0. Raw/provider
+data are not redistributed or relicensed by this repository. See
+[`DATA_AND_LICENSES.md`](DATA_AND_LICENSES.md).
 
 ## Citation
 
-Citation metadata is provided in [`CITATION.cff`](CITATION.cff). After the arXiv
-identifier and any Zenodo DOI are available, update that file and the manuscript
-data-availability statement.
+Citation metadata is in [`CITATION.cff`](CITATION.cff). After the arXiv
+identifier or any archival DOI is available, update that file.
 
-## Security Note
+## Security
 
-Do not commit API keys, `.cdsapirc`, provider tokens, raw restricted data, or
-private storage paths. CDS credentials should be supplied through the standard
-CDS configuration file or environment variables such as `CDSAPI_KEY`.
+Do not commit API keys, `.cdsapirc`, provider tokens, private data paths, or
+restricted datasets. Use environment variables or provider-specific credential
+files outside the repository.

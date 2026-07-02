@@ -1,8 +1,0 @@
-__pycache__/
-*.py[cod]
-.ipynb_checkpoints/
-
-# Generated analysis products stay local until intentionally curated.
-outputs/*
-!outputs/.gitkeep
-

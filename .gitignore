@@ -82,7 +82,6 @@ final_analysis/jjas/logs/
 *.zip
 analysis-code/
 final_analysis/
-paper/
 data_new/
 verify_all_datasets.py
 verify_t2m_comparability.py
@@ -93,15 +92,13 @@ analysis-code/data-download/fuxi_s2s/test_plots/
 analysis-code/experiments/spire_era5/
 analysis-code/experiments/temp/
 analysis-code/experiments/weekly_anomalies.nc
-final_paper/case-study/
-final_paper/paper/
-final_paper/prof_package_20260623/
 
-# Curated small masks required by the reproducible paper workflow.
-!final_paper/masks/
-!final_paper/masks/imd_region_masks_*.nc
+# Curated small masks required by the reproducible workflow.
+!masks/
+!masks/imd_region_masks_*.nc
 
-# Local binaries and generated submission bundles
-paper/tectonic
-paper_v2/arxiv_submission/
-paper_v2/arxiv_submission.tar.gz
+# Generated verification outputs stay local unless explicitly curated.
+outputs/*
+!outputs/.gitkeep
+
+# Local binaries

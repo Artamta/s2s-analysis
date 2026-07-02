@@ -13,10 +13,5 @@
 *.h5 binary
 *.hdf5 binary
 
-# Generated paper artifacts are kept for review/arXiv convenience, but should
-# not dominate GitHub language statistics or code review diffs.
-paper_v2/cache/*.csv linguist-generated=true
-paper_v2/figs/* linguist-generated=true
-paper_v2/tables/*.csv linguist-generated=true
-paper_v2/tables/*.tex linguist-generated=true
-paper_v2/s2s_india_benchmark.pdf linguist-generated=true
+# Local/generated outputs are not tracked; keep this file focused on file
+# normalization and binary handling for the code companion.

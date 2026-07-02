@@ -8,11 +8,11 @@ project license does not override provider terms.
 Code authored in this repository is licensed under the MIT License. See
 [`LICENSE`](LICENSE).
 
-## Paper, Figures, Tables, And Documentation
+## Documentation And Derived Artifacts
 
-Project-authored manuscript text, generated figures, generated tables, and
-documentation are licensed under Creative Commons Attribution 4.0 International
-unless a file states otherwise. See [`LICENSE-DOCS.md`](LICENSE-DOCS.md).
+Project-authored documentation and derived/publication artifacts are licensed
+under Creative Commons Attribution 4.0 International unless a file states
+otherwise. See [`LICENSE-DOCS.md`](LICENSE-DOCS.md).
 
 ## Third-Party Or Restricted Data
 

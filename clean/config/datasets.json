@@ -5,7 +5,7 @@
   "experiment": {
     "season": "JJAS",
     "operational_years": [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
-    "missing_ecmwf_years": [2020, 2021, 2022, 2023, 2024],
+    "missing_physics_model_years": [2020, 2021, 2022, 2023, 2024],
     "ecmwf_cadence": "fuxi_fixed_mmdd_paired_to_ecmwf_native",
     "comparable_dates": "clean/config/comparable_dates_2019_2026.csv",
     "variables": ["tp", "t2m"],
@@ -23,8 +23,21 @@
     },
     "ecmwf_operational_2020_2024": {
       "kind": "forecast",
-      "status": "planned",
+      "status": "dry_run_complete_not_launched",
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ecmwf/forecast/jjas{year}"
+    },
+    "ukmo_operational_2020_2024": {
+      "kind": "forecast",
+      "status": "dry_run_complete_not_launched",
+      "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ukmo/forecast/jjas{year}",
+      "members": "1_control_plus_3_perturbed"
+    },
+    "ncep_operational_2020_2024": {
+      "kind": "forecast",
+      "status": "dry_run_complete_not_launched",
+      "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ncep/forecast/jjas{year}",
+      "members": "1_control_plus_15_perturbed",
+      "temperature": "proxy_from_6h_tmin_tmax_midranges"
     },
     "ecmwf_operational_legacy_2025": {
       "kind": "forecast",
@@ -37,6 +50,20 @@
       "path": "/storage/raj.ayush/archive/All_Model_Data/models/ecmwf/data",
       "members": "1_control_plus_10_perturbed",
       "lead_days": 46
+    },
+    "ukmo_reforecast_1993_2016": {
+      "kind": "reforecast",
+      "status": "planned_24yr_native_climatology",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ukmo/reforecast/jjas_native",
+      "members": "1_control_plus_6_perturbed",
+      "jjas_slots": 16
+    },
+    "ncep_reforecast_1999_2010": {
+      "kind": "reforecast",
+      "status": "planned_12yr_native_climatology",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ncep/reforecast/jjas_native",
+      "members": "1_control_plus_3_perturbed",
+      "temperature": "proxy_from_6h_tmin_tmax_midranges"
     },
     "fuxi_reforecast_archive_2002_2021": {
       "kind": "reforecast",

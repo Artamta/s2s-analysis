@@ -1,6 +1,7 @@
 # Data Download Plan
 
-Goal: download organized S2S data for ECMWF, UKMO, and NCEP.
+Goal: download organized S2S data for ECMWF, UKMO, and NCEP. The current
+manifest-only audit is summarized in `DRY_RUN_REPORT.md`.
 
 ## Forecast vs Reforecast
 
@@ -18,7 +19,7 @@ Canonical heavy-data layout on `/storage`:
 /storage/raj.ayush/s2s_final_data/final_iteration/
   raw/<provider>/
     forecast/<season-or-year>/
-      <variable>/<YYYYMMDD>_<cf|pf>.<grib|nc>
+      <variable>/<YYYYMMDD>_<cf|pf>.grib
     reforecast/<season-or-year>/
       <variable>/<MMDD>_<cf|pf>.<grib|nc>
   standardized/<provider>/<experiment>/
@@ -29,9 +30,9 @@ Canonical heavy-data layout on `/storage`:
 Examples:
 
 ```text
-raw/ecmwf/forecast/jjas2020/tp/20200601_pf.nc
-raw/ecmwf/forecast/jjas2020/t2m/20200601_cf.nc
-raw/ukmo/forecast/jjas2025/tp/20250620_pf.nc
+raw/ecmwf/forecast/jjas2020/tp/20200601_pf.grib
+raw/ecmwf/forecast/jjas2020/t2m/20200601_cf.grib
+raw/ukmo/forecast/jjas2025/tp/20250620_pf.grib
 ```
 
 ## Minimum Variables
@@ -69,23 +70,29 @@ provider,product,season,init_date,mmdd,forecast_type,variable,level,
 lead_start,lead_end,file_path,size_bytes,status,request_hash,timestamp
 ```
 
-## ECMWF First Phase
+## Physics-Model First Phase
 
 The missing operational years are `2020-2024`. Use the 35 FuXi JJAS target
 starts in `../config/comparable_dates_2019_2026.csv`, paired to the minimum-lag
-one-to-one ECMWF schedule that preserves the full valid-date window.
-Download `tp` and `t2m`, control plus all perturbed members. ECMWF requests
+one-to-one ECMWF schedule that preserves the full valid-date window. UKMO and
+NCEP are daily, so use the exact target dates. Download `tp` and a documented
+temperature field, control plus all perturbed members. ECMWF requests
 extend beyond day 42 only where a shifted start needs later leads for the common
-42-day window. This remains 35 initializations and 140 resumable requests per
-year, or 700 requests across five years.
+42-day window.
 
 ECMWF `t2m` is a daily average and must be requested with interval steps such as
-`0-24`, `24-48`, and `48-72`; endpoint-only steps return day 1 only. FuXi `t2m`
+`0_24`, `24_48`, and `48_72`; endpoint-only steps return day 1 only. FuXi `t2m`
 is a daily 00 UTC snapshot, so temperature comparisons must disclose that
 temporal-statistic difference. `tp` is the strict like-for-like benchmark.
 
 Keep all native members in raw files. Ensemble-size matching belongs in the
 standardized analysis layer, not in the downloader.
 
-See `COMPARABILITY.md` for the ECMWF/FuXi contract and
-`ecmwf/README.md` for launch instructions.
+Generate all plans with:
+
+```bash
+python clean/data-download/scripts/plan_s2s_downloads.py --phase all --write
+```
+
+See `COMPARABILITY.md` for the scientific contract and `DRY_RUN_REPORT.md` for
+availability, request counts, storage estimates, and the production launch gate.

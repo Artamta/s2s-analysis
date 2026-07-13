@@ -15,6 +15,7 @@ forecast type, variable, lead range, and download request.
 clean/
   config/
     datasets.json
+    archive_policy.json
     comparable_dates_2019_2026.csv
   data-download/
     ecmwf/
@@ -60,16 +61,19 @@ in `config/datasets.json`.
 - Never compare models by lead number alone when their initialization dates
   differ; align the valid dates first.
 
-## Locked First Phase
+## Locked Acquisition Order
 
-- Provider: ECMWF operational S2S.
+- Providers: ECMWF, UKMO, and NCEP operational S2S.
 - Missing years: `2020-2024`.
 - Target season: 35 FuXi starts from June 2 through September 29; a paired
   ECMWF initialization may fall in late May.
 - Cadence: the 35 fixed FuXi JJAS starts, paired to ECMWF's native schedule
   using `config/comparable_dates_2019_2026.csv`.
-- Variables: `tp` and `t2m`.
+- Variables: `tp`; ECMWF/UKMO daily-mean `t2m`; labeled NCEP `t2m_proxy`.
 - Valid window: FuXi lead days `1-42`; ECMWF lead endpoints extend to day
   `42 - init_offset_days` where starts differ.
-- Ensemble: control plus every perturbed member returned by ECMWF.
+- Ensemble: control plus every native perturbed member.
 - Comparison: same valid-date windows on the common 1.5 degree India grid.
+- Gate: finish and validate 2020-2024 forecasts before reforecast downloads.
+- Reforecasts: native archives first; `2002-2010` only as a common-period
+  sensitivity. There is no honest 20-year common archive across all models.

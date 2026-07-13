@@ -1,4 +1,4 @@
-# ECMWF and FuXi Comparability Contract
+# Physics Models and FuXi Comparability Contract
 
 ## Benchmark Fields
 
@@ -24,6 +24,23 @@ existing compact FuXi files contain only `tp` and `z500`, so `t2m` must be read
 from the raw archive or compacted again. The local ECMWF 20-year reforecast has
 `tp` and `z500`, but not `t2m`; ECMWF reforecast `t2m` must therefore be acquired
 before a two-field 20-year comparison.
+
+## Provider Differences
+
+| provider | operational cadence | common forecast window | temperature | native reforecast archive |
+|---|---|---:|---|---|
+| ECMWF | native schedule, paired one-to-one | 42 days | daily mean | rolling 20 years; reuse local 2000-2019 TP |
+| UKMO | daily | 42 days | daily mean | 1993-2016, only days 1/9/17/25 |
+| NCEP | daily | 42 of 44 days | derived proxy | fixed 1999-2010, daily |
+| FuXi | fixed 35 JJAS MMDDs | 42 days | 00 UTC snapshot | 2002-2021, fixed 35 JJAS MMDDs |
+
+For UKMO and NCEP operational forecasts, use the exact FuXi target dates. For
+NCEP, derive a daily temperature proxy from all four six-hour intervals:
+`mean((mx2t6 + mn2t6) / 2)`. Never rename that proxy to plain `t2m`.
+
+No 20-year period exists across every model. Use each provider's native
+climatology for primary calibration and probabilistic skill. Use 2002-2010 as
+a separately labeled nine-year common-period sensitivity only.
 
 ## Operational Date Pairing
 

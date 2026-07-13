@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "run_label": "fuxi_s2s_twice_weekly_2020_2025_ens50",
   "calendar": "clean/config/all_season_dates_2020_2025.csv",
   "years": [2020, 2021, 2022, 2023, 2024, 2025],
@@ -19,7 +19,7 @@
     "longitude_count": 27
   },
   "input": {
-    "source": "CDS ERA5 daily statistics derived from 1-hourly reanalysis",
+    "source": "direct ARCO ERA5: local precomputed daily archive for 2020-2022 and public hourly GCS archive reduced to UTC daily means for missing and 2023-2025 fields",
     "daily_statistic": "daily_mean",
     "hourly_sampling": "1_hourly",
     "time_zone": "utc+00:00",
@@ -32,6 +32,23 @@
     "grid_degrees": 1.5,
     "request_cost_limit": 400,
     "pressure_days_per_request": 6,
+    "local_daily_arco": {
+      "zarr": "/storage/bedartha/public/datasets/as_downloaded/weatherbench2/era5-daily/1959-2023_01_10-full_37-1h-0p25deg-chunk-1-s2s.zarr",
+      "years": [2020, 2021, 2022],
+      "source_grid_degrees": 0.25,
+      "target_stride": 6,
+      "surface_remote_arco_fields": ["ttr", "100u", "100v"],
+      "validation_sample": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/data/input.nc",
+      "validation_dates": ["2020-06-01", "2020-06-02"]
+    },
+    "remote_hourly_arco": {
+      "zarr": "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3",
+      "years": [2023, 2024, 2025],
+      "source_grid_degrees": 0.25,
+      "target_stride": 6,
+      "workers": 8,
+      "authentication": "anonymous"
+    },
     "shape": [2, 76, 121, 240],
     "retain_input_nc": true
   },

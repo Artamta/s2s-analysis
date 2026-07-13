@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 import xarray as xr
 
 
@@ -35,6 +36,18 @@ runner = load_module(
 stage = load_module(
     "stage_era5_daily",
     "clean/model-runs/fuxi/scripts/stage_era5_daily.py",
+)
+arco_hourly = load_module(
+    "arco_hourly",
+    "clean/model-runs/fuxi/scripts/arco_hourly.py",
+)
+arco_stage = load_module(
+    "stage_arco_era5_daily",
+    "clean/model-runs/fuxi/scripts/stage_arco_era5_daily.py",
+)
+arco_remote_stage = load_module(
+    "stage_arco_hourly_daily",
+    "clean/model-runs/fuxi/scripts/stage_arco_hourly_daily.py",
 )
 
 
@@ -87,6 +100,91 @@ def test_monthly_requests_are_complete_unique_and_within_cds_limit():
     assert len(seen) == request_count
     assert pd.DatetimeIndex(sorted(covered)).equals(stage.required_dates(config))
     assert len(covered) == 1242
+
+
+def test_direct_arco_plan_has_no_cds_requests():
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    digests = set()
+    for year in config["input"]["local_daily_arco"]["years"]:
+        for month in range(1, 13):
+            days = stage.required_month_dates(config, year, month)
+            gap = arco_stage.gap_digests(
+                config["input"]["remote_hourly_arco"]["zarr"], days
+            )
+            assert set(gap) == {"ttr", "100u", "100v"}
+            assert not digests.intersection(gap.values())
+            digests.update(gap.values())
+    assert len(digests) == 108
+
+    for year in config["input"]["remote_hourly_arco"]["years"]:
+        for month in range(1, 13):
+            days = stage.required_month_dates(config, year, month)
+            for component in arco_remote_stage.FIELDS:
+                fields = arco_remote_stage.field_digests(
+                    config["input"]["remote_hourly_arco"]["zarr"],
+                    component,
+                    days,
+                )
+                assert set(fields) == set(arco_remote_stage.FIELDS[component])
+                assert not digests.intersection(fields.values())
+                digests.update(fields.values())
+    assert len(digests) == 108 + 36 * 16
+
+
+def test_local_arco_matches_official_fuxi_sample():
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    source = Path(config["input"]["local_daily_arco"]["zarr"])
+    if not source.is_dir():
+        pytest.skip("cluster-local daily ARCO archive is unavailable")
+    days = (pd.Timestamp("2020-06-01"), pd.Timestamp("2020-06-02"))
+    reader = arco_stage.ConsolidatedZarrReader(source)
+    time_index = arco_stage.source_time_index(reader)
+    lat, lon, level_indices = arco_stage.validate_source_grid(reader)
+    pressure = arco_stage.build_local_pressure(
+        reader,
+        days,
+        time_index,
+        lat,
+        lon,
+        level_indices,
+        arco_stage.source_digest(reader, "pressure", days),
+    )
+    surface = arco_stage.build_local_surface(
+        reader,
+        days,
+        time_index,
+        lat,
+        lon,
+        arco_stage.source_digest(reader, "surface", days),
+    )
+    expected = xr.open_dataarray(
+        REPO_ROOT / "analysis-code/data-download/fuxi_s2s/FuXi-S2S/data/input.nc"
+    )
+    try:
+        limits = {"z": 0.12, "t": 0.001, "u": 0.001, "v": 0.001, "q": 2e-7}
+        for short_name in arco_stage.LOCAL_PRESSURE_FIELDS:
+            for level in stage.LEVELS:
+                actual = pressure[short_name].sel(level=level).values
+                target = expected.sel(channel=f"{short_name}{level}").values
+                assert np.nanmax(np.abs(actual - target)) < limits[short_name]
+        surface_limits = {
+            "t2m": 0.001,
+            "d2m": 0.001,
+            "sst": 0.001,
+            "10u": 0.001,
+            "10v": 0.001,
+            "msl": 0.1,
+            "tcwv": 0.001,
+            "tp": 0.001,
+        }
+        for short_name in arco_stage.LOCAL_SURFACE_FIELDS:
+            actual = surface[short_name].values
+            if short_name == "tp":
+                actual = actual * 1000.0
+            target = expected.sel(channel=short_name).values
+            assert np.nanmax(np.abs(actual - target)) < surface_limits[short_name]
+    finally:
+        expected.close()
 
 
 def test_daily_staging_builds_checkpoint_tensor(tmp_path: Path):

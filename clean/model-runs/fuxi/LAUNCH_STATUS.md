@@ -4,62 +4,77 @@
 
 - Calendar: 621 exact physics-model dates, 2020-2025.
 - Ensemble: 50 model-native stochastic members from official `inference.py`.
-- No artificial input perturbations and no assumed control member.
-- Inputs: two UTC daily means derived from 1-hourly ERA5.
-- Leads: days 1-42, which are FuXi daily-mean forecasts.
+- Inputs: previous/init UTC daily means from 24 hourly ERA5 values.
+- Leads: days 1-42.
 - Final fields: native FuXi TP and T2M on the exact 27 x 27 India grid.
 
-## Corrected Preflight
+## Superseded Runs
 
-The official paper states that FuXi-S2S is trained on daily statistics and
-produces global daily-mean forecasts. The official archive card states that
-cumulative variables such as TP are 24-hour hourly averages. Therefore, the
-first-pass use of ERA5 00 UTC snapshots was not a valid input contract.
+Pilot `67911_0` and production array `67923` used ERA5 00 UTC snapshots. They
+were cancelled because the official FuXi sample confirms the model requires
+daily means. Their artifacts remain isolated under
+`invalid/00utc_snapshot_pipeline_20260713/` and must not be analyzed.
 
-The corrected workflow uses the CDS daily-statistics products cited by the
-FuXi-S2S authors. It requests only the 1,242 unique previous/init days. The 287
-requests are split by month, with every live CDS cost at or below `390/400`.
-Request IDs are persisted before polling and each month task submits only one
-request at a time. Per-date GPU tasks do no network retrieval.
+The first corrected staging design used the CDS daily-statistics service:
 
-## Cancelled Run
+- `67936`: all-CDS monthly staging;
+- `67940`: blocked task-0 pilot;
+- `67941`: blocked production array.
 
-Pilot `67911_0` and production array `67923` used the invalid 00 UTC input
-contract. Array `67923` was cancelled on 2026-07-13 after only tasks 1 and 2 had
-started. The pilot output is not a valid benchmark product even though its
-shape, physical range, and native stochastic spread passed mechanical QC.
+These jobs were cancelled after three pressure requests remained accepted for
+more than two hours without processing. Their request IDs were dismissed at
+CDS and moved out of the active state tree:
 
-Invalid artifacts from dates `20200102`, `20200106`, and `20200109` are kept at
-`invalid/00utc_snapshot_pipeline_20260713/`, separate from the corrected
-canonical paths, with their logs and manifests for provenance. They must not be
-used in analysis.
-
-## Corrected Launch
-
-The corrected workflow was submitted from commit `9aa02a8` at
-`2026-07-13 20:42 IST`:
-
-- `67936`: 72-month ERA5 daily-statistics staging array, at most three month
-  tasks and three CDS requests active concurrently;
-- `67940`: official 50-member task-0 pilot, blocked on staging task `67936_0`;
-- `67941`: tasks `1-620`, at most two GPU dates concurrently, blocked on the
-  complete staging array and successful pilot.
-
-Staging tasks 0-2 started on `cn18`. Their first pressure requests were
-accepted with persisted IDs and no stderr output. Slurm confirmed pilot
-dependency `afterok:67936_0` and production dependencies
-`afterok:67936,afterok:67940`. The workflow therefore continues without an
-interactive shell and cannot start GPU production on incomplete daily inputs.
-
-Progress is summarized with:
-
-```bash
-/home/raj.ayush/.conda/envs/s2s-hind/bin/python \
-  clean/model-runs/fuxi/scripts/audit_fuxi_run.py
+```text
+a13c2435-760d-4c0a-a46c-59c099a34101
+3e0624c4-6533-4839-b36b-df58ecde21d2
+7783db30-1691-4bc2-b883-f80d64b58ac9
 ```
 
-Scheduler state is checked with:
+A one-month hybrid trial (`68033`, pilot `68034`) proved that local daily ARCO
+stages January pressure in about one minute, but its small CDS supplement also
+remained accepted. It was cancelled, and request
+`11c32cf0-df3a-406c-ac41-c890afed2221` was dismissed.
+
+No CDS request remains active.
+
+## Direct ARCO Launch
+
+The current workflow uses anonymous public ARCO and the local precomputed daily
+ARCO archive only:
+
+- `68040`: January 2020 local daily ARCO plus direct hourly ARCO for
+  `ttr/100u/100v`;
+- `68042`: January 2023 full 76-channel direct hourly ARCO throughput test;
+- `68041`: official 50-member task-0 pilot, blocked on successful `68040_0`.
+- `68043`: remaining 2020-2022 local-daily/direct-ARCO months, three at a time;
+- `68047`: remaining 2023-2025 full-hourly-ARCO months, two at a time, blocked
+  until benchmark `68042_0` succeeds;
+- `68048`, `68049`, `68050`: 2020, 2021, and 2022 forecast arrays;
+- `68051`, `68052`, `68053`: 2023, 2024, and 2025 forecast arrays.
+
+Each yearly forecast array depends on its exact 12 monthly staging tasks and
+the successful pilot. Task 0 is produced only by pilot `68041`; array `68048`
+starts at task 1, so no forecast date is duplicated.
+
+The direct reader was compared with the official FuXi input before launch.
+Instantaneous fields use 00-23 UTC. TTR and TP use accumulation intervals valid
+01 UTC through next-day 00 UTC. The bounded reader reduced a two-day 100 m wind
+test from 17 GB to about 0.53 GB peak RAM and matched the official sample.
+
+One global pressure field/day took 34 seconds at eight workers and 1.49 GB peak
+RAM. The expected full 2023-2025 staging time is approximately 1-2 days with
+two month tasks running concurrently. All remaining staging and GPU arrays are
+already queued and continue without an interactive shell.
+
+Check the active benchmarks with:
 
 ```bash
-squeue -j 67936,67940,67941
+squeue -j 68040,68041,68042,68043,68047,68048,68049,68050,68051,68052,68053
+```
+
+For a fresh launch, the same dependency-linked workflow is submitted with:
+
+```bash
+clean/model-runs/fuxi/slurm/submit_fuxi_hybrid.sh
 ```

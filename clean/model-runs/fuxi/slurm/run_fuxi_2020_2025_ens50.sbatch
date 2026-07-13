@@ -2,8 +2,8 @@
 #SBATCH --job-name=fuxi_20_25
 #SBATCH --partition=GPU-AI_prio
 #SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=64G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
 #SBATCH --time=04:00:00
 #SBATCH --array=0-620%2
 #SBATCH --output=/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50/logs/slurm_%A_%a.out

@@ -79,6 +79,12 @@ The array allows two simultaneous dates. ARCO and plotting caches are directed
 to per-task node-local `/tmp` directories because the home filesystem is full.
 Rerunning the array validates and skips completed products.
 
+On this cluster the official child process can return `255` after writing all
+2,100 files. The wrapper accepts a nonzero child code only when every expected
+raw file is present and nonempty; the compact output must still pass all QC,
+and the child code is recorded in the manifest. Slurm job success is determined
+by the wrapper's final result.
+
 Summarize progress without opening every NetCDF:
 
 ```bash

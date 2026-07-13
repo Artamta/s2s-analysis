@@ -5,7 +5,7 @@
   "grid_degrees": [1.5, 1.5],
   "common_valid_days": 42,
   "forecast_years": [2020, 2021, 2022, 2023, 2024],
-  "forecast_target": "35 fixed FuXi JJAS initializations per year",
+  "forecast_target": "exact all-season common dates for ECMWF UKMO NCEP CMA; CNRM weekly secondary",
   "providers": {
     "ecmwf": {
       "forecast_members": "all_returned_cycle_dependent",

@@ -4,9 +4,9 @@ Goal: download organized S2S data for ECMWF, UKMO, NCEP, and CMA, with CNRM as
 a weekly secondary benchmark. See `MODEL_SELECTION.md` for the selection audit
 and `SMOKE_TEST_20240620.md` for the successful five-model day-1 test.
 
-The existing production manifest is still the earlier three-model JJAS plan.
-Do not launch it for the new all-season experiment; regenerate the annual
-calendar and provider set first.
+The production source of truth is `../config/all_season_dates_2020_2024.csv`.
+See `PRODUCTION_DOWNLOAD.md` for request counts, storage layout, launch, resume,
+monitoring, and QC.
 
 ## Forecast vs Reforecast
 
@@ -77,13 +77,10 @@ lead_start,lead_end,file_path,size_bytes,status,request_hash,timestamp
 
 ## Physics-Model First Phase
 
-The missing operational years are `2020-2024`. Use the 35 FuXi JJAS target
-starts in `../config/comparable_dates_2019_2026.csv`, paired to the minimum-lag
-one-to-one ECMWF schedule that preserves the full valid-date window. UKMO and
-NCEP are daily, so use the exact target dates. Download `tp` and a documented
-temperature field, control plus all perturbed members. ECMWF requests
-extend beyond day 42 only where a shifted start needs later leads for the common
-42-day window.
+The missing operational years are `2020-2024`. Use exact common all-season
+initializations for ECMWF, UKMO, NCEP, and CMA. Download CNRM on the exact
+weekly subset. Every file retains its control or all native perturbed members
+and the complete lead-day 1-42 window.
 
 ECMWF `t2m` is a daily average and must be requested with interval steps such as
 `0_24`, `24_48`, and `48_72`; endpoint-only steps return day 1 only. FuXi `t2m`

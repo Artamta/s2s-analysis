@@ -66,10 +66,9 @@ in `config/datasets.json`.
 - Primary physics providers: ECMWF, UKMO, NCEP, and CMA operational S2S.
 - Secondary physics provider: CNRM on the common weekly subset.
 - Missing years: `2020-2024`.
-- Target season: 35 FuXi starts from June 2 through September 29; a paired
-  ECMWF initialization may fall in late May.
-- Cadence: the 35 fixed FuXi JJAS starts, paired to ECMWF's native schedule
-  using `config/comparable_dates_2019_2026.csv`.
+- Target: all 12 months on exact common physics-model initialization dates.
+- Cadence: 517 primary dates across 2020-2024 using
+  `config/all_season_dates_2020_2024.csv`; CNRM uses its 217-date weekly subset.
 - Variables: `tp`; ECMWF/UKMO daily-mean `t2m`; labeled NCEP `t2m_proxy`.
 - Valid window: FuXi lead days `1-42`; ECMWF lead endpoints extend to day
   `42 - init_offset_days` where starts differ.

@@ -24,31 +24,31 @@
     },
     "ecmwf_operational_2020_2024": {
       "kind": "forecast",
-      "status": "production_launch_ready",
+      "status": "production_running_job_67816",
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ecmwf/forecast/annual{year}"
     },
     "ukmo_operational_2020_2024": {
       "kind": "forecast",
-      "status": "production_launch_ready",
+      "status": "production_running_job_67816",
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ukmo/forecast/annual{year}",
       "members": "1_control_plus_3_perturbed"
     },
     "ncep_operational_2020_2024": {
       "kind": "forecast",
-      "status": "production_launch_ready",
+      "status": "production_running_job_67816",
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ncep/forecast/annual{year}",
       "members": "1_control_plus_15_perturbed",
       "temperature": "proxy_from_6h_tmin_tmax_midranges"
     },
     "cma_operational_2020_2024": {
       "kind": "forecast",
-      "status": "production_launch_ready",
+      "status": "production_running_job_67816",
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cma/forecast/annual{year}",
       "members": "1_control_plus_3_perturbed_in_2024_smoke_test"
     },
     "cnrm_operational_2020_2024": {
       "kind": "forecast_secondary",
-      "status": "production_launch_ready_weekly_subset",
+      "status": "production_running_job_67816_weekly_subset",
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cnrm/forecast/annual{year}",
       "members": "1_control_plus_24_perturbed_in_2024_smoke_test"
     },

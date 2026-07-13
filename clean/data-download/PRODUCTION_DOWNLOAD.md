@@ -1,5 +1,7 @@
 # All-Season Production Download
 
+The current run is recorded in `LAUNCH_STATUS.md` (SLURM array `67816`).
+
 ## Scope
 
 Operational forecasts for 2020-2024 over `0-40 N, 60-100 E`, retaining control

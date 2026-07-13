@@ -1,7 +1,12 @@
 # Data Download Plan
 
-Goal: download organized S2S data for ECMWF, UKMO, and NCEP. The current
-manifest-only audit is summarized in `DRY_RUN_REPORT.md`.
+Goal: download organized S2S data for ECMWF, UKMO, NCEP, and CMA, with CNRM as
+a weekly secondary benchmark. See `MODEL_SELECTION.md` for the selection audit
+and `SMOKE_TEST_20240620.md` for the successful five-model day-1 test.
+
+The existing production manifest is still the earlier three-model JJAS plan.
+Do not launch it for the new all-season experiment; regenerate the annual
+calendar and provider set first.
 
 ## Forecast vs Reforecast
 

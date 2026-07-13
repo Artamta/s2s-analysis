@@ -63,7 +63,8 @@ in `config/datasets.json`.
 
 ## Locked Acquisition Order
 
-- Providers: ECMWF, UKMO, and NCEP operational S2S.
+- Primary physics providers: ECMWF, UKMO, NCEP, and CMA operational S2S.
+- Secondary physics provider: CNRM on the common weekly subset.
 - Missing years: `2020-2024`.
 - Target season: 35 FuXi starts from June 2 through September 29; a paired
   ECMWF initialization may fall in late May.

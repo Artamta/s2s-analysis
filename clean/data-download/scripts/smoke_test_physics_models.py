@@ -25,12 +25,12 @@ FTYPES = {"cf": "control_forecast", "pf": "perturbed_forecast"}
 DEFAULT_ROOT = Path(
     "/storage/raj.ayush/s2s_final_data/final_iteration/smoke_tests/physics_models"
 )
-PROVIDERS = ("ecmwf", "ukmo", "ncep")
+PROVIDERS = ("ecmwf", "ukmo", "ncep", "cma", "cnrm")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--init-date", type=dt.date.fromisoformat, default=dt.date(2024, 6, 2))
+    parser.add_argument("--init-date", type=dt.date.fromisoformat, default=dt.date(2024, 6, 20))
     parser.add_argument("--output-root", type=Path, default=DEFAULT_ROOT)
     parser.add_argument("--skip-download", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
@@ -49,7 +49,7 @@ def tasks(init_date: dt.date, root: Path) -> list[dict[str, Any]]:
     }
     result = []
     for provider in PROVIDERS:
-        if provider in ("ecmwf", "ukmo"):
+        if provider != "ncep":
             fields = (
                 ("tp", "total_precipitation", ["24"]),
                 ("t2m", "2_m_temperature", ["0_24"]),
@@ -177,8 +177,9 @@ def download(client: Any, task: dict[str, Any], overwrite: bool) -> dict[str, An
 def plot_comparison(run_root: Path, init_date: dt.date) -> tuple[Path, dict[str, Any]]:
     precipitation = {provider: ensemble_field(run_root, provider, "tp") for provider in PROVIDERS}
     temperature = {
-        "ecmwf": ensemble_field(run_root, "ecmwf", "t2m") - 273.15,
-        "ukmo": ensemble_field(run_root, "ukmo", "t2m") - 273.15,
+        provider: ensemble_field(run_root, provider, "t2m") - 273.15
+        for provider in PROVIDERS
+        if provider != "ncep"
     }
     ncep_max = ensemble_field(run_root, "ncep", "mx2t6", average_steps=True)
     ncep_min = ensemble_field(run_root, "ncep", "mn2t6", average_steps=True)
@@ -187,9 +188,14 @@ def plot_comparison(run_root: Path, init_date: dt.date) -> tuple[Path, dict[str,
     tp_max = max(float(field.max()) for field in precipitation.values())
     t_min = min(float(field.min()) for field in temperature.values())
     t_max = max(float(field.max()) for field in temperature.values())
-    figure, axes = plt.subplots(2, 3, figsize=(14, 8.5), constrained_layout=True)
+    figure, axes = plt.subplots(
+        2, len(PROVIDERS), figsize=(4.2 * len(PROVIDERS), 8.5), constrained_layout=True
+    )
     tp_image = temp_image = None
-    labels = {"ecmwf": "ECMWF", "ukmo": "UKMO", "ncep": "NCEP"}
+    labels = {
+        "ecmwf": "ECMWF", "ukmo": "UKMO", "ncep": "NCEP",
+        "cma": "CMA", "cnrm": "CNRM",
+    }
     for column, provider in enumerate(PROVIDERS):
         tp = precipitation[provider]
         latitude, longitude = spatial_names(tp)

@@ -12,17 +12,22 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_OUTPUT = REPO_ROOT / "clean/config/all_season_dates_2020_2024.csv"
+DEFAULT_START_YEAR = 2020
+DEFAULT_END_YEAR = 2025
 CORE_PROVIDERS = ("ecmwf", "ukmo", "ncep", "cma")
 SECONDARY_PROVIDER = "cnrm"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--start-year", type=int, default=2020)
-    parser.add_argument("--end-year", type=int, default=2024)
+    parser.add_argument("--start-year", type=int, default=DEFAULT_START_YEAR)
+    parser.add_argument("--end-year", type=int, default=DEFAULT_END_YEAR)
     parser.add_argument("--constraints-file", type=Path)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="defaults to clean/config/all_season_dates_<start>_<end>.csv",
+    )
     return parser.parse_args()
 
 
@@ -111,10 +116,18 @@ def build_rows(
 
 def main() -> int:
     args = parse_args()
+    if args.start_year > args.end_year:
+        raise ValueError("start year must not be later than end year")
+    output = args.output or (
+        REPO_ROOT
+        / f"clean/config/all_season_dates_{args.start_year}_{args.end_year}.csv"
+    )
     constraints = load_constraints(args.constraints_file)
     rows = build_rows(constraints, args.start_year, args.end_year)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("w", newline="", encoding="utf-8") as handle:
+    if not rows:
+        raise ValueError("no exact common dates found for the requested years")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
@@ -125,7 +138,7 @@ def main() -> int:
             "core": len(selected),
             "cnrm": sum(int(row["cnrm_available"]) for row in selected),
         }
-    print(json.dumps({"output": str(args.output), "rows": len(rows), "counts": counts}, indent=2))
+    print(json.dumps({"output": str(output), "rows": len(rows), "counts": counts}, indent=2))
     return 0
 
 

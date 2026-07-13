@@ -5,9 +5,10 @@
   "experiment": {
     "season": "all_season",
     "operational_years": [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
-    "missing_physics_model_years": [2020, 2021, 2022, 2023, 2024],
+    "missing_physics_model_years": [2020, 2021, 2022, 2023, 2024, 2025],
     "date_policy": "exact_common_ecmwf_ukmo_ncep_cma_with_cnrm_weekly_secondary",
-    "all_season_dates": "clean/config/all_season_dates_2020_2024.csv",
+    "all_season_dates": "clean/config/all_season_dates_2020_2025.csv",
+    "frozen_job_67816_dates": "clean/config/all_season_dates_2020_2024.csv",
     "legacy_jjas_comparable_dates": "clean/config/comparable_dates_2019_2026.csv",
     "variables": ["tp", "t2m"],
     "lead_days": [1, 42],
@@ -52,9 +53,35 @@
       "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cnrm/forecast/annual{year}",
       "members": "1_control_plus_24_perturbed_in_2024_smoke_test"
     },
+    "ecmwf_operational_2025": {
+      "kind": "forecast",
+      "status": "production_launch_ready_after_job_67816",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ecmwf/forecast/annual2025"
+    },
+    "ukmo_operational_2025": {
+      "kind": "forecast",
+      "status": "production_launch_ready_after_job_67816",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ukmo/forecast/annual2025"
+    },
+    "ncep_operational_2025": {
+      "kind": "forecast",
+      "status": "production_launch_ready_after_job_67816",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ncep/forecast/annual2025",
+      "temperature": "proxy_from_6h_tmin_tmax_midranges"
+    },
+    "cma_operational_2025": {
+      "kind": "forecast",
+      "status": "production_launch_ready_after_job_67816",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cma/forecast/annual2025"
+    },
+    "cnrm_operational_2025": {
+      "kind": "forecast_secondary",
+      "status": "production_launch_ready_after_job_67816_weekly_subset",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cnrm/forecast/annual2025"
+    },
     "ecmwf_operational_legacy_2025": {
       "kind": "forecast",
-      "status": "tp_complete_t2m_day1_only_requires_redownload",
+      "status": "legacy_partial_retained_canonical_redownload_scheduled",
       "path": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2025"
     },
     "ecmwf_reforecast_20yr": {

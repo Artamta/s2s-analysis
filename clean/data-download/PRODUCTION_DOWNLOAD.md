@@ -4,20 +4,20 @@ The current run is recorded in `LAUNCH_STATUS.md` (SLURM array `67816`).
 
 ## Scope
 
-Operational forecasts for 2020-2024 over `0-40 N, 60-100 E`, retaining control
+Operational forecasts for 2020-2025 over `0-40 N, 60-100 E`, retaining control
 and all native perturbed members through lead day 42.
 
 | provider | role | dates | requests | temperature |
 |---|---|---:|---:|---|
-| ECMWF | primary | 517 | 2,068 | daily-mean T2M |
-| UKMO | primary | 517 | 2,068 | daily-mean T2M |
-| NCEP | primary | 517 | 1,034 | proxy from four six-hour extrema intervals/day |
-| CMA | primary | 517 | 2,068 | daily-mean T2M |
-| CNRM | weekly secondary | 217 | 868 | daily-mean T2M |
-| **total** | | | **8,106** | |
+| ECMWF | primary | 621 | 2,484 | daily-mean T2M |
+| UKMO | primary | 621 | 2,484 | daily-mean T2M |
+| NCEP | primary | 621 | 1,242 | proxy from four six-hour extrema intervals/day |
+| CMA | primary | 621 | 2,484 | daily-mean T2M |
+| CNRM | weekly secondary | 269 | 1,076 | daily-mean T2M |
+| **total** | | | **9,770** | |
 
-The core calendar contains `105/104/104/104/100` exact dates in 2020-2024.
-CNRM contributes `11/52/52/52/50`; its sparse 2020 coverage must be disclosed.
+The core calendar contains `105/104/104/104/100/104` exact dates in 2020-2025.
+CNRM contributes `11/52/52/52/50/52`; its sparse 2020 coverage must be disclosed.
 
 ## Storage
 
@@ -53,9 +53,12 @@ The checked-in calendar was generated from live ECDS constraints on
 ```bash
 mkdir -p /storage/raj.ayush/s2s_final_data/final_iteration/logs/production
 sbatch clean/data-download/slurm/download_all_season_2020_2024.sbatch
+sbatch --dependency=afterany:<2020-2024-job-id> \
+  clean/data-download/slurm/download_all_season_2025.sbatch
 ```
 
-The 25-task array maps five providers across five years and allows only three
+The first 25-task array maps five providers across five years. The five-task
+2025 array starts only after that array terminates. Both allow at most three
 simultaneous workers. Each worker sends requests serially and sleeps between
 completed requests. This is intentionally rate-limited: GPU hardware does not
 accelerate ECDS transfers, and excessive concurrency makes queue throttling and

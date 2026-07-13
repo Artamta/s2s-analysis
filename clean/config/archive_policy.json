@@ -4,7 +4,7 @@
   "domain_north_west_south_east": [40.0, 60.0, 0.0, 100.0],
   "grid_degrees": [1.5, 1.5],
   "common_valid_days": 42,
-  "forecast_years": [2020, 2021, 2022, 2023, 2024],
+  "forecast_years": [2020, 2021, 2022, 2023, 2024, 2025],
   "forecast_target": "exact all-season common dates for ECMWF UKMO NCEP CMA; CNRM weekly secondary",
   "providers": {
     "ecmwf": {

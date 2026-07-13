@@ -16,6 +16,7 @@ clean/
   config/
     datasets.json
     archive_policy.json
+    all_season_dates_2020_2025.csv
     comparable_dates_2019_2026.csv
   data-download/
     ecmwf/
@@ -65,15 +66,15 @@ in `config/datasets.json`.
 
 - Primary physics providers: ECMWF, UKMO, NCEP, and CMA operational S2S.
 - Secondary physics provider: CNRM on the common weekly subset.
-- Missing years: `2020-2024`.
+- Canonical download years: `2020-2025`.
 - Target: all 12 months on exact common physics-model initialization dates.
-- Cadence: 517 primary dates across 2020-2024 using
-  `config/all_season_dates_2020_2024.csv`; CNRM uses its 217-date weekly subset.
+- Cadence: 621 primary dates across 2020-2025 using
+  `config/all_season_dates_2020_2025.csv`; CNRM uses its 269-date weekly subset.
 - Variables: `tp`; ECMWF/UKMO daily-mean `t2m`; labeled NCEP `t2m_proxy`.
 - Valid window: FuXi lead days `1-42`; ECMWF lead endpoints extend to day
   `42 - init_offset_days` where starts differ.
 - Ensemble: control plus every native perturbed member.
 - Comparison: same valid-date windows on the common 1.5 degree India grid.
-- Gate: finish and validate 2020-2024 forecasts before reforecast downloads.
+- Gate: finish and validate 2020-2025 forecasts before reforecast downloads.
 - Reforecasts: native archives first; `2002-2010` only as a common-period
   sensitivity. There is no honest 20-year common archive across all models.

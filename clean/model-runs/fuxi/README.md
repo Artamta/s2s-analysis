@@ -14,15 +14,15 @@ week: the same Monday/Thursday-style dates frozen in
 - Only the official `FuXi-S2S/inference.py` is accepted. The locally added
   `inference_ensemble.py` perturbation wrapper is explicitly excluded.
 - Lead days 1-42.
-- ERA5 at 00 UTC on the previous day and initialization day supplies the 76
-  global input channels.
+- UTC daily means derived from all 24 hourly ERA5 values on the previous day
+  and initialization day supply the 76 global input channels.
 - Final variables are TP and T2M only.
 - Final grid is exactly `39-0 N, 60-99 E` at 1.5 degrees (`27 x 27`), matching
   the physics downloads.
 - FuXi TP is retained as its native `mm h-1` mean rate. Multiply by 24 during
   standardization to compare with daily `mm day-1` precipitation.
-- FuXi T2M is an instantaneous daily model state, whereas physics-model T2M is
-  a daily mean. This temporal-statistic difference must be disclosed.
+- FuXi T2M is a daily mean, matching the temporal statistic requested from the
+  physics models.
 
 These are retrospective ERA5-initialized AI forecasts. Exact initialization
 dates and valid days are comparable, but the initialization systems are not
@@ -33,6 +33,8 @@ identical to each operational physics center's own analysis.
 ```text
 /storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/
   fuxi_s2s_twice_weekly_2020_2025_ens50/
+    era5-daily/monthly/<YYYYMM>/{pressure,surface}.nc
+    era5-daily/requests/<YYYYMM>/<request_name>.json
     inputs/annual<year>/<YYYYMMDD>/input.nc
     forecasts/annual<year>/<YYYYMMDD>.nc
     manifests/annual<year>/<YYYYMMDD>.json
@@ -47,10 +49,15 @@ Each final NetCDF contains:
 tp,t2m(member=50, lead_day=42, latitude=27, longitude=27)
 ```
 
-The two-day global inputs are retained so a forecast can be reproduced or
-additional variables can be compacted later. Temporary full 76-channel model
-outputs are deleted only after the compact file passes dimensions, coordinates,
-finite-value, physical-range, and ensemble-spread checks.
+ERA5 is staged in 144 monthly products: pressure and surface files for each of
+72 months. Only the 1,242 unique previous/init days are requested. Pressure
+requests contain at most six days, keeping their live CDS cost at `390/400`;
+the complete plan contains 287 unique requests. Request IDs are written before
+polling and reused after interruption, so a retry cannot silently duplicate a
+request. The two-day model inputs are retained for reproducibility. Temporary
+full 76-channel model outputs are deleted only after the compact file passes
+dimensions, coordinates, finite-value, physical-range, and ensemble-spread
+checks.
 
 The config records the official repository commit and SHA256 hashes for the
 inference script, ONNX graph, external checkpoint data, and land mask. Every
@@ -67,17 +74,31 @@ Dry-run one calendar row:
   --task-index 0 --dry-run --verify-large-checkpoint
 ```
 
-Production:
+Stage the exact 1-hour-derived ERA5 daily means:
 
 ```bash
 mkdir -p /storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/\
-fuxi_s2s_twice_weekly_2020_2025_ens50/logs
-sbatch clean/model-runs/fuxi/slurm/run_fuxi_2020_2025_ens50.sbatch
+fuxi_s2s_twice_weekly_2020_2025_ens50/logs/{era5_daily,inference}
+stage_job=$(sbatch --parsable \
+  clean/model-runs/fuxi/slurm/stage_era5_daily_2020_2025.sbatch)
 ```
 
-The array allows two simultaneous dates. ARCO and plotting caches are directed
-to per-task node-local `/tmp` directories because the home filesystem is full.
-Rerunning the array validates and skips completed products.
+Run a full 50-member pilot after January 2020 staging succeeds, then make the
+production array depend on both the full staging array and pilot:
+
+```bash
+pilot_job=$(sbatch --parsable --array=0 \
+  --dependency=afterok:${stage_job}_0 \
+  clean/model-runs/fuxi/slurm/run_fuxi_2020_2025_ens50.sbatch)
+sbatch --array=1-620%2 --dependency=afterok:${stage_job}:${pilot_job} \
+  clean/model-runs/fuxi/slurm/run_fuxi_2020_2025_ens50.sbatch
+```
+
+The 72-task staging array runs at most three month tasks concurrently; each task
+submits only one request at a time. Its state files make every request
+resumable, and Slurm requeues a staging task before its 24-hour allocation
+expires. Inference allows two simultaneous GPU dates. Rerunning either array
+validates and skips completed products.
 
 On this cluster the official child process can return `255` after writing all
 2,100 files. The wrapper accepts a nonzero child code only when every expected
@@ -93,3 +114,12 @@ Summarize progress without opening every NetCDF:
 ```
 
 Add `--verify-outputs` for a slower, full NetCDF QC pass.
+
+## Source Contract
+
+The FuXi-S2S paper describes 42-day global daily-mean forecasts, daily
+statistics derived from 1-hourly ERA5 through the CDS daily-statistics tool,
+and the model-native latent-prior/Perlin perturbation mechanism:
+<https://arxiv.org/abs/2312.09926>. The official archive card states that TP is
+stored as a 24-hour hourly-average rate and must be multiplied by 24 for a daily
+accumulation: <https://huggingface.co/datasets/FudanFuXi/FuXi-S2S>.

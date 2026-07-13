@@ -17,14 +17,12 @@ SCRIPT="${REPO}/clean/model-runs/fuxi/scripts/run_fuxi_forecast.py"
 CONFIG="${FUXI_CONFIG:-${REPO}/clean/config/fuxi_operational_2020_2025.json}"
 LOCAL_CACHE="/tmp/fuxi_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
 
-mkdir -p "${LOCAL_CACHE}/earth2" "${LOCAL_CACHE}/xdg" "${LOCAL_CACHE}/mpl"
+mkdir -p "${LOCAL_CACHE}/xdg" "${LOCAL_CACHE}/mpl"
 cleanup() {
   rm -rf -- "${LOCAL_CACHE:?}"
 }
 trap cleanup EXIT
 
-export EARTH2STUDIO_CACHE="${LOCAL_CACHE}/earth2"
-export EARTH2STUDIO_DATA_CACHE="${LOCAL_CACHE}/earth2"
 export XDG_CACHE_HOME="${LOCAL_CACHE}/xdg"
 export MPLCONFIGDIR="${LOCAL_CACHE}/mpl"
 export LD_LIBRARY_PATH="/home/raj.ayush/.conda/envs/fuxi_s2s/lib:${LD_LIBRARY_PATH:-}"

@@ -11,13 +11,13 @@ them.
 | leads | up to 46 daily steps | 42 daily steps | same valid dates for FuXi leads 1-42 |
 | ensemble | operational count varies; reforecast control + 10 perturbed | model-native stochastic members | retain native; add matched-N sensitivity |
 | precipitation | cumulative `kg m-2` | `mm h-1` rate | daily `mm day-1` |
-| 2 m temperature | daily-average intervals in K | daily 00 UTC snapshots in K | degC and weekly means, with temporal-statistic caveat |
+| 2 m temperature | daily-average intervals in K | daily mean in K | daily mean in degC and weekly means |
 | grid | India subset, 1.5 degree | native global, compacted over India at 1.5 degree | one canonical India grid |
 
-`tp` is strictly comparable after differencing ECMWF accumulation and converting
-FuXi rate to `mm day-1`. `t2m` is scientifically useful but is not a strict
-like-for-like daily statistic: ECMWF supplies a daily mean while FuXi supplies
-one 00 UTC value per lead. Report that limitation in every temperature result.
+`tp` is comparable after differencing ECMWF accumulation and converting the
+FuXi 24-hour mean rate to `mm day-1`. FuXi-S2S forecasts global daily means, so
+`t2m` is also a daily-mean statistic. Align the UTC daily valid periods before
+forming the common six weekly means.
 
 The raw FuXi 2002-2021 archive contains both fields and 51 total members,
 numbered `00-50`. Do not infer a deterministic control member from that
@@ -35,7 +35,7 @@ before a two-field 20-year comparison.
 | ECMWF | native schedule, paired one-to-one | 42 days | daily mean | rolling 20 years; reuse local 2000-2019 TP |
 | UKMO | daily | 42 days | daily mean | 1993-2016, only days 1/9/17/25 |
 | NCEP | daily | 42 of 44 days | derived proxy | fixed 1999-2010, daily |
-| FuXi | exact twice-weekly common dates for new runs | 42 days | 00 UTC snapshot | 2002-2021, fixed 35 JJAS MMDDs |
+| FuXi | exact twice-weekly common dates for new runs | 42 days | daily mean | 2002-2021, fixed 35 JJAS MMDDs |
 
 For UKMO and NCEP operational forecasts, use the exact FuXi target dates. For
 NCEP, derive a daily temperature proxy from all four six-hour intervals:
@@ -113,8 +113,7 @@ download.
 - Valid period: lead days 1-42, aggregated into six non-overlapping 7-day weeks.
 - Domain: India analysis box, regridded once to the shared 1.5 degree grid.
 - `tp`: daily increments/rates in `mm day-1`.
-- `t2m`: ECMWF daily mean and FuXi 00 UTC snapshot in `degC`, reported with the
-  temporal-statistic caveat.
+- `t2m`: daily mean in `degC` for ECMWF and FuXi.
 - Truth: the same ERA5 valid dates for both models.
 - Provenance: source path, request hash, native member count, lead count, units,
   and conversion must be retained in every standardized file.

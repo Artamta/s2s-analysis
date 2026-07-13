@@ -33,7 +33,7 @@ day-1 TP maximum instead of normalizing it away.
 
 The NCEP temperature panel is deliberately labeled `6-hour extrema proxy`.
 It is useful for weekly comparison but is not the same archived statistic as
-the four providers' daily-mean T2M or FuXi's 00 UTC T2M snapshot.
+the four providers' or FuXi's daily-mean T2M.
 
 An attempted `2024-06-06` test correctly failed on UKMO with `MarsNoDataError`.
 The live catalogue shows a UKMO gap from June 5-19. The final test therefore

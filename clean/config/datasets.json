@@ -115,11 +115,12 @@
     },
     "fuxi_operational_ens50_2020_2025": {
       "kind": "ai_forecast",
-      "status": "production_running_job_67923_pilot_67911_valid",
+      "status": "job_67923_cancelled_invalid_00utc_inputs_daily_staging_required",
       "calendar": "clean/config/all_season_dates_2020_2025.csv",
       "date_count": 621,
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50",
-      "members": "50_official_model_native_stochastic_members_no_added_perturbations",
+      "members": "50_official_onnx_native_stochastic_latent_prior_members_no_external_perturbations",
+      "input_statistic": "UTC_daily_mean_from_1_hourly_ERA5",
       "lead_days": 42,
       "variables": ["tp", "t2m"]
     },

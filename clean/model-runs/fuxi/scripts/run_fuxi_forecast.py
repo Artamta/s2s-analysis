@@ -73,7 +73,9 @@ def load_dates(config: dict[str, Any]) -> list[pd.Timestamp]:
             if int(row["year"]) in allowed_years:
                 dates.append(pd.Timestamp(row["init_date"]))
     if len(dates) != int(config["date_count"]):
-        raise ValueError(f"expected {config['date_count']} calendar dates, found {len(dates)}")
+        raise ValueError(
+            f"expected {config['date_count']} calendar dates, found {len(dates)}"
+        )
     if len(dates) != len(set(dates)) or dates != sorted(dates):
         raise ValueError("calendar dates must be sorted and unique")
     return dates
@@ -104,7 +106,9 @@ def verify_runtime_assets(
     model = config["model"]
     inference = absolute_repo_path(model["inference_script"])
     if inference.name != "inference.py":
-        raise ValueError(f"only the official inference.py is allowed, found {inference.name}")
+        raise ValueError(
+            f"only the official inference.py is allowed, found {inference.name}"
+        )
 
     checks = (
         ("inference", inference),
@@ -118,12 +122,20 @@ def verify_runtime_assets(
         actual_size = path.stat().st_size
         expected_size = int(model[f"{label}_size_bytes"])
         if actual_size != expected_size:
-            raise ValueError(f"{label} size mismatch: expected {expected_size}, found {actual_size}")
+            raise ValueError(
+                f"{label} size mismatch: expected {expected_size}, found {actual_size}"
+            )
         actual_hash = sha256(path)
         expected_hash = model[f"{label}_sha256"]
         if actual_hash != expected_hash:
-            raise ValueError(f"{label} SHA256 mismatch: expected {expected_hash}, found {actual_hash}")
-        verified[label] = {"path": str(path), "size_bytes": actual_size, "sha256": actual_hash}
+            raise ValueError(
+                f"{label} SHA256 mismatch: expected {expected_hash}, found {actual_hash}"
+            )
+        verified[label] = {
+            "path": str(path),
+            "size_bytes": actual_size,
+            "sha256": actual_hash,
+        }
 
     external = absolute_repo_path(model["external_data"])
     if not external.is_file():
@@ -188,7 +200,10 @@ def expected_raw_files(raw_dir: Path, members: int, steps: int):
 
 
 def raw_status(raw_dir: Path, members: int, steps: int) -> tuple[bool, int]:
-    present = sum(path.exists() and path.stat().st_size > 0 for path in expected_raw_files(raw_dir, members, steps))
+    present = sum(
+        path.exists() and path.stat().st_size > 0
+        for path in expected_raw_files(raw_dir, members, steps)
+    )
     return present == members * steps, present
 
 
@@ -248,7 +263,9 @@ def combine_output(
             values[member, step - 1] = read_raw_fields(path, lat, lon)
 
     lead_day = np.arange(1, steps + 1, dtype=np.int16)
-    valid_time = (date.to_datetime64() + lead_day.astype("timedelta64[D]")).astype("datetime64[ns]")
+    valid_time = (date.to_datetime64() + lead_day.astype("timedelta64[D]")).astype(
+        "datetime64[ns]"
+    )
     dataset = xr.Dataset(
         data_vars={
             "tp": (("member", "lead_day", "latitude", "longitude"), values[:, :, 0]),
@@ -267,10 +284,13 @@ def combine_output(
             "run_label": config["run_label"],
             "init_date": date.strftime("%Y-%m-%d"),
             "input_source": config["input"]["source"],
-            "ensemble": "50 official stochastic ONNX members; no separate control member",
-            "member_generation": "model-native stochasticity; no added input perturbations",
+            "ensemble": "50 repeated calls to the official stochastic ONNX model; no separate control member",
+            "member_generation": config["member_generation"],
+            "input_daily_statistic": config["input"]["daily_statistic"],
+            "input_hourly_sampling": config["input"]["hourly_sampling"],
+            "input_time_zone": config["input"]["time_zone"],
             "domain": "exact physics grid: 39-0 N, 60-99 E, 1.5 degrees",
-            "forecast_time_statistic": "instantaneous state at 00 UTC for each lead day",
+            "forecast_time_statistic": "global daily mean at daily resolution",
             "excluded_entry_point": "inference_ensemble.py is not used",
             "model_onnx_sha256": config["model"]["onnx_sha256"],
             "model_external_data_sha256": config["model"]["external_data_sha256"],
@@ -280,10 +300,17 @@ def combine_output(
         {
             "long_name": "FuXi-S2S total precipitation mean rate",
             "units": "mm h-1",
+            "cell_methods": "time: mean (24-hour period)",
             "comparison_conversion": "multiply by 24 for mm day-1",
         }
     )
-    dataset["t2m"].attrs.update({"long_name": "2 metre temperature", "units": "K"})
+    dataset["t2m"].attrs.update(
+        {
+            "long_name": "2 metre temperature",
+            "units": "K",
+            "cell_methods": "time: mean (24-hour period)",
+        }
+    )
     encoding = {
         name: {
             "zlib": True,
@@ -301,7 +328,9 @@ def combine_output(
     temporary.replace(output)
 
 
-def validate_output(path: Path, date: pd.Timestamp, config: dict[str, Any]) -> dict[str, Any]:
+def validate_output(
+    path: Path, date: pd.Timestamp, config: dict[str, Any]
+) -> dict[str, Any]:
     dataset = xr.open_dataset(path)
     try:
         members = int(config["members"])
@@ -314,14 +343,35 @@ def validate_output(path: Path, date: pd.Timestamp, config: dict[str, Any]) -> d
         }
         for dimension, size in expected_sizes.items():
             if dataset.sizes.get(dimension) != size:
-                raise ValueError(f"{dimension}: expected {size}, found {dataset.sizes.get(dimension)}")
+                raise ValueError(
+                    f"{dimension}: expected {size}, found {dataset.sizes.get(dimension)}"
+                )
         if set(dataset.data_vars) != set(EXPECTED_CHANNELS):
             raise ValueError(f"expected TP/T2M only, found {sorted(dataset.data_vars)}")
         lat, lon = expected_grid(config)
-        if not np.allclose(dataset.latitude.values, lat) or not np.allclose(dataset.longitude.values, lon):
+        if not np.allclose(dataset.latitude.values, lat) or not np.allclose(
+            dataset.longitude.values, lon
+        ):
             raise ValueError("final grid does not match the physics-model grid")
         if pd.Timestamp(dataset.init_time.values) != date:
             raise ValueError(f"wrong init time: {dataset.init_time.values}")
+        expected_leads = np.arange(1, steps + 1, dtype=np.int16)
+        if not np.array_equal(dataset.lead_day.values, expected_leads):
+            raise ValueError(f"wrong lead-day coordinate: {dataset.lead_day.values}")
+        expected_valid_time = (
+            date.to_datetime64() + expected_leads.astype("timedelta64[D]")
+        ).astype("datetime64[ns]")
+        if not np.array_equal(
+            dataset.valid_time.values.astype("datetime64[ns]"), expected_valid_time
+        ):
+            raise ValueError("valid-time coordinate does not match init + lead day")
+        if (
+            dataset.attrs.get("forecast_time_statistic")
+            != "global daily mean at daily resolution"
+        ):
+            raise ValueError(
+                "output does not declare the FuXi daily-mean forecast statistic"
+            )
         stats: dict[str, Any] = {}
         for name in EXPECTED_CHANNELS:
             values = dataset[name].values
@@ -336,12 +386,20 @@ def validate_output(path: Path, date: pd.Timestamp, config: dict[str, Any]) -> d
         if stats["t2m"]["minimum"] < 180.0 or stats["t2m"]["maximum"] > 350.0:
             raise ValueError(f"implausible FuXi T2M range: {stats['t2m']}")
         spread = max(
-            float(abs(dataset[name].isel(member=0) - dataset[name].isel(member=1)).max())
+            float(
+                abs(dataset[name].isel(member=0) - dataset[name].isel(member=1)).max()
+            )
             for name in EXPECTED_CHANNELS
         )
         if spread <= 1e-6:
-            raise ValueError("FuXi members 0 and 1 are identical; stochastic ensemble QC failed")
-        return {"size_bytes": path.stat().st_size, "member_0_1_max_difference": spread, "fields": stats}
+            raise ValueError(
+                "FuXi members 0 and 1 are identical; stochastic ensemble QC failed"
+            )
+        return {
+            "size_bytes": path.stat().st_size,
+            "member_0_1_max_difference": spread,
+            "fields": stats,
+        }
     finally:
         dataset.close()
 
@@ -356,7 +414,9 @@ def quarantine(path: Path) -> Path:
 def write_manifest(path: Path, record: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".part")
-    temporary.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.write_text(
+        json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     temporary.replace(path)
 
 
@@ -389,6 +449,7 @@ def base_record(
         "lead_days": config["lead_days"],
         "variables": list(EXPECTED_CHANNELS),
         "calendar": config["calendar"],
+        "input_contract": config["input"],
         "input": str(paths["input"]),
         "output": str(paths["output"]),
         "inference_log": str(paths["inference_log"]),
@@ -398,7 +459,9 @@ def base_record(
         "runtime_asset_checks": runtime_assets,
         "pipeline_git_commit": repository_commit(),
         "host": socket.gethostname(),
-        "slurm_job_id": os.environ.get("SLURM_ARRAY_JOB_ID", os.environ.get("SLURM_JOB_ID")),
+        "slurm_job_id": os.environ.get(
+            "SLURM_ARRAY_JOB_ID", os.environ.get("SLURM_JOB_ID")
+        ),
         "slurm_task_id": os.environ.get("SLURM_ARRAY_TASK_ID"),
     }
 
@@ -456,6 +519,8 @@ def run(args: argparse.Namespace) -> int:
             date.strftime("%Y%m%d"),
             "--output",
             str(paths["input"]),
+            "--config",
+            str(args.config),
         ]
         subprocess.run(input_command, check=True)
 
@@ -500,7 +565,9 @@ def run(args: argparse.Namespace) -> int:
             inference_returncode = inference.returncode
             complete, present = raw_status(paths["raw"], members, steps)
         if not complete:
-            raise RuntimeError(f"inference raw output incomplete: {present}/{members * steps}")
+            raise RuntimeError(
+                f"inference raw output incomplete: {present}/{members * steps}"
+            )
 
         combine_output(paths["raw"], paths["output"], date, config)
         qc = validate_output(paths["output"], date, config)

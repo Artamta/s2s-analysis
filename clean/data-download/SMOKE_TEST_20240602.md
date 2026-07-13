@@ -26,7 +26,7 @@ temperature panels use a single cross-model scale.
 
 The NCEP temperature panel is deliberately labeled `6-hour extrema proxy`.
 It is useful for weekly comparison but is not the same archived statistic as
-ECMWF/UKMO daily-mean T2M or FuXi's 00 UTC T2M snapshot.
+ECMWF/UKMO/FuXi daily-mean T2M.
 
 ## Files
 

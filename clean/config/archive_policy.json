@@ -40,6 +40,6 @@
   "notes": [
     "Native climatologies are required for primary bias correction and skill.",
     "The 2002-2010 common period is a nine-year sensitivity analysis, not a 20-year climatology.",
-    "FuXi t2m is a 00 UTC snapshot; provider daily means and the NCEP proxy are not identical temporal statistics."
+    "FuXi and provider t2m are daily means; the NCEP proxy remains a distinct derived temporal statistic."
   ]
 }

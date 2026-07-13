@@ -62,8 +62,8 @@ T2M. UKMO and NCEP reforecast roots are absent/empty and require acquisition.
   files. Download all six-hour `mx2t6`/`mn2t6` values and derive
   `mean((Tmax_6h + Tmin_6h) / 2)` over four intervals. Name it `t2m_proxy`, not
   `t2m`.
-- FuXi T2M is a daily 00 UTC snapshot. Weekly temperature comparisons remain
-  useful but are not strict like-for-like daily statistics.
+- FuXi T2M is a daily mean derived from the model's daily-statistics state.
+  Align UTC valid periods before comparing it with provider daily means.
 
 ## Reproduce
 

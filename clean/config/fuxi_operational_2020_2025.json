@@ -6,7 +6,7 @@
   "date_count": 621,
   "cadence": "twice_weekly_exact_physics_core_dates",
   "members": 50,
-  "member_generation": "official_model_native_stochastic_onnx_inference_no_added_perturbations",
+  "member_generation": "official_onnx_native_stochastic_latent_prior_ensemble_no_external_perturbations",
   "lead_days": 42,
   "retained_variables": ["tp", "t2m"],
   "domain": {
@@ -19,8 +19,19 @@
     "longitude_count": 27
   },
   "input": {
-    "source": "ARCO ERA5 via earth2studio.data.ARCO",
-    "times": "00 UTC previous day and initialization day",
+    "source": "CDS ERA5 daily statistics derived from 1-hourly reanalysis",
+    "daily_statistic": "daily_mean",
+    "hourly_sampling": "1_hourly",
+    "time_zone": "utc+00:00",
+    "times": "UTC daily means for the previous day and initialization day",
+    "staging_subdirectory": "era5-daily",
+    "staging_layout": "monthly_target_dates_only",
+    "staging_components": ["pressure", "surface"],
+    "pressure_dataset": "derived-era5-pressure-levels-daily-statistics",
+    "surface_dataset": "derived-era5-single-levels-daily-statistics",
+    "grid_degrees": 1.5,
+    "request_cost_limit": 400,
+    "pressure_days_per_request": 6,
     "shape": [2, 76, 121, 240],
     "retain_input_nc": true
   },
@@ -42,7 +53,7 @@
   },
   "runtime": {
     "driver_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python",
-    "input_python": "/home/raj.ayush/.conda/envs/earth2/bin/python",
+    "input_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python",
     "inference_python": "/home/raj.ayush/.conda/envs/fuxi_s2s/bin/python"
   },
   "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50"

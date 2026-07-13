@@ -84,9 +84,10 @@ weekly subset. Every file retains its control or all native perturbed members
 and the complete lead-day 1-42 window.
 
 ECMWF `t2m` is a daily average and must be requested with interval steps such as
-`0_24`, `24_48`, and `48_72`; endpoint-only steps return day 1 only. FuXi `t2m`
-is a daily 00 UTC snapshot, so temperature comparisons must disclose that
-temporal-statistic difference. `tp` is the strict like-for-like benchmark.
+`0_24`, `24_48`, and `48_72`; endpoint-only steps return day 1 only. FuXi-S2S
+also predicts daily means and its ERA5 inputs must come from daily statistics
+derived from all 24 hourly values. Both `tp` and `t2m` can therefore use a
+daily-statistic comparison after unit and valid-period alignment.
 
 Keep all native members in raw files. Ensemble-size matching belongs in the
 standardized analysis layer, not in the downloader.

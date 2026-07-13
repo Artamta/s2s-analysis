@@ -23,3 +23,9 @@ Every run should record:
 - grid/resolution
 - units after conversion
 - output files
+
+The FuXi-S2S operational benchmark is implemented under `fuxi/`. It uses the
+same 621-date 2020-2025 initialization calendar as the physics providers and
+writes compact India TP/T2M products with per-date provenance manifests. Its 50
+members come only from the official model's native stochastic inference; no
+external perturbation wrapper is used.

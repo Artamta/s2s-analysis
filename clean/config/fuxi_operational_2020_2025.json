@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "run_label": "fuxi_s2s_twice_weekly_2020_2025_ens50",
+  "calendar": "clean/config/all_season_dates_2020_2025.csv",
+  "years": [2020, 2021, 2022, 2023, 2024, 2025],
+  "date_count": 621,
+  "cadence": "twice_weekly_exact_physics_core_dates",
+  "members": 50,
+  "member_generation": "official_model_native_stochastic_onnx_inference_no_added_perturbations",
+  "lead_days": 42,
+  "retained_variables": ["tp", "t2m"],
+  "domain": {
+    "latitude_first": 39.0,
+    "latitude_last": 0.0,
+    "longitude_first": 60.0,
+    "longitude_last": 99.0,
+    "grid_degrees": 1.5,
+    "latitude_count": 27,
+    "longitude_count": 27
+  },
+  "input": {
+    "source": "ARCO ERA5 via earth2studio.data.ARCO",
+    "times": "00 UTC previous day and initialization day",
+    "shape": [2, 76, 121, 240],
+    "retain_input_nc": true
+  },
+  "model": {
+    "repository": "analysis-code/data-download/fuxi_s2s/FuXi-S2S",
+    "repository_commit": "cfcc829",
+    "inference_script": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/inference.py",
+    "inference_size_bytes": 5301,
+    "inference_sha256": "ade527b11b96664311add149318ca28054d3257da4f795173a6bda4a17fd36e1",
+    "onnx": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/model/fuxi_s2s.onnx",
+    "onnx_size_bytes": 1588847,
+    "onnx_sha256": "bcc3419ef698cb894b17fae2c5e40ded05d87ed8d4ba9f6342c9f0afff3c70f5",
+    "external_data": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/model/fuxi_s2s",
+    "external_data_size_bytes": 2078823204,
+    "external_data_sha256": "628d86076810d3d5c53a7a27f10e67b08051e2d2e5c9224a2df96cba8ecd8ea8",
+    "mask": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/data/mask.nc",
+    "mask_size_bytes": 41140,
+    "mask_sha256": "252acc576bf32c47af244191c1a77cb7c750adfaaeeeaf1dfb70f0ecc07682ab"
+  },
+  "runtime": {
+    "driver_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python",
+    "input_python": "/home/raj.ayush/.conda/envs/earth2/bin/python",
+    "inference_python": "/home/raj.ayush/.conda/envs/fuxi_s2s/bin/python"
+  },
+  "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50"
+}

@@ -109,8 +109,19 @@
       "kind": "reforecast",
       "status": "available",
       "path": "/storage/raj.ayush/archive/All_Model_Data/models/fuxi/data",
-      "members": "1_control_plus_50_perturbed",
+      "members": "51_archive_members_numbered_00_to_50_control_not_assumed",
+      "member_note": "FuXi is natively probabilistic; do not impose physics-model control/perturbed labels without provider metadata",
       "lead_days": 42
+    },
+    "fuxi_operational_ens50_2020_2025": {
+      "kind": "ai_forecast",
+      "status": "production_launch_ready_after_pilot",
+      "calendar": "clean/config/all_season_dates_2020_2025.csv",
+      "date_count": 621,
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50",
+      "members": "50_official_model_native_stochastic_members_no_added_perturbations",
+      "lead_days": 42,
+      "variables": ["tp", "t2m"]
     },
     "fuxi_reforecast_compact": {
       "kind": "standardized_intermediate",

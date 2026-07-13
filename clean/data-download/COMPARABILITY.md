@@ -9,17 +9,20 @@ them.
 | Property | ECMWF | FuXi | Common contract |
 |---|---|---|---|
 | leads | up to 46 daily steps | 42 daily steps | same valid dates for FuXi leads 1-42 |
-| ensemble | operational count varies; reforecast control + 10 perturbed | control + 50 perturbed | retain native; add matched-N sensitivity |
+| ensemble | operational count varies; reforecast control + 10 perturbed | model-native stochastic members | retain native; add matched-N sensitivity |
 | precipitation | cumulative `kg m-2` | `mm h-1` rate | daily `mm day-1` |
 | 2 m temperature | daily-average intervals in K | daily 00 UTC snapshots in K | degC and weekly means, with temporal-statistic caveat |
-| grid | India subset, 1.5 degree | global, 1.5 degree | one canonical India grid |
+| grid | India subset, 1.5 degree | native global, compacted over India at 1.5 degree | one canonical India grid |
 
 `tp` is strictly comparable after differencing ECMWF accumulation and converting
 FuXi rate to `mm day-1`. `t2m` is scientifically useful but is not a strict
 like-for-like daily statistic: ECMWF supplies a daily mean while FuXi supplies
 one 00 UTC value per lead. Report that limitation in every temperature result.
 
-The raw FuXi 2002-2021 archive contains both fields and 51 total members. The
+The raw FuXi 2002-2021 archive contains both fields and 51 total members,
+numbered `00-50`. Do not infer a deterministic control member from that
+numbering: the local files do not encode a control role, and FuXi's ensemble is
+model-native and stochastic. The
 existing compact FuXi files contain only `tp` and `z500`, so `t2m` must be read
 from the raw archive or compacted again. The local ECMWF 20-year reforecast has
 `tp` and `z500`, but not `t2m`; ECMWF reforecast `t2m` must therefore be acquired
@@ -32,7 +35,7 @@ before a two-field 20-year comparison.
 | ECMWF | native schedule, paired one-to-one | 42 days | daily mean | rolling 20 years; reuse local 2000-2019 TP |
 | UKMO | daily | 42 days | daily mean | 1993-2016, only days 1/9/17/25 |
 | NCEP | daily | 42 of 44 days | derived proxy | fixed 1999-2010, daily |
-| FuXi | fixed 35 JJAS MMDDs | 42 days | 00 UTC snapshot | 2002-2021, fixed 35 JJAS MMDDs |
+| FuXi | exact twice-weekly common dates for new runs | 42 days | 00 UTC snapshot | 2002-2021, fixed 35 JJAS MMDDs |
 
 For UKMO and NCEP operational forecasts, use the exact FuXi target dates. For
 NCEP, derive a daily temperature proxy from all four six-hour intervals:
@@ -43,6 +46,10 @@ climatology for primary calibration and probabilistic skill. Use 2002-2010 as
 a separately labeled nine-year common-period sensitivity only.
 
 ## Operational Date Pairing
+
+The following 35-slot pairing applies only when reusing the downloaded
+2002-2021 FuXi JJAS archive. The new 2020-2025 FuXi model run uses the exact 621
+physics-calendar initializations and needs no shifted pairing.
 
 Use the fixed 35 FuXi JJAS starts below. Before 2023-06-28, ECMWF operational
 forecasts were initialized Monday and Thursday; from 2023-06-28 onward they are
@@ -91,9 +98,10 @@ archive. Matching FuXi forecasts must be generated for operational years
 
 Use two views:
 
-1. Native ensemble: each system uses all available perturbed members.
+1. Native ensemble: each system uses all of its available native members.
 2. Matched ensemble: compare the 10 ECMWF reforecast perturbed members with
-   repeated 10-member FuXi subsets. Controls are reported separately.
+   repeated 10-member FuXi subsets. The ECMWF control may be reported
+   separately; FuXi has no assumed control member.
 
 For operational ECMWF versus FuXi, keep raw member counts unchanged and apply
 the matched-member rule only in derived products. Never discard members during

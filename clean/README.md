@@ -15,6 +15,7 @@ forecast type, variable, lead range, and download request.
 clean/
   config/
     datasets.json
+    comparable_dates_2019_2026.csv
   data-download/
     ecmwf/
     ukmo/
@@ -63,9 +64,12 @@ in `config/datasets.json`.
 
 - Provider: ECMWF operational S2S.
 - Missing years: `2020-2024`.
-- Season: JJAS (`June 1` through `September 30`).
-- Cadence: twice weekly, ECMWF Monday/Thursday initialization cycle.
-- Variables: `tp` and `z500`.
-- Lead range: daily lead days `1-42`.
+- Target season: 35 FuXi starts from June 2 through September 29; a paired
+  ECMWF initialization may fall in late May.
+- Cadence: the 35 fixed FuXi JJAS starts, paired to ECMWF's native schedule
+  using `config/comparable_dates_2019_2026.csv`.
+- Variables: `tp` and `t2m`.
+- Valid window: FuXi lead days `1-42`; ECMWF lead endpoints extend to day
+  `42 - init_offset_days` where starts differ.
 - Ensemble: control plus every perturbed member returned by ECMWF.
 - Comparison: same valid-date windows on the common 1.5 degree India grid.

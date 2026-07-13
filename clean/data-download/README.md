@@ -26,19 +26,12 @@ Canonical heavy-data layout on `/storage`:
   logs/<provider>/
 ```
 
-For pressure-level variables:
-
-```text
-raw/<provider>/<forecast|reforecast>/<season>/<variable>/<level>/<date>_<cf|pf>.<ext>
-```
-
 Examples:
 
 ```text
-raw/ecmwf/reforecast/jjas/tp/0620_pf.grib
-raw/ecmwf/reforecast/jjas/z/500/0620_cf.grib
+raw/ecmwf/forecast/jjas2020/tp/20200601_pf.nc
+raw/ecmwf/forecast/jjas2020/t2m/20200601_cf.nc
 raw/ukmo/forecast/jjas2025/tp/20250620_pf.nc
-raw/ncep/forecast/jjas2025/z/500/20250620_cf.grib
 ```
 
 ## Minimum Variables
@@ -47,7 +40,7 @@ For the current India S2S benchmark:
 
 ```text
 tp      total precipitation
-z500    500 hPa geopotential height / height
+t2m     2 m temperature
 ```
 
 Useful process-science additions:
@@ -57,7 +50,6 @@ u850    low-level monsoon flow / MISO
 u200    tropical easterly jet / Webster-Yang shear
 v850    moisture transport support
 msl     monsoon trough
-t2m     temperature, if provider lead coverage is usable
 ```
 
 ## Manifests
@@ -79,10 +71,18 @@ lead_start,lead_end,file_path,size_bytes,status,request_hash,timestamp
 
 ## ECMWF First Phase
 
-The missing operational years are `2020-2024`. Download Monday/Thursday JJAS
-initializations, `tp` and `z500`, control plus all perturbed members, daily lead
-days `1-42`. This is 35 initializations per year and 700 resumable API requests
-across five years.
+The missing operational years are `2020-2024`. Use the 35 FuXi JJAS target
+starts in `../config/comparable_dates_2019_2026.csv`, paired to the minimum-lag
+one-to-one ECMWF schedule that preserves the full valid-date window.
+Download `tp` and `t2m`, control plus all perturbed members. ECMWF requests
+extend beyond day 42 only where a shifted start needs later leads for the common
+42-day window. This remains 35 initializations and 140 resumable requests per
+year, or 700 requests across five years.
+
+ECMWF `t2m` is a daily average and must be requested with interval steps such as
+`0-24`, `24-48`, and `48-72`; endpoint-only steps return day 1 only. FuXi `t2m`
+is a daily 00 UTC snapshot, so temperature comparisons must disclose that
+temporal-statistic difference. `tp` is the strict like-for-like benchmark.
 
 Keep all native members in raw files. Ensemble-size matching belongs in the
 standardized analysis layer, not in the downloader.

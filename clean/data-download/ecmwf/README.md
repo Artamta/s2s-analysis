@@ -3,10 +3,12 @@
 This phase fills the five missing operational years with the fields that are
 directly usable in the ECMWF/FuXi benchmark:
 
-- Monday/Thursday initializations from June 1 through September 30.
-- `tp` and 500 hPa geopotential height.
+- The 35 FuXi JJAS target starts, paired to ECMWF's actual initialization
+  schedule.
+- `tp` and `t2m`.
 - Control and every perturbed member returned by ECMWF.
-- Daily lead days 1-42.
+- The full common FuXi lead 1-42 valid window; shifted ECMWF starts may require
+  native leads through day 45.
 - India-centered raw request box on the 1.5 degree grid.
 
 The output root is outside Git:
@@ -16,8 +18,8 @@ The output root is outside Git:
   raw/ecmwf/forecast/jjasYYYY/
     tp/YYYYMMDD_cf.nc
     tp/YYYYMMDD_pf.nc
-    z/500/YYYYMMDD_cf.nc
-    z/500/YYYYMMDD_pf.nc
+    t2m/YYYYMMDD_cf.nc
+    t2m/YYYYMMDD_pf.nc
     manifests/requests.jsonl
   logs/ecmwf/
 ```
@@ -31,7 +33,9 @@ dimensions after each download and writes one manifest record per attempt.
 ```bash
 /home/raj.ayush/.conda/envs/fuxi/bin/python \
   clean/data-download/ecmwf/scripts/download_ecmwf_operational.py \
-  --year 2020 --dry-run
+  --year 2020 \
+  --dates-file clean/config/comparable_dates_2019_2026.csv \
+  --dry-run
 ```
 
 Expected per year: 35 initializations and 140 requests. Expected total for the
@@ -45,6 +49,10 @@ sbatch clean/data-download/ecmwf/slurm/download_jjas_2020_2024.sbatch
 
 The array runs at most two years concurrently. It is safe to resubmit: valid
 existing files are checked and skipped.
+
+`t2m` uses ECMWF's daily-average interval syntax (`0-24`, `24-48`, ...).
+Using only endpoint steps (`24`, `48`, ...) silently returns the first daily
+average, which is why legacy 2019/2025 `t2m` files cannot fill this benchmark.
 
 ## Scientific Boundary
 

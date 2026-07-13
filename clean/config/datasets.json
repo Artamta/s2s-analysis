@@ -4,10 +4,11 @@
   "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration",
   "experiment": {
     "season": "JJAS",
-    "operational_years": [2019, 2020, 2021, 2022, 2023, 2024, 2025],
+    "operational_years": [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
     "missing_ecmwf_years": [2020, 2021, 2022, 2023, 2024],
-    "ecmwf_cadence": "monday_thursday",
-    "variables": ["tp", "z500"],
+    "ecmwf_cadence": "fuxi_fixed_mmdd_paired_to_ecmwf_native",
+    "comparable_dates": "clean/config/comparable_dates_2019_2026.csv",
+    "variables": ["tp", "t2m"],
     "lead_days": [1, 42],
     "raw_area_north_west_south_east": [40.0, 60.0, 0.0, 100.0],
     "grid_degrees": 1.5,
@@ -17,7 +18,7 @@
   "datasets": {
     "ecmwf_operational_legacy_2019": {
       "kind": "forecast",
-      "status": "complete_for_mon_thu",
+      "status": "tp_complete_t2m_day1_only_requires_redownload",
       "path": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2019"
     },
     "ecmwf_operational_2020_2024": {
@@ -27,7 +28,7 @@
     },
     "ecmwf_operational_legacy_2025": {
       "kind": "forecast",
-      "status": "complete_for_mon_thu_and_additional_dates",
+      "status": "tp_complete_t2m_day1_only_requires_redownload",
       "path": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2025"
     },
     "ecmwf_reforecast_20yr": {
@@ -47,7 +48,8 @@
     "fuxi_reforecast_compact": {
       "kind": "standardized_intermediate",
       "status": "available_tp_z500",
-      "path": "/storage/raj.ayush/s2s_final_data/jjas/fuxi_combined"
+      "path": "/storage/raj.ayush/s2s_final_data/jjas/fuxi_combined",
+      "benchmark_gap": "t2m_not_compacted_use_raw_archive_or_rebuild"
     },
     "era5_truth": {
       "kind": "truth",

@@ -76,6 +76,10 @@ Quick sample opens:
 | NCEP 2019 surface pf | `jjas2019/surface/pf/20190603.grib` | number=15, step=44, 34x34; vars mx2t6, mn2t6, tp |
 | NCEP 2019 z500 pf | `jjas2019/z/500/pf/20190603.grib` | number=15, step=44, 34x34; var gh |
 
+The legacy ECMWF 2019 and 2025 `t2m` files contain all native members but only
+the `0-24` daily-average step. They cannot provide lead days 2-42 and must be
+redownloaded with explicit daily intervals for the `tp`/`t2m` benchmark.
+
 ## Practical Conclusion
 
 For a 2019-2025 operational comparison over India:

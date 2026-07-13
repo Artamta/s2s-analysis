@@ -13,6 +13,7 @@ set -euo pipefail
 REPO="/home/raj.ayush/s2s/s2s_anlysis"
 PYTHON="/home/raj.ayush/.conda/envs/fuxi/bin/python"
 SCRIPT="${REPO}/clean/data-download/ecmwf/scripts/download_ecmwf_operational.py"
+DATES_FILE="${REPO}/clean/config/comparable_dates_2019_2026.csv"
 STORAGE="/storage/raj.ayush/s2s_final_data/final_iteration"
 YEAR="${SLURM_ARRAY_TASK_ID}"
 OUT_ROOT="${STORAGE}/raw/ecmwf/forecast/jjas${YEAR}"
@@ -30,14 +31,14 @@ if ! "${PYTHON}" -c "import cdsapi, xarray" >/dev/null 2>&1; then
 fi
 
 echo "ECMWF operational S2S core benchmark"
-echo "year=${YEAR} cadence=Mon/Thu variables=tp,z500 leads=1-42 types=cf,pf"
+echo "year=${YEAR} cadence=FuXi-paired variables=tp,t2m valid_window=FuXi-1-42 types=cf,pf"
 echo "output=${OUT_ROOT}"
 
 "${PYTHON}" "${SCRIPT}" \
   --year "${YEAR}" \
   --out-root "${OUT_ROOT}" \
-  --cadence mon-thu \
-  --variables tp,z500 \
+  --dates-file "${DATES_FILE}" \
+  --variables tp,t2m \
   --forecast-types cf,pf \
   --lead-days 42 \
   --retries 5 \

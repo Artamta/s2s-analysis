@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as dt
 import hashlib
 import json
@@ -28,13 +29,15 @@ VARIABLES: dict[str, dict[str, Any]] = {
         "level": "",
         "directory": ("tp",),
         "netcdf_names": ("tp",),
+        "step_encoding": "end_hour",
     },
-    "z500": {
-        "level_type": "pressure_level",
-        "variable": "156",
-        "level": "500",
-        "directory": ("z", "500"),
-        "netcdf_names": ("gh", "z"),
+    "t2m": {
+        "level_type": "single_level",
+        "variable": "167",
+        "level": "",
+        "directory": ("t2m",),
+        "netcdf_names": ("t2m",),
+        "step_encoding": "daily_average_range",
     },
 }
 
@@ -47,7 +50,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start-mmdd", default="0601")
     parser.add_argument("--end-mmdd", default="0930")
     parser.add_argument("--cadence", choices=("mon-thu", "all"), default="mon-thu")
-    parser.add_argument("--variables", default="tp,z500")
+    parser.add_argument(
+        "--dates-file",
+        type=Path,
+        default=None,
+        help="Comparable-date CSV containing year, fuxi_init, and ecmwf_init columns",
+    )
+    parser.add_argument("--variables", default="tp,t2m")
     parser.add_argument("--forecast-types", default="cf,pf")
     parser.add_argument("--lead-days", type=int, default=42)
     parser.add_argument("--retries", type=int, default=5)
@@ -82,9 +91,47 @@ def initialization_dates(start: dt.date, end: dt.date, cadence: str) -> list[dt.
     return dates
 
 
+def load_date_pairs(path: Path, year: int) -> list[tuple[dt.date, dict[str, Any]]]:
+    pairs: list[tuple[dt.date, dict[str, Any]]] = []
+    seen: set[str] = set()
+    with path.open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            if int(row["year"]) != year:
+                continue
+            init = row["ecmwf_init"]
+            if init in seen:
+                raise ValueError(f"duplicate ECMWF initialization in {path}: {init}")
+            seen.add(init)
+            pairs.append(
+                (
+                    dt.date.fromisoformat(init),
+                    {
+                        "fuxi_init": row["fuxi_init"],
+                        "ecmwf_init": init,
+                        "init_offset_days": int(row["init_offset_days"]),
+                        "pair_mode": row["pair_mode"],
+                        "ecmwf_lead_start_day": int(row["ecmwf_lead_start_day"]),
+                        "ecmwf_lead_end_day": int(row["ecmwf_lead_end_day"]),
+                        "pair_policy": row["pair_policy"],
+                        "fuxi_target_source": row["fuxi_target_source"],
+                        "ecmwf_retrieval_status": row["ecmwf_retrieval_status"],
+                    },
+                )
+            )
+    if not pairs:
+        raise ValueError(f"no comparable dates for {year} in {path}")
+    return pairs
+
+
 def target_path(out_root: Path, date: dt.date, variable: str, ftype: str) -> Path:
     spec = VARIABLES[variable]
     return out_root.joinpath(*spec["directory"], f"{date:%Y%m%d}_{ftype}.nc")
+
+
+def request_steps(variable: str, lead_days: int) -> list[str]:
+    if VARIABLES[variable]["step_encoding"] == "daily_average_range":
+        return [f"{(day - 1) * 24}-{day * 24}" for day in range(1, lead_days + 1)]
+    return [str(day * 24) for day in range(1, lead_days + 1)]
 
 
 def build_request(date: dt.date, variable: str, ftype: str, lead_days: int) -> dict[str, Any]:
@@ -98,7 +145,7 @@ def build_request(date: dt.date, variable: str, ftype: str, lead_days: int) -> d
         "month": f"{date.month:02d}",
         "day": f"{date.day:02d}",
         "time": "00:00:00",
-        "step": [str(hour) for hour in range(24, lead_days * 24 + 1, 24)],
+        "step": request_steps(variable, lead_days),
         "area": list(AREA),
         "grid": list(GRID),
         "data_format": "netcdf",
@@ -178,9 +225,10 @@ def base_record(
     target: Path,
     request: dict[str, Any],
     lead_days: int,
+    comparison_pair: dict[str, Any] | None,
 ) -> dict[str, Any]:
     spec = VARIABLES[variable]
-    return {
+    record = {
         "provider": "ecmwf",
         "dataset": DATASET,
         "product": "operational_forecast",
@@ -197,7 +245,11 @@ def base_record(
         "all_native_members_requested": True,
         "file_path": str(target),
         "request_hash": request_hash(request),
+        "step_encoding": spec["step_encoding"],
     }
+    if comparison_pair:
+        record["comparison_pair"] = comparison_pair
+    return record
 
 
 def download_one(
@@ -211,9 +263,18 @@ def download_one(
     retries: int,
     sleep_between: float,
     overwrite: bool,
+    comparison_pair: dict[str, Any] | None,
 ) -> str:
     request = build_request(date, variable, ftype, lead_days)
-    record = base_record(date, variable, ftype, target, request, lead_days)
+    record = base_record(
+        date,
+        variable,
+        ftype,
+        target,
+        request,
+        lead_days,
+        comparison_pair,
+    )
     record["started_utc"] = utc_now()
 
     if target.exists() and target.stat().st_size > 0 and not overwrite:
@@ -301,20 +362,35 @@ def main() -> int:
     end = parse_mmdd(args.year, args.end_mmdd)
     if end < start:
         raise ValueError("end date precedes start date")
-    dates = initialization_dates(start, end, args.cadence)
+    if args.dates_file:
+        date_pairs = load_date_pairs(args.dates_file, args.year)
+    else:
+        date_pairs = [
+            (date, {}) for date in initialization_dates(start, end, args.cadence)
+        ]
+    dates = [date for date, _ in date_pairs]
 
     out_root = args.out_root or (
         STORAGE_ROOT / "raw" / "ecmwf" / "forecast" / f"jjas{args.year}"
     )
     manifest = args.manifest or out_root / "manifests" / "requests.jsonl"
     tasks = [
-        (date, variable, ftype)
-        for date in dates
+        (
+            date,
+            variable,
+            ftype,
+            pair,
+            int(pair.get("ecmwf_lead_end_day", args.lead_days)),
+        )
+        for date, pair in date_pairs
         for variable in variables
         for ftype in forecast_types
     ]
     if args.max_requests is not None:
         tasks = tasks[: args.max_requests]
+    requested_lead_end_days = sorted({task[4] for task in tasks})
+    if requested_lead_end_days and requested_lead_end_days[-1] > 46:
+        raise ValueError("comparable-date plan exceeds ECMWF's 46-day native range")
 
     logging.basicConfig(
         level=logging.INFO,
@@ -322,8 +398,19 @@ def main() -> int:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     logging.info("ECMWF operational S2S download plan")
-    logging.info("year=%d dates=%d cadence=%s", args.year, len(dates), args.cadence)
-    logging.info("variables=%s forecast_types=%s lead_days=%d", variables, forecast_types, args.lead_days)
+    logging.info(
+        "year=%d dates=%d source=%s",
+        args.year,
+        len(dates),
+        args.dates_file or args.cadence,
+    )
+    logging.info(
+        "variables=%s forecast_types=%s target_lead_days=%d request_lead_ends=%s",
+        variables,
+        forecast_types,
+        args.lead_days,
+        requested_lead_end_days,
+    )
     logging.info("requests=%d output=%s", len(tasks), out_root)
     logging.info("all native members requested; no ECMWF number selector is used")
 
@@ -335,10 +422,12 @@ def main() -> int:
                     "initialization_count": len(dates),
                     "first_initialization": dates[0].isoformat() if dates else None,
                     "last_initialization": dates[-1].isoformat() if dates else None,
-                    "cadence": args.cadence,
+                    "cadence": "dates_file" if args.dates_file else args.cadence,
+                    "dates_file": str(args.dates_file) if args.dates_file else None,
                     "variables": variables,
                     "forecast_types": forecast_types,
                     "lead_days": args.lead_days,
+                    "request_lead_end_days": requested_lead_end_days,
                     "request_count": len(tasks),
                     "out_root": str(out_root),
                     "manifest": str(manifest),
@@ -352,7 +441,7 @@ def main() -> int:
 
     client = cdsapi.Client(quiet=True)
     counts = {"downloaded_valid": 0, "existing_valid": 0, "failed": 0}
-    for index, (date, variable, ftype) in enumerate(tasks, 1):
+    for index, (date, variable, ftype, pair, request_lead_days) in enumerate(tasks, 1):
         status = download_one(
             client=client,
             date=date,
@@ -360,10 +449,11 @@ def main() -> int:
             ftype=ftype,
             target=target_path(out_root, date, variable, ftype),
             manifest=manifest,
-            lead_days=args.lead_days,
+            lead_days=request_lead_days,
             retries=args.retries,
             sleep_between=args.sleep_between,
             overwrite=args.overwrite,
+            comparison_pair=pair,
         )
         counts[status] += 1
         logging.info("PROGRESS %d/%d counts=%s", index, len(tasks), counts)

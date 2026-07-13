@@ -34,16 +34,32 @@ Invalid artifacts from dates `20200102`, `20200106`, and `20200109` are kept at
 canonical paths, with their logs and manifests for provenance. They must not be
 used in analysis.
 
-## Next Launch
+## Corrected Launch
 
-1. Complete 72 months of bounded ERA5 daily-statistics staging for 2020-2025.
-2. Re-run task 0 as a full official 50-member pilot.
-3. Validate daily input metadata, dimensions, TP/T2M ranges, and member spread.
-4. Start tasks 1-620 with a dependency on both staging and the corrected pilot.
+The corrected workflow was submitted from commit `9aa02a8` at
+`2026-07-13 20:42 IST`:
+
+- `67936`: 72-month ERA5 daily-statistics staging array, at most three month
+  tasks and three CDS requests active concurrently;
+- `67940`: official 50-member task-0 pilot, blocked on staging task `67936_0`;
+- `67941`: tasks `1-620`, at most two GPU dates concurrently, blocked on the
+  complete staging array and successful pilot.
+
+Staging tasks 0-2 started on `cn18`. Their first pressure requests were
+accepted with persisted IDs and no stderr output. Slurm confirmed pilot
+dependency `afterok:67936_0` and production dependencies
+`afterok:67936,afterok:67940`. The workflow therefore continues without an
+interactive shell and cannot start GPU production on incomplete daily inputs.
 
 Progress is summarized with:
 
 ```bash
 /home/raj.ayush/.conda/envs/s2s-hind/bin/python \
   clean/model-runs/fuxi/scripts/audit_fuxi_run.py
+```
+
+Scheduler state is checked with:
+
+```bash
+squeue -j 67936,67940,67941
 ```

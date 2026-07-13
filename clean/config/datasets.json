@@ -115,7 +115,7 @@
     },
     "fuxi_operational_ens50_2020_2025": {
       "kind": "ai_forecast",
-      "status": "job_67923_cancelled_invalid_00utc_inputs_daily_staging_required",
+      "status": "daily_staging_67936_running_pilot_67940_and_production_67941_dependency_queued",
       "calendar": "clean/config/all_season_dates_2020_2025.csv",
       "date_count": 621,
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50",

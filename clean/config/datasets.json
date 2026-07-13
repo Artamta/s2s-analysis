@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "workspace": "final_iteration",
+  "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration",
+  "experiment": {
+    "season": "JJAS",
+    "operational_years": [2019, 2020, 2021, 2022, 2023, 2024, 2025],
+    "missing_ecmwf_years": [2020, 2021, 2022, 2023, 2024],
+    "ecmwf_cadence": "monday_thursday",
+    "variables": ["tp", "z500"],
+    "lead_days": [1, 42],
+    "raw_area_north_west_south_east": [40.0, 60.0, 0.0, 100.0],
+    "grid_degrees": 1.5,
+    "forecast_types": ["cf", "pf"],
+    "member_policy": "retain_all_native_members"
+  },
+  "datasets": {
+    "ecmwf_operational_legacy_2019": {
+      "kind": "forecast",
+      "status": "complete_for_mon_thu",
+      "path": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2019"
+    },
+    "ecmwf_operational_2020_2024": {
+      "kind": "forecast",
+      "status": "planned",
+      "path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ecmwf/forecast/jjas{year}"
+    },
+    "ecmwf_operational_legacy_2025": {
+      "kind": "forecast",
+      "status": "complete_for_mon_thu_and_additional_dates",
+      "path": "/storage/raj.ayush/All_Model_Data/ecmwf/jjas2025"
+    },
+    "ecmwf_reforecast_20yr": {
+      "kind": "reforecast",
+      "status": "complete_tp_z500_35_jjas_slots",
+      "path": "/storage/raj.ayush/archive/All_Model_Data/models/ecmwf/data",
+      "members": "1_control_plus_10_perturbed",
+      "lead_days": 46
+    },
+    "fuxi_reforecast_archive_2002_2021": {
+      "kind": "reforecast",
+      "status": "available",
+      "path": "/storage/raj.ayush/archive/All_Model_Data/models/fuxi/data",
+      "members": "1_control_plus_50_perturbed",
+      "lead_days": 42
+    },
+    "fuxi_reforecast_compact": {
+      "kind": "standardized_intermediate",
+      "status": "available_tp_z500",
+      "path": "/storage/raj.ayush/s2s_final_data/jjas/fuxi_combined"
+    },
+    "era5_truth": {
+      "kind": "truth",
+      "status": "available_through_2023_in_weatherbench2",
+      "path": "/storage/bedartha/public/datasets/as_downloaded/weatherbench2/era5/1959-2023_01_10-6h-240x121_equiangular_with_poles_conservative.zarr"
+    }
+  }
+}

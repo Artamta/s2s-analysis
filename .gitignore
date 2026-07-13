@@ -65,3 +65,11 @@ verify_t2m_comparability.py
 # Keep curated masks in Git despite the NetCDF ignore rule.
 !masks/
 !masks/imd_region_masks_*.nc
+
+# Final clean-workspace runtime state (code/config/docs remain tracked).
+clean/data-download/*/raw/
+clean/data-download/*/logs/
+clean/data-download/*/checksums/
+clean/data-download/*/manifests/runtime/
+clean/model-runs/logs/
+clean/model-runs/outputs/

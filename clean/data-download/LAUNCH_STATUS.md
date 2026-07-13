@@ -12,7 +12,20 @@ The all-season 2020-2024 operational forecast download was submitted on
 | providers | ECMWF, UKMO, NCEP, CMA, CNRM |
 | output root | `/storage/raj.ayush/s2s_final_data/final_iteration` |
 
-The job runs on the cluster's `gpu` partition because that is the available
+## 2025 Extension
+
+The 2025 extension was submitted on `2026-07-13 17:08 IST` from commit
+`4dba63f` as SLURM array `67824`. Its five tasks cover ECMWF, UKMO, NCEP, CMA,
+and CNRM. The array has the dependency `afterany:67816`, so it remains pending
+until every 2020-2024 task terminates and then starts automatically with the
+same three-worker limit.
+
+The extension adds 104 exact common core dates and 52 CNRM dates, or 1,664
+requests. Across 2020-2025 the production plan contains 9,770 requests. It uses
+`clean/config/all_season_dates_2020_2025.csv`; job `67816` continues to use its
+unchanged `2020_2024` calendar.
+
+Both arrays run on the cluster's `gpu` partition because that is the available
 queue selected for this project. It does not request a GPU: ECDS retrieval is
 network-bound and GRIB validation is CPU-bound, so an accelerator would not
 make the download faster.
@@ -41,7 +54,7 @@ SHA-256 request hash, file size, member count, lead count, units, and QC status.
 ## Monitor or Resume
 
 ```bash
-squeue -j 67816
+squeue -j 67816,67824
 tail -f /storage/raj.ayush/s2s_final_data/final_iteration/logs/production/slurm_67816_0.err
 ```
 
@@ -52,7 +65,6 @@ rg '"status": "downloaded_valid"' \
   /storage/raj.ayush/s2s_final_data/final_iteration/manifests
 ```
 
-If a task is interrupted, resubmit
-`clean/data-download/slurm/download_all_season_2020_2024.sbatch`. The downloader
-revalidates existing final files and skips them, so it does not create duplicate
-GRIB data.
+If a task is interrupted, resubmit the matching `2020_2024` or `2025` sbatch
+file. The downloader revalidates existing final files and skips them, so it
+does not create duplicate GRIB data.

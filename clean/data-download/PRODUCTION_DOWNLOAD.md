@@ -1,6 +1,7 @@
 # All-Season Production Download
 
-The current run is recorded in `LAUNCH_STATUS.md` (SLURM array `67816`).
+The current runs are recorded in `LAUNCH_STATUS.md` (SLURM arrays `67816` and
+`67824`).
 
 ## Scope
 

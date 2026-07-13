@@ -55,28 +55,28 @@
     },
     "ecmwf_operational_2025": {
       "kind": "forecast",
-      "status": "production_launch_ready_after_job_67816",
+      "status": "production_pending_job_67824_after_job_67816",
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ecmwf/forecast/annual2025"
     },
     "ukmo_operational_2025": {
       "kind": "forecast",
-      "status": "production_launch_ready_after_job_67816",
+      "status": "production_pending_job_67824_after_job_67816",
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ukmo/forecast/annual2025"
     },
     "ncep_operational_2025": {
       "kind": "forecast",
-      "status": "production_launch_ready_after_job_67816",
+      "status": "production_pending_job_67824_after_job_67816",
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/ncep/forecast/annual2025",
       "temperature": "proxy_from_6h_tmin_tmax_midranges"
     },
     "cma_operational_2025": {
       "kind": "forecast",
-      "status": "production_launch_ready_after_job_67816",
+      "status": "production_pending_job_67824_after_job_67816",
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cma/forecast/annual2025"
     },
     "cnrm_operational_2025": {
       "kind": "forecast_secondary",
-      "status": "production_launch_ready_after_job_67816_weekly_subset",
+      "status": "production_pending_job_67824_after_job_67816_weekly_subset",
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/cnrm/forecast/annual2025"
     },
     "ecmwf_operational_legacy_2025": {

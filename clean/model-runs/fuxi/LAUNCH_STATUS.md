@@ -41,5 +41,32 @@ task successfully.
 
 ## Production
 
-Production tasks `1-620` are pending submission. Task `0` is already complete
-and will not be duplicated.
+Production tasks `1-620` were submitted at `2026-07-13 20:06 IST` from commit
+`f06f6de` as Slurm array `67923`, with at most two dates running concurrently.
+Task `0` remains the validated pilot and is not duplicated. Task `1`
+(`2020-01-06`) started successfully on `gpu2`; remaining tasks are managed by
+Slurm and continue without an interactive shell.
+
+At the pilot rate, the remaining work is about 130 GPU-hours, or roughly 65
+wall-clock hours when both array lanes are continuously available. Actual
+completion is scheduler- and network-dependent.
+
+Monitor scheduler state:
+
+```bash
+squeue -j 67923
+```
+
+Monitor archive-level progress:
+
+```bash
+/home/raj.ayush/.conda/envs/s2s-hind/bin/python \
+  clean/model-runs/fuxi/scripts/audit_fuxi_run.py
+```
+
+Inspect one active task:
+
+```bash
+tail -f /storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/\
+fuxi_s2s_twice_weekly_2020_2025_ens50/logs/slurm_67923_1.out
+```

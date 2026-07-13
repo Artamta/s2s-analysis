@@ -44,9 +44,10 @@ The current workflow uses anonymous public ARCO and the local precomputed daily
 ARCO archive only:
 
 - `68040`: January 2020 local daily ARCO plus direct hourly ARCO for
-  `ttr/100u/100v`;
+  `ttr/100u/100v`; completed successfully in `00:07:09` with 406 MB peak RSS;
 - `68042`: January 2023 full 76-channel direct hourly ARCO throughput test;
-- `68041`: official 50-member task-0 pilot, blocked on successful `68040_0`.
+- `68041`: official 50-member task-0 pilot, released by `68040_0` and running
+  on `gpu1`;
 - `68043`: remaining 2020-2022 local-daily/direct-ARCO months, three at a time;
 - `68047`: remaining 2023-2025 full-hourly-ARCO months, two at a time, blocked
   until benchmark `68042_0` succeeds;
@@ -63,9 +64,11 @@ Instantaneous fields use 00-23 UTC. TTR and TP use accumulation intervals valid
 test from 17 GB to about 0.53 GB peak RAM and matched the official sample.
 
 One global pressure field/day took 34 seconds at eight workers and 1.49 GB peak
-RAM. The expected full 2023-2025 staging time is approximately 1-2 days with
-two month tasks running concurrently. All remaining staging and GPU arrays are
-already queued and continue without an interactive shell.
+RAM. The measured January 2020 month time projects the complete 2020-2022 block
+to roughly 1-2 hours at three concurrent month tasks. The expected full
+2023-2025 staging time is approximately 1-2 days with two month tasks running
+concurrently. All remaining staging and GPU arrays are already queued and
+continue without an interactive shell.
 
 Check the active benchmarks with:
 

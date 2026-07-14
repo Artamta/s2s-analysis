@@ -1,5 +1,33 @@
 # FuXi-S2S Launch Status
 
+## Strict 00 UTC Primary Launch
+
+The information-matched primary workflow passed a real 50-member pilot before
+production submission:
+
+- `68550_0`: December 2019 boundary staging, completed in `00:00:53`;
+- `68550_1`: January 2020 staging, completed in `00:07:22`;
+- `68552_0`: strict 50-member forecast for physics issue `2020-01-02 00 UTC`,
+  completed in `00:10:06`;
+- full NetCDF QC confirmed D-2/D-1 inputs, cutoff exactly at issue time,
+  lead-1 period `2020-01-02 00` to `2020-01-03 00`, 50 members, 42 leads,
+  and explicit forecast-period bounds.
+
+The complete resumable strict workflow is active:
+
+- `68558`: December 2019 through 2022 local-daily/direct-ARCO staging;
+- `68559`: 2023-2025 public hourly ARCO staging, dependency-delayed until the
+  older ARCO job `68047` completes;
+- `68560`: resumable task-0 pilot gate;
+- `68561` through `68566`: yearly forecast arrays for 2020 through 2025.
+
+Primary outputs are isolated under:
+
+```text
+/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/
+  fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/
+```
+
 ## Contract
 
 - Calendar: 621 exact physics-model dates, 2020-2025.

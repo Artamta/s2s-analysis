@@ -128,7 +128,7 @@
     },
     "fuxi_strict00z_ens50_2020_2025": {
       "kind": "ai_forecast_primary",
-      "status": "implementation_validated_ready_to_launch",
+      "status": "production_running_jobs_68558_through_68566_pilot_68552_verified",
       "calendar": "clean/config/all_season_dates_2020_2025.csv",
       "date_count": 621,
       "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",

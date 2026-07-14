@@ -1,8 +1,10 @@
 # Data Download Plan
 
-Goal: download organized S2S data for ECMWF, UKMO, NCEP, and CMA, with CNRM as
-a weekly secondary benchmark. See `MODEL_SELECTION.md` for the selection audit
-and `SMOKE_TEST_20240620.md` for the successful five-model day-1 test.
+Goal: download organized S2S data for ECMWF, UKMO, NCEP, CMA, and ERPAS, with
+CNRM as a weekly secondary benchmark. ERPAS is first retained as an immutable
+provider snapshot; see `erpas/README.md`. See `MODEL_SELECTION.md` for the
+selection audit and `SMOKE_TEST_20240620.md` for the successful five-model
+day-1 test.
 
 The production source of truth is `../config/all_season_dates_2020_2025.csv`.
 The older `2020_2024` calendar remains frozen for the already-running array.

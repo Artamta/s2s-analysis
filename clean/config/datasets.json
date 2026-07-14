@@ -147,6 +147,20 @@
       "path": "/storage/raj.ayush/s2s_final_data/jjas/fuxi_combined",
       "benchmark_gap": "t2m_not_compacted_use_raw_archive_or_rebuild"
     },
+    "erpas_forecast_and_climatology_2023_2025": {
+      "kind": "deterministic_forecast_and_provider_climatology",
+      "status": "transfer_running_job_68758_canonical_layout",
+      "source": "google_drive_folder_1S58Swev_M33lAK6Aap7FJuFvG5gtv3Jf",
+      "forecast_path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual{year}",
+      "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/reforecast/climatology",
+      "years": [2023, 2024, 2025],
+      "forecast_init_counts": {"2023": 52, "2024": 52, "2025": 44},
+      "lead_days": 33,
+      "members": "deterministic_no_ensemble_dimension",
+      "products": ["tp", "surface_temperature_not_t2m", "geopotential_height", "tp_india_0p5"],
+      "climatology": "144_mmdd_directories_432_files",
+      "validation": "rclone_source_check_and_local_sha256_inventory"
+    },
     "era5_truth": {
       "kind": "truth",
       "status": "available_through_2023_in_weatherbench2",

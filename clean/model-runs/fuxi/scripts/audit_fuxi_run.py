@@ -54,6 +54,7 @@ def main() -> int:
     report = {
         "run_label": config["run_label"],
         "storage_root": config["storage_root"],
+        "temporal_alignment": config["temporal_alignment"],
         "planned_dates": len(dates),
         "counts": dict(sorted(counts.items())),
         "manifest_statuses": dict(sorted(statuses.items())),

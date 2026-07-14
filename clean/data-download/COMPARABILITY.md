@@ -8,16 +8,29 @@ them.
 
 | Property | ECMWF | FuXi | Common contract |
 |---|---|---|---|
-| leads | up to 46 daily steps | 42 daily steps | same valid dates for FuXi leads 1-42 |
+| leads | up to 46 daily steps | 42 daily steps | same bounded UTC periods for leads 1-42 |
 | ensemble | operational count varies; reforecast control + 10 perturbed | model-native stochastic members | retain native; add matched-N sensitivity |
 | precipitation | cumulative `kg m-2` | `mm h-1` rate | daily `mm day-1` |
 | 2 m temperature | daily-average intervals in K | daily mean in K | daily mean in degC and weekly means |
 | grid | India subset, 1.5 degree | native global, compacted over India at 1.5 degree | one canonical India grid |
 
-`tp` is comparable after differencing ECMWF accumulation and converting the
-FuXi 24-hour mean rate to `mm day-1`. FuXi-S2S forecasts global daily means, so
-`t2m` is also a daily-mean statistic. Align the UTC daily valid periods before
-forming the common six weekly means.
+`tp` is comparable after differencing physics-model accumulation and
+converting the FuXi 24-hour mean rate to `mm day-1`. FuXi-S2S forecasts global
+daily means, so `t2m` is also a daily-mean statistic. Align the UTC daily valid
+periods before forming the common six weekly means.
+
+## Strict 00 UTC Information Contract
+
+FuXi-S2S consumes two complete daily means rather than an instantaneous 00 UTC
+analysis. For a physics forecast issued on date D at 00 UTC, the primary FuXi
+run therefore uses D-2 and D-1. The D-1 daily interval ends exactly at the
+physics issue time, and FuXi lead day 1 covers D 00 UTC through D+1 00 UTC.
+
+The older run using D-1 and D inputs follows the published same-nominal-date
+convention, but its effective information cutoff is D+1 00 UTC. It is retained
+as a sensitivity experiment and is not the primary operational comparison.
+Never replace daily means with 00 UTC snapshots; that is outside the
+checkpoint's training distribution.
 
 The raw FuXi 2002-2021 archive contains both fields and 51 total members,
 numbered `00-50`. Do not infer a deterministic control member from that
@@ -48,8 +61,9 @@ a separately labeled nine-year common-period sensitivity only.
 ## Operational Date Pairing
 
 The following 35-slot pairing applies only when reusing the downloaded
-2002-2021 FuXi JJAS archive. The new 2020-2025 FuXi model run uses the exact 621
-physics-calendar initializations and needs no shifted pairing.
+2002-2021 FuXi JJAS archive. The new strict 2020-2025 FuXi model run uses the
+exact 621 physics issue dates. Its daily states are shifted back internally to
+D-2/D-1, so no forecast-case pairing shift is required.
 
 Use the fixed 35 FuXi JJAS starts below. Before 2023-06-28, ECMWF operational
 forecasts were initialized Monday and Thursday; from 2023-06-28 onward they are
@@ -109,7 +123,9 @@ download.
 
 ## Canonical Derived Fields
 
-- Initialization: 00 UTC.
+- Forecast reference/issue time: D at 00 UTC.
+- FuXi input periods: D-2 and D-1 complete UTC days; information cutoff D
+  00 UTC.
 - Valid period: lead days 1-42, aggregated into six non-overlapping 7-day weeks.
 - Domain: India analysis box, regridded once to the shared 1.5 degree grid.
 - `tp`: daily increments/rates in `mm day-1`.

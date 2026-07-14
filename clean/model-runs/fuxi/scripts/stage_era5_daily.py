@@ -18,6 +18,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import xarray as xr
+
+import temporal_contract
 from ecmwf.datastores import Client
 
 
@@ -109,9 +111,13 @@ def required_dates(config: dict[str, Any]) -> pd.DatetimeIndex:
         raise ValueError(
             f"expected {config['date_count']} initialization dates, found {len(init_dates)}"
         )
-    dates = init_dates.append(init_dates - pd.Timedelta(days=1)).unique().sort_values()
+    temporal_contract.alignment(config)
+    dates = pd.DatetimeIndex([])
+    for issue_date in init_dates:
+        dates = dates.append(temporal_contract.input_days(issue_date, config))
+    dates = dates.unique().sort_values()
     if len(dates) != len(init_dates) * 2:
-        raise ValueError("previous-day and initialization-day inputs are not unique")
+        raise ValueError("FuXi daily input dates are not unique across issue dates")
     return dates
 
 

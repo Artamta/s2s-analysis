@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+import temporal_contract
+
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_CONFIG = REPO_ROOT / "clean/config/fuxi_operational_2020_2025.json"
@@ -142,10 +144,11 @@ def convert_ttr(values: np.ndarray, units: str) -> np.ndarray:
 
 
 def build_input(
-    init_date: pd.Timestamp,
+    issue_date: pd.Timestamp,
     config: dict[str, Any],
 ) -> xr.DataArray:
-    days = pd.DatetimeIndex([init_date - pd.Timedelta(days=1), init_date])
+    days = temporal_contract.input_days(issue_date, config)
+    timing = temporal_contract.provenance(issue_date, config)
     paths_by_day = {day: staging_paths(config, day) for day in days}
     all_paths = sorted(
         {path for paths in paths_by_day.values() for path in paths.values()}
@@ -201,7 +204,14 @@ def build_input(
             name="data",
             attrs={
                 "source": config["input"]["source"],
-                "init_date": init_date.strftime("%Y-%m-%d"),
+                "issue_date": issue_date.strftime("%Y-%m-%d"),
+                "forecast_reference_time": timing["forecast_reference_time"],
+                "model_state_time": timing["model_state_time"],
+                "information_cutoff_time": timing["information_cutoff_time"],
+                "information_cutoff_matches_issue_time": str(
+                    timing["information_cutoff_matches_issue_time"]
+                ).lower(),
+                "benchmark_mode": timing["benchmark_mode"],
                 "temporal_statistic": "UTC daily mean derived from 1-hourly ERA5",
                 "source_days": f"{days[0]:%Y-%m-%d},{days[1]:%Y-%m-%d}",
                 "tp_preprocessing": "daily mean of hourly ERA5 accumulations; m to mm h-1",
@@ -220,7 +230,7 @@ def build_input(
             dataset.close()
 
 
-def validate_input(path: Path, init_date: pd.Timestamp) -> dict[str, object]:
+def validate_input(path: Path, issue_date: pd.Timestamp, config: dict[str, Any]) -> dict[str, object]:
     data = xr.open_dataarray(path)
     try:
         if data.dims != ("time", "channel", "lat", "lon"):
@@ -238,9 +248,7 @@ def validate_input(path: Path, init_date: pd.Timestamp) -> dict[str, object]:
             raise ValueError(
                 "FuXi input longitude grid is not the expected 1.5 degree grid"
             )
-        expected_times = pd.DatetimeIndex(
-            [init_date - pd.Timedelta(days=1), init_date]
-        ).values
+        expected_times = temporal_contract.input_days(issue_date, config).values
         if not np.array_equal(
             data.time.values.astype("datetime64[ns]"), expected_times
         ):
@@ -252,6 +260,21 @@ def validate_input(path: Path, init_date: pd.Timestamp) -> dict[str, object]:
             raise ValueError(
                 "input does not declare the required ERA5 daily-mean statistic"
             )
+        timing = temporal_contract.provenance(issue_date, config)
+        strict = bool(timing["strict_operational"])
+        if strict or "forecast_reference_time" in data.attrs:
+            if data.attrs.get("forecast_reference_time") != timing[
+                "forecast_reference_time"
+            ]:
+                raise ValueError("input forecast-reference time does not match the issue date")
+            if data.attrs.get("information_cutoff_time") != timing[
+                "information_cutoff_time"
+            ]:
+                raise ValueError(
+                    "input information-cutoff time does not match its daily periods"
+                )
+        if strict and not bool(timing["information_cutoff_matches_issue_time"]):
+            raise ValueError("strict input contains information after the physics issue time")
         for channel in channels:
             values = data.sel(channel=channel).values
             if channel == "sst":
@@ -263,6 +286,11 @@ def validate_input(path: Path, init_date: pd.Timestamp) -> dict[str, object]:
             "shape": list(data.shape),
             "time_start": str(pd.Timestamp(data.time.values[0])),
             "time_end": str(pd.Timestamp(data.time.values[-1])),
+            "forecast_reference_time": timing["forecast_reference_time"],
+            "information_cutoff_time": timing["information_cutoff_time"],
+            "information_cutoff_matches_issue_time": timing[
+                "information_cutoff_matches_issue_time"
+            ],
             "temporal_statistic": data.attrs["temporal_statistic"],
             "size_bytes": path.stat().st_size,
         }
@@ -284,14 +312,14 @@ def main() -> int:
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     args = parser.parse_args()
 
-    init_date = pd.Timestamp(args.date)
-    if init_date.strftime("%Y%m%d") != args.date:
+    issue_date = pd.Timestamp(args.date)
+    if issue_date.strftime("%Y%m%d") != args.date:
         raise SystemExit("date must use YYYYMMDD format")
     config = load_config(args.config)
 
     if args.output.exists():
         try:
-            details = validate_input(args.output, init_date)
+            details = validate_input(args.output, issue_date, config)
             print(f"existing input valid: {args.output} {details}", flush=True)
             return 0
         except Exception as exc:  # noqa: BLE001
@@ -301,9 +329,9 @@ def main() -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.output.with_suffix(args.output.suffix + ".part")
     temporary.unlink(missing_ok=True)
-    data = build_input(init_date, config)
+    data = build_input(issue_date, config)
     data.to_netcdf(temporary)
-    details = validate_input(temporary, init_date)
+    details = validate_input(temporary, issue_date, config)
     temporary.replace(args.output)
     print(f"wrote valid input: {args.output} {details}", flush=True)
     return 0

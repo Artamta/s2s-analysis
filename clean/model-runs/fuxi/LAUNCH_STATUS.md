@@ -4,9 +4,15 @@
 
 - Calendar: 621 exact physics-model dates, 2020-2025.
 - Ensemble: 50 model-native stochastic members from official `inference.py`.
-- Inputs: previous/init UTC daily means from 24 hourly ERA5 values.
+- Inputs in this already-running sensitivity: D-1/D UTC daily means from 24
+  hourly ERA5 values.
 - Leads: days 1-42.
 - Final fields: native FuXi TP and T2M on the exact 27 x 27 India grid.
+
+This run is now labeled `published_same_nominal_date_retrospective`. Its full
+day-D input gives it an effective D+1 00 UTC information cutoff, so it is not
+the primary strict operational comparison. The separate strict workflow uses
+D-2/D-1 inputs and is documented in `README.md`.
 
 ## Superseded Runs
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "run_label": "fuxi_s2s_twice_weekly_2020_2025_ens50",
+  "run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
   "calendar": "clean/config/all_season_dates_2020_2025.csv",
   "years": [2020, 2021, 2022, 2023, 2024, 2025],
   "date_count": 621,
@@ -10,13 +10,13 @@
   "lead_days": 42,
   "retained_variables": ["tp", "t2m"],
   "temporal_alignment": {
-    "benchmark_mode": "published_same_nominal_date_retrospective",
-    "strict_operational": false,
+    "benchmark_mode": "strict_information_matched_00utc",
+    "strict_operational": true,
     "issue_hour_utc": 0,
-    "input_day_offsets": [-1, 0],
-    "first_forecast_period_start_offset_days": 1,
-    "valid_time_role": "period_start",
-    "warning": "The complete day-D input is available only at D+1 00 UTC; do not use this run as the primary strict-00Z benchmark."
+    "input_day_offsets": [-2, -1],
+    "first_forecast_period_start_offset_days": 0,
+    "valid_time_role": "period_end",
+    "contract": "For physics issue date D at 00 UTC, use complete UTC daily means D-2 and D-1. FuXi lead 1 covers D 00 UTC through D+1 00 UTC."
   },
   "domain": {
     "latitude_first": 39.0,
@@ -28,13 +28,13 @@
     "longitude_count": 27
   },
   "input": {
-    "source": "direct ARCO ERA5: local precomputed daily archive for 2020-2022 and public hourly GCS archive reduced to UTC daily means for missing and 2023-2025 fields",
+    "source": "direct ARCO ERA5: local precomputed daily archive for 2019-2022 and public hourly GCS archive reduced to UTC daily means for missing and 2023-2025 fields",
     "daily_statistic": "daily_mean",
     "hourly_sampling": "1_hourly",
     "time_zone": "utc+00:00",
-    "times": "UTC daily means for the previous day and initialization day",
+    "times": "two complete UTC daily means ending exactly at the 00 UTC physics issue time",
     "staging_subdirectory": "era5-daily",
-    "staging_layout": "monthly_target_dates_only",
+    "staging_layout": "monthly_strict_issue_time_inputs_only",
     "staging_components": ["pressure", "surface"],
     "pressure_dataset": "derived-era5-pressure-levels-daily-statistics",
     "surface_dataset": "derived-era5-single-levels-daily-statistics",
@@ -43,7 +43,7 @@
     "pressure_days_per_request": 6,
     "local_daily_arco": {
       "zarr": "/storage/bedartha/public/datasets/as_downloaded/weatherbench2/era5-daily/1959-2023_01_10-full_37-1h-0p25deg-chunk-1-s2s.zarr",
-      "years": [2020, 2021, 2022],
+      "years": [2019, 2020, 2021, 2022],
       "source_grid_degrees": 0.25,
       "target_stride": 6,
       "surface_remote_arco_fields": ["ttr", "100u", "100v"],
@@ -82,5 +82,5 @@
     "input_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python",
     "inference_python": "/home/raj.ayush/.conda/envs/fuxi_s2s/bin/python"
   },
-  "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50"
+  "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50"
 }

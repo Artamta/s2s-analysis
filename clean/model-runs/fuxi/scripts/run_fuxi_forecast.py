@@ -19,6 +19,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+import temporal_contract
+
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_CONFIG = REPO_ROOT / "clean/config/fuxi_operational_2020_2025.json"
@@ -56,11 +58,13 @@ def load_config(path: Path) -> dict[str, Any]:
         "run_label",
         "runtime",
         "storage_root",
+        "temporal_alignment",
         "years",
     }
     missing = required - set(config)
     if missing:
         raise ValueError(f"config missing keys: {sorted(missing)}")
+    temporal_contract.alignment(config)
     return config
 
 
@@ -263,9 +267,11 @@ def combine_output(
             values[member, step - 1] = read_raw_fields(path, lat, lon)
 
     lead_day = np.arange(1, steps + 1, dtype=np.int16)
-    valid_time = (date.to_datetime64() + lead_day.astype("timedelta64[D]")).astype(
-        "datetime64[ns]"
+    period_start, period_end, valid_time = temporal_contract.forecast_periods(
+        date, steps, config
     )
+    timing = temporal_contract.provenance(date, config)
+    period_bounds = np.stack([period_start, period_end], axis=1)
     dataset = xr.Dataset(
         data_vars={
             "tp": (("member", "lead_day", "latitude", "longitude"), values[:, :, 0]),
@@ -277,12 +283,30 @@ def combine_output(
             "latitude": lat,
             "longitude": lon,
             "valid_time": ("lead_day", valid_time),
+            "forecast_period_start": ("lead_day", period_start),
+            "forecast_period_end": ("lead_day", period_end),
+            "forecast_period_bounds": (
+                ("lead_day", "bounds"),
+                period_bounds,
+            ),
+            "bounds": np.asarray([0, 1], dtype=np.int8),
             "init_time": date.to_datetime64(),
+            "forecast_reference_time": date.to_datetime64(),
+            "model_state_time": np.datetime64(timing["model_state_time"]),
+            "information_cutoff_time": np.datetime64(
+                timing["information_cutoff_time"]
+            ),
         },
         attrs={
             "model": "FuXi-S2S",
             "run_label": config["run_label"],
             "init_date": date.strftime("%Y-%m-%d"),
+            "benchmark_mode": timing["benchmark_mode"],
+            "strict_operational": str(timing["strict_operational"]).lower(),
+            "information_cutoff_matches_issue_time": str(
+                timing["information_cutoff_matches_issue_time"]
+            ).lower(),
+            "valid_time_role": timing["valid_time_role"],
             "input_source": config["input"]["source"],
             "ensemble": "50 repeated calls to the official stochastic ONNX model; no separate control member",
             "member_generation": config["member_generation"],
@@ -295,6 +319,13 @@ def combine_output(
             "model_onnx_sha256": config["model"]["onnx_sha256"],
             "model_external_data_sha256": config["model"]["external_data_sha256"],
         },
+    )
+    dataset["valid_time"].attrs.update(
+        {
+            "long_name": "forecast valid time",
+            "bounds": "forecast_period_bounds",
+            "representation": timing["valid_time_role"],
+        }
     )
     dataset["tp"].attrs.update(
         {
@@ -316,10 +347,25 @@ def combine_output(
             "zlib": True,
             "complevel": 4,
             "dtype": "float32",
-            "chunksizes": (1, 7, len(lat), len(lon)),
+            "chunksizes": (1, min(7, steps), len(lat), len(lon)),
         }
         for name in EXPECTED_CHANNELS
     }
+    time_encoding = {
+        "units": "hours since 1970-01-01 00:00:00",
+        "calendar": "proleptic_gregorian",
+    }
+    for name in (
+        "valid_time",
+        "forecast_period_start",
+        "forecast_period_end",
+        "forecast_period_bounds",
+        "init_time",
+        "forecast_reference_time",
+        "model_state_time",
+        "information_cutoff_time",
+    ):
+        encoding[name] = time_encoding.copy()
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_suffix(output.suffix + ".part")
     temporary.unlink(missing_ok=True)
@@ -358,13 +404,39 @@ def validate_output(
         expected_leads = np.arange(1, steps + 1, dtype=np.int16)
         if not np.array_equal(dataset.lead_day.values, expected_leads):
             raise ValueError(f"wrong lead-day coordinate: {dataset.lead_day.values}")
-        expected_valid_time = (
-            date.to_datetime64() + expected_leads.astype("timedelta64[D]")
-        ).astype("datetime64[ns]")
+        period_start, period_end, expected_valid_time = temporal_contract.forecast_periods(
+            date, steps, config
+        )
         if not np.array_equal(
             dataset.valid_time.values.astype("datetime64[ns]"), expected_valid_time
         ):
-            raise ValueError("valid-time coordinate does not match init + lead day")
+            raise ValueError("valid-time coordinate does not match the timing contract")
+        strict = bool(temporal_contract.alignment(config)["strict_operational"])
+        temporal_coordinates = {
+            "forecast_period_start": period_start,
+            "forecast_period_end": period_end,
+        }
+        for name, expected in temporal_coordinates.items():
+            if name not in dataset.coords:
+                if strict:
+                    raise ValueError(f"strict forecast is missing {name}")
+                continue
+            if not np.array_equal(
+                dataset[name].values.astype("datetime64[ns]"), expected
+            ):
+                raise ValueError(f"{name} does not match the timing contract")
+        timing = temporal_contract.provenance(date, config)
+        if strict:
+            if not timing["information_cutoff_matches_issue_time"]:
+                raise ValueError("strict forecast uses information after issue time")
+            if "forecast_reference_time" not in dataset.coords:
+                raise ValueError("strict forecast is missing forecast_reference_time")
+            if pd.Timestamp(dataset.forecast_reference_time.values) != date:
+                raise ValueError("wrong strict forecast-reference time")
+            if "information_cutoff_time" not in dataset.coords:
+                raise ValueError("strict forecast is missing information_cutoff_time")
+            if pd.Timestamp(dataset.information_cutoff_time.values) != date:
+                raise ValueError("strict information cutoff is not the 00 UTC issue time")
         if (
             dataset.attrs.get("forecast_time_statistic")
             != "global daily mean at daily resolution"
@@ -439,11 +511,26 @@ def base_record(
     paths: dict[str, Path],
     runtime_assets: dict[str, Any],
 ) -> dict[str, Any]:
+    timing = temporal_contract.provenance(date, config)
+    period_start, period_end, _ = temporal_contract.forecast_periods(
+        date, int(config["lead_days"]), config
+    )
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "model_name": "FuXi-S2S",
         "run_label": config["run_label"],
         "init_date": date.strftime("%Y-%m-%d"),
+        "forecast_reference_time": timing["forecast_reference_time"],
+        "model_state_time": timing["model_state_time"],
+        "information_cutoff_time": timing["information_cutoff_time"],
+        "information_cutoff_matches_issue_time": timing[
+            "information_cutoff_matches_issue_time"
+        ],
+        "benchmark_mode": timing["benchmark_mode"],
+        "strict_operational": timing["strict_operational"],
+        "input_days": timing["input_days"],
+        "first_forecast_period_start": str(pd.Timestamp(period_start[0])),
+        "last_forecast_period_end": str(pd.Timestamp(period_end[-1])),
         "members": config["members"],
         "member_generation": config["member_generation"],
         "lead_days": config["lead_days"],

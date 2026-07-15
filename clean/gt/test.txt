@@ -1,0 +1,27 @@
+import ee
+ee.Authenticate()
+ee.Initialize(project='') # Add your Earth Engine project ID here
+
+# Define Delhi NCR bounding box
+delhi_ncr_box = ee.Geometry.Rectangle([76.5, 28.2, 77.8, 28.9])
+
+# Filter collection to 2021-2025 and select only the precipitation band
+imerg_collection = (ee.ImageCollection("NASA/GPM_L3/IMERG_V07")
+                    .filterDate('2025-06-01', '2025-09-01')
+                    .select('precipitation')
+                    .filterBounds(delhi_ncr_box))
+
+# Convert the ImageCollection into a multi-band single image for rapid export
+stacked_image = imerg_collection.toBands()
+
+# Export task to Google Drive
+task = ee.batch.Export.image.toDrive(
+    image=stacked_image,
+    description='IMERG_Delhi_NCR_2025_JJA',
+    scale=11132, # Native ~0.1 degree resolution
+    region=delhi_ncr_box,
+    fileFormat='GeoTIFF'
+)
+task.start()
+print("Export task queued. Check your GEE Tasks tab or task.status().")
+task.status()

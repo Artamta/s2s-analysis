@@ -16,7 +16,7 @@ ROOT="/storage/raj.ayush/s2s_final_data/final_iteration"
 RCLONE="${ERPAS_RCLONE_BIN:-${ROOT}/tools/rclone}"
 FORECAST_ROOT="${ROOT}/raw/erpas/forecast"
 CLIMATOLOGY_ROOT="${ROOT}/raw/erpas/reforecast/climatology"
-STAGING_ROOT="${ROOT}/staging/erpas/google_drive_20260714_${SLURM_JOB_ID}"
+STAGING_ROOT="${ERPAS_STAGING_ROOT:-${ROOT}/staging/erpas/google_drive_20260714_${SLURM_JOB_ID}}"
 MANIFEST_DIR="${ROOT}/manifests/erpas/google_drive_20260714"
 LOG_DIR="${ROOT}/logs/erpas"
 RCLONE_LOG="${LOG_DIR}/rclone_${SLURM_JOB_ID}.log"
@@ -90,8 +90,12 @@ done
 
 "${RCLONE}" lsjson "${ROOT}/raw/erpas" \
   --recursive --files-only --hash > "${MANIFEST_DIR}/inventory.json"
-"${RCLONE}" hashsum SHA-256 "${ROOT}/raw/erpas" \
-  > "${MANIFEST_DIR}/sha256.txt"
+(
+  cd "${ROOT}/raw/erpas"
+  find . -type f -print0 \
+    | LC_ALL=C sort -z \
+    | xargs -0 -r sha256sum
+) > "${MANIFEST_DIR}/sha256.txt"
 "${RCLONE}" size "${ROOT}/raw/erpas" --json \
   > "${MANIFEST_DIR}/size.json"
 

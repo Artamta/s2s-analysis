@@ -17,6 +17,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import matplotlib.patheffects as pe
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -61,22 +62,30 @@ PROB = {
     "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/probabilistic_summary.csv",
 }
 
-# Okabe-Ito colour-blind-safe palette, fixed per model. Spire gets the
-# heaviest visual weight since it anchors the paper's main narrative.
+# Okabe-Ito colour-blind-safe palette, fixed per model. ECMWF and Spire carry
+# the two headline case-study results, while the MME is kept as a muted
+# reference curve.
 COLOR = {
     "spire": "#0072B2",   # blue
-    "fuxi": "#D55E00",    # vermillion
-    "delysm": "#009E73",  # green
-    "ecmwf": "#4D4D4D",   # dark grey (was black; softer against text)
-    "ukmo": "#CC79A7",    # purple-pink
-    "ncep": "#E69F00",    # orange
-    "mme": "#B0B0B0",     # light grey (dashed, background reference)
+    "fuxi": "#009E73",    # green
+    "ecmwf": "#222222",   # near-black
+    "ukmo": "#CC79A7",    # magenta
+    "ncep": "#D55E00",    # vermillion
+    "mme": "#B8B8B8",     # light grey (dashed, background reference)
 }
 LABEL = {
-    "spire": "Spire AI-S2S", "fuxi": "FuXi-S2S", "delysm": "DLESyM",
+    "spire": "Spire AI-S2S", "fuxi": "FuXi-S2S",
     "ecmwf": "ECMWF", "ukmo": "UKMO", "ncep": "NCEP", "mme": "MME",
 }
-ORDER = ["spire", "fuxi", "delysm", "ecmwf", "ukmo", "ncep", "mme"]
+MARKER = {
+    "spire": "o",
+    "fuxi": "s",
+    "ecmwf": "D",
+    "ukmo": "^",
+    "ncep": "v",
+    "mme": "o",
+}
+ORDER = ["spire", "fuxi", "ecmwf", "ukmo", "ncep", "mme"]
 WEEKS = [1, 2, 3, 4, 5, 6]
 REGIONS = {
     "northwest_india": "Northwest\nIndia",
@@ -96,12 +105,14 @@ plt.rcParams.update({
     "legend.fontsize": 8.5,
     "xtick.labelsize": 8.5,
     "ytick.labelsize": 8.5,
-    "figure.dpi": 200,
-    "savefig.dpi": 300,
+    "figure.dpi": 240,
+    "savefig.dpi": 600,
     "savefig.bbox": "tight",
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
     "axes.grid": True,
-    "grid.alpha": 0.25,
-    "grid.linewidth": 0.5,
+    "grid.alpha": 0.18,
+    "grid.linewidth": 0.45,
     "axes.spines.top": False,
     "axes.spines.right": False,
     "axes.linewidth": 0.8,
@@ -132,15 +143,21 @@ def _curve(ax, df, variable, value):
             continue
         y = [piv.loc[m, w] if w in piv.columns else None for w in WEEKS]
         if m == "mme":
-            ls, lw, alpha, zorder = "--", 1.3, 0.85, 1
-        elif m == "spire":
-            ls, lw, alpha, zorder = "-", 2.4, 1.0, 5
+            ls, lw, alpha, zorder = "--", 1.25, 0.75, 1
+        elif m in ("spire", "ecmwf"):
+            ls, lw, alpha, zorder = "-", 2.05, 1.0, 5
         else:
-            ls, lw, alpha, zorder = "-", 1.5, 0.95, 2
+            ls, lw, alpha, zorder = "-", 1.25, 0.88, 2
 
-        ax.plot(WEEKS, y, ls, color=COLOR[m], lw=lw, alpha=alpha,
-                 marker="o", ms=3.2 if m != "spire" else 4.0,
-                 markeredgewidth=0, label=LABEL[m], zorder=zorder)
+        line, = ax.plot(WEEKS, y, ls, color=COLOR[m], lw=lw, alpha=alpha,
+                        marker=MARKER[m],
+                        ms=3.4 if m not in ("spire", "ecmwf") else 4.0,
+                        markerfacecolor="white", markeredgecolor=COLOR[m],
+                        markeredgewidth=0.75, label=LABEL[m], zorder=zorder)
+        line.set_path_effects([
+            pe.Stroke(linewidth=lw + 1.35, foreground="white", alpha=0.9),
+            pe.Normal(),
+        ])
     ax.set_xticks(WEEKS)
     ax.set_xlabel("Lead week")
     ax.xaxis.set_minor_locator(mticker.NullLocator())
@@ -153,9 +170,7 @@ def _style_axis(ax):
 
 
 def _legend_union(axes):
-    """Handles/labels from every axis, deduped and in canonical model ORDER,
-    so a model plotted in only one panel (e.g. DLESyM, Z500-only) still gets
-    a legend entry."""
+    """Handles/labels from every axis, deduped in canonical model order."""
     by_label = {}
     for ax in np.ravel(axes):
         for h, l in zip(*ax.get_legend_handles_labels()):
@@ -181,7 +196,8 @@ def fig_acc_lead():
     ]
 
     fig, axes = plt.subplots(
-        len(rows), 2, figsize=(7.35, 8.15), sharex=True, sharey=True
+        len(rows), 2, figsize=(7.55, 8.75), sharex=True, sharey=True,
+        gridspec_kw={"height_ratios": [1.18, 1, 1, 1, 1]}
     )
     letters = string.ascii_lowercase
 
@@ -192,9 +208,9 @@ def fig_acc_lead():
                 _curve(ax, all_india, "tp", "acc")
             else:
                 _regional_curve(ax, regional, "tp", region, "acc")
-            ax.text(0.02, 0.92, f"({letters[i * 2 + j]})",
+            ax.text(-0.09, 1.06, f"({letters[i * 2 + j]})",
                     transform=ax.transAxes, fontsize=9, fontweight="bold",
-                    va="top", ha="left")
+                    va="bottom", ha="left", clip_on=False)
             ax.axhspan(0.5, 1.05, color="#0072B2", alpha=0.04, zorder=0)
             ax.axhline(0.5, color="grey", lw=0.6, ls=":", zorder=0)
             ax.axhline(0.0, color="grey", lw=0.7, zorder=0)
@@ -209,10 +225,10 @@ def fig_acc_lead():
             else:
                 ax.set_xlabel("")
             if i == 0:
-                ax.set_title(f"{season_label} (ERA5 truth)", pad=10)
+                ax.set_title(season_label, pad=14)
 
-    fig.subplots_adjust(left=0.135, right=0.985, top=0.94, bottom=0.115,
-                        hspace=0.28, wspace=0.18)
+    fig.subplots_adjust(left=0.140, right=0.985, top=0.935, bottom=0.160,
+                        hspace=0.34, wspace=0.18)
 
     for i, (row_label, _region) in enumerate(rows):
         bbox = axes[i, 0].get_position()
@@ -221,10 +237,13 @@ def fig_acc_lead():
                  rotation=90, fontsize=9.5, fontweight="bold")
 
     handles, labels = _legend_union(axes)
+    fig.text(0.56, 0.085,
+             "Verified against ERA5 precipitation; JJAS gauge-rainfall sensitivity is in Appendix B.1.",
+             ha="center", va="center", fontsize=8.1, color="#333333")
     fig.legend(handles, labels, loc="lower center", ncol=6,
-               bbox_to_anchor=(0.55, -0.005), frameon=False,
-               columnspacing=0.95, handletextpad=0.4)
-    fig.savefig(f"{OUT}/fig_acc_lead.pdf")
+               bbox_to_anchor=(0.56, 0.024), frameon=False,
+               columnspacing=0.95, handletextpad=0.35, handlelength=1.6)
+    fig.savefig(f"{OUT}/fig_acc_lead.pdf", dpi=600, bbox_inches="tight")
     plt.close(fig)
     print("wrote fig_acc_lead.pdf")
 
@@ -293,10 +312,10 @@ def fig_jjas_reference_sensitivity():
 
     fig, axes = plt.subplots(2, 2, figsize=(7.4, 5.6), sharex=True)
     panels = [
-        (axes[0, 0], det_era5, "acc", "ACC (ERA5 truth)"),
-        (axes[0, 1], det_imd, "acc", "ACC (IMD truth)"),
-        (axes[1, 0], prob_era5, "crpss_clim", "CRPSS (ERA5 truth)"),
-        (axes[1, 1], prob_imd, "crpss_clim", "CRPSS (IMD truth)"),
+        (axes[0, 0], det_era5, "acc", "ACC - ERA5 reference"),
+        (axes[0, 1], det_imd, "acc", "ACC - IMD reference"),
+        (axes[1, 0], prob_era5, "crpss_clim", "CRPSS - ERA5 reference"),
+        (axes[1, 1], prob_imd, "crpss_clim", "CRPSS - IMD reference"),
     ]
     letters = string.ascii_lowercase
     for k, (ax, df, metric, title) in enumerate(panels):
@@ -339,8 +358,8 @@ def fig_jjas_era5_tp():
 
     fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.25), sharex=True)
     panels = [
-        (axes[0], det_era5, "acc", "ACC (ERA5 truth)", "ACC", (-0.05, 0.9)),
-        (axes[1], prob_era5, "crpss_clim", "CRPSS (ERA5 truth)",
+        (axes[0], det_era5, "acc", "ACC - ERA5 reference", "ACC", (-0.05, 0.9)),
+        (axes[1], prob_era5, "crpss_clim", "CRPSS - ERA5 reference",
          "CRPSS vs. climatology", (-0.15, 0.6)),
     ]
     for k, (ax, df, metric, title, ylabel, ylim) in enumerate(panels):
@@ -503,14 +522,20 @@ def _regional_curve(ax, df, variable, region, value="acc"):
             continue
         y = [piv.loc[m, w] if w in piv.columns else None for w in WEEKS]
         if m == "mme":
-            ls, lw, alpha, zorder = "--", 1.3, 0.85, 1
-        elif m == "spire":
-            ls, lw, alpha, zorder = "-", 2.4, 1.0, 5
+            ls, lw, alpha, zorder = "--", 1.25, 0.75, 1
+        elif m in ("spire", "ecmwf"):
+            ls, lw, alpha, zorder = "-", 2.05, 1.0, 5
         else:
-            ls, lw, alpha, zorder = "-", 1.5, 0.95, 2
-        ax.plot(WEEKS, y, ls, color=COLOR[m], lw=lw, alpha=alpha,
-                marker="o", ms=3.2 if m != "spire" else 4.0,
-                markeredgewidth=0, label=LABEL[m], zorder=zorder)
+            ls, lw, alpha, zorder = "-", 1.25, 0.88, 2
+        line, = ax.plot(WEEKS, y, ls, color=COLOR[m], lw=lw, alpha=alpha,
+                        marker=MARKER[m],
+                        ms=3.4 if m not in ("spire", "ecmwf") else 4.0,
+                        markerfacecolor="white", markeredgecolor=COLOR[m],
+                        markeredgewidth=0.75, label=LABEL[m], zorder=zorder)
+        line.set_path_effects([
+            pe.Stroke(linewidth=lw + 1.35, foreground="white", alpha=0.9),
+            pe.Normal(),
+        ])
     ax.set_xticks(WEEKS)
     ax.xaxis.set_minor_locator(mticker.NullLocator())
 
@@ -610,15 +635,15 @@ def fig_jjas_regional_reference_acc():
     precipitation verification reference and matching climatology change.
     """
     refs = [
-        ("ERA5 truth", pd.read_csv(DET["jjas_tp_era5"])),
-        ("IMD truth", pd.read_csv(DET["jjas_tp"])),
+        ("ERA5 reference", pd.read_csv(DET["jjas_tp_era5"])),
+        ("IMD reference", pd.read_csv(DET["jjas_tp"])),
     ]
     regions = list(REGION_PANEL.keys())
-    fig, axes = plt.subplots(2, 4, figsize=(7.8, 4.9), sharex=True, sharey=True)
+    fig, axes = plt.subplots(4, 2, figsize=(6.3, 8.0), sharex=True, sharey=True)
     letters = string.ascii_lowercase
 
-    for i, (ref_label, df) in enumerate(refs):
-        for j, region in enumerate(regions):
+    for i, region in enumerate(regions):
+        for j, (ref_label, df) in enumerate(refs):
             ax = axes[i, j]
             _regional_curve(ax, df, "tp", region, "acc")
             ax.axhspan(0.5, 1.05, color="#0072B2", alpha=0.04, zorder=0)
@@ -626,23 +651,22 @@ def fig_jjas_regional_reference_acc():
             ax.axhline(0.0, color="grey", lw=0.7, zorder=0)
             ax.set_ylim(-0.22, 0.9)
             ax.set_xlim(0.6, 6.4)
-            ax.text(-0.14, 1.04, f"({letters[i * len(regions) + j]})",
+            ax.text(-0.13, 1.04, f"({letters[i * len(refs) + j]})",
                     transform=ax.transAxes, fontsize=8.8, fontweight="bold",
                     va="bottom", ha="left", clip_on=False)
             if i == 0:
-                ax.set_title(REGION_PANEL[region], pad=10)
-                ax.set_xlabel("")
-            else:
+                ax.set_title(ref_label, pad=9)
+            if i == len(regions) - 1:
                 ax.set_xlabel("Lead week")
             if j == 0:
-                ax.set_ylabel(f"{ref_label}\nACC")
+                ax.set_ylabel(f"{REGION_PANEL[region]}\nACC")
             _style_axis(ax)
 
     handles, labels = _legend_union(axes)
     fig.legend(handles, labels, loc="lower center", ncol=5,
-               bbox_to_anchor=(0.5, -0.055), frameon=False,
+               bbox_to_anchor=(0.5, -0.025), frameon=False,
                columnspacing=1.1, handletextpad=0.45)
-    fig.tight_layout(rect=(0, 0.07, 1, 1), h_pad=1.7, w_pad=1.5)
+    fig.tight_layout(rect=(0, 0.075, 1, 1), h_pad=1.45, w_pad=1.2)
     fig.savefig(f"{OUT}/fig_jjas_regional_reference_acc.pdf")
     plt.close(fig)
     print("wrote fig_jjas_regional_reference_acc.pdf")
@@ -860,10 +884,15 @@ def _spatial_grid_figure(season, variable, week, value, models, cmap, vmin, vmax
         print(f"[skip] {outname}: no models for {season}/{variable}")
         return
 
-    ncol = 3 if len(models) > 4 else len(models)
+    portrait_grid = len(models) == 5
+    ncol = 2 if portrait_grid else (3 if len(models) > 4 else len(models))
     nrow = int(np.ceil(len(models) / ncol))
     proj = ccrs.PlateCarree()
-    fig, axes = plt.subplots(nrow, ncol, figsize=(2.5 * ncol, 2.9 * nrow),
+    if portrait_grid:
+        figsize = (2.55 * ncol, 2.45 * nrow)
+    else:
+        figsize = (2.5 * ncol, 2.9 * nrow)
+    fig, axes = plt.subplots(nrow, ncol, figsize=figsize,
                              subplot_kw={"projection": proj})
     axes = np.atleast_1d(axes).ravel()
     im = None
@@ -879,10 +908,18 @@ def _spatial_grid_figure(season, variable, week, value, models, cmap, vmin, vmax
     for j in range(len(models), len(axes)):
         axes[j].axis("off")
     fig.suptitle(title, fontsize=10.5, fontweight="bold", y=0.99)
-    cbar = fig.colorbar(im, ax=axes.tolist(), fraction=0.025, pad=0.02,
-                        aspect=30)
-    cbar.set_label(cbar_label, fontsize=9)
-    cbar.ax.tick_params(labelsize=8)
+    if portrait_grid:
+        fig.subplots_adjust(left=0.08, right=0.96, top=0.92, bottom=0.11,
+                            wspace=0.08, hspace=0.16)
+        cax = fig.add_axes([0.27, 0.055, 0.46, 0.018])
+        cbar = fig.colorbar(im, cax=cax, orientation="horizontal")
+        cbar.set_label(cbar_label, fontsize=9, labelpad=2)
+        cbar.ax.tick_params(labelsize=8, pad=1)
+    else:
+        cbar = fig.colorbar(im, ax=axes.tolist(), fraction=0.025, pad=0.02,
+                            aspect=30)
+        cbar.set_label(cbar_label, fontsize=9)
+        cbar.ax.tick_params(labelsize=8)
     fig.savefig(f"{OUT}/{outname}.pdf", bbox_inches="tight")
     plt.close(fig)
     print(f"wrote {outname}.pdf")
@@ -914,18 +951,14 @@ def fig_spatial_bias_tp():
 
 def main():
     fig_acc_lead()
-    fig_z500_acc_appendix()
     fig_jjas_era5_tp()
     fig_error_scores()
     fig_jjas_era5_acc_lead()
     fig_jjas_reference_sensitivity()
-    fig_jjas17_z500_sensitivity()
     fig_regional_scorecard()
     fig_regional_acc_lead(variable="tp", season="jfm", tag="tp")
-    fig_regional_acc_lead(variable="z500", season="jfm", tag="z500")
     fig_jjas_regional_reference_acc()
     fig_imd_era5_climatology_tp()
-    fig_spatial_localacc_z500()
     fig_spatial_bias_tp()
     print(f"\nAll figures written to {OUT}")
 

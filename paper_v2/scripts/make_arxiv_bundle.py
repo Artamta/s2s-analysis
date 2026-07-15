@@ -77,8 +77,8 @@ def main() -> None:
     with open(os.path.join(STAGE, "00README.txt"), "w") as fh:
         fh.write(
             "arXiv source bundle for:\n"
-            "  When Does Machine Learning Add Subseasonal Forecast Skill over India?\n"
-            "  An Early Benchmark across Winter and Monsoon Regimes\n\n"
+            "  IndiaS2S-Bench: Benchmarking Machine-Learning and Operational\n"
+            "  Subseasonal-to-Seasonal Forecasts over India\n\n"
             f"Main file: {MAIN_TEX}\n"
             "Compile with: latexmk -pdf s2s_india_benchmark.tex\n"
             "Bibliography is a manual thebibliography block "

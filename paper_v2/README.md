@@ -1,25 +1,26 @@
 # paper_v2 — Two-Season India S2S Benchmark (clean rebuild)
 
 arXiv-style single-column preprint. **Current story: two asymmetric case
-studies, not a symmetric six-model/two-season hindcast.** JFM 2026 is the
+studies, not a symmetric multi-season hindcast.** JFM 2026 is the
 Spire-inclusive winter case; JJAS 2019 is the 35-date monsoon benchmark for
-ECMWF/UKMO/NCEP/FuXi, with DLESyM retained only as a smaller sensitivity.
+ECMWF/UKMO/NCEP/FuXi.
 
 ## The story (precipitation-first)
 
 1. **Winter (JFM 2026): ML can win.** Spire AI-S2S leads individual precipitation systems at every
    lead (W1 ACC 0.78 vs 0.73 ECMWF), with the strongest block-bootstrap support at short lead.
-2. **Monsoon (JJAS 2019): the great equalizer.** In the 35-date benchmark,
-   ECMWF/UKMO/NCEP/FuXi all lose useful precipitation skill by week 3-4. Spire
-   is not available for this season; DLESyM has no precipitation channel. This
-   TP result belongs in the main Results because JJAS rainfall is the most
-   operationally important target.
-3. **Regional structure matters.** The main winter figure now shows all-India
-   precipitation ACC first, then the four IMD homogeneous rainfall regions below it.
+2. **Monsoon (JJAS 2019): reference choice matters.** In the 35-date ERA5
+   benchmark, ECMWF is the strongest individual precipitation system through
+   week 6; the IMD gauge-rainfall sensitivity is much weaker. Spire is not
+   available for this season.
+3. **Regional structure matters.** The main Figure 2 shows all-India
+   precipitation ACC first, then the four IMD homogeneous rainfall regions below it
+   for both JJAS 2019 and JFM 2026.
 4. **Deterministic != probabilistic.** ECMWF leads JFM precipitation CRPSS in
    weeks 2-5 even where Spire leads ACC; calibration is a separate axis.
-5. **Z500 is appendix context.** Z500 is retained as an auxiliary circulation
-   diagnostic, but it is no longer a headline target variable in the main text.
+5. **Future versions can expand the variable set.** This v1 paper is
+   precipitation-first; T2M and additional systems can be added when the
+   like-for-like archives are ready.
 
 ## How to work on it
 
@@ -34,8 +35,8 @@ python paper_v2/scripts/make_spatial_cache.py # -> paper_v2/cache/spatial_cells_
 # 3. regenerate tables and figures (idempotent)
 python paper_v2/scripts/make_tables.py        # -> paper_v2/tables/*.tex
 python paper_v2/scripts/make_figures.py       # -> paper_v2/figs/*.pdf
-python paper_v2/scripts/make_case_study.py    # -> paper_v2/figs/fig_case_study_{jfm,jjas}.pdf
-python paper_v2/scripts/make_scatter.py       # -> paper_v2/figs/fig_scatter_{tp,z500}.pdf
+python paper_v2/scripts/make_case_study.py    # -> paper_v2/figs/fig_case_study_*_w*.pdf
+python paper_v2/scripts/make_scatter.py       # -> paper_v2/figs/fig_scatter_*.pdf
 
 # 4. compile, then assemble the arXiv upload tarball
 cd paper_v2
@@ -52,18 +53,16 @@ when rebuilding from archived outputs.
 generated from:
 - JFM: `final_paper/.../jfm2026/05_tables/full_jfm2026_daily_spire/`
 - JJAS TP main: `final_paper/.../jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/`
-- JJAS Z500 main: `final_paper/.../jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/`
-- JJAS DLESyM sensitivity/T2M: `final_paper/.../jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/`
 To change a number, edit the script and rerun — not the `.tex`.
 
-Main Figure 2 is generated as `figs/fig_acc_lead.pdf`: all-India JFM 2026
-precipitation ACC in a compact centered panel and the four IMD regional ACC
-panels below. JJAS TP reference sensitivity remains in the main Results. The
-appendix Z500 all-India ACC figure is `figs/fig_z500_acc_appendix.pdf`.
+Main Figure 2 is generated as `figs/fig_acc_lead.pdf`: JJAS 2019 and JFM 2026
+precipitation ACC side by side, with all-India results first and the four IMD
+regional panels below. JJAS TP reference sensitivity remains in the appendix.
 
-Spatial/scatter appendix PDFs are included in the current paper draft. The
-current appendix figures are regenerated from the cached per-cell diagnostics
-and the full grid-level scatter CSVs listed above.
+The current appendix keeps supporting figures that add a distinct diagnostic:
+error scores, ERA5-versus-IMD reference sensitivity, case-study maps,
+climatology comparison, spatial bias, and pointwise forecast-versus-observed
+scatter plots.
 
 ## Writing status
 
@@ -76,5 +75,5 @@ limited to rebuilding the PDF/arXiv bundle after any manuscript or figure change
 - `tables/tab_models.tex` — hand-written model table
 - `tables/tab_*.tex` — auto-generated metric tables (do not edit by hand)
 - `figs/*.pdf` — auto-generated figures
-- `bibliography_block.tex` — 32 citations carried from the prior draft
+- `bibliography_block.tex` — bibliography entries carried from the prior draft
 - `scripts/make_tables.py`, `scripts/make_figures.py` — generators

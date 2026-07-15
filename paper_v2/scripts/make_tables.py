@@ -27,13 +27,12 @@ DET = {
     "jfm": f"{ROOT}/jfm2026/05_tables/full_jfm2026_daily_spire/deterministic_summary.csv",
     "jjas_tp": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/deterministic_summary.csv",
     "jjas_tp_era5": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_era5truth/deterministic_summary.csv",
-    "jjas_z500": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/deterministic_summary.csv",
     "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/deterministic_summary.csv",
 }
 PROB = {
     "jfm": f"{ROOT}/jfm2026/05_tables/full_jfm2026_daily_spire/probabilistic_summary.csv",
     "jjas_tp": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_imdtruth/probabilistic_summary.csv",
-    "jjas_z500": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_z500/probabilistic_summary.csv",
+    "jjas_tp_era5": f"{ROOT}/jjas2019/05_tables/full_jjas2019_operational35_plus_fuxi_tp_era5truth/probabilistic_summary.csv",
     "jjas17": f"{ROOT}/jjas2019/05_tables/full_jjas2019_common17_fuxi_imd/probabilistic_summary.csv",
 }
 
@@ -41,13 +40,20 @@ PROB = {
 MODEL_LABEL = {
     "spire": "Spire AI-S2S",
     "fuxi": "FuXi-S2S",
-    "delysm": "DLESyM",
     "ecmwf": "ECMWF",
     "ukmo": "UKMO",
     "ncep": "NCEP",
     "mme": "MME",
 }
-MODEL_ORDER = ["spire", "fuxi", "delysm", "ecmwf", "ukmo", "ncep", "mme"]
+MODEL_LABEL_SHORT = {
+    "spire": "Spire",
+    "fuxi": "FuXi",
+    "ecmwf": "ECMWF",
+    "ukmo": "UKMO",
+    "ncep": "NCEP",
+    "mme": "MME",
+}
+MODEL_ORDER = ["spire", "fuxi", "ecmwf", "ukmo", "ncep", "mme"]
 WEEKS = [1, 2, 3, 4, 5, 6]
 
 
@@ -77,6 +83,163 @@ def _num(x: float, nd: int = 2, signed: bool = False, bold: bool = False) -> str
 
 def _fmt(x: float, nd: int = 2) -> str:
     return _num(x, nd)
+
+
+def _plain(x: float, nd: int = 2) -> str:
+    if pd.isna(x):
+        return "--"
+    v = round(float(x), nd)
+    if v == 0:
+        v = 0.0
+    return f"{v:.{nd}f}"
+
+
+def _range_label(weeks: list[int]) -> str:
+    if len(weeks) == 1:
+        return f"W{weeks[0]}"
+    return f"W{weeks[0]}--W{weeks[-1]}"
+
+
+def _compress_week_leaders(leaders: list[tuple[int, str]]) -> str:
+    """Compress [(week, model), ...] into 'ECMWF (W1--W3); ...'."""
+    if not leaders:
+        return "--"
+    chunks = []
+    cur_model = leaders[0][1]
+    cur_weeks = [leaders[0][0]]
+    for week, model in leaders[1:]:
+        if model == cur_model and week == cur_weeks[-1] + 1:
+            cur_weeks.append(week)
+        else:
+            chunks.append(f"{MODEL_LABEL[cur_model]} ({_range_label(cur_weeks)})")
+            cur_model = model
+            cur_weeks = [week]
+    chunks.append(f"{MODEL_LABEL[cur_model]} ({_range_label(cur_weeks)})")
+    return "; ".join(chunks)
+
+
+def _leader_by_week(piv: pd.DataFrame, higher_is_better: bool = True,
+                    exclude_mme: bool = True) -> list[tuple[int, str]]:
+    rows = [m for m in piv.index if not (exclude_mme and m == "mme")]
+    out = []
+    for week in WEEKS:
+        vals = piv.loc[rows, week].dropna()
+        if vals.empty:
+            continue
+        model = vals.idxmax() if higher_is_better else vals.idxmin()
+        out.append((week, model))
+    return out
+
+
+def make_allindia_clean_table() -> str:
+    """Two-case all-India synthesis table for the main Results section."""
+    jjas_acc = _pivot(_load(DET["jjas_tp_era5"]), "tp", "acc")
+    jjas_rmse = _pivot(_load(DET["jjas_tp_era5"]), "tp", "rmse")
+    jjas_crps = _pivot(_load(PROB["jjas_tp_era5"]), "tp", "crps")
+    jjas_imd_acc = _pivot(_load(DET["jjas_tp"]), "tp", "acc")
+    jfm_acc = _pivot(_load(DET["jfm"]), "tp", "acc")
+    jfm_rmse = _pivot(_load(DET["jfm"]), "tp", "rmse")
+    jfm_crpss = _pivot(_load(PROB["jfm"]), "tp", "crpss_clim")
+
+    jjas_acc_leaders = _leader_by_week(jjas_acc)
+    jjas_rmse_leaders = _leader_by_week(jjas_rmse, higher_is_better=False)
+    jjas_crps_leaders = _leader_by_week(jjas_crps, higher_is_better=False)
+    jjas_imd_leaders = _leader_by_week(jjas_imd_acc)
+    jfm_acc_leaders = _leader_by_week(jfm_acc)
+    jfm_rmse_leaders = _leader_by_week(jfm_rmse, higher_is_better=False)
+    jfm_crpss_leaders = _leader_by_week(jfm_crpss)
+
+    jjas_acc_w1 = _plain(jjas_acc.loc["ecmwf", 1])
+    jjas_acc_w6 = _plain(jjas_acc.loc["ecmwf", 6])
+    jjas_imd_w1 = _plain(jjas_imd_acc.loc[[m for m in jjas_imd_acc.index if m != "mme"], 1].max())
+    jjas_imd_w3 = _plain(jjas_imd_acc.loc[[m for m in jjas_imd_acc.index if m != "mme"], 3].max())
+    jfm_acc_w1 = _plain(jfm_acc.loc["spire", 1])
+    jfm_acc_w6 = _plain(jfm_acc.loc["spire", 6])
+
+    rows = [
+        ("JJAS~2019 / ERA5", "ACC",
+         f"{_compress_week_leaders(jjas_acc_leaders)}; ECMWF is {jjas_acc_w1} at W1 and {jjas_acc_w6} at W6.",
+         "Main ERA5-referenced monsoon ranking."),
+        ("JJAS~2019 / ERA5", "RMSE / CRPS",
+         f"RMSE leader: {_compress_week_leaders(jjas_rmse_leaders)}. CRPS leader: {_compress_week_leaders(jjas_crps_leaders)}.",
+         "Error scores support the all-India ACC result."),
+        ("JJAS~2019 / IMD", "ACC sensitivity",
+         f"Best individual ACC is {jjas_imd_w1} at W1 and {jjas_imd_w3} at W3; leaders are {_compress_week_leaders(jjas_imd_leaders)}.",
+         "Gauge-verified monsoon skill is much weaker."),
+        ("JFM~2026 / ERA5", "ACC / RMSE",
+         f"ACC leader: {_compress_week_leaders(jfm_acc_leaders)}; Spire is {jfm_acc_w1} at W1 and {jfm_acc_w6} at W6. RMSE leader: {_compress_week_leaders(jfm_rmse_leaders)}.",
+         "Main deterministic winter ranking."),
+        ("JFM~2026 / ERA5", "CRPSS",
+         f"CRPSS leader: {_compress_week_leaders(jfm_crpss_leaders)}.",
+         "Probabilistic ranking differs from ACC/RMSE."),
+    ]
+    body = "\n".join(
+        f"    {case} & {score} & {result} & {read} \\\\" for case, score, result, read in rows
+    )
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[!tbp]
+      \\centering
+      \\footnotesize
+      \\setlength{{\\tabcolsep}}{{4pt}}
+      \\renewcommand{{\\arraystretch}}{{1.16}}
+      \\caption{{Clean all-India summary for the V1 precipitation benchmark. Values are weekly precipitation scores over the common Indian land mask. The MME is not treated as a separate forecast model.}}
+      \\label{{tab:allindia_clean}}
+      \\begin{{tabular}}{{@{{}}>{{\\raggedright\\arraybackslash}}p{{0.17\\linewidth}}>{{\\raggedright\\arraybackslash}}p{{0.12\\linewidth}}>{{\\raggedright\\arraybackslash}}p{{0.43\\linewidth}}>{{\\raggedright\\arraybackslash}}p{{0.19\\linewidth}}@{{}}}}
+        \\toprule
+        Case / reference & Score & Leading individual system(s) & Interpretation \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+    \\end{{table}}
+    """)
+
+
+def make_regions_clean_table() -> str:
+    """Homogeneous-region synthesis table for JJAS 2019 and JFM 2026."""
+    jjas = pd.read_csv(DET["jjas_tp_era5"])
+    jjas = jjas[(jjas["variable"] == "tp") & (jjas["region"].isin(REGION_ORDER))]
+    jjas_models = ["fuxi", "ecmwf", "ukmo", "ncep"]
+    jfm = pd.read_csv(DET["jfm"])
+    jfm = jfm[(jfm["variable"] == "tp") & (jfm["region"].isin(REGION_ORDER))]
+    jfm_models = ["spire", "fuxi", "ecmwf", "ukmo", "ncep"]
+
+    rows = []
+    for region in REGION_ORDER:
+        jpiv = jjas[jjas["region"] == region].pivot_table(
+            index="model", columns="week", values="acc", aggfunc="mean"
+        ).reindex(jjas_models)
+        jleaders = _leader_by_week(jpiv, exclude_mme=False)
+        jw1 = jpiv.loc[[m for m in jpiv.index if pd.notna(jpiv.loc[m, 1])], 1].max()
+        jw6 = jpiv.loc[[m for m in jpiv.index if pd.notna(jpiv.loc[m, 6])], 6].max()
+
+        jfm_mean = jfm[jfm["region"] == region].groupby("model")["acc"].mean().reindex(jfm_models)
+        jfm_best = jfm_mean.dropna().idxmax()
+        jfm_val = jfm_mean.loc[jfm_best]
+
+        rows.append(
+            f"    {REGION_LABEL[region]} & "
+            f"{_compress_week_leaders(jleaders)}; best ACC {_plain(jw1)} at W1 and {_plain(jw6)} at W6. & "
+            f"{MODEL_LABEL[jfm_best]} ({_plain(jfm_val)} weeks~1--6 mean) \\\\"
+        )
+    body = "\n".join(rows)
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[!tbp]
+      \\centering
+      \\footnotesize
+      \\setlength{{\\tabcolsep}}{{4pt}}
+      \\renewcommand{{\\arraystretch}}{{1.16}}
+      \\caption{{Clean regional summary for the V1 precipitation benchmark. JJAS~2019 entries show the best individual ERA5-referenced ACC by lead week in each IMD homogeneous rainfall region. JFM~2026 entries show the best individual ERA5-referenced ACC averaged over weeks~1--6.}}
+      \\label{{tab:regions_clean}}
+      \\begin{{tabular}}{{@{{}}>{{\\raggedright\\arraybackslash}}p{{0.14\\linewidth}}>{{\\raggedright\\arraybackslash}}p{{0.53\\linewidth}}>{{\\raggedright\\arraybackslash}}p{{0.24\\linewidth}}@{{}}}}
+        \\toprule
+        Region & JJAS~2019 / ERA5 & JFM~2026 / ERA5 \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+    \\end{{table}}
+    """)
 
 
 def _bold_best(col: pd.Series, higher_is_better: bool = True, nd: int = 2):
@@ -509,11 +672,241 @@ def make_jfm_tp_regional_acc_mean_table() -> str:
     """)
 
 
+def make_main_acc_table(season: str, caption: str, label: str,
+                        placement: str = "H") -> str:
+    """Main-text ACC table: All India + four IMD homogeneous regions, all
+    models, weeks 1--6. Bold marks the best individual model in each
+    region--week; MME is shown but not bolded."""
+    df = pd.read_csv(DET[season])
+    regions = ["All India"] + REGION_ORDER
+    df = df[(df["variable"] == "tp") & (df["week"].isin(WEEKS))
+            & (df["region"].isin(regions))]
+    models = [m for m in MODEL_ORDER if m in df["model"].unique()]
+
+    rows = []
+    for i, region in enumerate(regions):
+        sub = df[df["region"] == region]
+        piv = sub.pivot_table(index="model", columns="week", values="acc",
+                              aggfunc="mean")
+        piv = piv.reindex(models)
+        cells_per_model = {m: [] for m in models}
+        for w in WEEKS:
+            if w not in piv.columns:
+                for m in models:
+                    cells_per_model[m].append("--")
+                continue
+            col = piv[w]
+            bold_index = [m for m in models if m != "mme"]
+            fb = _bold_best(col.reindex(bold_index), higher_is_better=True, nd=2)
+            for m in models:
+                v = col.get(m, float("nan"))
+                cells_per_model[m].append(fb.get(m, _fmt(v, 2)))
+        region_label = ALLREGION_LABEL.get(region, REGION_LABEL.get(region, region))
+        for j, m in enumerate(models):
+            rowprefix = f"\\multirow{{{len(models)}}}{{*}}{{{region_label}}}" if j == 0 else ""
+            cells = " & ".join(cells_per_model[m])
+            rows.append(f"{rowprefix} & {MODEL_LABEL[m]:<14} & {cells} \\\\")
+        if i < len(regions) - 1:
+            rows.append("\\midrule")
+    body = "\n".join(rows)
+    header = " & ".join([f"W{w}" for w in WEEKS])
+
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[{placement}]
+      \\centering
+      \\scriptsize
+      \\setlength{{\\tabcolsep}}{{3pt}}
+      \\renewcommand{{\\arraystretch}}{{0.96}}
+      \\caption{{{caption}}}
+      \\label{{{label}}}
+      \\begin{{tabular}}{{llcccccc}}
+        \\toprule
+        Region & Model & {header} \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+    \\end{{table}}
+    """)
+
+
+def _main_acc_tabular(season: str, compact_labels: bool = False) -> str:
+    """Tabular-only version of the main ACC table for side-by-side display."""
+    df = pd.read_csv(DET[season])
+    regions = ["All India"] + REGION_ORDER
+    df = df[(df["variable"] == "tp") & (df["week"].isin(WEEKS))
+            & (df["region"].isin(regions))]
+    models = [m for m in MODEL_ORDER if m in df["model"].unique()]
+    labels = MODEL_LABEL_SHORT if compact_labels else MODEL_LABEL
+
+    rows = []
+    for i, region in enumerate(regions):
+        sub = df[df["region"] == region]
+        piv = sub.pivot_table(index="model", columns="week", values="acc",
+                              aggfunc="mean")
+        piv = piv.reindex(models)
+        cells_per_model = {m: [] for m in models}
+        for w in WEEKS:
+            if w not in piv.columns:
+                for m in models:
+                    cells_per_model[m].append("--")
+                continue
+            col = piv[w]
+            bold_index = [m for m in models if m != "mme"]
+            fb = _bold_best(col.reindex(bold_index), higher_is_better=True, nd=2)
+            for m in models:
+                v = col.get(m, float("nan"))
+                cells_per_model[m].append(fb.get(m, _fmt(v, 2)))
+        region_label = ALLREGION_LABEL.get(region, REGION_LABEL.get(region, region))
+        for j, m in enumerate(models):
+            rowprefix = f"\\multirow{{{len(models)}}}{{*}}{{{region_label}}}" if j == 0 else ""
+            cells = " & ".join(cells_per_model[m])
+            rows.append(f"{rowprefix} & {labels[m]:<6} & {cells} \\\\")
+        if i < len(regions) - 1:
+            rows.append("\\midrule")
+    body = "\n".join(rows)
+    header = " & ".join([f"W{w}" for w in WEEKS])
+
+    return textwrap.dedent(f"""\
+      \\begin{{tabular}}{{llcccccc}}
+        \\toprule
+        Region & Model & {header} \\\\
+        \\midrule
+    {body}
+        \\bottomrule
+      \\end{{tabular}}
+    """)
+
+
+def make_main_acc_side_by_side_table() -> str:
+    """Two main Results ACC tables on one landscape page."""
+    jjas_tabular = _main_acc_tabular("jjas_tp_era5", compact_labels=True)
+    jfm_tabular = _main_acc_tabular("jfm", compact_labels=True)
+    return textwrap.dedent(f"""\
+    \\begin{{landscape}}
+    \\begingroup
+    \\footnotesize
+    \\setlength{{\\tabcolsep}}{{2.1pt}}
+    \\renewcommand{{\\arraystretch}}{{0.80}}
+    \\captionsetup{{font=footnotesize}}
+    \\begin{{center}}
+    \\begin{{minipage}}[t]{{0.492\\linewidth}}
+      \\centering
+      \\captionof{{table}}{{JJAS~2019 precipitation ACC by region and lead week
+      (ERA5 precipitation; 35 common Monday/Thursday initializations).}}
+      \\label{{tab:jjas_acc_main}}
+    {jjas_tabular}
+    \\end{{minipage}}\\hfill
+    \\begin{{minipage}}[t]{{0.492\\linewidth}}
+      \\centering
+      \\captionof{{table}}{{JFM~2026 precipitation ACC by region and lead week
+      (ERA5 precipitation; 90 daily initializations).}}
+      \\label{{tab:jfm_acc_main}}
+    {jfm_tabular}
+    \\end{{minipage}}
+
+    \\vspace{{4pt}}
+    \\footnotesize
+    \\emph{{Note.}} Bold marks the best individual model in each region--week;
+    MME is shown for comparison but is not bolded. Spire is unavailable for
+    JJAS~2019.
+    \\end{{center}}
+    \\endgroup
+    \\end{{landscape}}
+    """)
+
+
+def _main_acc_lookup(season: str) -> dict[str, dict[str, list[str]]]:
+    """Formatted ACC cells by region/model/week for the combined main table."""
+    df = pd.read_csv(DET[season])
+    regions = ["All India"] + REGION_ORDER
+    df = df[(df["variable"] == "tp") & (df["week"].isin(WEEKS))
+            & (df["region"].isin(regions))]
+
+    out: dict[str, dict[str, list[str]]] = {}
+    for region in regions:
+        sub = df[df["region"] == region]
+        piv = sub.pivot_table(index="model", columns="week", values="acc",
+                              aggfunc="mean").reindex(MODEL_ORDER)
+        out[region] = {m: [] for m in MODEL_ORDER}
+        for w in WEEKS:
+            if w not in piv.columns:
+                for m in MODEL_ORDER:
+                    out[region][m].append("--")
+                continue
+            col = piv[w]
+            bold_index = [m for m in MODEL_ORDER if m != "mme"]
+            fb = _bold_best(col.reindex(bold_index),
+                            higher_is_better=True, nd=2)
+            for m in MODEL_ORDER:
+                v = col.get(m, float("nan"))
+                out[region][m].append(fb.get(m, _fmt(v, 2)))
+    return out
+
+
+def make_main_acc_combined_table() -> str:
+    """Single portrait Results table with JJAS and JFM week blocks side by side."""
+    regions = ["All India"] + REGION_ORDER
+    jjas = _main_acc_lookup("jjas_tp_era5")
+    jfm = _main_acc_lookup("jfm")
+
+    rows = []
+    for r_i, region in enumerate(regions):
+        region_label = ALLREGION_LABEL.get(region, REGION_LABEL.get(region, region))
+        for m_i, model in enumerate(MODEL_ORDER):
+            region_cell = (
+                f"\\multirow{{{len(MODEL_ORDER)}}}{{*}}{{\\textbf{{{region_label}}}}}"
+                if m_i == 0 else ""
+            )
+            jjas_cells = " & ".join(jjas[region][model])
+            jfm_cells = " & ".join(jfm[region][model])
+            rows.append(f"{region_cell} & {MODEL_LABEL_SHORT[model]} & "
+                        f"{jjas_cells} & {jfm_cells} \\\\")
+        if r_i < len(regions) - 1:
+            rows.append("\\midrule")
+    body = "\n".join(rows)
+    header = " & ".join([f"W{w}" for w in WEEKS])
+
+    return textwrap.dedent(f"""\
+    \\begin{{table}}[H]
+    \\centering
+    \\tiny
+    \\setlength{{\\tabcolsep}}{{2.1pt}}
+    \\renewcommand{{\\arraystretch}}{{1.58}}
+    \\caption{{Main precipitation ACC table by region, model, and lead week.
+    JJAS~2019 columns are shown first, followed by JFM~2026; both seasons are
+    verified against ERA5 precipitation. JJAS uses 35 common Monday/Thursday
+    initializations and JFM uses 90 daily initializations.}}
+    \\label{{tab:main_acc}}
+    \\resizebox{{0.98\\linewidth}}{{!}}{{%
+    \\begin{{tabular}}{{@{{}}llcccccc@{{\\hspace{{5pt}}}}cccccc@{{}}}}
+    \\toprule
+    Region & Model & \\multicolumn{{6}}{{c}}{{JJAS~2019}} &
+    \\multicolumn{{6}}{{c}}{{JFM~2026}} \\\\
+    \\cmidrule(lr){{3-8}}\\cmidrule(l){{9-14}}
+    & & {header} & {header} \\\\
+    \\midrule
+    {body}
+    \\bottomrule
+    \\end{{tabular}}
+    }}
+
+    \\vspace{{3pt}}
+    \\begin{{minipage}}{{0.98\\linewidth}}
+    \\tiny\\emph{{Note.}} FuXi denotes FuXi-S2S and Spire denotes Spire
+    AI-S2S. Bold marks the best individual model in each
+    region--season--week using unrounded scores; MME is shown for comparison
+    but is not bolded. Spire AI-S2S is unavailable for JJAS~2019.
+    \\end{{minipage}}
+    \\end{{table}}
+    """)
+
+
 BOOT_PAIR = os.path.join(OUT, "bootstrap_pairwise.csv")
 BOOT_PAIR_BLOCK = os.path.join(OUT, "bootstrap_block_pairwise.csv")
 # Primary block length per season (in initializations): 7 daily inits for JFM,
 # 4 Mon/Thu inits (~2 calendar weeks) for JJAS.
-BLOCK_LEN_PRIMARY = {"jfm": 7, "jjas_tp": 4, "jjas_z500": 4}
+BLOCK_LEN_PRIMARY = {"jfm": 7, "jjas_tp": 4}
 
 
 def make_significance_table(season: str, variable: str, reference: str,
@@ -614,7 +1007,11 @@ def make_significance_table(season: str, variable: str, reference: str,
 def main():
     artifacts = []
 
-    # --- JFM 2026 deterministic ACC (the three variables) ---
+    # --- Main Results ACC table ---
+    artifacts.append(("tab_main_acc_combined.tex",
+                      make_main_acc_combined_table()))
+
+    # --- JFM 2026 deterministic ACC ---
     artifacts.append(("tab_jfm_acc.tex", make_skill_table(
         "jfm", "tp", "acc",
         "JFM~2026 all-India precipitation anomaly correlation (ACC) by lead week, "
@@ -622,23 +1019,12 @@ def main():
         "column is bold; MME is the multi-model mean.",
         "tab:jfm_acc_tp", placement="H")))
 
-    artifacts.append(("tab_jfm_acc_z500.tex", make_skill_table(
-        "jfm", "z500", "acc",
-        "JFM~2026 all-India Z500 ACC by lead week (ERA5 truth).",
-        "tab:jfm_acc_z500", placement="H")))
-
     # --- Paired-bootstrap differences relative to Spire (JFM) ---
     artifacts.append(("tab_jfm_sig_tp.tex", make_significance_table(
         "jfm", "tp", "spire",
         "JFM~2026 precipitation: paired-bootstrap all-India ACC difference "
         "between Spire AI-S2S and each other system, by lead week.",
         "tab:jfm_sig_tp", placement="H")))
-
-    artifacts.append(("tab_jfm_sig_z500.tex", make_significance_table(
-        "jfm", "z500", "spire",
-        "JFM~2026 Z500: paired-bootstrap all-India ACC difference between "
-        "Spire AI-S2S and each other system, by lead week.",
-        "tab:jfm_sig_z500", placement="H")))
 
     # NOTE: JFM 2026 T2M is intentionally omitted. The T2M verification truth
     # is being rebuilt (daily-mean reconstruction) as of the latest pipeline
@@ -658,30 +1044,18 @@ def main():
         "IMD gridded rainfall (35 common Monday/Thursday initializations).",
         "tab:jjas_acc_tp_imd", placement="H")))
 
-    artifacts.append(("tab_jjas_acc_z500.tex", make_skill_table(
-        "jjas_z500", "z500", "acc",
-        "JJAS~2019 all-India Z500 ACC by lead week for the "
-        "operational-plus-FuXi-S2S main comparison (ERA5 truth, 35 common "
-        "Monday/Thursday initializations).",
-        "tab:jjas_acc_z500", placement="H")))
-
     # --- RMSE companions (precip, both seasons) ---
     artifacts.append(("tab_jfm_rmse_tp.tex", make_skill_table(
         "jfm", "tp", "rmse",
         "JFM~2026 all-India precipitation RMSE (mm\\,day$^{-1}$) by lead week.",
         "tab:jfm_rmse_tp", higher_is_better=False, placement="H")))
 
-    # --- Probabilistic CRPSS (precip + Z500, JFM) ---
+    # --- Probabilistic CRPSS (precip, JFM) ---
     artifacts.append(("tab_jfm_crpss_tp.tex", make_skill_table(
         "jfm", "tp", "crpss_clim",
         "JFM~2026 all-India precipitation CRPSS versus climatology by lead week. "
         "Positive values indicate probabilistic skill above climatology.",
         "tab:jfm_crpss_tp", placement="H")))
-
-    artifacts.append(("tab_jfm_crpss_z500.tex", make_skill_table(
-        "jfm", "z500", "crpss_clim",
-        "JFM~2026 all-India Z500 CRPSS versus climatology by lead week.",
-        "tab:jfm_crpss_z500", placement="H")))
 
     # --- IMD regional breakdown (model x region, fixed week) ---
     artifacts.append(("tab_jfm_regional_tp_w1.tex", make_regional_table(
@@ -707,14 +1081,10 @@ def main():
         "model attaining the value: E=ECMWF, F=FuXi-S2S, U=UKMO, N=NCEP.",
         "tab:reg_jjas_tp_era5_best_allweeks")))
 
-    # NOTE: a JFM week-1 Z500 regional table is intentionally not generated.
-    # The main regional Results use the TP-only weeks-1--6 summary below;
-    # mixed TP/Z500 regional diagnostics are kept out of the main Results.
-
     artifacts.append(("tab_jjas_regional_tp_w1w3.tex", make_regional_multiweek_table(
         "jjas_tp", "tp", [1, 2, 3, 4, 5, 6], "acc",
         "JJAS~2019 precipitation ACC by IMD homogeneous region for every lead "
-        "week~1--6 (IMD truth, 35 common Monday/Thursday initializations). "
+        "week~1--6 (IMD reference, 35 common Monday/Thursday initializations). "
         "Bold marks the best individual model in each region--week; MME is shown "
         "but not bolded.",
         "tab:reg_jjas_tp_w1w3", placement="H")))
@@ -722,39 +1092,30 @@ def main():
     artifacts.append(("tab_jjas_regional_tp_era5_allweeks.tex", make_regional_multiweek_table(
         "jjas_tp_era5", "tp", [1, 2, 3, 4, 5, 6], "acc",
         "JJAS~2019 precipitation ACC by IMD homogeneous region for every lead "
-        "week~1--6 (ERA5 truth, 35 common Monday/Thursday initializations). "
+        "week~1--6 (ERA5 reference, 35 common Monday/Thursday initializations). "
         "Bold marks the best individual model in each region--week; "
         "MME is shown but not bolded.",
         "tab:reg_jjas_tp_era5_allweeks", placement="H")))
 
-    # --- Old-paper-style stacked regional scorecards (weeks 1-6 mean) ---
-    var_label = {"tp": "Precipitation", "z500": "Z500"}
-    jfm_models = ["spire", "fuxi", "delysm", "ecmwf", "ukmo", "ncep", "mme"]
+    # --- Stacked regional scorecards (weeks 1-6 mean) ---
+    var_label = {"tp": "Precipitation"}
+    jfm_models = ["spire", "fuxi", "ecmwf", "ukmo", "ncep", "mme"]
 
     artifacts.append(("tab_jfm_reg_acc_tp.tex",
                       make_jfm_tp_regional_acc_mean_table()))
 
-    artifacts.append(("tab_jfm_reg_acc_full.tex", make_stacked_regional_table(
-        "jfm", "acc", ["tp", "z500"], var_label,
-        "JFM~2026 region-wise ACC by IMD homogeneous region, weeks~1--6 mean "
-        "(90-initialization average). Best value in each variable--region row "
-        "is bold.",
-        "tab:reg_pcc", models_subset=jfm_models)))
+    artifacts.append(("tab_jfm_reg_rmse_tp.tex", make_stacked_regional_table(
+        "jfm", "rmse", ["tp"], var_label,
+        "JFM~2026 precipitation RMSE by IMD homogeneous region, weeks~1--6 mean "
+        "(mm\\,day$^{-1}$). Best (lowest) system per region is bold.",
+        "tab:reg_rmse_tp", models_subset=jfm_models, higher_is_better=False)))
 
-    artifacts.append(("tab_jfm_reg_rmse_full.tex", make_stacked_regional_table(
-        "jfm", "rmse", ["tp", "z500"], var_label,
-        "JFM~2026 region-wise RMSE by IMD homogeneous region, weeks~1--6 mean. "
-        "Precipitation in mm\\,day$^{-1}$; Z500 in m. Best (lowest) system per "
-        "region in bold.",
-        "tab:reg_rmse", models_subset=jfm_models, higher_is_better=False)))
-
-    artifacts.append(("tab_jfm_reg_bias_full.tex", make_stacked_regional_table(
-        "jfm", "bias", ["tp", "z500"], var_label,
-        "JFM~2026 region-wise mean bias (forecast minus ERA5) by IMD "
-        "homogeneous region, weeks~1--6 mean. Precipitation bias in "
-        "mm\\,day$^{-1}$; Z500 bias in m. Value closest to zero per region "
-        "in bold.",
-        "tab:reg_bias", models_subset=jfm_models, bold_closest_zero=True)))
+    artifacts.append(("tab_jfm_reg_bias_tp.tex", make_stacked_regional_table(
+        "jfm", "bias", ["tp"], var_label,
+        "JFM~2026 precipitation mean bias (forecast minus ERA5) by IMD "
+        "homogeneous region, weeks~1--6 mean (mm\\,day$^{-1}$). Value closest "
+        "to zero per region is bold.",
+        "tab:reg_bias_tp", models_subset=jfm_models, bold_closest_zero=True)))
 
     # --- Bias-by-week tables (All India) ---
     artifacts.append(("tab_jfm_bias_tp.tex", make_bias_table(
@@ -762,12 +1123,6 @@ def main():
         "JFM~2026 all-India precipitation bias (mm\\,day$^{-1}$, forecast "
         "minus ERA5) by lead week. Bold = closest to zero.",
         "tab:bias_tp", placement="H")))
-
-    artifacts.append(("tab_jfm_bias_z500.tex", make_bias_table(
-        "jfm", "z500",
-        "JFM~2026 all-India Z500 bias (m, forecast minus ERA5) by lead week. "
-        "Bold = closest to zero.",
-        "tab:bias_z500", placement="H")))
 
     for fname, tex in artifacts:
         with open(os.path.join(OUT, fname), "w") as fh:

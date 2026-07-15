@@ -60,3 +60,15 @@ sbatch clean/data-download/erpas/slurm/download_erpas_gdrive.sbatch
 
 The job uses a shared rclone executable, copies with two concurrent transfers,
 verifies each source subset, and writes JSON and SHA-256 inventories.
+
+An interrupted climatology transfer can reuse its existing staging directory:
+
+```bash
+sbatch --export=ALL,ERPAS_STAGING_ROOT=/storage/raj.ayush/s2s_final_data/final_iteration/staging/erpas/<staging-directory> \
+  clean/data-download/erpas/slurm/download_erpas_gdrive.sbatch
+```
+
+Rclone skips matching destination files, verifies every source subset, and
+removes the selected staging directory only after all manifests are complete.
+The bundled rclone does not implement SHA-256, so the downloader uses the
+system `sha256sum` command over a sorted relative-path inventory.

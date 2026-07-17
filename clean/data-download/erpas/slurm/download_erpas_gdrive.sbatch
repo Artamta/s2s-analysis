@@ -88,8 +88,10 @@ done
   "${CLIMATOLOGY_ROOT}" \
   --one-way
 
+# SHA-256 is written separately below; omitting rclone's hashes avoids an
+# additional full read of every local GRIB file.
 "${RCLONE}" lsjson "${ROOT}/raw/erpas" \
-  --recursive --files-only --hash > "${MANIFEST_DIR}/inventory.json"
+  --recursive --files-only > "${MANIFEST_DIR}/inventory.json"
 (
   cd "${ROOT}/raw/erpas"
   find . -type f -print0 \

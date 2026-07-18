@@ -88,6 +88,7 @@ def existing_stage_is_valid(input_path: Path, manifest_path: Path) -> bool:
 
 
 def stage(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
+    run_mode = config.get("run_mode", "pilot")
     input_path = run_contract.storage_path(config, "input")
     manifest_path = run_contract.storage_path(config, "input_manifest")
     if not force and existing_stage_is_valid(input_path, manifest_path):
@@ -186,7 +187,11 @@ def stage(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
             "source_url": config["source"]["url"],
             "source_request_sha256": canonical_hash(request_contract),
             "checkpoint_sha256": checkpoint_hash,
-            "paper_status": "42-day pilot input only; not for skill scores",
+            "paper_status": (
+                "five-year production initial condition"
+                if run_mode == "production"
+                else "42-day pilot input only; not for skill scores"
+            ),
         }
     )
 
@@ -208,6 +213,7 @@ def stage(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
         "status": "complete",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "run_label": config["run_label"],
+        "run_mode": run_mode,
         "repository_commit": repository_commit(),
         "input_path": str(input_path),
         "input_size_bytes": input_path.stat().st_size,

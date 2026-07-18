@@ -1,7 +1,17 @@
 # FCN3, DLESyM, and NeuralGCM Six-Year Inference Runbook
 
-Status: implementation plan, checked 2026-07-17. Do not submit the 621-date
-production arrays until every launch gate in this document passes.
+> **FCN3 production decision (2026-07-19):** retain only native FCN3 T2M in
+> the primary benchmark. AFNOv2 TP underestimates ERA5 daily precipitation by
+> 51-57% in four direct seasonal ERA5-state tests, despite high day-one spatial
+> correlations (0.928-0.962). The raw FCN3+AFNOv2 pilot and isolation products
+> remain diagnostic evidence; they are not the primary FCN3 paper product and
+> no post-hoc precipitation correction is applied. FCN3 T2M production uses
+> three fixed stochastic members; ACC and RMSE use their ensemble mean, with
+> member 0 retained for a single-member sensitivity.
+
+Status: the broader six-year multi-model plan below remains a planning record.
+The currently approved NeuralGCM production run is the separately frozen
+2020-2024 experiment documented in Section 3.1.
 
 ## 1. Objective
 
@@ -76,6 +86,15 @@ FCN3 T2M separately from diagnostic TP. The production pilot must compare
 actual ERA5 `sp` with derived `sp`, compare AFNOv2 output using those two `sp`
 sources at initialization, and inspect TP behavior by lead week.
 
+The direct diagnostic isolation check is now complete for one 2020 day in each
+season. AFNOv2 was driven by exact ARCO-ERA5 states and native ERA5 `sp`, then
+both AFNOv2 and ERA5 `tp06` were conservatively remapped to the common grid.
+Predicted/ERA5 daily-mean ratios were 0.493 (JFM), 0.441 (MAM), 0.483 (JJAS),
+and 0.429 (OND), with spatial correlations of 0.928-0.962. The approximately
+factor-of-two low amplitude therefore exists without FCN3 or derived `sp` and
+must be reported as a limitation of the diagnostic over this domain. Do not
+apply a post-hoc multiplicative correction; preserve and score the raw output.
+
 ### 2.2 Why NeuralGCM T2M is unavailable
 
 The public NeuralGCM precipitation checkpoint decodes pressure-level
@@ -104,26 +123,69 @@ model names. It cannot be added as an undocumented post-processing shortcut.
 
 ## 3. Current Local Status
 
-- `model-runs/fcn3`, `model-runs/Deylsm`, and `model-runs/neural-gcm` contain no
-  production implementation yet.
-- The final storage model-run tree currently contains FuXi only.
+- `model-runs/fcn3` now contains the pinned FCN3+AFNOv2 environment recipe,
+  exact ARCO-ERA5 IC staging, stochastic 42-day runner, common-grid daily
+  output, seasonal AFNOv2 isolation checks, ERA5 pilot plots, and resumable
+  2020-2024 production array. DLESyM and NeuralGCM are implemented separately
+  under their frozen five-year contracts.
+- The final storage model-run tree contains FuXi plus the NeuralGCM checkpoint,
+  launch-gate output, and one-case 10-member benchmark.
 - `/home/raj.ayush/.conda/envs/fcn3run` must not be reused. Its previous logs
   show incompatible PhysicsNeMo/PyTorch custom operators, Zarr modifications,
-  and a missing torch-harmonics attention CUDA operator.
+  and a missing torch-harmonics attention CUDA operator. The isolated FCN3
+  production environment is stored under
+  `/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_envs/fcn3-prod`.
 - `/home/raj.ayush/.conda/envs/earth2` can import the current Earth2Studio source
   only when its Conda `lib` directory is placed first in `LD_LIBRARY_PATH`. It
   is useful for a pilot, but it is not a frozen production environment.
 - `/home/raj.ayush/.conda/envs/neuralgcm` has NeuralGCM 1.2.2, JAX/JAXLIB 0.10.2,
-  and the CUDA 12 plugin. It imports correctly on the login node, where no GPU
-  is visible. A requested A100 smoke test was queued and then cancelled because
-  the GPU-AI nodes were reserved; GPU execution is therefore still a launch
-  gate.
+  and the CUDA 12 plugin. The 42-day one-member production gate and 10-member
+  timing benchmark both passed on an A100 before the five-year launch.
 - The existing local WeatherBench2 store under `era5-daily` is daily data. It
   cannot initialize FCN3, DLESyM, or NeuralGCM, which require instantaneous
   states and/or subdaily history. Use the hourly ARCO-ERA5 source.
 
 Before implementation, standardize the empty typo directory `Deylsm` to the
 lowercase name `dlesym`. Do not maintain two spellings in code or storage.
+
+### 3.1 Current NeuralGCM production run: 2020-2024
+
+The executable NeuralGCM production contract is narrower than the legacy
+six-year plan in this document:
+
+- calendar: `config/all_season_dates_2020_2024.csv`
+- calendar SHA256:
+  `ab1b82b215f50ba3c52654e242675905dce2b4f2aa5bf93c2e0d08f5b9131b5a`
+- cases: 517, with year counts `105/104/104/104/100`
+- product: TP only, 42 daily periods in `mm day-1`
+- ensemble: 10 deterministic, model-native stochastic members per date
+- partition: `GPU-AI`, with at most four array tasks running concurrently
+- output root:
+  `/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10`
+
+Submit the frozen array with:
+
+```bash
+sbatch model-runs/neural-gcm/slurm/run_neuralgcm_tp_2020_2024_ens10.sbatch
+```
+
+Each array index is materialized through the frozen CSV. IC and forecast files
+are written atomically and accompanied by SHA256 manifests. Re-running the
+same array is the supported resume operation: a date is skipped only when both
+its final file and manifest validate. Partial or invalid final products fail
+for inspection rather than being overwritten.
+
+Monitor a submitted array and count completed manifests with:
+
+```bash
+squeue -j JOB_ID
+find /storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/manifests -name '*.json' -type f | wc -l
+```
+
+Logs are written under `model-runs/neural-gcm/logs` as
+`production_ens10_JOBID_ARRAYINDEX.out` and `.err`. The measured one-case A100
+inference time was 161.6 seconds through member 5 and 220.6 seconds through
+member 10. The expected full run is about 47 GPU-hours before queue delays.
 
 ## 4. Frozen Model and Source Versions
 

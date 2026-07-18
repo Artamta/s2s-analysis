@@ -65,8 +65,13 @@ def validate_config(config: dict[str, Any]) -> dict[str, Any]:
         raise RunContractError(f"config missing top-level keys: {missing}")
     if config["schema_version"] != 1:
         raise RunContractError("unsupported schema_version")
-    if "not for skill scores" not in config["purpose"]:
+    run_mode = config.get("run_mode", "pilot")
+    if run_mode not in {"pilot", "production"}:
+        raise RunContractError("run_mode must be pilot or production")
+    if run_mode == "pilot" and "not for skill scores" not in config["purpose"]:
         raise RunContractError("pilot purpose must forbid skill scoring")
+    if run_mode == "production" and "production" not in config["purpose"].lower():
+        raise RunContractError("production purpose must identify production output")
 
     calendar_cfg = config["calendar"]
     calendar_path = repo_path(calendar_cfg["path"])
@@ -154,7 +159,10 @@ def validate_config(config: dict[str, Any]) -> dict[str, Any]:
         storage_root.relative_to(EXPECTED_STORAGE_PREFIX)
     except ValueError as exc:
         raise RunContractError("storage root is outside NeuralGCM storage") from exc
-    for key in ("checkpoint", "input", "input_manifest", "output", "output_manifest", "pilot_report"):
+    storage_keys = ["checkpoint", "input", "input_manifest", "output", "output_manifest"]
+    if run_mode == "pilot":
+        storage_keys.append("pilot_report")
+    for key in storage_keys:
         storage_path(config, key)
 
     return {
@@ -164,6 +172,7 @@ def validate_config(config: dict[str, Any]) -> dict[str, Any]:
         "lead_days": lead_days,
         "member_count": len(seeds),
         "product": product,
+        "run_mode": run_mode,
         "retained_fields": model["retained_fields"],
         "run_label": config["run_label"],
         "storage_root": str(storage_root),

@@ -12,6 +12,7 @@ import pickle
 import socket
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -274,6 +275,7 @@ def build_output(
     common = regrid_to_common(native, model, product)
     init_time = np.datetime64(config["case"]["init_time"])
     common = common.assign_coords(**period_coordinates(init_time, lead_days))
+    run_mode = config.get("run_mode", "pilot")
     common.attrs.update(
         {
             "model": config["model"]["name"],
@@ -288,7 +290,11 @@ def build_output(
             "ensemble": f"{config['forecast']['member_count']} stochastic NeuralGCM member(s)",
             "domain": "exact physics grid: 39-0 N, 60-99 E, 1.5 degrees",
             "checkpoint_sha256": config["model"]["checkpoint_sha256"],
-            "paper_status": "42-day pilot only; not for skill scores",
+            "paper_status": (
+                "five-year production forecast"
+                if run_mode == "production"
+                else "42-day pilot only; not for skill scores"
+            ),
         }
     )
     common["valid_time"].attrs.update(
@@ -327,7 +333,12 @@ def build_output(
 def run(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
     output_path = run_contract.storage_path(config, "output")
     manifest_path = run_contract.storage_path(config, "output_manifest")
-    report_path = run_contract.storage_path(config, "pilot_report")
+    run_mode = config.get("run_mode", "pilot")
+    report_path = (
+        run_contract.storage_path(config, "pilot_report")
+        if run_mode == "pilot"
+        else None
+    )
     if not force and existing_output_is_valid(output_path, manifest_path):
         print(f"validated existing 42-day output: {output_path}", flush=True)
         return output_path, manifest_path
@@ -363,8 +374,11 @@ def run(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
         product = config["model"]["product"]
         member_values: list[dict[str, np.ndarray]] = []
         diagnostic_records: list[dict[str, float]] = []
+        member_runtimes: list[float] = []
+        inference_started = time.perf_counter()
         for member, seed in enumerate(config["forecast"]["member_seeds"]):
             print(f"running member={member} seed={seed}", flush=True)
+            member_started = time.perf_counter()
             initial_state = model.encode(
                 inputs, input_forcings, jax.random.key(np.uint32(seed))
             )
@@ -383,8 +397,23 @@ def run(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
                 predictions, product, fields, config
             )
             member_values.append(values)
-            diagnostic_records.append(diagnostics)
+            member_runtime = time.perf_counter() - member_started
+            cumulative_runtime = time.perf_counter() - inference_started
+            member_runtimes.append(member_runtime)
+            diagnostic_records.append(
+                {
+                    **diagnostics,
+                    "member_runtime_seconds": member_runtime,
+                    "cumulative_inference_seconds": cumulative_runtime,
+                }
+            )
+            print(
+                f"finished member={member} member_seconds={member_runtime:.3f} "
+                f"cumulative_seconds={cumulative_runtime:.3f}",
+                flush=True,
+            )
             del predictions
+        inference_runtime = time.perf_counter() - inference_started
         standardized = build_output(member_values, model, config)
     finally:
         staged.close()
@@ -435,7 +464,14 @@ def run(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
         encoding[name] = time_encoding.copy()
     standardized.to_netcdf(temporary, engine="netcdf4", encoding=encoding)
     with xr.open_dataset(temporary) as check:
-        if dict(check.sizes) != {"member": 1, "lead_day": 42, "latitude": 27, "longitude": 27, "bounds": 2}:
+        expected_sizes = {
+            "member": int(config["forecast"]["member_count"]),
+            "lead_day": 42,
+            "latitude": 27,
+            "longitude": 27,
+            "bounds": 2,
+        }
+        if dict(check.sizes) != expected_sizes:
             raise ValueError(f"written output dimensions are wrong: {dict(check.sizes)}")
         check.load()
     os.replace(temporary, output_path)
@@ -462,16 +498,20 @@ def run(config: dict[str, Any], force: bool) -> tuple[Path, Path]:
         "retained_fields": config["model"]["retained_fields"],
         "lead_days": 42,
         "member_seeds": config["forecast"]["member_seeds"],
+        "member_runtime_seconds": member_runtimes,
+        "inference_runtime_seconds": inference_runtime,
         "field_stats": stats,
         "member_diagnostics": diagnostic_records,
         "t2m_written": "t2m" in standardized.data_vars,
-        "promoted_to_production": False,
+        "run_mode": run_mode,
+        "promoted_to_production": run_mode == "production",
     }
     if result["t2m_written"]:
-        raise ValueError("NeuralGCM pilot must not write a false T2M variable")
+        raise ValueError("NeuralGCM precipitation run must not write a false T2M variable")
     write_json_atomic(result, manifest_path)
-    write_json_atomic(result, report_path)
-    print(f"42-day NeuralGCM pilot passed: {output_path}", flush=True)
+    if report_path is not None:
+        write_json_atomic(result, report_path)
+    print(f"42-day NeuralGCM {run_mode} passed: {output_path}", flush=True)
     print(f"output SHA256: {output_hash}", flush=True)
     print(json.dumps(stats, indent=2, sort_keys=True), flush=True)
     return output_path, manifest_path

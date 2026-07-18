@@ -1,7 +1,8 @@
 # FCN3, DLESyM, and NeuralGCM Six-Year Inference Runbook
 
-Status: implementation plan, checked 2026-07-17. Do not submit the 621-date
-production arrays until every launch gate in this document passes.
+Status: the broader six-year multi-model plan below remains a planning record.
+The currently approved NeuralGCM production run is the separately frozen
+2020-2024 experiment documented in Section 3.1.
 
 ## 1. Objective
 
@@ -104,9 +105,11 @@ model names. It cannot be added as an undocumented post-processing shortcut.
 
 ## 3. Current Local Status
 
-- `model-runs/fcn3`, `model-runs/Deylsm`, and `model-runs/neural-gcm` contain no
-  production implementation yet.
-- The final storage model-run tree currently contains FuXi only.
+- `model-runs/fcn3` and `model-runs/Deylsm` do not yet contain production
+  implementations. The NeuralGCM TP production runner is implemented and
+  validated separately under the five-year contract in Section 3.1.
+- The final storage model-run tree contains FuXi plus the NeuralGCM checkpoint,
+  launch-gate output, and one-case 10-member benchmark.
 - `/home/raj.ayush/.conda/envs/fcn3run` must not be reused. Its previous logs
   show incompatible PhysicsNeMo/PyTorch custom operators, Zarr modifications,
   and a missing torch-harmonics attention CUDA operator.
@@ -114,16 +117,53 @@ model names. It cannot be added as an undocumented post-processing shortcut.
   only when its Conda `lib` directory is placed first in `LD_LIBRARY_PATH`. It
   is useful for a pilot, but it is not a frozen production environment.
 - `/home/raj.ayush/.conda/envs/neuralgcm` has NeuralGCM 1.2.2, JAX/JAXLIB 0.10.2,
-  and the CUDA 12 plugin. It imports correctly on the login node, where no GPU
-  is visible. A requested A100 smoke test was queued and then cancelled because
-  the GPU-AI nodes were reserved; GPU execution is therefore still a launch
-  gate.
+  and the CUDA 12 plugin. The 42-day one-member production gate and 10-member
+  timing benchmark both passed on an A100 before the five-year launch.
 - The existing local WeatherBench2 store under `era5-daily` is daily data. It
   cannot initialize FCN3, DLESyM, or NeuralGCM, which require instantaneous
   states and/or subdaily history. Use the hourly ARCO-ERA5 source.
 
 Before implementation, standardize the empty typo directory `Deylsm` to the
 lowercase name `dlesym`. Do not maintain two spellings in code or storage.
+
+### 3.1 Current NeuralGCM production run: 2020-2024
+
+The executable NeuralGCM production contract is narrower than the legacy
+six-year plan in this document:
+
+- calendar: `config/all_season_dates_2020_2024.csv`
+- calendar SHA256:
+  `ab1b82b215f50ba3c52654e242675905dce2b4f2aa5bf93c2e0d08f5b9131b5a`
+- cases: 517, with year counts `105/104/104/104/100`
+- product: TP only, 42 daily periods in `mm day-1`
+- ensemble: 10 deterministic, model-native stochastic members per date
+- partition: `GPU-AI_prio`, with at most four array tasks running concurrently
+- output root:
+  `/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10`
+
+Submit the frozen array with:
+
+```bash
+sbatch model-runs/neural-gcm/slurm/run_neuralgcm_tp_2020_2024_ens10.sbatch
+```
+
+Each array index is materialized through the frozen CSV. IC and forecast files
+are written atomically and accompanied by SHA256 manifests. Re-running the
+same array is the supported resume operation: a date is skipped only when both
+its final file and manifest validate. Partial or invalid final products fail
+for inspection rather than being overwritten.
+
+Monitor a submitted array and count completed manifests with:
+
+```bash
+squeue -j JOB_ID
+find /storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/manifests -name '*.json' -type f | wc -l
+```
+
+Logs are written under `model-runs/neural-gcm/logs` as
+`production_ens10_JOBID_ARRAYINDEX.out` and `.err`. The measured one-case A100
+inference time was 161.6 seconds through member 5 and 220.6 seconds through
+member 10. The expected full run is about 47 GPU-hours before queue delays.
 
 ## 4. Frozen Model and Source Versions
 

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_mode": "pilot",
+  "run_label": "neuralgcm_v1_precip_2p8_era5_00z_runtime_20200102_ens10",
+  "purpose": "One-case 10-member runtime and visualization benchmark; not for skill scores",
+  "calendar": {
+    "path": "config/all_season_dates_2020_2024.csv",
+    "sha256": "ab1b82b215f50ba3c52654e242675905dce2b4f2aa5bf93c2e0d08f5b9131b5a",
+    "date_count": 517,
+    "year_counts": {"2020": 105, "2021": 104, "2022": 104, "2023": 104, "2024": 100}
+  },
+  "case": {
+    "init_time": "2020-01-02T00:00:00",
+    "forecast_reference_time": "2020-01-02T00:00:00",
+    "information_cutoff_time": "2020-01-02T00:00:00"
+  },
+  "source": {
+    "name": "ARCO-ERA5 hourly analysis",
+    "url": "gs://gcp-public-data-arco-era5/ar/full_37-1h-0p25deg-chunk-1.zarr-v3",
+    "storage_options": {"token": "anon"}
+  },
+  "model": {
+    "name": "NeuralGCM v1 stochastic precipitation 2.8 degree",
+    "product": "daily_tp",
+    "python_package": "neuralgcm==1.2.2",
+    "checkpoint_url": "gs://neuralgcm/models/v1_precip/stochastic_precip_2_8_deg.pkl",
+    "checkpoint_size_bytes": 44898125,
+    "checkpoint_sha256": "59f65398d4481af0a9fd3d94e07e6ee5c818c614da07940a162d97070af17153",
+    "native_longitude_count": 128,
+    "native_latitude_count": 64,
+    "decoded_field": "precipitation_cumulative_mean",
+    "retained_fields": ["tp"]
+  },
+  "initial_conditions": {
+    "atmosphere_source_time": "2020-01-02T00:00:00",
+    "forcing_source_time": "2020-01-01T00:00:00",
+    "forcing_policy": "Official 24-hour backward shift at initialization, then persistence from D-1",
+    "horizontal_regrid": "Dinosaur ConservativeRegridder",
+    "fill_policy": "dinosaur.xarray_utils.fill_nan_with_nearest"
+  },
+  "forecast": {
+    "lead_days": 42,
+    "output_interval_hours": 6,
+    "unroll_steps": 169,
+    "start_with_input": true,
+    "member_count": 10,
+    "member_seeds": [3722422987, 145076496, 3271716913, 754840073, 836341165, 1125685910, 2885275892, 2506921858, 3545929942, 175550703],
+    "seed_contract": "first 32 bits of SHA256(run_label/init_date/member)",
+    "negative_increment_tolerance_m": 1e-7,
+    "daily_aggregation": "difference cumulative precipitation at consecutive 24-hour boundaries"
+  },
+  "domain": {
+    "latitude": [39.0, 0.0, -1.5],
+    "longitude": [60.0, 99.0, 1.5],
+    "latitude_count": 27,
+    "longitude_count": 27,
+    "global_target_grid": "240x121 equiangular with poles",
+    "tp_regrid": "conservative"
+  },
+  "storage": {
+    "root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens1",
+    "checkpoint": "_cache/neuralgcm/stochastic_precip_2_8_deg.pkl",
+    "input": "inputs/2020/20200102.nc",
+    "input_manifest": "inputs/2020/20200102.json",
+    "output": "benchmarks/ens10/2020/20200102.nc",
+    "output_manifest": "benchmarks/ens10/2020/20200102.json",
+    "pilot_report": "benchmarks/ens10/2020/BENCHMARK_REPORT.json"
+  },
+  "runtime": {
+    "python": "/home/raj.ayush/.conda/envs/neuralgcm/bin/python",
+    "expected_versions": {"neuralgcm": "1.2.2", "jax": "0.10.2", "jaxlib": "0.10.2", "dinosaur": "1.3.6", "gcsfs": "2026.6.0", "xarray": "2026.4.0"}
+  }
+}

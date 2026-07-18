@@ -29,3 +29,7 @@ same 621-date 2020-2025 initialization calendar as the physics providers and
 writes compact India TP/T2M products with per-date provenance manifests. Its 50
 members come only from the official model's native stochastic inference; no
 external perturbation wrapper is used.
+
+The checked implementation plan for the 2020-2025 FCN3, DLESyM, and NeuralGCM
+runs is in `MULTI_MODEL_INFERENCE_RUNBOOK.md`. Read its field-availability
+matrix and launch gates before writing runners or submitting production arrays.

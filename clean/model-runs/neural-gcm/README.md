@@ -94,3 +94,27 @@ These files are smoke evidence only and must not be used for skill scores. A
 passing smoke test promotes the runner to a two-day pilot, then one complete
 42-day pilot, cross-year cases, and finally a ten-date batch. The 621-date run
 is forbidden until those gates pass.
+
+## Complete 42-Day TP Pilot
+
+Status: passed on 2026-07-17 as Slurm job `69803` on an A100 GPU in
+`GPU-AI_prio`. The job completed in 3 minutes 38 seconds with exit code 0.
+The standardized output is:
+
+```text
+/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/
+  neuralgcm_v1_precip_2p8_era5_00z_pilot42d_20200601_ens1/
+    forecasts/2020/20200601.nc
+```
+
+Its SHA256 is
+`fe6a1f21d2f92a2ab3a036e2ae4dd5993e65c86c5639de9495ae648240fb34f3`.
+It contains `tp(member=1, lead_day=42, latitude=27, longitude=27)` in
+`mm day-1`, with lead day 1 covering 2020-06-01 00 UTC through 2020-06-02
+00 UTC and lead day 42 ending 2020-07-13 00 UTC. The observed pilot range is
+0 to 140.6408 mm/day and all values are finite and nonnegative.
+
+NeuralGCM contributes TP only to this benchmark. The public 1.4 degree
+stochastic checkpoint outputs pressure-level temperature, not 2 m
+temperature. No NeuralGCM temperature job is submitted and no NeuralGCM field
+may be labeled or scored as `t2m`.

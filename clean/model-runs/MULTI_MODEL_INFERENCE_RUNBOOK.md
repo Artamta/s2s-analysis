@@ -137,7 +137,7 @@ six-year plan in this document:
 - cases: 517, with year counts `105/104/104/104/100`
 - product: TP only, 42 daily periods in `mm day-1`
 - ensemble: 10 deterministic, model-native stochastic members per date
-- partition: `GPU-AI_prio`, with at most four array tasks running concurrently
+- partition: `GPU-AI`, with at most four array tasks running concurrently
 - output root:
   `/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10`
 

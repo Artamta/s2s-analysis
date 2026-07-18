@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=ngcm_tp5y_e10
-#SBATCH --partition=GPU-AI_prio
+#SBATCH --partition=GPU-AI
 #SBATCH --array=0-516%4
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8

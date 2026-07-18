@@ -1,5 +1,14 @@
 # FCN3, DLESyM, and NeuralGCM Six-Year Inference Runbook
 
+> **FCN3 production decision (2026-07-19):** retain only native FCN3 T2M in
+> the primary benchmark. AFNOv2 TP underestimates ERA5 daily precipitation by
+> 51-57% in four direct seasonal ERA5-state tests, despite high day-one spatial
+> correlations (0.928-0.962). The raw FCN3+AFNOv2 pilot and isolation products
+> remain diagnostic evidence; they are not the primary FCN3 paper product and
+> no post-hoc precipitation correction is applied. FCN3 T2M production uses
+> three fixed stochastic members; ACC and RMSE use their ensemble mean, with
+> member 0 retained for a single-member sensitivity.
+
 Status: the broader six-year multi-model plan below remains a planning record.
 The currently approved NeuralGCM production run is the separately frozen
 2020-2024 experiment documented in Section 3.1.
@@ -77,6 +86,15 @@ FCN3 T2M separately from diagnostic TP. The production pilot must compare
 actual ERA5 `sp` with derived `sp`, compare AFNOv2 output using those two `sp`
 sources at initialization, and inspect TP behavior by lead week.
 
+The direct diagnostic isolation check is now complete for one 2020 day in each
+season. AFNOv2 was driven by exact ARCO-ERA5 states and native ERA5 `sp`, then
+both AFNOv2 and ERA5 `tp06` were conservatively remapped to the common grid.
+Predicted/ERA5 daily-mean ratios were 0.493 (JFM), 0.441 (MAM), 0.483 (JJAS),
+and 0.429 (OND), with spatial correlations of 0.928-0.962. The approximately
+factor-of-two low amplitude therefore exists without FCN3 or derived `sp` and
+must be reported as a limitation of the diagnostic over this domain. Do not
+apply a post-hoc multiplicative correction; preserve and score the raw output.
+
 ### 2.2 Why NeuralGCM T2M is unavailable
 
 The public NeuralGCM precipitation checkpoint decodes pressure-level
@@ -105,14 +123,18 @@ model names. It cannot be added as an undocumented post-processing shortcut.
 
 ## 3. Current Local Status
 
-- `model-runs/fcn3` and `model-runs/Deylsm` do not yet contain production
-  implementations. The NeuralGCM TP production runner is implemented and
-  validated separately under the five-year contract in Section 3.1.
+- `model-runs/fcn3` now contains the pinned FCN3+AFNOv2 environment recipe,
+  exact ARCO-ERA5 IC staging, stochastic 42-day runner, common-grid daily
+  output, seasonal AFNOv2 isolation checks, ERA5 pilot plots, and resumable
+  2020-2024 production array. DLESyM and NeuralGCM are implemented separately
+  under their frozen five-year contracts.
 - The final storage model-run tree contains FuXi plus the NeuralGCM checkpoint,
   launch-gate output, and one-case 10-member benchmark.
 - `/home/raj.ayush/.conda/envs/fcn3run` must not be reused. Its previous logs
   show incompatible PhysicsNeMo/PyTorch custom operators, Zarr modifications,
-  and a missing torch-harmonics attention CUDA operator.
+  and a missing torch-harmonics attention CUDA operator. The isolated FCN3
+  production environment is stored under
+  `/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_envs/fcn3-prod`.
 - `/home/raj.ayush/.conda/envs/earth2` can import the current Earth2Studio source
   only when its Conda `lib` directory is placed first in `LD_LIBRARY_PATH`. It
   is useful for a pilot, but it is not a frozen production environment.

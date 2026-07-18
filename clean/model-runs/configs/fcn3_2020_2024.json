@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "experiment_id": "india_s2s_fcn3_afnov2_2020_2024",
+  "calendar": {
+    "path": "config/all_season_dates_2020_2024.csv",
+    "sha256": "ab1b82b215f50ba3c52654e242675905dce2b4f2aa5bf93c2e0d08f5b9131b5a",
+    "date_count": 517,
+    "years": [2020, 2021, 2022, 2023, 2024],
+    "year_counts": [105, 104, 104, 104, 100]
+  },
+  "forecast": {
+    "initialization_hour_utc": 0,
+    "lead_days": 42,
+    "step_hours": 6
+  },
+  "domain": {
+    "latitude": [39.0, 0.0, -1.5],
+    "longitude": [60.0, 99.0, 1.5],
+    "shape": [27, 27]
+  },
+  "model": {
+    "run_label": "fcn3_v1_afnov2_tp_t2m_00z_2020_2024_ens10",
+    "display_name": "FourCastNet 3 v1 + AFNOv2 TP diagnostic",
+    "package_uri": "hf://nvidia/fourcastnet3@76ef0c60237e458b33196ba027134e27f3fc4538",
+    "package_revision": "76ef0c60237e458b33196ba027134e27f3fc4538",
+    "precipitation_package_uri": "ngc://models/nvidia/earth-2/afno_dx_tp-v1-era5@v0.1.0",
+    "precipitation_package_revision": "v0.1.0",
+    "members": 10,
+    "seeds": [31000, 31001, 31002, 31003, 31004, 31005, 31006, 31007, 31008, 31009],
+    "fields": ["t2m", "tp"]
+  },
+  "software": {
+    "python": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_envs/fcn3-prod/bin/python",
+    "earth2studio_tag": "0.16.0",
+    "earth2studio_commit": "c99422c3e75ca29d200440ec1bd2d4ac8282683c",
+    "makani_commit": "b38fcb2799d7dbc146fa60459f3f9823394a8bf1",
+    "torch_harmonics_commit": "a632ca748a12bd9f74dbc1e00653317810991f74"
+  },
+  "storage": {
+    "root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs",
+    "model_cache": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_shared_cache/earth2studio",
+    "data_cache": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_shared_cache/earth2studio/arco"
+  },
+  "initial_conditions": {
+    "source": "Google ARCO-ERA5 hourly analysis",
+    "source_policy": "exact D 00 UTC state for all 72 FCN3 channels; no temporal interpolation"
+  }
+}

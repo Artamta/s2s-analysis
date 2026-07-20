@@ -1,0 +1,36 @@
+{
+  "forecast_contract": {
+    "issue": "2026-06-01T00:00:00Z",
+    "input_daily_statistic": "daily_mean",
+    "input_days": [
+      "2026-05-30",
+      "2026-05-31"
+    ],
+    "information_cutoff": "2026-06-01T00:00:00Z",
+    "valid_period_endpoints": [
+      "2026-06-02",
+      "2026-07-13"
+    ],
+    "tp_conversion": "FuXi mm h-1 daily mean rate multiplied by 24, then cumulatively summed"
+  },
+  "first_week_july_mm": {
+    "lead_days": [
+      30,
+      36
+    ],
+    "imd_climatology": 50.881317138671875,
+    "fuxi_ensemble_mean": 74.86454772949219,
+    "fuxi_member00": 75.12568664550781,
+    "imd_gauge_observation": 71.09912836317143,
+    "fuxi_anomaly_percent": 47.13563236866776,
+    "imd_observed_anomaly_percent": 39.735235566716874,
+    "fuxi_minus_observed": 3.7654193663207565
+  },
+  "full_42day_mm": {
+    "fuxi_ensemble_mean": 277.20503509521484,
+    "fuxi_member00": 271.648193359375,
+    "imd_climatology": 248.0775909423828,
+    "imd_gauge_observation": 203.20094095043933,
+    "fuxi_minus_observed": 74.00409414477551
+  }
+}

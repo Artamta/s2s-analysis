@@ -1,0 +1,20 @@
+{
+  "forecast_issue": "2026-06-23T00:00:00Z",
+  "first_forecast_period_endpoint": "2026-06-24T00:00:00Z",
+  "last_forecast_period_endpoint": "2026-08-04T00:00:00Z",
+  "imd_observation_available_through": "2026-07-18",
+  "observed_days": 25,
+  "at_observation_cutoff_mm": {
+    "imd_observed": 162.99057245120648,
+    "imd_1991_2020_climatology": 190.02881,
+    "fuxi_ensemble_mean": 206.43234,
+    "fuxi_minus_imd_observed": 43.441767548793536
+  },
+  "full_42day_context_mm": {
+    "fuxi_ensemble_mean": 344.11206,
+    "imd_1991_2020_climatology": 337.61902
+  },
+  "era5_used": false,
+  "imerg_used": false,
+  "ecmwf_used": false
+}

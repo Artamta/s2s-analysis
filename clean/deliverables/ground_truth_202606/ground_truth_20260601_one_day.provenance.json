@@ -1,0 +1,24 @@
+{
+  "coverage": {
+    "start": "2026-06-01",
+    "end": "2026-06-01"
+  },
+  "aggregation": "cosine-latitude weighted mean over union of four IMD homogeneous regions",
+  "imerg": {
+    "collection": "GPM_3IMERGDL.07 (IMERG Late, daily)",
+    "variable": "precipitation (mm/day)",
+    "base_url": "https://data.gesdisc.earthdata.nasa.gov/data/GPM_L3/GPM_3IMERGDL.07",
+    "doi": "10.5067/GPM/IMERGDL/DAY/07"
+  },
+  "imd_gauge": {
+    "product": "IMD real-time daily rainfall, 0.25 degree binary",
+    "endpoint": "https://imdpune.gov.in/cmpg/Realtimedata/Rainfall/rain.php",
+    "grid": "135x129; 66.5E-100E, 6.5N-38.5N"
+  },
+  "imd_gauge_gpm_merged": {
+    "product": "IMD daily merged satellite-gauge rainfall (GPM), 0.25 degree binary",
+    "endpoint": "https://imdpune.gov.in/cmpg/Realtimedata/gpm/rain.php",
+    "grid": "241x281; 50E-110E, 30S-40N"
+  },
+  "mask": "/storage/raj.ayush/s2s-forecast-data-prev/era5/daily/imd_region_masks.nc"
+}

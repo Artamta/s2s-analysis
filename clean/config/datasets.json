@@ -148,17 +148,19 @@
       "benchmark_gap": "t2m_not_compacted_use_raw_archive_or_rebuild"
     },
     "erpas_forecast_and_climatology_2023_2025": {
-      "kind": "deterministic_forecast_and_provider_climatology",
-      "status": "transfer_running_job_68758_canonical_layout",
+      "kind": "ensemble_mean_forecast_and_provider_climatology",
+      "status": "available_verified_google_drive_20260714",
       "source": "google_drive_folder_1S58Swev_M33lAK6Aap7FJuFvG5gtv3Jf",
       "forecast_path_template": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual{year}",
       "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/reforecast/climatology",
       "years": [2023, 2024, 2025],
       "forecast_init_counts": {"2023": 52, "2024": 52, "2025": 44},
       "lead_days": 33,
-      "members": "deterministic_no_ensemble_dimension",
-      "products": ["tp", "surface_temperature_not_t2m", "geopotential_height", "tp_india_0p5"],
-      "climatology": "144_mmdd_directories_432_files",
+      "members": "precomputed_unweighted_mean_of_4_source_forecasts_no_raw_member_dimension",
+      "grib_provenance": "kwbc_ncep_gfs_generating_process_96",
+      "products": ["tp", "surface_air_temperature_t2m_instantaneous_grib_surface_level0", "geopotential_height", "tp_india_0p5"],
+      "product_file_counts_2024": {"tp": 52, "surface_temperature": 52, "geopotential_height": 52, "tp_india_0p5": 51},
+      "climatology": "144_mmdd_directories_432_files_precomputed_mean_of_20_source_forecasts",
       "validation": "rclone_source_check_and_local_sha256_inventory"
     },
     "era5_truth": {

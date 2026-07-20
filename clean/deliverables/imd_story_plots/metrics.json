@@ -1,0 +1,54 @@
+{
+  "verification_reference": "IMD real-time daily rainfall 0.25-degree gauge analysis",
+  "era5_used": false,
+  "imerg_used": false,
+  "figures": [
+    "01_imd_42day_cumulative_20260601.png",
+    "02_imd_weekly_rainfall_and_bias_20260601.png",
+    "03_imd_two_case_scorecard.png"
+  ],
+  "full_case_metrics": {
+    "FuXi-S2S": {
+      "n_days": 42,
+      "rmse_mm": 40.717588787754636,
+      "mae_mm": 30.49900004329287,
+      "endpoint_bias_mm": 74.00382904956066,
+      "endpoint_abs_error_mm": 74.00382904956066,
+      "endpoint_forecast_mm": 277.20477
+    },
+    "ECMWF S2S": {
+      "n_days": 42,
+      "rmse_mm": 62.88774776377621,
+      "mae_mm": 51.97998175843155,
+      "endpoint_bias_mm": 102.45884384510501,
+      "endpoint_abs_error_mm": 102.45884384510501,
+      "endpoint_forecast_mm": 305.65978479554434
+    },
+    "IMD gauge": {
+      "n_days": 42,
+      "endpoint_observed_mm": 203.20094095043933
+    }
+  },
+  "partial_case_metrics": {
+    "FuXi-S2S": {
+      "n_days": 25,
+      "rmse_mm": 19.3382164130556,
+      "mae_mm": 13.296479472261126,
+      "endpoint_bias_mm": 43.441767548793536,
+      "endpoint_abs_error_mm": 43.441767548793536,
+      "endpoint_forecast_mm": 206.43234
+    },
+    "ECMWF S2S": {
+      "n_days": 25,
+      "rmse_mm": 38.7323308690987,
+      "mae_mm": 33.32702462574122,
+      "endpoint_bias_mm": 68.89206430390516,
+      "endpoint_abs_error_mm": 68.89206430390516,
+      "endpoint_forecast_mm": 231.88263675511163
+    },
+    "IMD gauge": {
+      "n_days": 25,
+      "endpoint_observed_mm": 162.99057245120648
+    }
+  }
+}

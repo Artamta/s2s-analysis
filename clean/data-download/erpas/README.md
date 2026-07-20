@@ -3,23 +3,38 @@
 ERPAS data from Google Drive is downloaded directly into the same canonical
 storage tree used by the other forecast providers.
 
+## Data Analysis
+
+The notebook is not required. Generate a complete report, CSV summaries, and
+diagnostic figures with:
+
+```bash
+python data-download/erpas/data-analysis/analyze_erpas.py
+```
+
+See [`data-analysis/README.md`](data-analysis/README.md) for the generated files
+and optional path arguments.
+
 ## Source Audit
 
 - Drive folder: `1S58Swev_M33lAK6Aap7FJuFvG5gtv3Jf`
 - Dated forecasts: 2023-2025, weekly Wednesday initializations
 - Forecast length: 33 daily leads, initialized at 00 UTC
-- Ensemble metadata: no member dimension; treat these files as deterministic
+- Ensemble metadata: no member dimension; dated fields are precomputed
+  unweighted means of four source forecasts
 - Global grid: regular 1 degree, 360 x 181
 - India precipitation grid: regular 0.5 degree, 241 x 161
 
 The dated source products are:
 
 - `APCP_YYYYMMDD.grb`: 24-hour total precipitation, `kg m-2`;
-- `tsfc_YYYYMMDD.grb`: instantaneous surface temperature at daily endpoints,
-  not 2 m temperature and not a daily mean;
+- `tsfc_YYYYMMDD.grb`: instantaneous surface air temperature at daily
+  endpoints, treated as T2m under the project/WMO convention; the GRIB is
+  encoded at `surface`, level 0, rather than an explicit 2 m height;
 - `gpot_YYYYMMDD.grb`: geopotential height at 1000, 925, 850, 700, 500, 300,
   and 200 hPa;
-- `Ind_0.5_APCP_YYYYMMDD.grb`: India-domain 0.5-degree precipitation.
+- `Ind_0.5_APCP_YYYYMMDD.grb`: broad regional 0.5-degree precipitation
+  (30-150 E, 30 S-50 N; not clipped to India).
 
 The source also has duplicate Drive folders named `z_HINDCAST_CLIMATOLOGY`.
 Together they contain 432 files in 144 `MMDD` directories. The downloader
@@ -48,9 +63,11 @@ the dataset tree.
   logs/erpas/
 ```
 
-`surface_temperature` must not be used as the `t2m` field in the primary
-ECMWF/NCEP/UKMO/FuXi comparison. ERPAS precipitation can be evaluated through
-lead day 33 after grid, date, and deterministic-versus-ensemble alignment.
+`surface_temperature` may be analysed as T2m under the project convention, but
+it is an instantaneous daily-endpoint field rather than a daily mean. Any
+ECMWF/NCEP/UKMO/FuXi comparison must match that temporal statistic explicitly.
+ERPAS precipitation can be evaluated through lead day 33 after grid, date, and
+ensemble-mean alignment.
 
 ## Transfer
 

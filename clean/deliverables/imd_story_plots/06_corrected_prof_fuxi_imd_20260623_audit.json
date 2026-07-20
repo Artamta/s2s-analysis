@@ -1,0 +1,46 @@
+{
+  "corrected_plot": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/imd_story_plots/06_corrected_prof_fuxi_imd_20260623.png",
+  "forecast_contract": {
+    "input_daily_statistic": "daily_mean",
+    "input_days": [
+      "2026-06-21",
+      "2026-06-22"
+    ],
+    "information_cutoff": "2026-06-23T00:00:00Z",
+    "forecast_period_endpoints": [
+      "2026-06-24",
+      "2026-08-04"
+    ],
+    "tp_conversion": "FuXi mm h-1 daily mean rate multiplied by 24, then cumulatively summed"
+  },
+  "imd_contract": {
+    "source": "/storage/raj.ayush/All_Model_Data/ground_truth/imd_rainfall/climatology/imd_rain_1991_2020_daily_climatology.nc",
+    "baseline": "1991-2020",
+    "spatial_method": "cosine-latitude weighted union of four IMD homogeneous-region masks",
+    "temporal_method": "daily mm/day summed over matching forecast-period endpoint dates"
+  },
+  "first_week_july_mm": {
+    "imd_climatology": 50.88131332397461,
+    "fuxi_ensemble_mean": 66.9358780670166,
+    "fuxi_member00": 69.24263000488281,
+    "imd_gauge_observation": 71.09912836317147,
+    "fuxi_anomaly_percent": 31.55296845586195,
+    "imd_observed_anomaly_percent": 39.735246043011415,
+    "fuxi_minus_observed": -4.163250296154871
+  },
+  "full_42day_mm": {
+    "imd_climatology": 337.6193542480469,
+    "fuxi_ensemble_mean": 344.11229125976564,
+    "fuxi_member00": 324.7194519042969
+  },
+  "old_slide_audit": {
+    "fuxi_input": "00 UTC snapshot sensitivity experiment; not training-consistent daily means",
+    "first_week_july_imd_climatology_mm": 48.52421075503032,
+    "first_week_july_fuxi_mean_mm": 57.15971499999999,
+    "claimed_fuxi_anomaly_percent": 17.796279652162017,
+    "full_42day_imd_climatology_mm": 321.978945962588,
+    "old_to_direct_imd_climatology_ratio": 0.9536744322010403,
+    "finding": "old IMD curve is the direct climatology multiplied by one fixed factor on all 42 days"
+  },
+  "news_comparison_warning": "Do not numerically equate the article's 11% statistic with this plot unless its exact dates, domain, area weighting, and climatological normal are confirmed to match."
+}

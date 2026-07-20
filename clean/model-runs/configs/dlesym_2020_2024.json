@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "experiment_id": "india_s2s_dlesym_2020_2024",
+  "calendar": {
+    "path": "config/all_season_dates_2020_2024.csv",
+    "sha256": "ab1b82b215f50ba3c52654e242675905dce2b4f2aa5bf93c2e0d08f5b9131b5a",
+    "date_count": 517,
+    "years": [2020, 2021, 2022, 2023, 2024],
+    "year_counts": [105, 104, 104, 104, 100]
+  },
+  "forecast": {
+    "initialization_hour_utc": 0,
+    "lead_days": 42,
+    "step_hours": 6,
+    "coupled_step_hours": 96
+  },
+  "domain": {
+    "latitude": [39.0, 0.0, -1.5],
+    "longitude": [60.0, 99.0, 1.5],
+    "shape": [27, 27]
+  },
+  "software": {
+    "python": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_envs/dlesym-prod/bin/python",
+    "earth2studio_version": "0.16.0rc0",
+    "earth2studio_tag": "0.16.0",
+    "earth2studio_commit": "c99422c3e75ca29d200440ec1bd2d4ac8282683c",
+    "earth2grid_version": "2025.11.1+torch212",
+    "earth2grid_commit": "11dcf1b0787a7eb6a8497a3a5a5e1fdcc31232d3"
+  },
+  "storage": {
+    "root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs",
+    "model_cache": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_shared_cache/earth2studio",
+    "data_cache": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/_shared_cache/earth2studio/arco"
+  },
+  "products": {
+    "v1_t2m": {
+      "run_label": "dlesym_v1_era5_t2m_00z_2020_2024_ens4",
+      "display_name": "DLESyM-V1-ERA5",
+      "package_uri": "hf://nvidia/dlesym-v1-era5@9dbcdb83706702ac3b7d93f5dad5e535abc2fb72",
+      "package_revision": "9dbcdb83706702ac3b7d93f5dad5e535abc2fb72",
+      "members": 4,
+      "fields": ["t2m"],
+      "ensemble_definition": "matched component checkpoint indices: member i uses atmosphere i and ocean i",
+      "checkpoint_pairs": [
+        [0, 0], [1, 1], [2, 2], [3, 3]
+      ]
+    },
+    "v0_tp_t2m": {
+      "run_label": "dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1",
+      "display_name": "DLESyM-v0-ISCCP-ERA5 + TP diagnostic",
+      "package_uri": "hf://nvidia/dlesym-v0-isccp-era5@924b2d62644ef61289dd960e018f60d6e067bfca",
+      "package_revision": "924b2d62644ef61289dd960e018f60d6e067bfca",
+      "members": 1,
+      "fields": ["t2m", "tp"]
+    }
+  }
+}

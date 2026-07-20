@@ -1,0 +1,29 @@
+{
+  "case": "2020-01-02",
+  "domain_mean_mm_day": {
+    "1 member": 1.2735467234159645,
+    "10-member mean": 1.6740177673977117,
+    "5-member mean": 1.6523805960727413,
+    "ERA5": 1.680140074465983
+  },
+  "era5": "/storage/bedartha/public/datasets/as_downloaded/weatherbench2/era5/1959-2023_01_10-6h-240x121_equiangular_with_poles_conservative.zarr",
+  "forecast": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens1/benchmarks/ens10/2020/20200102.nc",
+  "metrics": {
+    "1 member": {
+      "mae_mm_day": 1.8460500090691827,
+      "raw_space_time_correlation": 0.31178280602116737,
+      "rmse_mm_day": 5.468973844096125
+    },
+    "10-member mean": {
+      "mae_mm_day": 1.8893945012478954,
+      "raw_space_time_correlation": 0.3774145899454596,
+      "rmse_mm_day": 4.938507542216828
+    },
+    "5-member mean": {
+      "mae_mm_day": 1.922862208050313,
+      "raw_space_time_correlation": 0.34617754657695166,
+      "rmse_mm_day": 5.074810476548213
+    }
+  },
+  "note": "One-case raw comparison only; not a skill score."
+}

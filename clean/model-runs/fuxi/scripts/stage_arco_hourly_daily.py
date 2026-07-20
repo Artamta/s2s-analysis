@@ -198,6 +198,16 @@ def run(args: argparse.Namespace) -> int:
 
     dataset = arco_hourly.open_arco(url)
     try:
+        coverage_override = remote.get("coverage_override_stop")
+        if coverage_override:
+            original_stop = dataset.valid_time_stop
+            dataset.valid_time_stop = pd.Timestamp(coverage_override)
+            print(
+                "ARCO coverage metadata override: "
+                f"{original_stop} -> {dataset.valid_time_stop}; "
+                f"evidence={remote.get('coverage_override_evidence', 'not recorded')}",
+                flush=True,
+            )
         arco_hourly.validate_availability(dataset, days)
         print(
             "ARCO coverage: "

@@ -1,0 +1,7 @@
+Issue date: 2026-06-23 00 UTC
+FuXi input days: 2026-06-21 and 2026-06-22
+FuXi input statistic: complete UTC daily mean from hourly ERA5
+FuXi forecast: /storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_case_20260623_ens50/forecasts/annual2026/20260623.nc
+FuXi run label: fuxi_s2s_strict00z_case_20260623_ens50
+Baselines: /home/raj.ayush/s2s/s2s_anlysis/final_paper/case-study/data/20260623_all_india_cumulative_timeseries_with_era5.csv
+Important: IMD and ERA5 curves are climatologies, not verifying observations.

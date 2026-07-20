@@ -1,0 +1,63 @@
+{
+  "plot": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/imd_story_plots/08_two_issue_wet_week_ensemble_20260701_07.png",
+  "event": "1-7 July 2026 All-India rainfall",
+  "forecast_contract": {
+    "fuxi_input_daily_statistic": "daily_mean",
+    "fuxi_members": 50,
+    "ecmwf_members": "perturbed members 1-50, matching prior case plots",
+    "spatial_aggregation": "cosine-latitude weighted union of four IMD homogeneous-region masks"
+  },
+  "imd_climatology_mm": 50.88131332397461,
+  "imd_observed_mm": 71.09912836317147,
+  "cases": {
+    "20260601": {
+      "FuXi-S2S": {
+        "mean_mm": 74.86454963684082,
+        "median_mm": 76.83813095092773,
+        "p10_mm": 59.20398941040039,
+        "p25_mm": 67.64666557312012,
+        "p75_mm": 84.15410232543945,
+        "p90_mm": 89.38331832885743,
+        "probability_above_imd_climatology_percent": 94.0,
+        "mean_minus_imd_observed_mm": 3.7654212736693466,
+        "absolute_mean_error_mm": 3.7654212736693466
+      },
+      "ECMWF S2S": {
+        "mean_mm": 65.63304913752599,
+        "median_mm": 62.787284514200664,
+        "p10_mm": 43.35248202052139,
+        "p25_mm": 51.60171905298329,
+        "p75_mm": 77.94518335310836,
+        "p90_mm": 94.21477797849873,
+        "probability_above_imd_climatology_percent": 78.0,
+        "mean_minus_imd_observed_mm": -5.466079225645487,
+        "absolute_mean_error_mm": 5.466079225645487
+      }
+    },
+    "20260623": {
+      "FuXi-S2S": {
+        "mean_mm": 66.9358773803711,
+        "median_mm": 66.99803924560547,
+        "p10_mm": 63.146256637573245,
+        "p25_mm": 64.87244606018066,
+        "p75_mm": 69.052490234375,
+        "p90_mm": 71.69834747314454,
+        "probability_above_imd_climatology_percent": 100.0,
+        "mean_minus_imd_observed_mm": -4.163250982800378,
+        "absolute_mean_error_mm": 4.163250982800378
+      },
+      "ECMWF S2S": {
+        "mean_mm": 79.45537165274398,
+        "median_mm": 80.0251013417103,
+        "p10_mm": 62.224796901277394,
+        "p25_mm": 71.39918353616453,
+        "p75_mm": 89.7366424701791,
+        "p90_mm": 93.67743721932516,
+        "probability_above_imd_climatology_percent": 96.0,
+        "mean_minus_imd_observed_mm": 8.356243289572504,
+        "absolute_mean_error_mm": 8.356243289572504
+      }
+    }
+  },
+  "interpretation": "Case-specific repeated forecast of one event; not an independent skill sample."
+}

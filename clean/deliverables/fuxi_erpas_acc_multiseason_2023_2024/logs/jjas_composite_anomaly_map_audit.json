@@ -1,0 +1,55 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-22T11:12:35.594459+00:00",
+  "n_paired_initializations": 31,
+  "year_counts": {
+    "2023": 17,
+    "2024": 14
+  },
+  "fixed_target_supported_cells": 169,
+  "imd_support_audit": {
+    "requested_period_end_count": 749,
+    "first_period_end": "2023-01-06T00:00:00",
+    "last_period_end": "2025-01-23T00:00:00",
+    "truth_remap_checks": {
+      "2023": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2024": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2025": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      }
+    },
+    "climatology_remap_checks": {
+      "latitude_covered": true,
+      "longitude_covered": true,
+      "full_target_coverage": false
+    },
+    "feb29_rule": "mean of Feb-28 and Mar-01 climatology fields",
+    "original_source_support_cells": 4323,
+    "fixed_all_season_source_support_cells": 4293,
+    "source_cells_removed_for_any_date_missingness": 30,
+    "original_target_supported_cells": 171,
+    "fixed_all_season_target_supported_cells": 169
+  },
+  "erpas_source_counts": {
+    "19": 1,
+    "20": 30
+  },
+  "maximum_acc_reproduction_difference": 7.632783294297951e-17,
+  "checks": {
+    "paired_cycle_count_is_31": true,
+    "four_lead_weeks": true,
+    "three_map_rows": true,
+    "supported_composites_finite": true,
+    "audited_acc_reproduced": true
+  }
+}

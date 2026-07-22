@@ -1,0 +1,25 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-22T11:02:18.195275+00:00",
+  "n_paired_initializations": 31,
+  "year_counts": {
+    "2023": 17,
+    "2024": 14
+  },
+  "available_fraction": "31 of 34 possible weekly JJAS cycles",
+  "excluded_total_all_seasons": 3,
+  "fixed_target_supported_cells": 169,
+  "official_boundary": "/storage/raj.ayush/archive/s2s-forecast-/STATE_BOUNDARY.shp",
+  "erpas_source_counts": {
+    "19": 1,
+    "20": 30
+  },
+  "maximum_mae_reproduction_difference_mm_day": 1.949379591081879e-08,
+  "checks": {
+    "paired_cycle_count_is_31": true,
+    "four_lead_weeks": true,
+    "all_supported_errors_finite": true,
+    "audited_csv_mae_reproduced": true,
+    "official_boundary_has_40_records": true
+  }
+}

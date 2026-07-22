@@ -1,0 +1,160 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-22T10:18:54.868756+00:00",
+  "scope": "paired Wednesday ERPAS and preceding-Monday strict-00Z FuXi-S2S cycles in 2023-2024",
+  "paper_v2_alignment": "primary acc_mean is arithmetic mean of per-initialization spatial ACC; Fisher-z mean retained as sensitivity",
+  "methods": {
+    "common_imd_1991_2020": "forecast and IMD truth anomalies both subtract the same IMD 1991-2020 calendar-day climatology; available all year",
+    "system_specific_jjas": "FuXi forecast subtracts native 2002-2021 model climatology; ERPAS forecast subtracts provider 20-source climatology; IMD truth subtracts IMD 1991-2020; ready only for JJAS because the standardized FuXi model-climatology NetCDF is JJAS-only"
+  },
+  "season_windows": {
+    "ALL": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "JF": [
+      1,
+      2
+    ],
+    "JFM": [
+      1,
+      2,
+      3
+    ],
+    "MAM": [
+      3,
+      4,
+      5
+    ],
+    "JJAS": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "OND": [
+      10,
+      11,
+      12
+    ]
+  },
+  "season_window_note": "The headline four-season partition is JF, MAM, JJAS and OND. JFM is retained only as a separate paper_v2 comparison window and overlaps MAM in March; it is not part of the disjoint four-season partition.",
+  "forecast_roots": {
+    "ERPAS": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast",
+    "FuXi-S2S": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts"
+  },
+  "erpas_source_count_distribution": {
+    "4": 9,
+    "8": 1,
+    "12": 1,
+    "19": 1,
+    "20": 89
+  },
+  "erpas_source_count_note": "ERPAS is a provider-precomputed deterministic mean; GRIB numberOfForecastsInEnsemble varies by initialization and is retained explicitly in the per-case CSV.",
+  "forecast_climatologies": {
+    "FuXi-S2S": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+    "ERPAS": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/reforecast/climatology"
+  },
+  "truth": "/storage/raj.ayush/All_Model_Data/ground_truth/imd_rainfall/netcdf",
+  "truth_climatology": "/storage/raj.ayush/All_Model_Data/ground_truth/imd_rainfall/climatology/imd_rain_1991_2020_daily_climatology.nc",
+  "truth_climatology_sha256": "a7b7780ad46dc9bbd3127f74714e76c33559b98ce377c8d92a9002c1fa73d62d",
+  "grid": "22x22 at 1.5 degrees; frozen all-season India support with 169 cells",
+  "spatial_weighting": "spherical target-cell area multiplied by frozen IMD India fraction",
+  "case_aggregation": "paper_v2 arithmetic mean primary; Fisher-z mean also provided",
+  "excluded_missing_pairs": [
+    {
+      "erpas_init": "2024-06-12",
+      "reason": "matched preceding-Monday strict-00Z FuXi file missing",
+      "expected_fuxi_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240610.nc"
+    },
+    {
+      "erpas_init": "2024-06-19",
+      "reason": "matched preceding-Monday strict-00Z FuXi file missing",
+      "expected_fuxi_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240617.nc"
+    },
+    {
+      "erpas_init": "2024-08-07",
+      "reason": "matched preceding-Monday strict-00Z FuXi file missing",
+      "expected_fuxi_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240805.nc"
+    }
+  ],
+  "imd": {
+    "requested_period_end_count": 749,
+    "first_period_end": "2023-01-06T00:00:00",
+    "last_period_end": "2025-01-23T00:00:00",
+    "truth_remap_checks": {
+      "2023": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2024": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2025": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      }
+    },
+    "climatology_remap_checks": {
+      "latitude_covered": true,
+      "longitude_covered": true,
+      "full_target_coverage": false
+    },
+    "feb29_rule": "mean of Feb-28 and Mar-01 climatology fields",
+    "original_source_support_cells": 4323,
+    "fixed_all_season_source_support_cells": 4293,
+    "source_cells_removed_for_any_date_missingness": 30,
+    "original_target_supported_cells": 171,
+    "fixed_all_season_target_supported_cells": 169
+  },
+  "imd_homogeneous_regions": {
+    "mask_path": "/home/raj.ayush/s2s/s2s_anlysis/masks/imd_region_masks_0.25deg.nc",
+    "mask_sha256": "a834a834772e94e2bfcd2002c77aab12342778e494776aed7751cf52c9d87a4e",
+    "description": "IMD 4-region boolean masks (1=in region) from Survey of India STATE_BOUNDARY.shp, LCC->WGS84.",
+    "citation": "Pai et al. (2014); boundaries: Survey of India",
+    "remapping": "conservative spherical overlap from 0.25-degree boolean masks to 1.5-degree fractional support",
+    "weighting": "frozen All-India spatial weight partitioned by within-cell IMD-region fractional area",
+    "target_cells_with_positive_weight": {
+      "northwest_india": 68,
+      "central_india": 64,
+      "south_peninsula": 38,
+      "east_northeast_india": 36
+    },
+    "fractional_weight_sum_matches_all_india_where_region_union_is_represented": true
+  },
+  "checks": {
+    "paired_case_count_101": true,
+    "year_counts_52_49": true,
+    "fixed_support_has_at_least_150_cells": true,
+    "all_acc_in_bounds": true,
+    "all_errors_finite_nonnegative": true,
+    "system_specific_only_jjas": true,
+    "both_models_every_case_method_week": true,
+    "four_imd_regions_present": true,
+    "regional_acc_in_bounds": true,
+    "regional_errors_finite_nonnegative": true,
+    "both_models_every_region_case_method_week": true
+  },
+  "outputs": [
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_acc_multiseason_2023_2024/metrics/acc_per_case_2023_2024.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_acc_multiseason_2023_2024/metrics/acc_summary_by_year_season.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_acc_multiseason_2023_2024/metrics/acc_fuxi_minus_erpas_by_year_season.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_acc_multiseason_2023_2024/metrics/regional_acc_per_case_2023_2024.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_acc_multiseason_2023_2024/metrics/regional_acc_summary_by_year_season.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_acc_multiseason_2023_2024/metrics/regional_acc_fuxi_minus_erpas.csv"
+  ]
+}

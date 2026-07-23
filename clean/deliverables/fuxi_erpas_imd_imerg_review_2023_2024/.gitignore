@@ -1,0 +1,7 @@
+.cache/
+.mplconfig/
+data/imerg_climatology/.daily_cache/
+data/imerg_climatology/year_chunks/
+logs/*.out
+logs/*.err
+*.tmp

@@ -1,0 +1,2086 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-24T09:25:51.514970+00:00",
+  "purpose": "individual paired-case 2x2 Week-1--4 rainfall-anomaly figures for presentation",
+  "data_source": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/processed/review_fields_2023_2024.nc",
+  "imerg_native_observation_source": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/imd_acc_1p5_full_2023_2024/data/observations/imerg_final_v07b_jjas_2023_2024_india.nc",
+  "imerg_native_observation_product": "GPM_3IMERGDF.07",
+  "imerg_native_climatology": {
+    "status": "VALIDATED_EXISTING",
+    "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_native_0p1_daily.nc",
+    "shape": [
+      142,
+      348,
+      333
+    ],
+    "baseline_year_count": 22
+  },
+  "verification_reference": "IMERG Final V07B",
+  "map_extent_degrees": {
+    "west": 66.97765528808891,
+    "east": 98.61289651394152,
+    "south": 5.0,
+    "north": 37.987288350881784
+  },
+  "shared_levels_mm_day": [
+    -20.0,
+    -15.0,
+    -10.0,
+    -5.0,
+    -2.0,
+    2.0,
+    5.0,
+    10.0,
+    15.0,
+    20.0
+  ],
+  "shared_colors": [
+    "#ff5200",
+    "#ff8e1d",
+    "#ffca59",
+    "#fff4a5",
+    "#ffffff",
+    "#c8c8e9",
+    "#8c8cbf",
+    "#6464a3",
+    "#3c3c87"
+  ],
+  "under_color": "#d70e00",
+  "over_color": "#00001e",
+  "scientific_grids": "IMERG 0.1-degree native; FuXi-S2S 1.5-degree native; ERPAS 1.0-degree native",
+  "display": "IMERG is drawn as direct native cells; FuXi-S2S and ERPAS use filled contours evaluated on their native nodes. Fields are not clipped to India; no array resampling or amplitude scaling is applied",
+  "color_scale_policy": "input anomalies are not clipped or rescaled; the fixed shared colorbar saturates values beyond +/-20 mm/day using extend colors",
+  "checks": {
+    "requested_cases_exist": true,
+    "three_products_per_case": true,
+    "all_cases_mode_has_31_cases": true,
+    "all_png_and_pdf_outputs_exist": true,
+    "four_weeks_in_dataset": true,
+    "fuxi_grid_is_1p5_degrees": true,
+    "imerg_native_grid_is_0p1_degrees": true,
+    "erpas_native_grid_is_1p0_degrees": true,
+    "erpas_source_counts_positive": true,
+    "all_native_fields_extend_outside_india": true,
+    "fuxi_unmasked_matches_audited_india_values": true,
+    "official_boundary_has_40_records": true,
+    "exact_requested_color_levels": true,
+    "southern_boundary_matches_request": true
+  },
+  "cases": [
+    {
+      "case_id": "paired_20230607",
+      "fuxi_initialization": "2023-06-05",
+      "erpas_initialization": "2023-06-07",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230605.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0602",
+          "0606"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.559755325317383e-06,
+        "india_mean_abs_difference_mm_day": 4.701331306478096e-07
+      },
+      "erpas_climatology_slots": [
+        "0607",
+        "0607"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -45.066104888916016,
+          247.6039581298828
+        ],
+        "FuXi-S2S": [
+          -11.771282196044922,
+          18.274974822998047
+        ],
+        "ERPAS": [
+          -21.187501907348633,
+          30.98214340209961
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230607/01_imerg_observed_anomaly_paired_20230607.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230607/01_imerg_observed_anomaly_paired_20230607.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230607/02_fuxi_s2s_anomaly_paired_20230607.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230607/02_fuxi_s2s_anomaly_paired_20230607.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230607/03_erpas_anomaly_paired_20230607.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230607/03_erpas_anomaly_paired_20230607.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230614",
+      "fuxi_initialization": "2023-06-12",
+      "erpas_initialization": "2023-06-14",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230612.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0609",
+          "0613"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.4570693969726562e-06,
+        "india_mean_abs_difference_mm_day": 4.5068296117278805e-07
+      },
+      "erpas_climatology_slots": [
+        "0614",
+        "0614"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -45.066104888916016,
+          80.67247009277344
+        ],
+        "FuXi-S2S": [
+          -14.244860649108887,
+          31.899904251098633
+        ],
+        "ERPAS": [
+          -25.517858505249023,
+          64.64285278320312
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230614/01_imerg_observed_anomaly_paired_20230614.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230614/01_imerg_observed_anomaly_paired_20230614.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230614/02_fuxi_s2s_anomaly_paired_20230614.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230614/02_fuxi_s2s_anomaly_paired_20230614.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230614/03_erpas_anomaly_paired_20230614.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230614/03_erpas_anomaly_paired_20230614.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230621",
+      "fuxi_initialization": "2023-06-19",
+      "erpas_initialization": "2023-06-21",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230619.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0616",
+          "0620"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 5.7220458984375e-06,
+        "india_mean_abs_difference_mm_day": 5.486137411025993e-07
+      },
+      "erpas_climatology_slots": [
+        "0621",
+        "0621"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -45.066104888916016,
+          85.64564514160156
+        ],
+        "FuXi-S2S": [
+          -17.996246337890625,
+          27.038440704345703
+        ],
+        "ERPAS": [
+          -19.732141494750977,
+          35.25
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230621/01_imerg_observed_anomaly_paired_20230621.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230621/01_imerg_observed_anomaly_paired_20230621.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230621/02_fuxi_s2s_anomaly_paired_20230621.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230621/02_fuxi_s2s_anomaly_paired_20230621.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230621/03_erpas_anomaly_paired_20230621.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230621/03_erpas_anomaly_paired_20230621.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230628",
+      "fuxi_initialization": "2023-06-26",
+      "erpas_initialization": "2023-06-28",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230626.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0623",
+          "0627"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.231929779052734e-06,
+        "india_mean_abs_difference_mm_day": 5.804197371617192e-07
+      },
+      "erpas_climatology_slots": [
+        "0628",
+        "0628"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -45.066104888916016,
+          107.8968734741211
+        ],
+        "FuXi-S2S": [
+          -13.658082962036133,
+          31.837688446044922
+        ],
+        "ERPAS": [
+          -25.553571701049805,
+          20.794645309448242
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230628/01_imerg_observed_anomaly_paired_20230628.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230628/01_imerg_observed_anomaly_paired_20230628.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230628/02_fuxi_s2s_anomaly_paired_20230628.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230628/02_fuxi_s2s_anomaly_paired_20230628.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230628/03_erpas_anomaly_paired_20230628.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230628/03_erpas_anomaly_paired_20230628.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230705",
+      "fuxi_initialization": "2023-07-03",
+      "erpas_initialization": "2023-07-05",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230703.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0630",
+          "0704"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 5.245208740234375e-06,
+        "india_mean_abs_difference_mm_day": 4.983753569831606e-07
+      },
+      "erpas_climatology_slots": [
+        "0705",
+        "0705"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -34.09415817260742,
+          107.8968734741211
+        ],
+        "FuXi-S2S": [
+          -12.052461624145508,
+          26.78011703491211
+        ],
+        "ERPAS": [
+          -20.571430206298828,
+          22.303573608398438
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230705/01_imerg_observed_anomaly_paired_20230705.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230705/01_imerg_observed_anomaly_paired_20230705.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230705/02_fuxi_s2s_anomaly_paired_20230705.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230705/02_fuxi_s2s_anomaly_paired_20230705.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230705/03_erpas_anomaly_paired_20230705.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230705/03_erpas_anomaly_paired_20230705.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230712",
+      "fuxi_initialization": "2023-07-10",
+      "erpas_initialization": "2023-07-12",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230710.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0707",
+          "0711"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 5.317328373166674e-07
+      },
+      "erpas_climatology_slots": [
+        "0712",
+        "0712"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -34.550132751464844,
+          107.8968734741211
+        ],
+        "FuXi-S2S": [
+          -14.660782814025879,
+          30.621307373046875
+        ],
+        "ERPAS": [
+          -20.71428680419922,
+          45.66071701049805
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230712/01_imerg_observed_anomaly_paired_20230712.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230712/01_imerg_observed_anomaly_paired_20230712.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230712/02_fuxi_s2s_anomaly_paired_20230712.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230712/02_fuxi_s2s_anomaly_paired_20230712.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230712/03_erpas_anomaly_paired_20230712.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230712/03_erpas_anomaly_paired_20230712.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230719",
+      "fuxi_initialization": "2023-07-17",
+      "erpas_initialization": "2023-07-19",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230717.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0714",
+          "0718"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 4.925967118651897e-07
+      },
+      "erpas_climatology_slots": [
+        "0719",
+        "0719"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -34.550132751464844,
+          107.8968734741211
+        ],
+        "FuXi-S2S": [
+          -16.383136749267578,
+          37.105690002441406
+        ],
+        "ERPAS": [
+          -24.98214340209961,
+          26.76785659790039
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230719/01_imerg_observed_anomaly_paired_20230719.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230719/01_imerg_observed_anomaly_paired_20230719.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230719/02_fuxi_s2s_anomaly_paired_20230719.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230719/02_fuxi_s2s_anomaly_paired_20230719.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230719/03_erpas_anomaly_paired_20230719.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230719/03_erpas_anomaly_paired_20230719.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230726",
+      "fuxi_initialization": "2023-07-24",
+      "erpas_initialization": "2023-07-26",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230724.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0721",
+          "0725"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 4.526365557921963e-07
+      },
+      "erpas_climatology_slots": [
+        "0724",
+        "0730"
+      ],
+      "erpas_climatology_right_weight": 0.3333333333333333,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -34.550132751464844,
+          103.4592514038086
+        ],
+        "FuXi-S2S": [
+          -16.54585075378418,
+          19.349050521850586
+        ],
+        "ERPAS": [
+          -14.678573608398438,
+          23.443452835083008
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230726/01_imerg_observed_anomaly_paired_20230726.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230726/01_imerg_observed_anomaly_paired_20230726.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230726/02_fuxi_s2s_anomaly_paired_20230726.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230726/02_fuxi_s2s_anomaly_paired_20230726.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230726/03_erpas_anomaly_paired_20230726.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230726/03_erpas_anomaly_paired_20230726.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230802",
+      "fuxi_initialization": "2023-07-31",
+      "erpas_initialization": "2023-08-02",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230731.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0728",
+          "0801"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 5.7220458984375e-06,
+        "india_mean_abs_difference_mm_day": 4.317238051498862e-07
+      },
+      "erpas_climatology_slots": [
+        "0802",
+        "0802"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -34.550132751464844,
+          84.56587982177734
+        ],
+        "FuXi-S2S": [
+          -13.691670417785645,
+          19.250167846679688
+        ],
+        "ERPAS": [
+          -15.517860412597656,
+          24.767858505249023
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230802/01_imerg_observed_anomaly_paired_20230802.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230802/01_imerg_observed_anomaly_paired_20230802.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230802/02_fuxi_s2s_anomaly_paired_20230802.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230802/02_fuxi_s2s_anomaly_paired_20230802.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230802/03_erpas_anomaly_paired_20230802.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230802/03_erpas_anomaly_paired_20230802.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230809",
+      "fuxi_initialization": "2023-08-07",
+      "erpas_initialization": "2023-08-09",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230807.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0804",
+          "0808"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.291534423828125e-06,
+        "india_mean_abs_difference_mm_day": 4.141760996390076e-07
+      },
+      "erpas_climatology_slots": [
+        "0809",
+        "0809"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -27.885095596313477,
+          61.00503158569336
+        ],
+        "FuXi-S2S": [
+          -11.453217506408691,
+          17.159469604492188
+        ],
+        "ERPAS": [
+          -20.258928298950195,
+          27.5
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230809/01_imerg_observed_anomaly_paired_20230809.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230809/01_imerg_observed_anomaly_paired_20230809.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230809/02_fuxi_s2s_anomaly_paired_20230809.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230809/02_fuxi_s2s_anomaly_paired_20230809.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230809/03_erpas_anomaly_paired_20230809.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230809/03_erpas_anomaly_paired_20230809.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230816",
+      "fuxi_initialization": "2023-08-14",
+      "erpas_initialization": "2023-08-16",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230814.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0811",
+          "0815"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 4.2436519720467913e-07
+      },
+      "erpas_climatology_slots": [
+        "0816",
+        "0816"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -27.885095596313477,
+          79.32584381103516
+        ],
+        "FuXi-S2S": [
+          -9.662578582763672,
+          17.282447814941406
+        ],
+        "ERPAS": [
+          -14.553570747375488,
+          18.169639587402344
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230816/01_imerg_observed_anomaly_paired_20230816.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230816/01_imerg_observed_anomaly_paired_20230816.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230816/02_fuxi_s2s_anomaly_paired_20230816.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230816/02_fuxi_s2s_anomaly_paired_20230816.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230816/03_erpas_anomaly_paired_20230816.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230816/03_erpas_anomaly_paired_20230816.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230823",
+      "fuxi_initialization": "2023-08-21",
+      "erpas_initialization": "2023-08-23",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230821.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0818",
+          "0822"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 5.245208740234375e-06,
+        "india_mean_abs_difference_mm_day": 3.61779370905424e-07
+      },
+      "erpas_climatology_slots": [
+        "0821",
+        "0827"
+      ],
+      "erpas_climatology_right_weight": 0.3333333333333333,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -27.885095596313477,
+          89.48006439208984
+        ],
+        "FuXi-S2S": [
+          -9.379497528076172,
+          21.375106811523438
+        ],
+        "ERPAS": [
+          -17.636903762817383,
+          34.04166793823242
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230823/01_imerg_observed_anomaly_paired_20230823.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230823/01_imerg_observed_anomaly_paired_20230823.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230823/02_fuxi_s2s_anomaly_paired_20230823.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230823/02_fuxi_s2s_anomaly_paired_20230823.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230823/03_erpas_anomaly_paired_20230823.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230823/03_erpas_anomaly_paired_20230823.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230830",
+      "fuxi_initialization": "2023-08-28",
+      "erpas_initialization": "2023-08-30",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230828.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0825",
+          "0829"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 3.300766877600836e-07
+      },
+      "erpas_climatology_slots": [
+        "0830",
+        "0830"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -27.885095596313477,
+          89.48006439208984
+        ],
+        "FuXi-S2S": [
+          -12.82104778289795,
+          21.211889266967773
+        ],
+        "ERPAS": [
+          -21.991071701049805,
+          52.46428680419922
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230830/01_imerg_observed_anomaly_paired_20230830.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230830/01_imerg_observed_anomaly_paired_20230830.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230830/02_fuxi_s2s_anomaly_paired_20230830.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230830/02_fuxi_s2s_anomaly_paired_20230830.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230830/03_erpas_anomaly_paired_20230830.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230830/03_erpas_anomaly_paired_20230830.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230906",
+      "fuxi_initialization": "2023-09-04",
+      "erpas_initialization": "2023-09-06",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230904.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0901",
+          "0905"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 2.384185791015625e-06,
+        "india_mean_abs_difference_mm_day": 3.066828355713369e-07
+      },
+      "erpas_climatology_slots": [
+        "0906",
+        "0906"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -20.396623611450195,
+          138.00172424316406
+        ],
+        "FuXi-S2S": [
+          -13.341815948486328,
+          24.70842742919922
+        ],
+        "ERPAS": [
+          -15.303571701049805,
+          29.285715103149414
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230906/01_imerg_observed_anomaly_paired_20230906.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230906/01_imerg_observed_anomaly_paired_20230906.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230906/02_fuxi_s2s_anomaly_paired_20230906.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230906/02_fuxi_s2s_anomaly_paired_20230906.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230906/03_erpas_anomaly_paired_20230906.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230906/03_erpas_anomaly_paired_20230906.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230913",
+      "fuxi_initialization": "2023-09-11",
+      "erpas_initialization": "2023-09-13",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230911.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0908",
+          "0912"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 2.205371856689453e-06,
+        "india_mean_abs_difference_mm_day": 2.779195256152889e-07
+      },
+      "erpas_climatology_slots": [
+        "0913",
+        "0913"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -20.396623611450195,
+          138.00172424316406
+        ],
+        "FuXi-S2S": [
+          -11.041950225830078,
+          26.201786041259766
+        ],
+        "ERPAS": [
+          -17.366071701049805,
+          29.4375
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230913/01_imerg_observed_anomaly_paired_20230913.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230913/01_imerg_observed_anomaly_paired_20230913.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230913/02_fuxi_s2s_anomaly_paired_20230913.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230913/02_fuxi_s2s_anomaly_paired_20230913.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230913/03_erpas_anomaly_paired_20230913.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230913/03_erpas_anomaly_paired_20230913.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230920",
+      "fuxi_initialization": "2023-09-18",
+      "erpas_initialization": "2023-09-20",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230918.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0915",
+          "0919"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 2.9802322387695312e-06,
+        "india_mean_abs_difference_mm_day": 2.0563699365538923e-07
+      },
+      "erpas_climatology_slots": [
+        "0918",
+        "0924"
+      ],
+      "erpas_climatology_right_weight": 0.3333333333333333,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -19.89392852783203,
+          138.00172424316406
+        ],
+        "FuXi-S2S": [
+          -11.182019233703613,
+          30.88212776184082
+        ],
+        "ERPAS": [
+          -15.8005952835083,
+          41.71428680419922
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230920/01_imerg_observed_anomaly_paired_20230920.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230920/01_imerg_observed_anomaly_paired_20230920.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230920/02_fuxi_s2s_anomaly_paired_20230920.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230920/02_fuxi_s2s_anomaly_paired_20230920.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230920/03_erpas_anomaly_paired_20230920.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230920/03_erpas_anomaly_paired_20230920.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20230927",
+      "fuxi_initialization": "2023-09-25",
+      "erpas_initialization": "2023-09-27",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230925.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0922",
+          "0926"
+        ],
+        "climatology_right_weight": 0.75,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 1.9073486328125e-06,
+        "india_mean_abs_difference_mm_day": 1.724826432791815e-07
+      },
+      "erpas_climatology_slots": [
+        "0927",
+        "0927"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -19.89392852783203,
+          138.00172424316406
+        ],
+        "FuXi-S2S": [
+          -11.132655143737793,
+          35.74287033081055
+        ],
+        "ERPAS": [
+          -12.571429252624512,
+          35.79464340209961
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230927/01_imerg_observed_anomaly_paired_20230927.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230927/01_imerg_observed_anomaly_paired_20230927.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230927/02_fuxi_s2s_anomaly_paired_20230927.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230927/02_fuxi_s2s_anomaly_paired_20230927.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230927/03_erpas_anomaly_paired_20230927.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20230927/03_erpas_anomaly_paired_20230927.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240605",
+      "fuxi_initialization": "2024-06-03",
+      "erpas_initialization": "2024-06-05",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240603.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0602",
+          "0606"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.291534423828125e-06,
+        "india_mean_abs_difference_mm_day": 4.138366591632803e-07
+      },
+      "erpas_climatology_slots": [
+        "0605",
+        "0605"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -28.413410186767578,
+          113.55658721923828
+        ],
+        "FuXi-S2S": [
+          -15.165360450744629,
+          40.80109405517578
+        ],
+        "ERPAS": [
+          -12.839284896850586,
+          26.008928298950195
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240605/01_imerg_observed_anomaly_paired_20240605.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240605/01_imerg_observed_anomaly_paired_20240605.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240605/02_fuxi_s2s_anomaly_paired_20240605.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240605/02_fuxi_s2s_anomaly_paired_20240605.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240605/03_erpas_anomaly_paired_20240605.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240605/03_erpas_anomaly_paired_20240605.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240626",
+      "fuxi_initialization": "2024-06-24",
+      "erpas_initialization": "2024-06-26",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240624.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0623",
+          "0627"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 7.62939453125e-06,
+        "india_mean_abs_difference_mm_day": 6.203893008205341e-07
+      },
+      "erpas_climatology_slots": [
+        "0626",
+        "0626"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -25.889934539794922,
+          146.89210510253906
+        ],
+        "FuXi-S2S": [
+          -7.128287315368652,
+          34.40751266479492
+        ],
+        "ERPAS": [
+          -23.857141494750977,
+          33.36607360839844
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240626/01_imerg_observed_anomaly_paired_20240626.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240626/01_imerg_observed_anomaly_paired_20240626.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240626/02_fuxi_s2s_anomaly_paired_20240626.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240626/02_fuxi_s2s_anomaly_paired_20240626.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240626/03_erpas_anomaly_paired_20240626.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240626/03_erpas_anomaly_paired_20240626.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240703",
+      "fuxi_initialization": "2024-07-01",
+      "erpas_initialization": "2024-07-03",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240701.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0630",
+          "0704"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 5.7220458984375e-06,
+        "india_mean_abs_difference_mm_day": 5.849673812008405e-07
+      },
+      "erpas_climatology_slots": [
+        "0703",
+        "0703"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -25.889934539794922,
+          146.89210510253906
+        ],
+        "FuXi-S2S": [
+          -14.099691390991211,
+          20.454689025878906
+        ],
+        "ERPAS": [
+          -16.732145309448242,
+          33.08035659790039
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240703/01_imerg_observed_anomaly_paired_20240703.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240703/01_imerg_observed_anomaly_paired_20240703.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240703/02_fuxi_s2s_anomaly_paired_20240703.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240703/02_fuxi_s2s_anomaly_paired_20240703.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240703/03_erpas_anomaly_paired_20240703.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240703/03_erpas_anomaly_paired_20240703.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240710",
+      "fuxi_initialization": "2024-07-08",
+      "erpas_initialization": "2024-07-10",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240708.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0707",
+          "0711"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.5299530029296875e-06,
+        "india_mean_abs_difference_mm_day": 5.278776029626897e-07
+      },
+      "erpas_climatology_slots": [
+        "0710",
+        "0710"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -33.41808319091797,
+          146.89210510253906
+        ],
+        "FuXi-S2S": [
+          -13.389032363891602,
+          37.30853271484375
+        ],
+        "ERPAS": [
+          -17.491069793701172,
+          25.29464340209961
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240710/01_imerg_observed_anomaly_paired_20240710.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240710/01_imerg_observed_anomaly_paired_20240710.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240710/02_fuxi_s2s_anomaly_paired_20240710.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240710/02_fuxi_s2s_anomaly_paired_20240710.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240710/03_erpas_anomaly_paired_20240710.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240710/03_erpas_anomaly_paired_20240710.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240717",
+      "fuxi_initialization": "2024-07-15",
+      "erpas_initialization": "2024-07-17",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240715.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0714",
+          "0718"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 7.62939453125e-06,
+        "india_mean_abs_difference_mm_day": 5.868571975042869e-07
+      },
+      "erpas_climatology_slots": [
+        "0717",
+        "0717"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -39.18821334838867,
+          146.89210510253906
+        ],
+        "FuXi-S2S": [
+          -23.736848831176758,
+          31.64493751525879
+        ],
+        "ERPAS": [
+          -15.258928298950195,
+          32.46428298950195
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240717/01_imerg_observed_anomaly_paired_20240717.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240717/01_imerg_observed_anomaly_paired_20240717.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240717/02_fuxi_s2s_anomaly_paired_20240717.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240717/02_fuxi_s2s_anomaly_paired_20240717.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240717/03_erpas_anomaly_paired_20240717.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240717/03_erpas_anomaly_paired_20240717.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240724",
+      "fuxi_initialization": "2024-07-22",
+      "erpas_initialization": "2024-07-24",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240722.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0721",
+          "0725"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.76837158203125e-06,
+        "india_mean_abs_difference_mm_day": 5.386351062952599e-07
+      },
+      "erpas_climatology_slots": [
+        "0724",
+        "0724"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -39.18821334838867,
+          144.58895874023438
+        ],
+        "FuXi-S2S": [
+          -9.36550235748291,
+          19.552406311035156
+        ],
+        "ERPAS": [
+          -26.526782989501953,
+          33.86607360839844
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240724/01_imerg_observed_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240724/01_imerg_observed_anomaly_paired_20240724.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240724/02_fuxi_s2s_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240724/02_fuxi_s2s_anomaly_paired_20240724.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240724/03_erpas_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240724/03_erpas_anomaly_paired_20240724.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240731",
+      "fuxi_initialization": "2024-07-29",
+      "erpas_initialization": "2024-07-31",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240729.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0728",
+          "0801"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.0531158447265625e-06,
+        "india_mean_abs_difference_mm_day": 5.117695991430082e-07
+      },
+      "erpas_climatology_slots": [
+        "0731",
+        "0731"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -39.18821334838867,
+          144.58895874023438
+        ],
+        "FuXi-S2S": [
+          -11.233620643615723,
+          21.610044479370117
+        ],
+        "ERPAS": [
+          -42.705360412597656,
+          43.71428680419922
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240731/01_imerg_observed_anomaly_paired_20240731.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240731/01_imerg_observed_anomaly_paired_20240731.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240731/02_fuxi_s2s_anomaly_paired_20240731.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240731/02_fuxi_s2s_anomaly_paired_20240731.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240731/03_erpas_anomaly_paired_20240731.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240731/03_erpas_anomaly_paired_20240731.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240814",
+      "fuxi_initialization": "2024-08-12",
+      "erpas_initialization": "2024-08-14",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240812.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0811",
+          "0815"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.5762786865234375e-06,
+        "india_mean_abs_difference_mm_day": 4.6768701622568187e-07
+      },
+      "erpas_climatology_slots": [
+        "0814",
+        "0814"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -25.97688102722168,
+          163.9259033203125
+        ],
+        "FuXi-S2S": [
+          -15.40559196472168,
+          27.18808937072754
+        ],
+        "ERPAS": [
+          -25.196428298950195,
+          31.15178680419922
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240814/01_imerg_observed_anomaly_paired_20240814.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240814/01_imerg_observed_anomaly_paired_20240814.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240814/02_fuxi_s2s_anomaly_paired_20240814.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240814/02_fuxi_s2s_anomaly_paired_20240814.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240814/03_erpas_anomaly_paired_20240814.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240814/03_erpas_anomaly_paired_20240814.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240821",
+      "fuxi_initialization": "2024-08-19",
+      "erpas_initialization": "2024-08-21",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240819.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0818",
+          "0822"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 4.740197709907079e-07
+      },
+      "erpas_climatology_slots": [
+        "0821",
+        "0821"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -25.97688102722168,
+          163.9259033203125
+        ],
+        "FuXi-S2S": [
+          -9.557845115661621,
+          35.480464935302734
+        ],
+        "ERPAS": [
+          -21.54464340209961,
+          31.41964340209961
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240821/01_imerg_observed_anomaly_paired_20240821.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240821/01_imerg_observed_anomaly_paired_20240821.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240821/02_fuxi_s2s_anomaly_paired_20240821.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240821/02_fuxi_s2s_anomaly_paired_20240821.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240821/03_erpas_anomaly_paired_20240821.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240821/03_erpas_anomaly_paired_20240821.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240828",
+      "fuxi_initialization": "2024-08-26",
+      "erpas_initialization": "2024-08-28",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240826.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0825",
+          "0829"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 2.86102294921875e-06,
+        "india_mean_abs_difference_mm_day": 3.9169700016827846e-07
+      },
+      "erpas_climatology_slots": [
+        "0828",
+        "0828"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -25.97688102722168,
+          163.9259033203125
+        ],
+        "FuXi-S2S": [
+          -17.24138069152832,
+          18.455890655517578
+        ],
+        "ERPAS": [
+          -18.366073608398438,
+          29.0625
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240828/01_imerg_observed_anomaly_paired_20240828.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240828/01_imerg_observed_anomaly_paired_20240828.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240828/02_fuxi_s2s_anomaly_paired_20240828.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240828/02_fuxi_s2s_anomaly_paired_20240828.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240828/03_erpas_anomaly_paired_20240828.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240828/03_erpas_anomaly_paired_20240828.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240904",
+      "fuxi_initialization": "2024-09-02",
+      "erpas_initialization": "2024-09-04",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240902.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0901",
+          "0905"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 2.6226043701171875e-06,
+        "india_mean_abs_difference_mm_day": 3.360965479259903e-07
+      },
+      "erpas_climatology_slots": [
+        "0904",
+        "0904"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 19,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -23.911623001098633,
+          163.9259033203125
+        ],
+        "FuXi-S2S": [
+          -9.558164596557617,
+          14.67020034790039
+        ],
+        "ERPAS": [
+          -12.16964340209961,
+          36.24107360839844
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240904/01_imerg_observed_anomaly_paired_20240904.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240904/01_imerg_observed_anomaly_paired_20240904.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240904/02_fuxi_s2s_anomaly_paired_20240904.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240904/02_fuxi_s2s_anomaly_paired_20240904.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240904/03_erpas_anomaly_paired_20240904.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240904/03_erpas_anomaly_paired_20240904.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240911",
+      "fuxi_initialization": "2024-09-09",
+      "erpas_initialization": "2024-09-11",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240909.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0908",
+          "0912"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 3.1418980483977066e-07
+      },
+      "erpas_climatology_slots": [
+        "0911",
+        "0911"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -23.911623001098633,
+          112.09954833984375
+        ],
+        "FuXi-S2S": [
+          -12.013995170593262,
+          29.092803955078125
+        ],
+        "ERPAS": [
+          -18.60714340209961,
+          24.5625
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240911/01_imerg_observed_anomaly_paired_20240911.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240911/01_imerg_observed_anomaly_paired_20240911.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240911/02_fuxi_s2s_anomaly_paired_20240911.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240911/02_fuxi_s2s_anomaly_paired_20240911.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240911/03_erpas_anomaly_paired_20240911.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240911/03_erpas_anomaly_paired_20240911.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240918",
+      "fuxi_initialization": "2024-09-16",
+      "erpas_initialization": "2024-09-18",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240916.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0915",
+          "0919"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 4.649162292480469e-06,
+        "india_mean_abs_difference_mm_day": 2.440047524032707e-07
+      },
+      "erpas_climatology_slots": [
+        "0918",
+        "0918"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -17.961103439331055,
+          64.28359985351562
+        ],
+        "FuXi-S2S": [
+          -15.599488258361816,
+          19.94881820678711
+        ],
+        "ERPAS": [
+          -14.982141494750977,
+          23.160717010498047
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240918/01_imerg_observed_anomaly_paired_20240918.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240918/01_imerg_observed_anomaly_paired_20240918.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240918/02_fuxi_s2s_anomaly_paired_20240918.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240918/02_fuxi_s2s_anomaly_paired_20240918.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240918/03_erpas_anomaly_paired_20240918.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240918/03_erpas_anomaly_paired_20240918.pdf"
+      ]
+    },
+    {
+      "case_id": "paired_20240925",
+      "fuxi_initialization": "2024-09-23",
+      "erpas_initialization": "2024-09-25",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "fuxi_native_shape": [
+        4,
+        27,
+        27
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "fuxi": {
+        "forecast_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240923.nc",
+        "forecast_ensemble_members": 50,
+        "forecast_run_label": "fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50",
+        "climatology_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+        "climatology_slots": [
+          "0922",
+          "0926"
+        ],
+        "climatology_right_weight": 0.25,
+        "climatology_baseline_years": "2002-2021",
+        "climatology_title": "FuXi-S2S 2002-2021 native-reforecast lead-dependent model climatology",
+        "units": "mm day-1",
+        "india_audited_cell_count": 676,
+        "india_max_abs_difference_mm_day": 3.814697265625e-06,
+        "india_mean_abs_difference_mm_day": 2.4832360168147716e-07
+      },
+      "erpas_climatology_slots": [
+        "0925",
+        "0925"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "native_anomaly_min_max_mm_day": {
+        "IMERG": [
+          -17.961103439331055,
+          64.28359985351562
+        ],
+        "FuXi-S2S": [
+          -10.299202919006348,
+          35.8956298828125
+        ],
+        "ERPAS": [
+          -22.633928298950195,
+          40.05357360839844
+        ]
+      },
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240925/01_imerg_observed_anomaly_paired_20240925.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240925/01_imerg_observed_anomaly_paired_20240925.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240925/02_fuxi_s2s_anomaly_paired_20240925.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240925/02_fuxi_s2s_anomaly_paired_20240925.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240925/03_erpas_anomaly_paired_20240925.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_unclipped_native/paired_20240925/03_erpas_anomaly_paired_20240925.pdf"
+      ]
+    }
+  ]
+}

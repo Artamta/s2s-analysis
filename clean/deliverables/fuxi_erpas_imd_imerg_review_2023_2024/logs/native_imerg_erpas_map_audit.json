@@ -1,0 +1,45 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-23T00:16:37.458512+00:00",
+  "purpose": "native-resolution visual comparison of IMERG observed and ERPAS forecast anomalies",
+  "native_grid_policy": "no interpolation between IMERG 0.1-degree and ERPAS 1.0-degree display fields",
+  "score_policy": "printed ACC is read from the independently audited common 1.5-degree calculation",
+  "imerg_observation_path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/imd_acc_1p5_full_2023_2024/data/observations/imerg_final_v07b_jjas_2023_2024_india.nc",
+  "imerg_observation_provenance": {
+    "title": "IMERG Final V07B daily precipitation, India pilot subset",
+    "product": "GPM_3IMERGDF.07",
+    "revision": "V07B",
+    "doi": "10.5067/GPM/IMERGDF/DAY/07",
+    "source_url": "https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.07",
+    "source_variable": "precipitation",
+    "source_units": "mm/day",
+    "stored_units": "mm per one-day interval",
+    "rate_to_accumulation": "numeric value unchanged because every source interval is exactly one day",
+    "period_convention": "period_start inclusive, period_end exclusive; exact UTC day",
+    "created_utc": "2026-07-21T11:56:50.016070+00:00",
+    "date_count": "280",
+    "minimum_half_hour_count": "48",
+    "maximum_half_hour_count": "48"
+  },
+  "imerg_climatology": {
+    "status": "VALIDATED_EXISTING",
+    "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_native_0p1_daily.nc",
+    "shape": [
+      142,
+      348,
+      333
+    ],
+    "baseline_year_count": 22
+  },
+  "erpas_forecast_root": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast",
+  "erpas_climatology_root": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/reforecast/climatology",
+  "rendered_case_count": 31,
+  "checks": {
+    "imerg_native_grid_is_0p1": true,
+    "erpas_native_grid_is_1p0": true,
+    "all_requested_maps_exist": true,
+    "all_31_maps_rendered": true,
+    "official_boundary_has_40_records": true,
+    "fixed_scale_matches_reference": true
+  }
+}

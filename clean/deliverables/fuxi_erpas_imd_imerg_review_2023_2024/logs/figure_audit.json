@@ -1,0 +1,49 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-22T23:56:28.206370+00:00",
+  "purpose": "Professor-requested IMERG ACC+MAE+RMSE headline, reference bars, and different-IC anomaly maps",
+  "bar_method": "arithmetic mean; IQR whiskers; ACC higher is better; MAE and RMSE lower are better",
+  "map_method": {
+    "global_scale_limit_mm_day": 20.0,
+    "global_absolute_anomaly_q99_mm_day": 17.243755340576172,
+    "levels_mm_day": [
+      -20.0,
+      -15.0,
+      -10.0,
+      -5.0,
+      -2.0,
+      2.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0
+    ],
+    "official_state_record_count": 40,
+    "display_boundary_simplification_degrees": 0.02,
+    "india_masking": "official outline applied directly to the interpolated display mesh; no effect on native-grid verification",
+    "all_maps_pdf": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/04_all_31_imerg_spatial_anomaly_maps.pdf"
+  },
+  "png_dimensions": {
+    "00_imerg_acc_mae_headline_2023_2024.png": [
+      5154,
+      2278
+    ],
+    "01_acc_grouped_bars_imd_imerg_2023_2024.png": [
+      3781,
+      2018
+    ],
+    "02_mae_grouped_bars_imd_imerg_2023_2024.png": [
+      3703,
+      2018
+    ]
+  },
+  "checks": {
+    "six_bar_outputs_exist": true,
+    "bar_summary_has_16_rows": true,
+    "bar_sample_is_31": true,
+    "maps_rendered_or_existing_index_has_31": true,
+    "all_31_ic_pngs_exist": true,
+    "three_selected_map_pairs_exist": true,
+    "official_boundary_has_40_records": true
+  }
+}

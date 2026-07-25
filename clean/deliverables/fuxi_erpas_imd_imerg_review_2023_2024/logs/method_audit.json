@@ -1,0 +1,955 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-22T21:43:34.747744+00:00",
+  "scope": "31 paired FuXi-S2S/ERPAS JJAS starts in 2023-2024, verified independently against IMD and IMERG Final V07B",
+  "case_pairing": "ERPAS Wednesday with preceding-Monday FuXi; four identical Thursday-Wednesday seven-day windows",
+  "aggregation": "arithmetic mean of case-wise area-weighted spatial ACC; IQR is descriptive",
+  "bootstrap": {
+    "method": "paired circular moving-block bootstrap within each year",
+    "block_length_initializations": 4,
+    "samples": 10000,
+    "base_seed": 20260723,
+    "purpose": "robustness supplement only; no headline significance claim"
+  },
+  "forecast_climatologies": {
+    "FuXi-S2S": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+    "ERPAS": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/reforecast/climatology"
+  },
+  "imd": {
+    "requested_period_end_count": 749,
+    "first_period_end": "2023-01-06T00:00:00",
+    "last_period_end": "2025-01-23T00:00:00",
+    "truth_remap_checks": {
+      "2023": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2024": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2025": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      }
+    },
+    "climatology_remap_checks": {
+      "latitude_covered": true,
+      "longitude_covered": true,
+      "full_target_coverage": false
+    },
+    "feb29_rule": "mean of Feb-28 and Mar-01 climatology fields",
+    "original_source_support_cells": 4323,
+    "fixed_all_season_source_support_cells": 4293,
+    "source_cells_removed_for_any_date_missingness": 30,
+    "original_target_supported_cells": 171,
+    "fixed_all_season_target_supported_cells": 169
+  },
+  "imerg_observations": {
+    "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/imd_acc_1p5_full_2023_2024/data/observations/imerg_final_v07b_jjas_2023_2024_india.nc",
+    "sha256": "706d442f04602309b0af10a1841243d6c11c8296e5405af476a25d959237d0f6",
+    "source_attrs": {
+      "title": "IMERG Final V07B daily precipitation, India pilot subset",
+      "product": "GPM_3IMERGDF.07",
+      "revision": "V07B",
+      "doi": "10.5067/GPM/IMERGDF/DAY/07",
+      "source_url": "https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.07",
+      "source_variable": "precipitation",
+      "source_units": "mm/day",
+      "stored_units": "mm per one-day interval",
+      "rate_to_accumulation": "numeric value unchanged because every source interval is exactly one day",
+      "period_convention": "period_start inclusive, period_end exclusive; exact UTC day",
+      "created_utc": "2026-07-21T11:56:50.016070+00:00",
+      "date_count": 280,
+      "minimum_half_hour_count": 48,
+      "maximum_half_hour_count": 48
+    },
+    "date_count": 280,
+    "first_date": "2023-06-08",
+    "last_date": "2024-10-23",
+    "minimum_half_hour_count": 48,
+    "maximum_half_hour_count": 48,
+    "remap_checks": {
+      "latitude_covered": true,
+      "longitude_covered": true,
+      "full_target_coverage": true
+    },
+    "support_representation": {
+      "land_support_area_steradians": 0.07450992027433037,
+      "target_land_fraction_sha256": "f4eb52193797edc4fd1d7e45373eab385dfe164df9a5dd155f3077c1f025c794",
+      "support_fraction_max_absolute_difference": 2.9329325301752363e-08,
+      "support_fraction_area_weighted_l1_difference": 8.59114273935718e-09
+    }
+  },
+  "imerg_climatology": {
+    "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_1p5_daily.nc",
+    "sha256": "38e066a3d0efccb38977e9d2a6f243d94e548a6a7d5dd33f67592efc2d7247b8",
+    "manifest_path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_1p5_daily.manifest.json",
+    "manifest_sha256": "0b4a44656f74b7aa5c858139535ba2440f4a57fe8becb78f95d26ecae7b1bb35",
+    "attrs": {
+      "title": "IMERG Final V07B 2001-2022 fixed daily climatology for India S2S verification",
+      "product": "GPM_3IMERGDF.07",
+      "revision": "V07B",
+      "doi": "10.5067/GPM/IMERGDF/DAY/07",
+      "baseline_years": "2001-2022",
+      "baseline_year_count": 22,
+      "verification_years_excluded": "2023-2024",
+      "calendar_window": "06-06 through 10-25 inclusive (142 days)",
+      "grid": "22x22 at 1.5 degrees; frozen 169-cell India support",
+      "remapping": "conservative spherical overlap to fixed IMD-derived India support",
+      "support_difference_fraction": 8.59114273935718e-09,
+      "created_utc": "2026-07-22T21:42:42.550286+00:00"
+    },
+    "sample_count_min": 22,
+    "sample_count_max": 22
+  },
+  "excluded_missing_pairs": [
+    {
+      "erpas_init": "2024-06-12",
+      "reason": "matched preceding-Monday strict-00Z FuXi file missing",
+      "expected_fuxi_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240610.nc"
+    },
+    {
+      "erpas_init": "2024-06-19",
+      "reason": "matched preceding-Monday strict-00Z FuXi file missing",
+      "expected_fuxi_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240617.nc"
+    },
+    {
+      "erpas_init": "2024-08-07",
+      "reason": "matched preceding-Monday strict-00Z FuXi file missing",
+      "expected_fuxi_path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240805.nc"
+    }
+  ],
+  "source_qc": {
+    "paired_20230607": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230605.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 62.858299255371094,
+        "minimum_weekly_mm": 0.026989003643393517,
+        "maximum_weekly_mm": 302.5616455078125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230607.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230614": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230612.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 62.89653778076172,
+        "minimum_weekly_mm": 0.2857404351234436,
+        "maximum_weekly_mm": 242.24600219726562,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230614.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230621": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230619.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 75.09171295166016,
+        "minimum_weekly_mm": 0.593599259853363,
+        "maximum_weekly_mm": 305.5367126464844,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230621.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230628": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230626.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 82.89964294433594,
+        "minimum_weekly_mm": 0.043466947972774506,
+        "maximum_weekly_mm": 412.02178955078125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230628.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230705": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230703.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.00037147520924918354,
+        "maximum_daily_mm": 85.35075378417969,
+        "minimum_weekly_mm": 0.6970170736312866,
+        "maximum_weekly_mm": 284.6161193847656,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230705.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230712": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230710.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 57.17625427246094,
+        "minimum_weekly_mm": 0.791013240814209,
+        "maximum_weekly_mm": 321.34210205078125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230712.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230719": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230717.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 67.46900177001953,
+        "minimum_weekly_mm": 0.23827217519283295,
+        "maximum_weekly_mm": 302.9926452636719,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230719.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230726": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230724.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 99.22962951660156,
+        "minimum_weekly_mm": 0.011134644038975239,
+        "maximum_weekly_mm": 222.13153076171875,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230726.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230802": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230731.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 81.18775939941406,
+        "minimum_weekly_mm": 0.08945617824792862,
+        "maximum_weekly_mm": 282.9936828613281,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230802.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230809": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230807.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 54.85380554199219,
+        "minimum_weekly_mm": 0.08326400816440582,
+        "maximum_weekly_mm": 277.1489562988281,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230809.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230816": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230814.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 52.802913665771484,
+        "minimum_weekly_mm": 0.08808425813913345,
+        "maximum_weekly_mm": 249.92300415039062,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230816.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230823": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230821.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 68.17697143554688,
+        "minimum_weekly_mm": 0.013623390346765518,
+        "maximum_weekly_mm": 296.62158203125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230823.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230830": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230828.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 46.92934036254883,
+        "minimum_weekly_mm": 0.03563243895769119,
+        "maximum_weekly_mm": 178.16175842285156,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230830.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230906": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230904.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.00020433425379451364,
+        "maximum_daily_mm": 47.56998062133789,
+        "minimum_weekly_mm": 0.10964058339595795,
+        "maximum_weekly_mm": 189.03057861328125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230906.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230913": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230911.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 75.05545806884766,
+        "minimum_weekly_mm": 0.08700891584157944,
+        "maximum_weekly_mm": 227.60377502441406,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230913.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230920": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230918.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 52.479461669921875,
+        "minimum_weekly_mm": 0.03160594776272774,
+        "maximum_weekly_mm": 242.8125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230920.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20230927": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230925.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 62.54048538208008,
+        "minimum_weekly_mm": 0.00812610611319542,
+        "maximum_weekly_mm": 186.59268188476562,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2023/tp/APCP_20230927.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240605": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240603.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 100.17236328125,
+        "minimum_weekly_mm": 0.0013703728327527642,
+        "maximum_weekly_mm": 533.3743896484375,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240605.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240626": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240624.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 91.1510238647461,
+        "minimum_weekly_mm": 0.1845545768737793,
+        "maximum_weekly_mm": 472.1597900390625,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240626.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240703": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240701.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 65.1484375,
+        "minimum_weekly_mm": 0.7265196442604065,
+        "maximum_weekly_mm": 319.5556640625,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240703.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240710": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240708.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 89.11018371582031,
+        "minimum_weekly_mm": 0.08507996052503586,
+        "maximum_weekly_mm": 439.0991516113281,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240710.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240717": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240715.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 79.3968505859375,
+        "minimum_weekly_mm": 0.019520757719874382,
+        "maximum_weekly_mm": 377.765869140625,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240717.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240724": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240722.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 79.79258728027344,
+        "minimum_weekly_mm": 0.24247080087661743,
+        "maximum_weekly_mm": 280.89093017578125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240724.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240731": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240729.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 73.29655456542969,
+        "minimum_weekly_mm": 0.5982261896133423,
+        "maximum_weekly_mm": 340.69415283203125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240731.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240814": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240812.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.002815818879753351,
+        "maximum_daily_mm": 55.731689453125,
+        "minimum_weekly_mm": 1.451322317123413,
+        "maximum_weekly_mm": 298.15362548828125,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240814.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240821": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240819.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 82.27330017089844,
+        "minimum_weekly_mm": 0.5187046527862549,
+        "maximum_weekly_mm": 369.49261474609375,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240821.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240828": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240826.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.002971115056425333,
+        "maximum_daily_mm": 39.861995697021484,
+        "minimum_weekly_mm": 0.2807515263557434,
+        "maximum_weekly_mm": 166.43605041503906,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240828.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240904": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240902.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 52.07612609863281,
+        "minimum_weekly_mm": 0.11374013870954514,
+        "maximum_weekly_mm": 158.0563201904297,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240904.grb",
+        "source_count": 19,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240911": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240909.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 65.17127990722656,
+        "minimum_weekly_mm": 0.03965543955564499,
+        "maximum_weekly_mm": 231.16297912597656,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240911.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240918": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240916.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 53.39125061035156,
+        "minimum_weekly_mm": 0.03090093471109867,
+        "maximum_weekly_mm": 180.48597717285156,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240918.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    },
+    "paired_20240925": {
+      "FuXi-S2S": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/forecasts/annual2024/20240923.nc",
+        "member_count": 50,
+        "member_semantics": "ensemble mean",
+        "unit_conversion": "daily mean rate mm h-1 multiplied by 24",
+        "minimum_daily_mm": 0.0,
+        "maximum_daily_mm": 121.72075653076172,
+        "minimum_weekly_mm": 0.06579042971134186,
+        "maximum_weekly_mm": 276.8445129394531,
+        "land_support_area_steradians": 0.07450992027433037,
+        "target_land_fraction_sha256": "4940cc9336189d386d762d791e837f1a3ddc128cdc979e91ab8f263b650fbfc7",
+        "support_fraction_max_absolute_difference": 2.932932519073006e-08,
+        "support_fraction_area_weighted_l1_difference": 8.591142724579697e-09
+      },
+      "ERPAS": {
+        "path": "/storage/raj.ayush/s2s_final_data/final_iteration/raw/erpas/forecast/annual2024/tp/APCP_20240925.grb",
+        "source_count": 20,
+        "member_semantics": "provider precomputed unweighted source-forecast mean",
+        "unit_conversion": "kg m-2 equals mm; disjoint 24-hour accumulations",
+        "land_support_area_steradians": 0.07450992027433039,
+        "target_land_fraction_sha256": "30a3e1812c7ba727309ca1889baffebb47e0d512de397249d2829dd4cc159468",
+        "support_fraction_max_absolute_difference": 0.13790251042002613,
+        "support_fraction_area_weighted_l1_difference": 0.027178585866244116
+      }
+    }
+  },
+  "maximum_metric_reproduction_difference": 0.0,
+  "checks": {
+    "paired_case_count_31": true,
+    "year_counts_17_14": true,
+    "exactly_496_primary_rows": true,
+    "two_models_every_reference_case_week": true,
+    "four_lead_weeks": true,
+    "all_acc_in_bounds": true,
+    "all_errors_finite": true,
+    "mae_rmse_nonnegative": true,
+    "fixed_support_169_cells": true,
+    "three_distinct_selected_initializations": true,
+    "saved_metrics_reproduced": true
+  },
+  "outputs": [
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/processed/review_fields_2023_2024.nc",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/metrics/per_case_metrics_2023_2024.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/metrics/summary_metrics_2023_2024.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/metrics/paired_block_bootstrap_differences_2023_2024.csv",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/metrics/selected_spatial_initializations_2023_2024.csv"
+  ]
+}

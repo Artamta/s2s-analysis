@@ -1,0 +1,58 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-24T09:00:30.434103+00:00",
+  "purpose": "individual paired-case 2x2 Week-1--4 rainfall-anomaly figures for presentation",
+  "data_source": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/processed/review_fields_2023_2024.nc",
+  "verification_reference": "IMERG Final V07B",
+  "shared_levels_mm_day": [
+    -20.0,
+    -15.0,
+    -10.0,
+    -5.0,
+    -2.0,
+    2.0,
+    5.0,
+    10.0,
+    15.0,
+    20.0
+  ],
+  "shared_colors": [
+    "#ff5200",
+    "#ff8e1d",
+    "#ffca59",
+    "#fff4a5",
+    "#ffffff",
+    "#c8c8e9",
+    "#8c8cbf",
+    "#6464a3",
+    "#3c3c87"
+  ],
+  "under_color": "#d70e00",
+  "over_color": "#00001e",
+  "scientific_grid": "common audited 1.5-degree India grid",
+  "display": "bilinear refinement to 0.15 degrees after anomaly calculation",
+  "checks": {
+    "requested_cases_exist": true,
+    "three_products_per_case": true,
+    "all_png_and_pdf_outputs_exist": true,
+    "four_weeks_in_dataset": true,
+    "common_grid_is_1p5_degrees": true,
+    "official_boundary_has_40_records": true,
+    "exact_requested_color_levels": true
+  },
+  "cases": [
+    {
+      "case_id": "paired_20240724",
+      "fuxi_initialization": "2024-07-22",
+      "erpas_initialization": "2024-07-24",
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2/paired_20240724/01_imerg_observed_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2/paired_20240724/01_imerg_observed_anomaly_paired_20240724.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2/paired_20240724/02_fuxi_s2s_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2/paired_20240724/02_fuxi_s2s_anomaly_paired_20240724.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2/paired_20240724/03_erpas_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2/paired_20240724/03_erpas_anomaly_paired_20240724.pdf"
+      ]
+    }
+  ]
+}

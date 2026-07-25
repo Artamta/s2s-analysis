@@ -1,0 +1,38 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-23T00:41:57.725936+00:00",
+  "definition": "arithmetic mean of the case-wise weekly anomaly field at each source-grid cell",
+  "sample": "31 paired JJAS initializations: 17 in 2023 and 14 in 2024",
+  "display": "bilinear refinement to 0.15 degrees after composite calculation",
+  "shared_composite_levels_mm_day": [
+    -5.0,
+    -3.0,
+    -2.0,
+    -1.0,
+    -0.5,
+    0.5,
+    1.0,
+    2.0,
+    3.0,
+    5.0
+  ],
+  "checks": {
+    "paired_case_count_31": true,
+    "three_sources_rendered": true,
+    "six_outputs_exist": true,
+    "four_weeks_each": true,
+    "imerg_source_grid_0p1": true,
+    "fuxi_source_grid_1p5": true,
+    "erpas_source_grid_1p0": true,
+    "official_boundary_has_40_records": true,
+    "erpas_source_counts_positive": true
+  },
+  "outputs": [
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/weekly_case_mean_composites_2x2/01_imerg_observed_case_mean_anomaly_weeks1_4.png",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/weekly_case_mean_composites_2x2/01_imerg_observed_case_mean_anomaly_weeks1_4.pdf",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/weekly_case_mean_composites_2x2/02_fuxi_s2s_case_mean_anomaly_weeks1_4.png",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/weekly_case_mean_composites_2x2/02_fuxi_s2s_case_mean_anomaly_weeks1_4.pdf",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/weekly_case_mean_composites_2x2/03_erpas_case_mean_anomaly_weeks1_4.png",
+    "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/weekly_case_mean_composites_2x2/03_erpas_case_mean_anomaly_weeks1_4.pdf"
+  ]
+}

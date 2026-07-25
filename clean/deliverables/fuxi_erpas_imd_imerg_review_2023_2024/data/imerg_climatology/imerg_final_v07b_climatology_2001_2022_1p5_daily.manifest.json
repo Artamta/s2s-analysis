@@ -1,0 +1,171 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-22T21:42:42.749686+00:00",
+  "output": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_1p5_daily.nc",
+  "output_sha256": "38e066a3d0efccb38977e9d2a6f243d94e548a6a7d5dd33f67592efc2d7247b8",
+  "source_year_chunks": [
+    {
+      "year": 2001,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2001_0606_1025.nc",
+      "sha256": "eb5c35f2df675e40418201855f392b2942c3981f10a573ae998f70725b91281f"
+    },
+    {
+      "year": 2002,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2002_0606_1025.nc",
+      "sha256": "b89649ae91fd24ed013decb05309df3a6e16919e98172552805033eb701c8146"
+    },
+    {
+      "year": 2003,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2003_0606_1025.nc",
+      "sha256": "ac901713062470049f237c71d40b1a941743e802afe9e2e1c4c3c414aca2ad7c"
+    },
+    {
+      "year": 2004,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2004_0606_1025.nc",
+      "sha256": "a0650e4191794e4bab8d46db97478d2af3ddbe4be719b5be1e6c2546335daf04"
+    },
+    {
+      "year": 2005,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2005_0606_1025.nc",
+      "sha256": "bc108f7d458c08e594d437aaddf7213103b97023a046f737f41cafd1c052e278"
+    },
+    {
+      "year": 2006,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2006_0606_1025.nc",
+      "sha256": "dcc780e1e5c99202fdc31d3b2790972345a4e27ab80c8c3f0cdb9941a730911c"
+    },
+    {
+      "year": 2007,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2007_0606_1025.nc",
+      "sha256": "fede66c906f637bfc2e31c2bfccedc07b9bd519a18fa7f1d0727a34d33a2cbd9"
+    },
+    {
+      "year": 2008,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2008_0606_1025.nc",
+      "sha256": "91f920f59c7a690f0416bf5adf58b5ad47ca58648b4a6736f4f73b77bdfb4e22"
+    },
+    {
+      "year": 2009,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2009_0606_1025.nc",
+      "sha256": "9128c0050dd941fefb6a3c09842a3dfce941f0a5a959066d481702bce0a58d99"
+    },
+    {
+      "year": 2010,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2010_0606_1025.nc",
+      "sha256": "bd8683eaf951eab92e3a7b749ddf54a3c2a0af188199ddca9a5d607f3219debb"
+    },
+    {
+      "year": 2011,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2011_0606_1025.nc",
+      "sha256": "b139826512e9b766dc57e35c5cbf494bf3acea2827ff2a8cee3ac05edb6b9310"
+    },
+    {
+      "year": 2012,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2012_0606_1025.nc",
+      "sha256": "b614c993bf24beab2436fd7b41ca1e576df720e30a8be711c4444746b2e51d0e"
+    },
+    {
+      "year": 2013,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2013_0606_1025.nc",
+      "sha256": "7d5ee1d45a61bdb9b0b90cd42641b78be3ad8b3f759cb922619637779aae9398"
+    },
+    {
+      "year": 2014,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2014_0606_1025.nc",
+      "sha256": "62f0a56c89908bb2a7034a3490bce09207629e1bd2cd854a25036362a1ba358f"
+    },
+    {
+      "year": 2015,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2015_0606_1025.nc",
+      "sha256": "69695578f05b5f5234d2022b034edce677b4f102bd86c799adc353964aa6ed69"
+    },
+    {
+      "year": 2016,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2016_0606_1025.nc",
+      "sha256": "e21cb0d603d72711a565e9b9398a1f5f64497e4c94e9ffca8532f763a1ca29f2"
+    },
+    {
+      "year": 2017,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2017_0606_1025.nc",
+      "sha256": "406d14701da9a9ab2da4956fa0c1c82e552ecce1da1e33bf0a8bc6c9ee504c46"
+    },
+    {
+      "year": 2018,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2018_0606_1025.nc",
+      "sha256": "afb3eff10600fcd35643e3fba3f937c4a50e6bf256dff304b9e991323e83ca67"
+    },
+    {
+      "year": 2019,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2019_0606_1025.nc",
+      "sha256": "70f15fb05083ac252d7b0026bfa953ea6495536eedae8395a5d72fb42fcb8ea3"
+    },
+    {
+      "year": 2020,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2020_0606_1025.nc",
+      "sha256": "32e4eb4b98fe9f27a430cc39b1edf7b85b238f13ff6d46654966e4bef9832297"
+    },
+    {
+      "year": 2021,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2021_0606_1025.nc",
+      "sha256": "dbcff7e559777d83455920bd36484aa88b2a7b7b34d486ddd6e4925f560a5900"
+    },
+    {
+      "year": 2022,
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/year_chunks/imerg_final_v07b_daily_2022_0606_1025.nc",
+      "sha256": "7d22a68996e8df66fe8facbc278d0b6376933d872797292ddc2ee8d69f215c3f"
+    }
+  ],
+  "imd_fixed_support_audit": {
+    "requested_period_end_count": 749,
+    "first_period_end": "2023-01-06T00:00:00",
+    "last_period_end": "2025-01-23T00:00:00",
+    "truth_remap_checks": {
+      "2023": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2024": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      },
+      "2025": {
+        "latitude_covered": true,
+        "longitude_covered": true,
+        "full_target_coverage": false
+      }
+    },
+    "climatology_remap_checks": {
+      "latitude_covered": true,
+      "longitude_covered": true,
+      "full_target_coverage": false
+    },
+    "feb29_rule": "mean of Feb-28 and Mar-01 climatology fields",
+    "original_source_support_cells": 4323,
+    "fixed_all_season_source_support_cells": 4293,
+    "source_cells_removed_for_any_date_missingness": 30,
+    "original_target_supported_cells": 171,
+    "fixed_all_season_target_supported_cells": 169
+  },
+  "remap_checks": {
+    "latitude_covered": true,
+    "longitude_covered": true,
+    "full_target_coverage": true
+  },
+  "support_representation": {
+    "land_support_area_steradians": 0.07450992027433037,
+    "target_land_fraction_sha256": "f4eb52193797edc4fd1d7e45373eab385dfe164df9a5dd155f3077c1f025c794",
+    "support_fraction_max_absolute_difference": 2.9329325301752363e-08,
+    "support_fraction_area_weighted_l1_difference": 8.59114273935718e-09
+  },
+  "checks": {
+    "twenty_two_year_chunks": true,
+    "exactly_142_calendar_days": true,
+    "exactly_22_samples_per_day": true,
+    "verification_years_excluded": true,
+    "fixed_support_169_cells": true,
+    "finite_nonnegative_on_support": true,
+    "support_difference_below_3_percent": true
+  }
+}

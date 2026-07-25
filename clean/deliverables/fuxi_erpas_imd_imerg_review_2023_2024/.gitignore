@@ -1,0 +1,8 @@
+.cache/
+.mplconfig/
+data/imerg_climatology/.daily_cache/
+data/imerg_climatology/year_chunks/
+data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_native_0p1_daily.nc
+logs/*.out
+logs/*.err
+*.tmp

@@ -1,0 +1,706 @@
+{
+  "generated_at": "2026-07-31T00:53:15.810460+00:00",
+  "grid": {
+    "latitude_first": 90.0,
+    "latitude_last": -90.0,
+    "longitude_first": 0.0,
+    "longitude_last": 358.5,
+    "shape": [
+      121,
+      240
+    ],
+    "spacing_degrees": 1.5,
+    "value_order": "lead_day, latitude north-to-south, longitude eastward"
+  },
+  "issue": {
+    "display_interpolation": "Cross-fades are a visual transition between daily fields; they are not additional forecast times.",
+    "ensemble_relation": "Independent 100-member companion ensemble generated from the same frozen initialization input as the India validation case.",
+    "initialization": "2026-07-28T00:00:00Z",
+    "input_description": "Operational global analysis proxy",
+    "lead_days": 42,
+    "members": 100,
+    "public_label": "Experimental global ensemble guidance",
+    "status": "experimental"
+  },
+  "schema_version": 1,
+  "valid_period_starts": [
+    "2026-07-28",
+    "2026-07-29",
+    "2026-07-30",
+    "2026-07-31",
+    "2026-08-01",
+    "2026-08-02",
+    "2026-08-03",
+    "2026-08-04",
+    "2026-08-05",
+    "2026-08-06",
+    "2026-08-07",
+    "2026-08-08",
+    "2026-08-09",
+    "2026-08-10",
+    "2026-08-11",
+    "2026-08-12",
+    "2026-08-13",
+    "2026-08-14",
+    "2026-08-15",
+    "2026-08-16",
+    "2026-08-17",
+    "2026-08-18",
+    "2026-08-19",
+    "2026-08-20",
+    "2026-08-21",
+    "2026-08-22",
+    "2026-08-23",
+    "2026-08-24",
+    "2026-08-25",
+    "2026-08-26",
+    "2026-08-27",
+    "2026-08-28",
+    "2026-08-29",
+    "2026-08-30",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-04",
+    "2026-09-05",
+    "2026-09-06",
+    "2026-09-07"
+  ],
+  "validation": {
+    "checks": [
+      "exact 121 x 240 global grid",
+      "all 100 members present for every lead",
+      "companion-ensemble relationship declared",
+      "all 42 daily leads present",
+      "finite TP, T2M, and Z500 fields",
+      "nonnegative precipitation",
+      "locked unit conversions and quantization",
+      "binary size and SHA-256 checks"
+    ],
+    "status": "green"
+  },
+  "variables": {
+    "precipitation": {
+      "description": "Ensemble-mean precipitation rate converted to a 24-hour total.",
+      "dtype": "uint16-little-endian",
+      "frame_ranges": [
+        {
+          "maximum": 110.65642467498775,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 73.17908535003662,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 67.44455841064456,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 85.31969100952148,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 120.11554819107059,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 111.1882507610321,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 104.75447670936586,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 82.52086592674254,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 56.98109298706059,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 55.369646530151336,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 45.494363479614265,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 44.71861072540283,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 44.13366909027099,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 40.1735058403015,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 36.492115488052356,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 40.10821620941163,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 40.79476850509644,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 36.09136731147767,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 37.614511013031006,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 35.78127794265748,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 39.32389603614808,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 45.070913143157945,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 54.44345478057862,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 61.01965055465698,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 54.50660522460935,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 43.16737841606141,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 39.58697716712951,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 37.21644802093506,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 36.27219981193544,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 41.24738791465759,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 45.10773885726931,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 42.67629695892333,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 36.88577891349794,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 33.90923426628113,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 36.79122734069825,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 38.385554151535025,
+          "minimum": 0.0
+        },
+        {
+          "maximum": 38.44264755249023,
+          "minimum": 0.00010216712951660153
+        },
+        {
+          "maximum": 38.99675276756286,
+          "minimum": 0.0004387092590332032
+        },
+        {
+          "maximum": 38.02549003601072,
+          "minimum": 0.00028658866882324223
+        },
+        {
+          "maximum": 36.784818420410154,
+          "minimum": 5.026817321777346e-05
+        },
+        {
+          "maximum": 37.59339308738707,
+          "minimum": 0.0004642868041992189
+        },
+        {
+          "maximum": 37.47459674835204,
+          "minimum": 0.00035628318786621097
+        }
+      ],
+      "label": "Daily precipitation",
+      "legend": {
+        "boundaries": [
+          0.0,
+          0.5,
+          2.0,
+          5.0,
+          10.0,
+          20.0,
+          40.0,
+          80.0
+        ],
+        "colors": [
+          "#081d2a",
+          "#123d50",
+          "#17687a",
+          "#1da297",
+          "#74c98e",
+          "#e3d66d",
+          "#e98e45"
+        ],
+        "over": "#e8543f",
+        "under": "#07151e"
+      },
+      "maximum": 120.12,
+      "minimum": 0.0,
+      "offset": 0.0,
+      "path": "precipitation.bin",
+      "scale": 0.01,
+      "sha256": "22023ddec3ecbe4898f5d8534ff336714ae3c25671dafad0957d20dcb3d47a4c",
+      "short_label": "Precipitation",
+      "size_bytes": 2439360,
+      "units": "mm/day"
+    },
+    "temperature": {
+      "description": "Daily ensemble-mean temperature two metres above the surface.",
+      "dtype": "uint16-little-endian",
+      "frame_ranges": [
+        {
+          "maximum": 42.0383609008789,
+          "minimum": -72.23274963378907
+        },
+        {
+          "maximum": 41.4717190551757,
+          "minimum": -73.49886535644524
+        },
+        {
+          "maximum": 40.89696563720685,
+          "minimum": -74.30031951904292
+        },
+        {
+          "maximum": 41.335514831543094,
+          "minimum": -73.61007766723637
+        },
+        {
+          "maximum": 41.9915359497071,
+          "minimum": -73.22691131591793
+        },
+        {
+          "maximum": 42.17771423339843,
+          "minimum": -73.59792160034175
+        },
+        {
+          "maximum": 41.99626403808588,
+          "minimum": -73.41286712646479
+        },
+        {
+          "maximum": 41.91949432373059,
+          "minimum": -73.25482696533192
+        },
+        {
+          "maximum": 42.054119873046886,
+          "minimum": -73.02069473266599
+        },
+        {
+          "maximum": 41.89833343505859,
+          "minimum": -73.7942332458496
+        },
+        {
+          "maximum": 41.090351257324244,
+          "minimum": -74.74472183227536
+        },
+        {
+          "maximum": 40.096863403320185,
+          "minimum": -76.61553161621097
+        },
+        {
+          "maximum": 39.990151977539256,
+          "minimum": -78.6623889160156
+        },
+        {
+          "maximum": 40.32671844482417,
+          "minimum": -82.08477737426756
+        },
+        {
+          "maximum": 40.40123565673821,
+          "minimum": -85.74895172119145
+        },
+        {
+          "maximum": 40.394483337402505,
+          "minimum": -89.1983558654785
+        },
+        {
+          "maximum": 40.15224426269549,
+          "minimum": -92.45910232543946
+        },
+        {
+          "maximum": 39.79969604492203,
+          "minimum": -95.39881759643555
+        },
+        {
+          "maximum": 39.79451690673841,
+          "minimum": -97.72438385009755
+        },
+        {
+          "maximum": 39.88456665039058,
+          "minimum": -99.80546279907222
+        },
+        {
+          "maximum": 40.257377624511776,
+          "minimum": -101.65240844726554
+        },
+        {
+          "maximum": 40.42712554931643,
+          "minimum": -103.3052952575683
+        },
+        {
+          "maximum": 40.54779266357423,
+          "minimum": -104.54124526977532
+        },
+        {
+          "maximum": 40.597772216796955,
+          "minimum": -105.48948150634763
+        },
+        {
+          "maximum": 40.549143676757694,
+          "minimum": -106.0162800598145
+        },
+        {
+          "maximum": 40.44558654785163,
+          "minimum": -105.74252426147464
+        },
+        {
+          "maximum": 40.47665466308598,
+          "minimum": -105.1477380371094
+        },
+        {
+          "maximum": 40.64639892578117,
+          "minimum": -104.81409957885734
+        },
+        {
+          "maximum": 40.74185241699212,
+          "minimum": -104.83796264648439
+        },
+        {
+          "maximum": 40.617808227538944,
+          "minimum": -105.35800765991209
+        },
+        {
+          "maximum": 40.284393615722706,
+          "minimum": -105.85328872680657
+        },
+        {
+          "maximum": 39.89605041503921,
+          "minimum": -106.0649078369141
+        },
+        {
+          "maximum": 39.62116851806644,
+          "minimum": -106.35937423706059
+        },
+        {
+          "maximum": 39.41067443847646,
+          "minimum": -106.63853302001957
+        },
+        {
+          "maximum": 39.19567810058595,
+          "minimum": -106.8082792663574
+        },
+        {
+          "maximum": 38.830520324707095,
+          "minimum": -107.2477275085449
+        },
+        {
+          "maximum": 38.40593017578141,
+          "minimum": -107.3733483886719
+        },
+        {
+          "maximum": 38.098403015136796,
+          "minimum": -107.45529388427727
+        },
+        {
+          "maximum": 37.901196289062625,
+          "minimum": -107.53949234008792
+        },
+        {
+          "maximum": 37.69812805175786,
+          "minimum": -107.47645599365234
+        },
+        {
+          "maximum": 37.44125793457039,
+          "minimum": -107.47375610351563
+        },
+        {
+          "maximum": 37.14431701660152,
+          "minimum": -107.68087188720708
+        }
+      ],
+      "label": "2 m temperature",
+      "legend": {
+        "boundaries": [
+          -60.0,
+          -40.0,
+          -20.0,
+          0.0,
+          15.0,
+          25.0,
+          35.0,
+          45.0
+        ],
+        "colors": [
+          "#5a4fa3",
+          "#3c78bd",
+          "#4db7d0",
+          "#c8d8b5",
+          "#f3c35b",
+          "#ef8548",
+          "#c8473c"
+        ],
+        "over": "#7e1f35",
+        "under": "#352b75"
+      },
+      "maximum": 42.18000000000001,
+      "minimum": -107.68,
+      "offset": -150.0,
+      "path": "temperature.bin",
+      "scale": 0.01,
+      "sha256": "6cc3386245a93f19f562cd1a3d49dc9f285751bb8bd4296701c432039bf2994a",
+      "short_label": "Temperature",
+      "size_bytes": 2439360,
+      "units": "\u00b0C"
+    },
+    "z500": {
+      "description": "Ensemble-mean 500 hPa geopotential converted to decametres.",
+      "dtype": "uint16-little-endian",
+      "frame_ranges": [
+        {
+          "maximum": 598.5771859847655,
+          "minimum": 471.0016158518709
+        },
+        {
+          "maximum": 599.6292240150817,
+          "minimum": 466.0627088028276
+        },
+        {
+          "maximum": 599.2103066700909,
+          "minimum": 460.15078615340116
+        },
+        {
+          "maximum": 598.2208887750912,
+          "minimum": 455.68477687971944
+        },
+        {
+          "maximum": 596.8162161486082,
+          "minimum": 452.6201986502782
+        },
+        {
+          "maximum": 596.7771311431528,
+          "minimum": 448.44915981757276
+        },
+        {
+          "maximum": 596.6264075270352,
+          "minimum": 443.55948275532427
+        },
+        {
+          "maximum": 595.7600669889819,
+          "minimum": 438.6162546588287
+        },
+        {
+          "maximum": 596.8149219853366,
+          "minimum": 436.5078452026175
+        },
+        {
+          "maximum": 597.7505773346404,
+          "minimum": 435.882491886883
+        },
+        {
+          "maximum": 598.6721924663368,
+          "minimum": 435.5292187731029
+        },
+        {
+          "maximum": 598.8626479703823,
+          "minimum": 432.3091656873142
+        },
+        {
+          "maximum": 597.885320882386,
+          "minimum": 426.6628464485833
+        },
+        {
+          "maximum": 596.4344407716956,
+          "minimum": 420.9102835352798
+        },
+        {
+          "maximum": 595.6186267736687,
+          "minimum": 415.6034186623363
+        },
+        {
+          "maximum": 595.4927384255835,
+          "minimum": 410.4744839120647
+        },
+        {
+          "maximum": 595.8695478642046,
+          "minimum": 405.3602318802803
+        },
+        {
+          "maximum": 596.069936439814,
+          "minimum": 401.77999949332855
+        },
+        {
+          "maximum": 596.1282407059241,
+          "minimum": 399.7095935857302
+        },
+        {
+          "maximum": 596.4625120453978,
+          "minimum": 397.74197507239995
+        },
+        {
+          "maximum": 596.7317836461738,
+          "minimum": 394.98057281283616
+        },
+        {
+          "maximum": 596.5123928979316,
+          "minimum": 392.7261901840842
+        },
+        {
+          "maximum": 595.9202942805392,
+          "minimum": 391.468576170252
+        },
+        {
+          "maximum": 595.3554005763947,
+          "minimum": 390.78189409418604
+        },
+        {
+          "maximum": 595.1297457433222,
+          "minimum": 389.8386812934333
+        },
+        {
+          "maximum": 595.3782924087225,
+          "minimum": 390.1280381169922
+        },
+        {
+          "maximum": 595.7373958296156,
+          "minimum": 391.34332912806616
+        },
+        {
+          "maximum": 595.5255573545758,
+          "minimum": 392.7538308666823
+        },
+        {
+          "maximum": 594.760280651395,
+          "minimum": 394.39927283080874
+        },
+        {
+          "maximum": 593.8650048691449,
+          "minimum": 394.66876112127983
+        },
+        {
+          "maximum": 593.4216876271458,
+          "minimum": 393.6538570925089
+        },
+        {
+          "maximum": 593.1839395971101,
+          "minimum": 391.99546274084423
+        },
+        {
+          "maximum": 593.078777777707,
+          "minimum": 389.9803370034619
+        },
+        {
+          "maximum": 593.1450708830233,
+          "minimum": 388.10168514477414
+        },
+        {
+          "maximum": 592.8390902952332,
+          "minimum": 386.9520367716041
+        },
+        {
+          "maximum": 592.3597073637535,
+          "minimum": 385.9932764852166
+        },
+        {
+          "maximum": 592.3325000605457,
+          "minimum": 385.8853088529214
+        },
+        {
+          "maximum": 592.3098241212595,
+          "minimum": 386.31631899654826
+        },
+        {
+          "maximum": 592.1830714043532,
+          "minimum": 386.92094259698774
+        },
+        {
+          "maximum": 591.9960689939988,
+          "minimum": 387.4167333996573
+        },
+        {
+          "maximum": 591.6758354821729,
+          "minimum": 388.1336448831917
+        },
+        {
+          "maximum": 591.5231680320244,
+          "minimum": 388.705447563006
+        }
+      ],
+      "label": "500 hPa geopotential height",
+      "legend": {
+        "boundaries": [
+          460.0,
+          480.0,
+          500.0,
+          520.0,
+          540.0,
+          560.0,
+          580.0,
+          600.0
+        ],
+        "colors": [
+          "#49396d",
+          "#345f83",
+          "#288a91",
+          "#62aa7f",
+          "#b4bd72",
+          "#d5a15f",
+          "#bf6654"
+        ],
+        "over": "#873b4a",
+        "under": "#30244c"
+      },
+      "maximum": 599.63,
+      "minimum": 385.89,
+      "offset": 0.0,
+      "path": "z500.bin",
+      "scale": 0.01,
+      "sha256": "3dc7ddcd784cd411aeff9bdc777c1d45ba57d034022828facd63527c045471c3",
+      "short_label": "Z500",
+      "size_bytes": 2439360,
+      "units": "dam"
+    }
+  }
+}

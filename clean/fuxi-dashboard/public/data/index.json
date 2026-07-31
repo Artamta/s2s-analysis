@@ -2,6 +2,17 @@
   "schema_version": 1,
   "generated_at": "2026-07-30T23:40:19.069182+00:00",
   "latest_successful_issue": "20260728",
+  "global_viewer": {
+    "issue": "20260728",
+    "status": "experimental",
+    "metadata": "global/metadata.json",
+    "lead_days": 42,
+    "variables": [
+      "precipitation",
+      "temperature",
+      "z500"
+    ]
+  },
   "available_issues": [
     {
       "id": "20260728",

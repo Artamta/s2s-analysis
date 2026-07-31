@@ -19,6 +19,13 @@ function friendlyDate(isoDate: string, includeYear = false): string {
   }).format(new Date(`${isoDate}T12:00:00Z`));
 }
 
+function neutralForecastLanguage(value: string): string {
+  return value
+    .replaceAll("FuXi-S2S", "native model")
+    .replaceAll("FuXi model", "model")
+    .replaceAll("FuXi", "model");
+}
+
 export function renderForecastPage(container: HTMLElement, data: AppData): void {
   const { forecast, validation } = data;
   if (!validation.presentation_allowed) {
@@ -39,14 +46,14 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
         <span class="eyebrow">Issue 01 · Research guidance</span>
         <h1>Six-week outlook<br><em>from 28 July 2026</em></h1>
       </div>
-      <p class="intro-copy">A 100-member experimental FuXi-S2S view of rainfall and 2-metre temperature across India. Every map stays on the native 1.5° science grid.</p>
+        <p class="intro-copy">A 100-member experimental view of rainfall and 2-metre temperature across India. Every map stays on the native 1.5° science grid.</p>
     </section>
 
     <aside class="experimental-note" aria-label="Experimental forecast warning">
       <span class="note-icon" aria-hidden="true">!</span>
       <div>
         <strong>Experimental GFS-proxy initialization</strong>
-        <p>FuXi-S2S was trained with ERA5-style daily inputs. This run uses operational GFS proxy fields and has no matched GFS-initialized hindcast calibration. It is not an official warning.</p>
+        <p>The model expects ERA5-style daily inputs. This run uses operational GFS proxy fields and has no matched GFS-initialized hindcast calibration. It is not an official warning.</p>
       </div>
     </aside>
 
@@ -103,7 +110,7 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
       <article>
         <span>01 / Anomaly contract</span>
         <h3>Model climate, matched by lead</h3>
-        <p>FuXi anomalies compare this forecast with 20 equally weighted native-reforecast yearly means. The 27 July model-state position is interpolated between 25 and 28 July.</p>
+        <p>Model-relative anomalies compare this forecast with 20 equally weighted native-reforecast yearly means. The 27 July model-state position is interpolated between 25 and 28 July.</p>
       </article>
       <article>
         <span>02 / Verification status</span>
@@ -113,7 +120,7 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
       <article>
         <span>03 / Interpretation</span>
         <h3>Baselines stay separate</h3>
-        <p>FuXi, IMD, and IMERG anomalies do not share a climatology. The Methods page explains which comparisons are scientifically safe.</p>
+        <p>Model, IMD, and IMERG anomalies do not share a climatology. The Methods page explains which comparisons are scientifically safe.</p>
       </article>
     </section>
   `;
@@ -187,13 +194,17 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
       product.units,
     );
     const baselineCard = container.querySelector<HTMLDivElement>("#baseline-card")!;
-    baselineCard.innerHTML = product.baseline
-      ? `<span>Reference baseline</span><strong>${product.baseline}</strong><p>Forecast and climatology are matched at identical lead before subtraction.</p>`
-      : `<span>Field definition</span><strong>${product.description}</strong><p>No anomaly baseline is applied to this layer.</p>`;
+    const neutralBaseline = product.baseline
+      ? neutralForecastLanguage(product.baseline)
+      : null;
+    const neutralDescription = neutralForecastLanguage(product.description);
+    baselineCard.innerHTML = neutralBaseline
+      ? `<span>Reference baseline</span><strong>${neutralBaseline}</strong><p>Forecast and climatology are matched at identical lead before subtraction.</p>`
+      : `<span>Field definition</span><strong>${neutralDescription}</strong><p>No anomaly baseline is applied to this layer.</p>`;
     const legend = container.querySelector<HTMLDivElement>("#map-legend")!;
     legend.replaceChildren(createLegend(product));
     container.querySelector("#map-caption")!.textContent =
-      `${product.description}. Cell shading uses a fixed scientific scale; values are not visually interpolated.`;
+      `${neutralDescription}. Cell shading uses a fixed scientific scale; values are not visually interpolated.`;
     forecastMap.render(selectedProduct, week, product);
   }
 

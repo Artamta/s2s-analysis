@@ -1,9 +1,11 @@
-# FuXi-S2S India Forecast Lab
+# Atmosphere 42
 
-A static, validated prototype for the 28 July 2026 experimental FuXi-S2S
-forecast. The site publishes compact ensemble-derived fields only. It does not
-contain raw model inputs, member fields, observations, reforecasts, model
-weights, credentials, or cluster paths.
+A static interactive global outlook and validated India case for the 28 July
+2026 experimental forecast. The global viewer animates 42 daily ensemble-mean
+fields for precipitation, 2 m temperature, and 500 hPa geopotential height.
+The site publishes compact ensemble-derived fields only. It does not contain
+raw model inputs, member fields, observations, reforecasts, model weights,
+credentials, or cluster paths.
 
 ## Scientific status
 
@@ -11,6 +13,15 @@ The forecast is a 100-member FuXi-S2S run initialized with operational GFS
 daily proxy fields. FuXi-S2S was trained with ERA5-style daily inputs, and no
 matched GFS-initialized hindcast calibration exists. It is research guidance,
 not an official forecast or warning.
+
+The global animation is an independently sampled 100-member companion ensemble
+generated from the same frozen input as the earlier India case. The raw members
+behind the India export had already been removed, so its exact stochastic draws
+could not be reused.
+
+The forecast interface uses the neutral product name **Atmosphere 42**. Model
+identity remains in this repository and the Methods page for scientific
+provenance.
 
 Anomalies use a calendar-interpolated, lead-matched FuXi 2002–2021 native
 reforecast climatology. They are not IMD or IMERG anomalies. The standardized
@@ -45,10 +56,15 @@ npm run dev
 
 ## Data contract
 
-The main forecast JSON stores latitude and longitude vectors, an India support
-mask, six week records, and flattened row-major fields. Every field contains
-exactly `latitude.length × longitude.length` finite values. The support mask
-controls display; no `NaN` or infinity is serialized.
+The global contract stores three little-endian `uint16` binary arrays in
+lead-day, latitude, longitude order. `metadata.json` locks dimensions,
+quantization, units, legends, valid periods, file sizes, and SHA-256 hashes.
+The browser verifies each binary before presentation. The complete global
+payload is about 7.3 MB before HTTP compression.
+
+The India forecast JSON stores latitude and longitude vectors, a support mask,
+six week records, and flattened row-major fields. Every displayed field
+contains exactly `latitude.length × longitude.length` finite values.
 
 The site has no backend. Hash navigation keeps the GitHub Pages deployment
 portable, and a failed validation status blocks forecast rendering while
@@ -62,3 +78,6 @@ push to `main`. During the build it stamps the exact `GITHUB_SHA` into
 of committing a file containing its own commit hash.
 
 See [PLAN.md](PLAN.md) for the complete prototype contract and next steps.
+
+Global geography is derived from the public-domain Natural Earth 1:110m
+administrative boundary dataset.

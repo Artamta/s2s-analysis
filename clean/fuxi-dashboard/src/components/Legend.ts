@@ -1,6 +1,11 @@
-import type { ProductDefinition } from "../types";
+import type { LegendDefinition } from "../types";
 
-export function createLegend(product: ProductDefinition): HTMLElement {
+interface LegendProduct {
+  units: string;
+  legend: LegendDefinition;
+}
+
+export function createLegend(product: LegendProduct): HTMLElement {
   const container = document.createElement("div");
   container.className = "legend";
   container.setAttribute("aria-label", `Fixed legend in ${product.units}`);

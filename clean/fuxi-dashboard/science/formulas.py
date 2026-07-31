@@ -34,7 +34,9 @@ def _weekly_reduce(
     """Reduce consecutive seven-day blocks while preserving axis order."""
 
     values = _float_array(daily_values)
-    axis = np.core.numeric.normalize_axis_index(day_axis, values.ndim)
+    if day_axis < -values.ndim or day_axis >= values.ndim:
+        raise np.exceptions.AxisError(day_axis, ndim=values.ndim)
+    axis = day_axis % values.ndim
     if values.shape[axis] % 7:
         raise ValueError("daily axis length must be divisible by seven")
     moved = np.moveaxis(values, axis, 0)

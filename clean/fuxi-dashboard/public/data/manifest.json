@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-30T23:48:27.859089+00:00",
+  "generated_at": "2026-07-31T00:53:41.272154+00:00",
   "deployed_commit": "local-uncommitted",
-  "inventory_scope": "Every deployed public-data JSON except manifest.json itself, whose self-checksum would be recursive.",
+  "inventory_scope": "Every deployed public-data file except manifest.json itself, whose self-checksum would be recursive.",
   "files": [
     {
       "path": "data/forecasts/20260728.json",
@@ -15,9 +15,29 @@
       "sha256": "355332c9a36a39a33d6f11aaa69441508758ef8deeab82398a31a41baa20026d"
     },
     {
+      "path": "data/global/metadata.json",
+      "size_bytes": 17139,
+      "sha256": "d71e64c051207eac91b1efa7133658d48516a8bfa81946b000e0ef312e55a1c1"
+    },
+    {
+      "path": "data/global/precipitation.bin",
+      "size_bytes": 2439360,
+      "sha256": "22023ddec3ecbe4898f5d8534ff336714ae3c25671dafad0957d20dcb3d47a4c"
+    },
+    {
+      "path": "data/global/temperature.bin",
+      "size_bytes": 2439360,
+      "sha256": "6cc3386245a93f19f562cd1a3d49dc9f285751bb8bd4296701c432039bf2994a"
+    },
+    {
+      "path": "data/global/z500.bin",
+      "size_bytes": 2439360,
+      "sha256": "3dc7ddcd784cd411aeff9bdc777c1d45ba57d034022828facd63527c045471c3"
+    },
+    {
       "path": "data/index.json",
-      "size_bytes": 305,
-      "sha256": "79c05894ad27a9603bff506dd3fbcf905f354578c9231bf3c059c796c89ff3b4"
+      "size_bytes": 529,
+      "sha256": "c2ef85a1e23360a4fbe054503dfddc38ff45cbfe5d4ab494fed489150c8dc30f"
     },
     {
       "path": "data/india-outline.json",
@@ -33,6 +53,11 @@
       "path": "data/validation.json",
       "size_bytes": 5541,
       "sha256": "175a92c188b0d6ed37ab879d33196126517ee4123dbef13b5e065254c804bb5f"
+    },
+    {
+      "path": "data/world-countries.geojson",
+      "size_bytes": 838726,
+      "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f"
     }
   ]
 }

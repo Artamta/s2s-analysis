@@ -1,47 +1,56 @@
 import type { AppData } from "../types";
 
 export function renderMethodsPage(container: HTMLElement, data: AppData): void {
-  const alignment = data.forecast.issue.climatology_alignment;
   container.innerHTML = `
     <section class="page-intro methods-intro">
       <div>
         <span class="eyebrow">Methods · Version ${data.formulas.formula_version}</span>
-        <h1>How to read<br><em>this experiment</em></h1>
+        <h1>Clarity before<br><em>complexity</em></h1>
       </div>
-      <p class="intro-copy">A compact explanation of what was run, how weekly fields were calculated, and where comparisons must stop.</p>
+      <p class="intro-copy">What the global animation shows, how the fields were converted, and where this experimental guidance must stop.</p>
     </section>
 
     <section class="methods-lead">
       <span class="chapter-number">01</span>
       <div>
-        <span class="eyebrow">The model</span>
-        <h2>What FuXi-S2S is</h2>
-        <p class="large-copy">FuXi-S2S is a data-driven subseasonal forecast model. This run makes 100 stochastic realizations for 42 daily periods, then summarizes them on a 1.5° India-domain grid.</p>
+        <span class="eyebrow">Forecast provenance</span>
+        <h2>One initialization, two validated views</h2>
+        <p class="large-copy">Atmosphere 42 presents the ensemble mean of 100 stochastic realizations for 42 daily periods on the native 1.5° global grid. The India case adds separately validated weekly products and anomalies.</p>
+        <p>The global animation is an independently sampled 100-member companion ensemble generated from the same frozen initialization input. Its individual stochastic draws are not the deleted raw members behind the earlier India case, so the two ensemble means can differ slightly.</p>
+        <p>The underlying research model is FuXi-S2S, a data-driven subseasonal forecast system. Its name is kept here for reproducibility while the forecast interface uses neutral product language.</p>
         <p>FuXi-S2S expects ERA5-style daily atmospheric inputs. For this near-real-time experiment, operational GFS analyses and short precipitation/radiation forecasts were assembled into two complete UTC daily proxy inputs. That input-domain mismatch is why the product remains explicitly experimental.</p>
       </div>
     </section>
 
     <section class="method-steps">
       <article>
-        <span>02 / Rainfall</span>
-        <h3>From rate to seven days</h3>
+        <span>02 / Global precipitation</span>
+        <h3>From rate to one day</h3>
         <code>daily rainfall = TP × 24</code>
-        <code>weekly total = Σ day 1…7</code>
-        <p>TP begins in millimetres per hour. Seven daily values are summed for the accumulation map; dividing that total by seven gives the rate used for rainfall anomalies.</p>
+        <p>TP begins in millimetres per hour. The global viewer converts each daily-mean forecast rate to a 24-hour total. The India case additionally sums seven days for each weekly accumulation.</p>
       </article>
       <article>
-        <span>03 / Temperature</span>
-        <h3>Absolute and weekly mean</h3>
+        <span>03 / Global temperature</span>
+        <h3>Kelvin to Celsius</h3>
         <code>°C = Kelvin − 273.15</code>
-        <code>weekly mean = mean(day 1…7)</code>
-        <p>Temperature is converted member-by-member before weekly averaging. The displayed field is the arithmetic mean across all 100 members.</p>
+        <p>The displayed global field is the arithmetic mean across all 100 members. The colour legend is fixed through the complete animation, so changes between days remain visually comparable.</p>
       </article>
       <article>
-        <span>04 / Calendar match</span>
-        <h3>Between native slots</h3>
-        <code>clim = (1 − w)L + wR</code>
-        <p>The ${alignment.target_model_state_calendar_day.slice(2)} July model state lies between native ${alignment.left_slot.slice(2)} and ${alignment.right_slot.slice(2)} July reforecast slots. The right-slot weight is ${alignment.right_weight.toFixed(3)}. Each year is interpolated first; the 20 annual means are then weighted equally.</p>
+        <span>04 / Mid-troposphere</span>
+        <h3>Geopotential to height</h3>
+        <code>Z500 (dam) = geopotential ÷ 9.80665 ÷ 10</code>
+        <p>The 500 hPa field is shown as geopotential height in decametres. Contours make large-scale ridges, troughs, and circulation changes easier to follow.</p>
       </article>
+    </section>
+
+    <section class="methods-lead">
+      <span class="chapter-number">05</span>
+      <div>
+        <span class="eyebrow">Animation contract</span>
+        <h2>Daily evidence, smooth presentation</h2>
+        <p class="large-copy">Only 42 daily model fields exist. The viewer cross-fades neighbouring maps for visual continuity; it does not claim additional hourly forecast information.</p>
+        <p>Hover values always come from the labelled daily field. The browser checks the size and SHA-256 digest of each compact binary file before rendering it.</p>
+      </div>
     </section>
 
     <section class="baseline-section">
@@ -82,10 +91,10 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
     </section>
 
     <section class="license-note">
-      <span>Research use</span>
+        <span>Research use</span>
       <div>
         <h2>Experimental guidance, not an operational warning</h2>
-        <p>This prototype publishes compact derived guidance under the applicable FuXi-S2S model and upstream-data research conditions. It does not redistribute model weights, full forecasts, GFS inputs, FuXi reforecasts, or raw IMD/IMERG grids. Consult the original model and data-provider licenses before reuse.</p>
+        <p>This prototype publishes compact derived guidance under the applicable FuXi-S2S model and upstream-data research conditions. It does not redistribute model weights, full forecasts, GFS inputs, FuXi reforecasts, or raw IMD/IMERG grids. Global boundary geography is from the public-domain Natural Earth 1:110m dataset. Consult the original model and data-provider licenses before reuse.</p>
       </div>
     </section>
   `;

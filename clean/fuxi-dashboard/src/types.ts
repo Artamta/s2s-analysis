@@ -6,6 +6,8 @@ export type ProductKey =
   | "temperature_mean"
   | "temperature_anomaly";
 
+export type GlobalVariableKey = "precipitation" | "temperature" | "z500";
+
 export interface LegendDefinition {
   boundaries: number[];
   colors: string[];
@@ -145,10 +147,78 @@ export interface OutlineData {
   };
 }
 
+export interface GlobalVariableDefinition {
+  label: string;
+  short_label: string;
+  units: string;
+  description: string;
+  path: string;
+  sha256: string;
+  size_bytes: number;
+  dtype: "uint16-little-endian";
+  offset: number;
+  scale: number;
+  minimum: number;
+  maximum: number;
+  frame_ranges: Array<{
+    minimum: number;
+    maximum: number;
+  }>;
+  legend: LegendDefinition;
+}
+
+export interface GlobalMetadata {
+  schema_version: number;
+  generated_at: string;
+  issue: {
+    initialization: string;
+    members: number;
+    lead_days: number;
+    status: "experimental";
+    public_label: string;
+    input_description: string;
+    ensemble_relation: string;
+    display_interpolation: string;
+  };
+  grid: {
+    shape: [number, number];
+    spacing_degrees: number;
+    latitude_first: number;
+    latitude_last: number;
+    longitude_first: number;
+    longitude_last: number;
+    value_order: string;
+  };
+  valid_period_starts: string[];
+  variables: Record<GlobalVariableKey, GlobalVariableDefinition>;
+  validation: {
+    status: ValidationStatus;
+    checks: string[];
+  };
+}
+
+export interface GlobalForecastData {
+  metadata: GlobalMetadata;
+  fields: Record<GlobalVariableKey, Uint16Array>;
+}
+
+export interface WorldCountriesData {
+  type: "FeatureCollection";
+  features: Array<{
+    type: "Feature";
+    geometry: {
+      type: "Polygon" | "MultiPolygon";
+      coordinates: number[][][] | number[][][][];
+    } | null;
+  }>;
+}
+
 export interface AppData {
   forecast: ForecastData;
+  global: GlobalForecastData;
   validation: ValidationData;
   sources: SourcesData;
   formulas: FormulasData;
   outline: OutlineData;
+  world: WorldCountriesData;
 }

@@ -118,6 +118,26 @@ The source is a dependency-light TypeScript/Vite static site. A GitHub Actions
 workflow builds it, stamps the deployed commit into the generated public
 manifest, and deploys through GitHub Pages.
 
+## Professor demonstration extension
+
+The 31 July extension adds a neutral, full-world `Atmosphere 42` homepage
+without weakening the original India validation case.
+
+- Display the 100-member ensemble mean for 42 daily periods.
+- Publish daily precipitation, 2 m temperature, and 500 hPa geopotential
+  height only.
+- Convert TP to `mm/day`, T2M to `°C`, and geopotential to height in `dam`.
+- Store each variable as a quantized little-endian `uint16` array on the exact
+  121 × 240 native grid.
+- Require 42 complete leads, 100 complete members, finite fields, physical
+  ranges, exact file sizes, and SHA-256 checks before publication.
+- Verify the three binary files again in the browser before drawing the map.
+- Cross-fade daily maps for presentation only; do not describe the visual
+  transition as an additional forecast time.
+- Keep the global interface model-neutral while retaining exact provenance in
+  Methods and source code.
+- Preserve the validated India product under a separate navigation route.
+
 ## Next milestones
 
 1. Build a full-year 2002–2021 FuXi climatology.

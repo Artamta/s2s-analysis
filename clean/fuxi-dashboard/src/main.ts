@@ -1,12 +1,19 @@
 import "./styles/main.css";
 import { renderForecastPage } from "./pages/forecast";
+import { renderGlobalPage } from "./pages/global";
 import { renderMethodsPage } from "./pages/methods";
 import { renderValidationPage } from "./pages/validation";
-import type { AppData } from "./types";
+import type {
+  AppData,
+  GlobalForecastData,
+  GlobalMetadata,
+  GlobalVariableKey,
+} from "./types";
 
-type Route = "forecast" | "validation" | "methods";
+type Route = "forecast" | "india" | "validation" | "methods";
 
-const ROUTES = new Set<Route>(["forecast", "validation", "methods"]);
+const ROUTES = new Set<Route>(["forecast", "india", "validation", "methods"]);
+let routeCleanup: (() => void) | undefined;
 
 function currentRoute(): Route {
   const hash = window.location.hash.replace("#", "") as Route;
@@ -21,27 +28,61 @@ async function fetchJson<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  return Array.from(new Uint8Array(digest))
+    .map((value) => value.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function fetchGlobalData(metadata: GlobalMetadata): Promise<GlobalForecastData> {
+  const keys = Object.keys(metadata.variables) as GlobalVariableKey[];
+  const entries = await Promise.all(
+    keys.map(async (key) => {
+      const definition = metadata.variables[key];
+      const response = await fetch(`./data/global/${definition.path}`);
+      if (!response.ok) {
+        throw new Error(`${definition.path} returned ${response.status}`);
+      }
+      const buffer = await response.arrayBuffer();
+      if (buffer.byteLength !== definition.size_bytes) {
+        throw new Error(`${definition.path} has an unexpected byte length`);
+      }
+      if (await sha256Hex(buffer) !== definition.sha256) {
+        throw new Error(`${definition.path} failed its SHA-256 check`);
+      }
+      return [key, new Uint16Array(buffer)] as const;
+    }),
+  );
+  return { metadata, fields: Object.fromEntries(entries) } as GlobalForecastData;
+}
+
 async function loadData(): Promise<AppData> {
-  const [forecast, validation, sources, formulas, outline] = await Promise.all([
+  const [forecast, globalMetadata, validation, sources, formulas, outline, world] =
+    await Promise.all([
     fetchJson<AppData["forecast"]>("./data/forecasts/20260728.json"),
+    fetchJson<GlobalMetadata>("./data/global/metadata.json"),
     fetchJson<AppData["validation"]>("./data/validation.json"),
     fetchJson<AppData["sources"]>("./data/sources.json"),
     fetchJson<AppData["formulas"]>("./data/formulas.json"),
     fetchJson<AppData["outline"]>("./data/india-outline.json"),
+    fetchJson<AppData["world"]>("./data/world-countries.geojson"),
   ]);
-  return { forecast, validation, sources, formulas, outline };
+  const global = await fetchGlobalData(globalMetadata);
+  return { forecast, global, validation, sources, formulas, outline, world };
 }
 
 function shell(): string {
   return `
     <header class="site-header">
-      <a class="brand" href="#forecast" aria-label="FuXi-S2S India Forecast Lab home">
+      <a class="brand" href="#forecast" aria-label="Atmosphere 42 home">
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span><strong>FuXi-S2S</strong><small>India Forecast Lab</small></span>
+        <span><strong>Atmosphere 42</strong><small>Global Outlook Lab</small></span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="#forecast" data-route="forecast">Forecast</a>
-        <a href="#validation" data-route="validation">Data Validation</a>
+        <a href="#forecast" data-route="forecast">Global</a>
+        <a href="#india" data-route="india">India case</a>
+        <a href="#validation" data-route="validation">Validation</a>
         <a href="#methods" data-route="methods">Methods</a>
       </nav>
       <div class="header-status">
@@ -52,17 +93,20 @@ function shell(): string {
     <main id="content" tabindex="-1"></main>
     <footer class="site-footer">
       <div>
-        <strong>FuXi-S2S India Forecast Lab</strong>
+        <strong>Atmosphere 42</strong>
         <span>Validated static prototype · Research use only</span>
       </div>
-      <p>100 members · 42 days · Native 1.5° grid · No raw source data distributed</p>
+      <p>100 members · 42 days · Native 1.5° grid · Natural Earth geography</p>
     </footer>
   `;
 }
 
 function renderRoute(data: AppData): void {
   const route = currentRoute();
+  routeCleanup?.();
+  routeCleanup = undefined;
   const content = document.querySelector<HTMLElement>("#content")!;
+  document.body.classList.toggle("global-route", route === "forecast");
   document
     .querySelectorAll<HTMLAnchorElement>(".site-nav a")
     .forEach((link) => {
@@ -72,7 +116,8 @@ function renderRoute(data: AppData): void {
       else link.removeAttribute("aria-current");
     });
   content.replaceChildren();
-  if (route === "forecast") renderForecastPage(content, data);
+  if (route === "forecast") routeCleanup = renderGlobalPage(content, data);
+  if (route === "india") renderForecastPage(content, data);
   if (route === "validation") renderValidationPage(content, data);
   if (route === "methods") renderMethodsPage(content, data);
   window.scrollTo({ top: 0, behavior: "instant" });

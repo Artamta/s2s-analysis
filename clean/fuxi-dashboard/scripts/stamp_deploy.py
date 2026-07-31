@@ -25,7 +25,9 @@ def build_manifest(commit: str = "local-uncommitted") -> Path:
     """Write the non-recursive public-data manifest and return its path."""
 
     files = []
-    for path in sorted(PUBLIC_DATA.rglob("*.json")):
+    for path in sorted(PUBLIC_DATA.rglob("*")):
+        if not path.is_file():
+            continue
         if path.name == "manifest.json":
             continue
         files.append(
@@ -40,7 +42,7 @@ def build_manifest(commit: str = "local-uncommitted") -> Path:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "deployed_commit": commit,
         "inventory_scope": (
-            "Every deployed public-data JSON except manifest.json itself, "
+            "Every deployed public-data file except manifest.json itself, "
             "whose self-checksum would be recursive."
         ),
         "files": files,

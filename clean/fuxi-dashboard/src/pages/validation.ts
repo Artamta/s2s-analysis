@@ -44,6 +44,17 @@ export function renderValidationPage(
       `;
     })
     .join("");
+  const globalStatus = data.global.metadata.validation.status;
+  const globalRow = `
+    <tr>
+      <td>
+        <strong>Global animation package</strong>
+        <span>42 daily leads × 3 ensemble-mean fields on the exact 121 × 240 grid.</span>
+      </td>
+      <td><span class="status-pill status-pill--${globalStatus}"><i></i>${statusLabel(globalStatus)}</span></td>
+      <td class="checksum">3 browser-verified SHA-256 files</td>
+    </tr>
+  `;
 
   container.innerHTML = `
     <section class="page-intro validation-intro">
@@ -79,7 +90,7 @@ export function renderValidationPage(
       <div class="table-scroll">
         <table class="validation-table">
           <thead><tr><th>Check</th><th>Result</th><th>SHA-256 / mode</th></tr></thead>
-          <tbody>${rows}</tbody>
+          <tbody>${globalRow}${rows}</tbody>
         </table>
       </div>
     </section>

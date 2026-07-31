@@ -1,0 +1,280 @@
+"""Single authoritative implementation of dashboard scientific formulas."""
+
+from __future__ import annotations
+
+from typing import Any
+
+import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+FloatArray = NDArray[np.float64]
+
+
+def _float_array(values: ArrayLike) -> FloatArray:
+    """Return values as a finite-capable float64 NumPy array."""
+
+    return np.asarray(values, dtype=np.float64)
+
+
+def tp_mm_hour_to_mm_day(tp_mm_hour: ArrayLike) -> FloatArray:
+    """Convert FuXi mean precipitation rate from mm h-1 to mm day-1."""
+
+    return _float_array(tp_mm_hour) * 24.0
+
+
+def kelvin_to_celsius(t2m_kelvin: ArrayLike) -> FloatArray:
+    """Convert absolute temperature in Kelvin to degrees Celsius."""
+
+    return _float_array(t2m_kelvin) - 273.15
+
+
+def _weekly_reduce(
+    daily_values: ArrayLike, *, day_axis: int, operation: str
+) -> FloatArray:
+    """Reduce consecutive seven-day blocks while preserving axis order."""
+
+    values = _float_array(daily_values)
+    axis = np.core.numeric.normalize_axis_index(day_axis, values.ndim)
+    if values.shape[axis] % 7:
+        raise ValueError("daily axis length must be divisible by seven")
+    moved = np.moveaxis(values, axis, 0)
+    reshaped = moved.reshape(moved.shape[0] // 7, 7, *moved.shape[1:])
+    if operation == "sum":
+        reduced = reshaped.sum(axis=1)
+    elif operation == "mean":
+        reduced = reshaped.mean(axis=1)
+    else:  # pragma: no cover - internal guard
+        raise ValueError(f"unsupported weekly operation: {operation}")
+    return np.moveaxis(reduced, 0, axis)
+
+
+def weekly_total(daily_rain_mm_day: ArrayLike, *, day_axis: int = 0) -> FloatArray:
+    """Sum each consecutive seven-day rainfall block."""
+
+    return _weekly_reduce(daily_rain_mm_day, day_axis=day_axis, operation="sum")
+
+
+def weekly_mean(daily_values: ArrayLike, *, day_axis: int = 0) -> FloatArray:
+    """Average each consecutive seven-day block."""
+
+    return _weekly_reduce(daily_values, day_axis=day_axis, operation="mean")
+
+
+def weekly_mean_rainfall(
+    daily_rain_mm_day: ArrayLike, *, day_axis: int = 0
+) -> FloatArray:
+    """Return the weekly total divided by exactly seven days."""
+
+    return weekly_total(daily_rain_mm_day, day_axis=day_axis) / 7.0
+
+
+def anomaly(forecast: ArrayLike, climatology: ArrayLike) -> FloatArray:
+    """Subtract a matched climatology from a forecast or observation."""
+
+    return _float_array(forecast) - _float_array(climatology)
+
+
+def calendar_interpolation(
+    left_slot: ArrayLike, right_slot: ArrayLike, right_weight: float
+) -> FloatArray:
+    """Linearly interpolate two calendar slots using the right-slot weight."""
+
+    if not 0.0 <= right_weight <= 1.0:
+        raise ValueError("right_weight must be between zero and one")
+    return (1.0 - right_weight) * _float_array(left_slot) + right_weight * _float_array(
+        right_slot
+    )
+
+
+def ensemble_mean(values: ArrayLike, *, member_axis: int = 0) -> FloatArray:
+    """Arithmetic mean across forecast members."""
+
+    return _float_array(values).mean(axis=member_axis)
+
+
+def forecast_spread(values: ArrayLike, *, member_axis: int = 0) -> FloatArray:
+    """Population standard deviation across forecast members (ddof=0)."""
+
+    return _float_array(values).std(axis=member_axis, ddof=0)
+
+
+def climatology_spread(values: ArrayLike, *, year_axis: int = 0) -> FloatArray:
+    """Sample standard deviation across annual ensemble means (ddof=1)."""
+
+    values_array = _float_array(values)
+    if values_array.shape[year_axis] < 2:
+        raise ValueError("at least two climatology years are required")
+    return values_array.std(axis=year_axis, ddof=1)
+
+
+def climatology_terciles(
+    yearly_means: ArrayLike, *, year_axis: int = 0
+) -> tuple[FloatArray, FloatArray]:
+    """Return lower and upper terciles across annual ensemble means."""
+
+    lower, upper = np.quantile(
+        _float_array(yearly_means), [1.0 / 3.0, 2.0 / 3.0], axis=year_axis
+    )
+    return lower, upper
+
+
+def probability_below_normal(
+    members: ArrayLike, lower_tercile: ArrayLike, *, member_axis: int = 0
+) -> FloatArray:
+    """Percentage of forecast members strictly below the lower tercile."""
+
+    return (
+        (_float_array(members) < _float_array(lower_tercile)).mean(axis=member_axis)
+        * 100.0
+    )
+
+
+def probability_above_normal(
+    members: ArrayLike, upper_tercile: ArrayLike, *, member_axis: int = 0
+) -> FloatArray:
+    """Percentage of forecast members strictly above the upper tercile."""
+
+    return (
+        (_float_array(members) > _float_array(upper_tercile)).mean(axis=member_axis)
+        * 100.0
+    )
+
+
+def area_weights(
+    latitude: ArrayLike, supported_land_fraction: ArrayLike, *, normalize: bool = True
+) -> FloatArray:
+    """Compute cos(latitude) times supported land fraction."""
+
+    latitudes = _float_array(latitude)
+    land_fraction = _float_array(supported_land_fraction)
+    if latitudes.ndim != 1 or land_fraction.ndim != 2:
+        raise ValueError("latitude must be 1-D and land fraction must be 2-D")
+    if land_fraction.shape[0] != latitudes.size:
+        raise ValueError("land-fraction latitude dimension does not match latitude")
+    if np.any((land_fraction < 0.0) | (land_fraction > 1.0)):
+        raise ValueError("supported land fractions must lie in [0, 1]")
+    weights = np.cos(np.deg2rad(latitudes))[:, None] * land_fraction
+    if not np.any(weights > 0.0):
+        raise ValueError("area weights contain no supported cells")
+    if normalize:
+        weights = weights / weights.sum()
+    return weights
+
+
+def weighted_mean(values: ArrayLike, weights: ArrayLike) -> float:
+    """Finite-value weighted arithmetic mean."""
+
+    field = _float_array(values)
+    weight = np.broadcast_to(_float_array(weights), field.shape)
+    valid = np.isfinite(field) & np.isfinite(weight) & (weight > 0.0)
+    if not np.any(valid):
+        raise ValueError("no finite, positively weighted values")
+    return float(np.sum(field[valid] * weight[valid]) / np.sum(weight[valid]))
+
+
+def verification_metrics(
+    forecast: ArrayLike,
+    observation: ArrayLike,
+    weights: ArrayLike,
+    *,
+    forecast_anomaly: ArrayLike | None = None,
+    observation_anomaly: ArrayLike | None = None,
+) -> dict[str, float]:
+    """Compute area-weighted bias, MAE, RMSE, and spatial anomaly ACC."""
+
+    forecast_values = _float_array(forecast)
+    observation_values = _float_array(observation)
+    if forecast_values.shape != observation_values.shape:
+        raise ValueError("forecast and observation must have identical shapes")
+    difference = forecast_values - observation_values
+    metrics = {
+        "bias": weighted_mean(difference, weights),
+        "mae": weighted_mean(np.abs(difference), weights),
+        "rmse": float(np.sqrt(weighted_mean(difference**2, weights))),
+    }
+    forecast_acc = (
+        forecast_values if forecast_anomaly is None else _float_array(forecast_anomaly)
+    )
+    observation_acc = (
+        observation_values
+        if observation_anomaly is None
+        else _float_array(observation_anomaly)
+    )
+    metrics["acc"] = weighted_spatial_correlation(
+        forecast_acc, observation_acc, weights
+    )
+    return metrics
+
+
+def weighted_spatial_correlation(
+    forecast_anomaly: ArrayLike,
+    observation_anomaly: ArrayLike,
+    weights: ArrayLike,
+) -> float:
+    """Weighted spatial Pearson correlation of two anomaly fields."""
+
+    forecast = _float_array(forecast_anomaly)
+    observation = _float_array(observation_anomaly)
+    if forecast.shape != observation.shape:
+        raise ValueError("anomaly fields must have identical shapes")
+    weight = np.broadcast_to(_float_array(weights), forecast.shape)
+    valid = (
+        np.isfinite(forecast)
+        & np.isfinite(observation)
+        & np.isfinite(weight)
+        & (weight > 0.0)
+    )
+    if np.count_nonzero(valid) < 2:
+        raise ValueError("ACC requires at least two supported cells")
+    normalized_weight = weight[valid] / weight[valid].sum()
+    x = forecast[valid]
+    y = observation[valid]
+    x_centered = x - np.sum(normalized_weight * x)
+    y_centered = y - np.sum(normalized_weight * y)
+    covariance = np.sum(normalized_weight * x_centered * y_centered)
+    variance_product = np.sum(normalized_weight * x_centered**2) * np.sum(
+        normalized_weight * y_centered**2
+    )
+    if variance_product <= 0.0:
+        raise ValueError("ACC is undefined for a spatially constant field")
+    return float(covariance / np.sqrt(variance_product))
+
+
+FORMULA_DEFINITIONS: dict[str, dict[str, Any]] = {
+    "rain_mm_day": {
+        "expression": "tp_mm_hour × 24",
+        "description": "FuXi 24-hour mean precipitation rate converted to daily rainfall.",
+    },
+    "weekly_total_mm": {
+        "expression": "sum(seven daily rain_mm_day values)",
+        "description": "Seven consecutive, non-overlapping UTC model periods.",
+    },
+    "weekly_mean_mm_day": {
+        "expression": "weekly_total_mm ÷ 7",
+        "description": "Weekly-mean daily rainfall rate.",
+    },
+    "temperature_deg_c": {
+        "expression": "t2m_kelvin − 273.15",
+        "description": "Kelvin-to-Celsius conversion.",
+    },
+    "calendar_interpolation": {
+        "expression": "(1 − w) × left_slot + w × right_slot",
+        "description": "Interpolation is applied to each yearly mean before averaging years.",
+    },
+    "model_anomaly": {
+        "expression": "forecast weekly mean − matched model-climatology weekly mean",
+        "description": "FuXi model anomaly; not an IMD or IMERG anomaly.",
+    },
+    "imd_anomaly": {
+        "expression": "IMD observation − IMD 1991–2020 calendar-day climatology",
+        "description": "Gauge-analysis observation anomaly.",
+    },
+    "imerg_anomaly": {
+        "expression": "IMERG observation − IMERG Final V07B 2001–2022 calendar-day climatology",
+        "description": "Satellite observation anomaly using the fixed audited baseline.",
+    },
+    "area_weight": {
+        "expression": "cos(latitude) × supported land fraction",
+        "description": "Weights are normalized across finite supported cells for scores.",
+    },
+}

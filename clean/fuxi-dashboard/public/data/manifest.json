@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-30T23:48:27.859089+00:00",
+  "deployed_commit": "local-uncommitted",
+  "inventory_scope": "Every deployed public-data JSON except manifest.json itself, whose self-checksum would be recursive.",
+  "files": [
+    {
+      "path": "data/forecasts/20260728.json",
+      "size_bytes": 346208,
+      "sha256": "475ec3f366d9410e9f296d8c48976712b4502451fffb36a29c6a130090747658"
+    },
+    {
+      "path": "data/formulas.json",
+      "size_bytes": 2468,
+      "sha256": "355332c9a36a39a33d6f11aaa69441508758ef8deeab82398a31a41baa20026d"
+    },
+    {
+      "path": "data/index.json",
+      "size_bytes": 305,
+      "sha256": "79c05894ad27a9603bff506dd3fbcf905f354578c9231bf3c059c796c89ff3b4"
+    },
+    {
+      "path": "data/india-outline.json",
+      "size_bytes": 448020,
+      "sha256": "0aa127cb934cc8c244afc9fce5dd8ad064895ea870ecca7bb825e3f2d7cc3c91"
+    },
+    {
+      "path": "data/sources.json",
+      "size_bytes": 2358,
+      "sha256": "ffc1a5ef83e38810b5a492d01861efb9ea73468d3fae232e4b5b0dcd37bec318"
+    },
+    {
+      "path": "data/validation.json",
+      "size_bytes": 5541,
+      "sha256": "175a92c188b0d6ed37ab879d33196126517ee4123dbef13b5e065254c804bb5f"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "fuxi_forecast_20260728",
+      "name": "FuXi-S2S 100-member GFS-proxy forecast",
+      "product": "FuXi-S2S experimental forecast",
+      "period": "2026-07-28 through 2026-09-07",
+      "grid": "27 \u00d7 27, 1.5\u00b0, 39\u00b0N\u20130\u00b0, 60\u00b0E\u201399\u00b0E",
+      "units": {
+        "tp": "mm h-1",
+        "t2m": "K"
+      },
+      "sha256": "59bf922f03159666603c38158b14f015fdd0d9c566249853e2cf90c96ffa3085",
+      "validation_status": "green"
+    },
+    {
+      "id": "fuxi_climatology_2002_2021",
+      "name": "FuXi-S2S native reforecast model climatology",
+      "product": "20 equally weighted yearly ensemble means",
+      "period": "2002\u20132021; JJAS native initialization slots",
+      "grid": "27 \u00d7 27, 1.5\u00b0, forecast grid",
+      "units": {
+        "tp": "mm day-1",
+        "t2m": "K"
+      },
+      "sha256": "e0bc3c4faf44a8f9d47b8dfc22cf3640cf7018dbacf9b9c876c1dd8cb8b93f2d",
+      "validation_status": "warning"
+    },
+    {
+      "id": "imd_climatology_1991_2020",
+      "name": "IMD native daily rainfall climatology",
+      "product": "India Meteorological Department gridded rainfall",
+      "period": "1991\u20132020; 365 calendar days",
+      "grid": "0.25\u00b0 native IMD grid",
+      "units": {
+        "rainfall": "mm/day"
+      },
+      "sha256": "a7b7780ad46dc9bbd3127f74714e76c33559b98ce377c8d92a9002c1fa73d62d",
+      "validation_status": "green"
+    },
+    {
+      "id": "imerg_final_climatology_2001_2022",
+      "name": "IMERG Final V07B fixed daily climatology",
+      "product": "GPM_3IMERGDF.07 Final",
+      "period": "2001\u20132022; 6 June\u201325 October calendar window",
+      "grid": "22 \u00d7 22 at 1.5\u00b0; frozen 169-cell India support",
+      "units": {
+        "rainfall": "mm day-1"
+      },
+      "sha256": "38e066a3d0efccb38977e9d2a6f243d94e548a6a7d5dd33f67592efc2d7247b8",
+      "validation_status": "warning"
+    }
+  ],
+  "observation_identity": {
+    "imd": "IMD daily gauge analysis; local observation-day convention is labelled separately from UTC model periods.",
+    "imerg_observation": "IMERG Late is the near-real-time observation stream.",
+    "imerg_climatology": "IMERG Final V07B is the fixed 2001\u20132022 climatology; it is not IMERG Late."
+  },
+  "generated_at": "2026-07-30T23:40:19.067845+00:00"
+}

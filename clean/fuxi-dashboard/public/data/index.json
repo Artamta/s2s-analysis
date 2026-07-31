@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-30T23:40:19.069182+00:00",
+  "latest_successful_issue": "20260728",
+  "available_issues": [
+    {
+      "id": "20260728",
+      "initialization": "2026-07-28T00:00:00Z",
+      "status": "warning",
+      "forecast": "forecasts/20260728.json"
+    }
+  ]
+}

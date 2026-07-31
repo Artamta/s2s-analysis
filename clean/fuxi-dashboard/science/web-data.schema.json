@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/fuxi-dashboard/forecast.schema.json",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "issue",
+    "grid",
+    "products",
+    "weeks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "issue": {
+      "type": "object",
+      "required": [
+        "initialization",
+        "information_cutoff",
+        "model_state_time",
+        "members",
+        "lead_days",
+        "status"
+      ],
+      "properties": {
+        "initialization": {
+          "type": "string"
+        },
+        "information_cutoff": {
+          "type": "string"
+        },
+        "model_state_time": {
+          "type": "string"
+        },
+        "members": {
+          "const": 100
+        },
+        "lead_days": {
+          "const": 42
+        },
+        "status": {
+          "enum": [
+            "green",
+            "warning"
+          ]
+        }
+      }
+    },
+    "grid": {
+      "type": "object",
+      "required": [
+        "shape",
+        "latitude",
+        "longitude",
+        "india_mask"
+      ],
+      "properties": {
+        "shape": {
+          "prefixItems": [
+            {
+              "const": 27
+            },
+            {
+              "const": 27
+            }
+          ],
+          "items": false
+        },
+        "latitude": {
+          "type": "array",
+          "minItems": 27,
+          "maxItems": 27,
+          "items": {
+            "type": "number"
+          }
+        },
+        "longitude": {
+          "type": "array",
+          "minItems": 27,
+          "maxItems": 27,
+          "items": {
+            "type": "number"
+          }
+        },
+        "india_mask": {
+          "type": "array",
+          "minItems": 729,
+          "maxItems": 729,
+          "items": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "products": {
+      "type": "object",
+      "required": [
+        "rainfall_total",
+        "rainfall_anomaly",
+        "temperature_mean",
+        "temperature_anomaly"
+      ]
+    },
+    "weeks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": [
+          "week",
+          "valid_start",
+          "valid_end",
+          "fields",
+          "summary"
+        ],
+        "properties": {
+          "week": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "valid_start": {
+            "type": "string"
+          },
+          "valid_end": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 729,
+              "maxItems": 729,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

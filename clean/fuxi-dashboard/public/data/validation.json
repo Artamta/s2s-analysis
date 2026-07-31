@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-30T23:48:27.855787+00:00",
+  "overall_status": "warning",
+  "presentation_allowed": true,
+  "checks": [
+    {
+      "id": "fuxi_forecast",
+      "label": "FuXi forecast",
+      "group": "source",
+      "status": "green",
+      "summary": "100 members, 42 lead days, timing, units, grid, physics, and spread validated.",
+      "details": {
+        "size_bytes": 16648185,
+        "sha256": "59bf922f03159666603c38158b14f015fdd0d9c566249853e2cf90c96ffa3085",
+        "members": 100,
+        "lead_days": 42,
+        "grid": "27 \u00d7 27 at 1.5\u00b0",
+        "tp_range_mm_h-1": [
+          0.0,
+          6.232000350952148
+        ],
+        "t2m_range_K": [
+          266.8512268066406,
+          312.4057922363281
+        ],
+        "maximum_tp_population_spread_mm_h-1": 0.9735969524054252,
+        "maximum_t2m_population_spread_K": 3.2573598388982288,
+        "initialization": "2026-07-28T00:00:00Z",
+        "information_cutoff": "2026-07-28T00:00:00Z"
+      }
+    },
+    {
+      "id": "fuxi_climatology",
+      "label": "FuXi climatology",
+      "group": "source",
+      "status": "warning",
+      "summary": "Validated for this JJAS issue; full-year FuXi climatology is not yet available.",
+      "details": {
+        "size_bytes": 251633007,
+        "sha256": "e0bc3c4faf44a8f9d47b8dfc22cf3640cf7018dbacf9b9c876c1dd8cb8b93f2d",
+        "hindcast_years": [
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2018,
+          2019,
+          2020,
+          2021
+        ],
+        "native_members_per_year": 51,
+        "annual_weighting": "one native-member mean per year; 20 years equally weighted",
+        "lead_days": 42,
+        "available_init_slots": 35,
+        "prototype_alignment": {
+          "left_slot": "0725",
+          "right_slot": "0728",
+          "right_weight": 0.6666666666666666
+        },
+        "complete_sample_count_slots": 1470,
+        "calendar_scope": "JJAS only"
+      }
+    },
+    {
+      "id": "imd_climatology",
+      "label": "IMD climatology",
+      "group": "source",
+      "status": "green",
+      "summary": "1991\u20132020 baseline, calendar, units, finite rainfall, and stable support validated.",
+      "details": {
+        "size_bytes": 13174950,
+        "sha256": "a7b7780ad46dc9bbd3127f74714e76c33559b98ce377c8d92a9002c1fa73d62d",
+        "baseline": "1991-2020",
+        "calendar_days": 365,
+        "feb_29_rule": "removed from the 365-day climatology",
+        "supported_native_cells": 4964,
+        "samples_per_supported_cell": 30,
+        "units": "mm/day"
+      }
+    },
+    {
+      "id": "imerg_climatology",
+      "label": "IMERG climatology",
+      "group": "source",
+      "status": "warning",
+      "summary": "Final V07B 2001\u20132022 baseline is validated for all 42 valid days; the audited file is seasonal.",
+      "details": {
+        "size_bytes": 133954,
+        "sha256": "38e066a3d0efccb38977e9d2a6f243d94e548a6a7d5dd33f67592efc2d7247b8",
+        "baseline": "2001-2022",
+        "samples_per_calendar_day": 22,
+        "calendar_days": 142,
+        "calendar_window": "06-06 through 10-25 inclusive (142 days)",
+        "grid": "22x22 at 1.5 degrees; frozen 169-cell India support",
+        "supported_cells": 169,
+        "remapping": "conservative spherical overlap to fixed IMD-derived India support",
+        "observation_stream": "IMERG Late (separate from this Final climatology)"
+      }
+    },
+    {
+      "id": "formula_tests",
+      "label": "Formula tests",
+      "group": "formula",
+      "status": "green",
+      "summary": "Conversions, weekly aggregation, anomalies, interpolation, weights, and metrics passed.",
+      "details": {
+        "formula_version": "1.0.0",
+        "independent_examples": 9
+      }
+    },
+    {
+      "id": "legacy_builder_crosscheck",
+      "label": "Independent 28 July cross-check",
+      "group": "formula",
+      "status": "green",
+      "summary": "All exported fields match the established validated 28 July builder.",
+      "details": {
+        "compared_values": 17496,
+        "absolute_tolerance": 0.00015,
+        "maximum_absolute_difference": 9.431152344063776e-05,
+        "left_slot": "0725",
+        "right_slot": "0728",
+        "right_weight": 0.6666666666666666
+      }
+    },
+    {
+      "id": "web_schema",
+      "label": "Web export",
+      "group": "publication",
+      "status": "green",
+      "summary": "JSON Schema and all six weeks \u00d7 four products passed.",
+      "details": {
+        "weeks": 6,
+        "products": 4,
+        "finite_values": 17496
+      }
+    },
+    {
+      "id": "publication_safety",
+      "label": "Publication safety",
+      "group": "publication",
+      "status": "green",
+      "summary": "Public JSON is finite and free of internal paths, credentials, and raw assets.",
+      "details": {
+        "json_files_scanned": 6,
+        "bytes_scanned": 803230
+      }
+    }
+  ],
+  "warnings": [
+    "Validated for this JJAS issue; full-year FuXi climatology is not yet available.",
+    "Final V07B 2001\u20132022 baseline is validated for all 42 valid days; the audited file is seasonal."
+  ],
+  "verification_metrics": {
+    "status": "withheld",
+    "reason": "Every required observation day is not yet available for the six complete valid weeks. No partial-period score is published."
+  }
+}

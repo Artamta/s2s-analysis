@@ -1,0 +1,16 @@
+{
+  "name": "fuxi-s2s-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test:science": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2",
+    "vite": "7.3.6"
+  }
+}

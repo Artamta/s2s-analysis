@@ -501,6 +501,22 @@ def main() -> int:
             "schema_version": 1,
             "generated_at": utc_now(),
             "latest_successful_issue": "20260728",
+            "global_viewer": {
+                "issue": "20260728",
+                "status": "experimental",
+                "metadata": "global/metadata.json",
+                "lead_days": 42,
+                "variables": [
+                    "precipitation",
+                    "temperature",
+                    "z500",
+                    "wind850",
+                    "mslp",
+                    "sst",
+                    "tcwv",
+                    "olr",
+                ],
+            },
             "available_issues": [
                 {
                     "id": "20260728",

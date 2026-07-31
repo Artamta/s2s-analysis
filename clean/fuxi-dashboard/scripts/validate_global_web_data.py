@@ -21,6 +21,7 @@ EXPECTED_VARIABLES = {
     "mslp",
     "sst",
     "olr",
+    "tcwv",
 }
 PHYSICAL_RANGES = {
     "precipitation": (0.0, 500.0),
@@ -30,6 +31,7 @@ PHYSICAL_RANGES = {
     "mslp": (800.0, 1150.0),
     "sst": (-100.0, 70.0),
     "olr": (0.0, 500.0),
+    "tcwv": (0.0, 100.0),
 }
 SPREAD_RANGES = {
     "precipitation": (0.0, 500.0),
@@ -39,6 +41,7 @@ SPREAD_RANGES = {
     "mslp": (0.0, 100.0),
     "sst": (0.0, 100.0),
     "olr": (0.0, 300.0),
+    "tcwv": (0.0, 100.0),
 }
 
 
@@ -73,7 +76,7 @@ def main() -> None:
     if metadata["grid"]["shape"] != [121, 240]:
         raise ValueError("global package must use the native 121 x 240 grid")
     if set(metadata["variables"]) != EXPECTED_VARIABLES:
-        raise ValueError("global package must contain TP, T2M, and Z500 products")
+        raise ValueError("global package does not contain the locked product set")
 
     dates = [dt.date.fromisoformat(value) for value in metadata["valid_period_starts"]]
     if len(dates) != 42:

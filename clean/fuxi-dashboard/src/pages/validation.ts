@@ -49,10 +49,10 @@ export function renderValidationPage(
     <tr>
       <td>
         <strong>Global animation package</strong>
-        <span>42 daily leads × 7 ensemble fields, population spread, 850 hPa U/V vectors, and an ocean support mask on the exact 121 × 240 grid.</span>
+        <span>42 daily leads × 8 ensemble fields, population spread, 850 hPa U/V vectors, and an ocean support mask on the exact 121 × 240 grid.</span>
       </td>
       <td><span class="status-pill status-pill--${globalStatus}"><i></i>${statusLabel(globalStatus)}</span></td>
-      <td class="checksum">17 build-verified files; active layers rechecked in browser</td>
+      <td class="checksum">19 build-verified binaries; active layers rechecked in browser</td>
     </tr>
   `;
 

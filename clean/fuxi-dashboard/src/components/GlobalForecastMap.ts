@@ -33,6 +33,7 @@ export interface MapOverlays {
   indiaStates: boolean;
   windVectors: boolean;
   pressureContours: boolean;
+  z500Contours: boolean;
 }
 
 interface DragState {
@@ -137,6 +138,7 @@ export class GlobalForecastMap {
     indiaStates: false,
     windVectors: false,
     pressureContours: false,
+    z500Contours: false,
   };
   private selection: MapSelection = {
     latitude: 28.5,
@@ -290,7 +292,7 @@ export class GlobalForecastMap {
     const bounds = this.container.getBoundingClientRect();
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     const width = Math.max(320, Math.round(bounds.width));
-    const height = Math.max(360, Math.round(bounds.height));
+    const height = Math.max(160, Math.round(bounds.height));
     this.canvas.width = Math.round(width * ratio);
     this.canvas.height = Math.round(height * ratio);
     this.canvas.style.width = `${width}px`;
@@ -406,7 +408,7 @@ export class GlobalForecastMap {
   private draw(): void {
     const bounds = this.container.getBoundingClientRect();
     const width = Math.max(320, bounds.width);
-    const height = Math.max(360, bounds.height);
+    const height = Math.max(160, bounds.height);
     const context = this.context;
     context.clearRect(0, 0, width, height);
 
@@ -434,11 +436,18 @@ export class GlobalForecastMap {
     context.clip();
     this.drawFields();
     this.drawGraticules();
-    if (!this.drag && this.currentVariable === "z500") {
-      this.drawContour(this.z500ContourPath);
+    if (
+      !this.drag &&
+      (this.currentVariable === "z500" || this.overlays.z500Contours)
+    ) {
+      this.drawContour(this.z500ContourPath, "rgb(255 205 112 / 72%)");
     }
     if (!this.drag && this.overlays.pressureContours) {
-      this.drawContour(this.pressureContourPath, "rgb(255 245 218 / 58%)");
+      this.drawContour(
+        this.pressureContourPath,
+        "rgb(244 250 239 / 66%)",
+        [3, 3],
+      );
     }
     if (this.overlays.windVectors) this.drawWindVectors();
     this.drawCountries();
@@ -818,19 +827,22 @@ export class GlobalForecastMap {
   private drawContour(
     path: Path2D | null,
     color = "rgb(248 249 229 / 65%)",
+    lineDash: number[] = [],
   ): void {
     if (!path) return;
     const context = this.context;
     context.save();
     context.strokeStyle = color;
     context.lineWidth = 0.7;
+    context.setLineDash(lineDash);
     context.stroke(path);
     context.restore();
   }
 
   private rebuildContours(): void {
     this.z500ContourPath =
-      this.currentVariable === "z500" && this.data.fields.z500
+      (this.currentVariable === "z500" || this.overlays.z500Contours) &&
+      this.data.fields.z500
         ? this.buildContourPath("z500", this.currentDay, Z500_LEVELS)
         : null;
     this.pressureContourPath =

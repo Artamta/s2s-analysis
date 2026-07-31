@@ -13,6 +13,7 @@ const VARIABLE_ORDER: GlobalVariableKey[] = [
   "wind850",
   "mslp",
   "sst",
+  "tcwv",
   "olr",
 ];
 const FAMILY_LABELS = {
@@ -42,6 +43,7 @@ function variableGlyph(variable: GlobalVariableKey): string {
     mslp: "P",
     sst: "≈",
     olr: "☁",
+    tcwv: "≋",
   };
   return glyphs[variable];
 }
@@ -235,27 +237,31 @@ export function renderGlobalPage(
 
       <div class="global-title">
         <span class="global-eyebrow"><b>Experimental</b> · research ensemble · not operational</span>
-        <h1>Atmosphere<br><em>in motion.</em></h1>
-        <p>Explore coupled rain, heat, circulation, ocean and convection signals from Day 1 through Week 6.</p>
+        <h1>Global outlook</h1>
+        <p>42 daily fields · 100 members · Week 1 to Week 6</p>
       </div>
 
       <aside class="global-facts" aria-label="Forecast issue and integrity facts">
-        <div><span>Status</span><strong class="experimental-text">Experimental research guidance</strong></div>
         <div><span>Initialized</span><strong>28 Jul 2026 · 00 UTC</strong></div>
-        <div><span>Signal</span><strong>${global.metadata.issue.members}-member ensemble mean</strong></div>
-        <div><span>Verification</span><strong>Awaiting future observations</strong></div>
+        <div><span>Product</span><strong class="experimental-text">Experimental ensemble mean</strong></div>
         <div><span>Integrity</span><strong class="integrity-ok" id="integrity-status">✓ Active layer SHA-256 verified</strong></div>
       </aside>
 
       <aside class="global-layer-dock" aria-label="Forecast fields">
-        <div class="layer-dock-heading"><span>Base field</span><small id="layer-load-status">SHA-256 verified</small></div>
+        <div class="layer-dock-heading"><span>Shaded field · choose one</span><small id="layer-load-status">SHA-256 verified</small></div>
         <div id="global-layer-groups"></div>
         <div class="overlay-controls">
-          <span>Map overlays</span>
+          <span>Overlays · combine freely</span>
           <label><input id="overlay-countries" type="checkbox" checked><i></i>Country names</label>
           <label><input id="overlay-india" type="checkbox"><i></i>India states · SoI ABDB</label>
           <label><input id="overlay-wind" type="checkbox"><i></i>850 hPa vectors</label>
-          <label><input id="overlay-pressure" type="checkbox"><i></i>Pressure contours</label>
+          <label><input id="overlay-pressure" type="checkbox"><i></i>MSLP · 10 hPa dashed</label>
+          <label><input id="overlay-z500" type="checkbox"><i></i>Z500 · 20 dam solid</label>
+        </div>
+        <div class="anomaly-note">
+          <strong>Absolute fields</strong>
+          <span>Global anomalies stay locked until a matched 20-year global model climatology is complete.</span>
+          <a href="#india">Validated India anomalies →</a>
         </div>
       </aside>
 
@@ -329,6 +335,7 @@ export function renderGlobalPage(
     indiaStates: false,
     windVectors: false,
     pressureContours: false,
+    z500Contours: false,
   };
   let speedIndex = 1;
   let playing = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -507,19 +514,23 @@ export function renderGlobalPage(
     container.querySelector<HTMLInputElement>("#overlay-wind")!;
   const pressureInput =
     container.querySelector<HTMLInputElement>("#overlay-pressure")!;
+  const z500Input =
+    container.querySelector<HTMLInputElement>("#overlay-z500")!;
   const updateOverlays = async (): Promise<void> => {
     overlays = {
       countryLabels: countryInput.checked,
       indiaStates: indiaInput.checked,
       windVectors: windInput.checked,
       pressureContours: pressureInput.checked,
+      z500Contours: z500Input.checked,
     };
     if (overlays.windVectors) await global.loadVariable("wind850");
     if (overlays.pressureContours) await global.loadVariable("mslp");
+    if (overlays.z500Contours) await global.loadVariable("z500");
     map.setOverlays(overlays);
     map.render(variable, day, 0);
   };
-  [countryInput, indiaInput, windInput, pressureInput].forEach((input) => {
+  [countryInput, indiaInput, windInput, pressureInput, z500Input].forEach((input) => {
     input.addEventListener("change", () => void updateOverlays());
   });
   container.querySelector("#zoom-in")!.addEventListener("click", () => {

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T02:00:05.890514+00:00",
+  "generated_at": "2026-07-31T02:38:20.270875+00:00",
   "deployed_commit": "local-uncommitted",
   "inventory_scope": "Every deployed public-data file except manifest.json itself, whose self-checksum would be recursive.",
   "files": [
@@ -16,8 +16,8 @@
     },
     {
       "path": "data/global/metadata.json",
-      "size_bytes": 94174,
-      "sha256": "1605338c090bb9d5d9f4001bdb5f735dfd5d709ef9d65051d653b4ba5a355e0c"
+      "size_bytes": 104798,
+      "sha256": "df28d4214276d5f4d401b518ca9381f1b8c93d989ccece701030f7c44a06c029"
     },
     {
       "path": "data/global/mslp-spread.bin",
@@ -65,6 +65,16 @@
       "sha256": "23df84bbd4ad0acda5d8fa21f392870b35c758c5a5ae1563216e08343b2ac4fb"
     },
     {
+      "path": "data/global/tcwv-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "592bb4d9a570e2fe07d32dbab8caa1d7be7aaa39cab5db1e94b0af2939a0a02d"
+    },
+    {
+      "path": "data/global/tcwv.bin",
+      "size_bytes": 2439360,
+      "sha256": "48797cc5bd1184ac75c0884769c3490970d476adfe076d7396fd0fee46154fb5"
+    },
+    {
       "path": "data/global/temperature-spread.bin",
       "size_bytes": 2439360,
       "sha256": "4f19398525cf6d8dd1fdfcc1b91452121d23605350fe035b3e889a9fb6a6575f"
@@ -106,8 +116,8 @@
     },
     {
       "path": "data/index.json",
-      "size_bytes": 586,
-      "sha256": "0c5ef3fda561613c7f79713b006d118d8f051d45ca9ea03aefd38a4f0178b8e9"
+      "size_bytes": 600,
+      "sha256": "f46e6ebea69cae7f6148f51d24ef588dfd39b31baec2644b5da7000a47fe6b2a"
     },
     {
       "path": "data/india-admin.json",
@@ -127,7 +137,7 @@
     {
       "path": "data/validation.json",
       "size_bytes": 5542,
-      "sha256": "26fc906d1e42f77a8ead8828373fe0c78057796032e121af8fd224a5ce1edb7a"
+      "sha256": "8466293b4ec79d956ded9ad21c1e137ab4b88b0f71f4002abff332f9936ddfe6"
     },
     {
       "path": "data/world-countries.geojson",

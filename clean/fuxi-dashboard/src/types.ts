@@ -13,7 +13,8 @@ export type GlobalVariableKey =
   | "wind850"
   | "mslp"
   | "sst"
-  | "olr";
+  | "olr"
+  | "tcwv";
 
 export interface LegendDefinition {
   boundaries: number[];

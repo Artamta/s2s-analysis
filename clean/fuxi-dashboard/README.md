@@ -4,7 +4,7 @@ A static interactive global outlook and validated India case for the 28 July
 2026 experimental forecast. The global viewer animates 42 daily ensemble-mean
 fields for precipitation, 2 m temperature, 500 hPa geopotential height,
 850 hPa wind, mean sea-level pressure, sea-surface temperature, and outgoing
-longwave radiation.
+longwave radiation, plus total-column water vapour.
 The site publishes compact ensemble-derived fields only. It does not contain
 raw model inputs, member fields, observations, reforecasts, model weights,
 credentials, or cluster paths.
@@ -25,11 +25,12 @@ The forecast interface uses the neutral product name **Atmosphere 42**. Model
 identity remains in this repository and the Methods page for scientific
 provenance.
 
-Anomalies use a calendar-interpolated, lead-matched FuXi 2002–2021 native
-reforecast climatology. They are not IMD or IMERG anomalies. The standardized
+The India anomalies use a calendar-interpolated, lead-matched FuXi 2002–2021
+native reforecast climatology. They are not IMD or IMERG anomalies. The standardized
 FuXi climatology and audited IMERG Final climatology are currently
 season-limited; both cover this issue, while full-year automation remains a
-pipeline milestone.
+pipeline milestone. Global anomalies are not published because this climatology
+covers India only, not the complete 121 × 240 grid.
 
 ## Rebuild and validate
 
@@ -59,12 +60,12 @@ npm run dev
 ## Data contract
 
 The global contract stores little-endian `uint16` binary arrays in lead-day,
-latitude, longitude order: seven ensemble means, seven population standard
+latitude, longitude order: eight ensemble means, eight population standard
 deviations, and separate U/V component means for 850 hPa wind. A one-byte
 ocean mask limits SST display support. `metadata.json` locks dimensions,
 quantization, units, legends, valid periods, file sizes, and SHA-256 hashes.
 The default precipitation layer loads first; other fields load and verify
-lazily when selected. The complete optional global payload is about 38 MB
+lazily when selected. The complete optional global payload is about 44 MB
 before HTTP compression.
 
 Country boundaries and labels use Natural Earth. `india-admin.json` is a

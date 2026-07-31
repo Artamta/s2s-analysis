@@ -65,10 +65,16 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
         <code>OLR = − top net thermal radiation</code>
         <p>Lower tropical OLR often accompanies higher cloud tops and deep convection. This is useful MJO context, but it is not a filtered OLR anomaly or an MJO phase/index.</p>
       </article>
+      <article>
+        <span>09 / Atmospheric moisture</span>
+        <h3>Total-column water vapour</h3>
+        <code>TCWV = vertically integrated water vapour (kg/m²)</code>
+        <p>TCWV highlights broad tropical moisture reservoirs and transport pathways. Physically invalid negative experimental values are clipped to zero before the 100-member mean and spread are calculated. Combine moisture shading with 850 hPa vectors to read inflow.</p>
+      </article>
     </section>
 
     <section class="methods-lead">
-      <span class="chapter-number">09</span>
+      <span class="chapter-number">10</span>
       <div>
         <span class="eyebrow">Animation contract</span>
         <h2>Daily evidence, smooth presentation</h2>
@@ -78,18 +84,18 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
     </section>
 
     <section class="methods-lead">
-      <span class="chapter-number">10</span>
+      <span class="chapter-number">11</span>
       <div>
         <span class="eyebrow">Uncertainty and S2S interpretation</span>
         <h2>Member disagreement, not a confidence score</h2>
         <p class="large-copy">The point trace shows the 100-member arithmetic mean with a band of ±1 population standard deviation (<code>ddof=0</code>) at every daily lead.</p>
         <p>A wider band means the members disagree more at that grid cell. It is not a calibrated probability interval and does not by itself measure forecast skill. In Days 1–14, synoptic detail can still be informative; in Weeks 3–4, emphasize persistent large-scale patterns; in Weeks 5–6, interpret only broad ensemble and circulation tendencies.</p>
-        <p>Verification metrics remain unpublished until every observation needed for the valid period is available on the identical grid, mask, and timing contract. The browser checks the size and SHA-256 digest of all six compact field files before rendering them.</p>
+        <p>Verification metrics remain unpublished until every observation needed for the valid period is available on the identical grid, mask, and timing contract. The browser checks the size and SHA-256 digest of every selected mean, spread, and vector file before rendering it.</p>
       </div>
     </section>
 
     <section class="methods-lead">
-      <span class="chapter-number">11</span>
+      <span class="chapter-number">12</span>
       <div>
         <span class="eyebrow">Geography and interaction</span>
         <h2>World context, India-standard focus</h2>
@@ -99,12 +105,22 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
     </section>
 
     <section class="methods-lead">
-      <span class="chapter-number">12</span>
+      <span class="chapter-number">13</span>
       <div>
         <span class="eyebrow">MJO publication gate</span>
         <h2>Context now; formal index later</h2>
         <p class="large-copy">A defensible MJO product needs equatorial OLR, U850 and U200 anomalies, temporal filtering, a matched daily climatology, and projection onto documented EOF patterns.</p>
         <p>The current viewer therefore exposes OLR and 850 hPa flow without calling either an MJO index. A Wheeler–Hendon-style phase-space product will be added only after those climatology and reproducibility contracts pass.</p>
+      </div>
+    </section>
+
+    <section class="methods-lead">
+      <span class="chapter-number">14</span>
+      <div>
+        <span class="eyebrow">Global anomaly gate</span>
+        <h2>Possible, but not from the India-only climate</h2>
+        <p class="large-copy">The available 2002–2021 lead-matched model climatology covers the 27 × 27 India grid for rainfall and temperature. It cannot be stretched across the globe or exchanged between variables.</p>
+        <p>The global explorer therefore publishes absolute fields only. Its controls permit one shaded field plus multiple compatible contour and vector overlays. Global anomalies will unlock after a 20-year, 121 × 240, lead- and calendar-matched climatology passes the same publication checks.</p>
       </div>
     </section>
 

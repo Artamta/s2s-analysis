@@ -32,7 +32,17 @@ from science.formulas import (  # noqa: E402
 )
 
 GRAVITY_M_S2 = 9.80665
-CHANNELS = ("tp", "t2m", "z500", "u850", "v850", "msl", "sst", "ttr")
+CHANNELS = (
+    "tp",
+    "t2m",
+    "z500",
+    "u850",
+    "v850",
+    "msl",
+    "sst",
+    "ttr",
+    "tcwv",
+)
 CHANNEL_INDEX = {channel: index for index, channel in enumerate(CHANNELS)}
 EXPECTED_LATITUDE = np.linspace(90.0, -90.0, 121, dtype=np.float32)
 EXPECTED_LONGITUDE = np.linspace(0.0, 358.5, 240, dtype=np.float32)
@@ -62,7 +72,7 @@ VARIABLES = (
         key="precipitation",
         source_channel="tp",
         label="Daily precipitation",
-        short_label="Precipitation",
+        short_label="Rainfall",
         units="mm/day",
         description="Ensemble-mean precipitation rate converted to a 24-hour total.",
         family="surface",
@@ -86,7 +96,7 @@ VARIABLES = (
         key="temperature",
         source_channel="t2m",
         label="2 m temperature",
-        short_label="Temperature",
+        short_label="2 m temp",
         units="°C",
         description="Daily ensemble-mean temperature two metres above the surface.",
         family="surface",
@@ -134,7 +144,7 @@ VARIABLES = (
         key="wind850",
         source_channel="u850,v850",
         label="850 hPa wind speed",
-        short_label="850 hPa wind",
+        short_label="850 wind",
         units="m/s",
         description=(
             "Arithmetic ensemble mean of member 850 hPa wind speed; arrows "
@@ -234,6 +244,38 @@ VARIABLES = (
         under="#0b2237",
         over="#7f3545",
     ),
+    ExportVariable(
+        key="tcwv",
+        source_channel="tcwv",
+        label="Total-column water vapour",
+        short_label="TCWV",
+        units="kg/m²",
+        description=(
+            "Daily ensemble-mean vertically integrated atmospheric water vapour. "
+            "Physically invalid negative experimental values are clipped to zero "
+            "before aggregation."
+        ),
+        family="ocean-convection",
+        interpretation=(
+            "Broad moisture reservoirs and transport pathways; combine with "
+            "850 hPa vectors to interpret tropical inflow."
+        ),
+        offset=0.0,
+        scale=0.01,
+        legend_boundaries=(0.0, 5.0, 10.0, 20.0, 30.0, 40.0, 55.0, 70.0, 85.0),
+        legend_colors=(
+            "#16263a",
+            "#203d5a",
+            "#2b6173",
+            "#3d8b86",
+            "#77ae83",
+            "#bdc878",
+            "#e1ad62",
+            "#dd704e",
+        ),
+        under="#0d1928",
+        over="#973f4c",
+    ),
 )
 
 
@@ -310,6 +352,7 @@ def convert_fields(values: np.ndarray) -> dict[str, np.ndarray]:
         "mslp": pascal_to_hectopascal(get("msl")),
         "sst": kelvin_to_celsius(get("sst")),
         "olr": top_net_thermal_to_olr(get("ttr")),
+        "tcwv": np.maximum(get("tcwv"), 0.0),
     }
 
 
@@ -324,6 +367,7 @@ def convert_spread(spread: np.ndarray) -> dict[str, np.ndarray]:
         "mslp": get("msl") / 100.0,
         "sst": get("sst"),
         "olr": get("ttr"),
+        "tcwv": get("tcwv"),
     }
 
 
@@ -627,8 +671,8 @@ def main() -> None:
                 f"all {args.members} members present for every lead",
                 "companion-ensemble relationship declared",
                 "all 42 daily leads present",
-                "finite TP, T2M, Z500, U850, V850, MSLP, SST, and TTR",
-                "nonnegative precipitation and OLR",
+                "finite TP, T2M, Z500, U850, V850, MSLP, SST, TTR, and TCWV",
+                "nonnegative precipitation, OLR, and published TCWV",
                 "locked unit conversions and quantization",
                 "population ensemble spread with ddof=0",
                 "850 hPa vector components exported separately",

@@ -17,6 +17,13 @@ interface MapRect {
   height: number;
 }
 
+export interface MapSelection {
+  latitude: number;
+  longitude: number;
+  latitudeIndex: number;
+  longitudeIndex: number;
+}
+
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.max(minimum, Math.min(maximum, value));
 }
@@ -43,11 +50,18 @@ export class GlobalForecastMap {
   private currentDay = 0;
   private currentMix = 0;
   private mapRect: MapRect = { x: 0, y: 0, width: 1, height: 1 };
+  private selection: MapSelection = {
+    latitude: 28.5,
+    longitude: 76.5,
+    latitudeIndex: 41,
+    longitudeIndex: 51,
+  };
 
   constructor(
     container: HTMLElement,
     data: GlobalForecastData,
     world: WorldCountriesData,
+    onSelect?: (selection: MapSelection) => void,
   ) {
     this.container = container;
     this.data = data;
@@ -70,6 +84,13 @@ export class GlobalForecastMap {
     this.canvas.addEventListener("pointermove", (event) =>
       this.showTooltip(event),
     );
+    this.canvas.addEventListener("click", (event) => {
+      const selection = this.selectionAtPointer(event);
+      if (!selection) return;
+      this.selection = selection;
+      onSelect?.(selection);
+      this.draw();
+    });
     this.canvas.addEventListener("pointerleave", () => {
       this.tooltip.hidden = true;
     });
@@ -245,6 +266,7 @@ export class GlobalForecastMap {
     this.drawGraticules();
     if (this.currentVariable === "z500") this.drawContours();
     this.drawCountries();
+    this.drawSelection();
 
     context.strokeStyle = "rgb(194 225 221 / 30%)";
     context.lineWidth = 1;
@@ -256,6 +278,30 @@ export class GlobalForecastMap {
       this.mapRect.x + ((longitude + 180) / 360) * this.mapRect.width,
       this.mapRect.y + ((90 - latitude) / 180) * this.mapRect.height,
     ];
+  }
+
+  private drawSelection(): void {
+    const [x, y] = this.project(
+      this.selection.longitude > 180
+        ? this.selection.longitude - 360
+        : this.selection.longitude,
+      this.selection.latitude,
+    );
+    const context = this.context;
+    context.save();
+    context.shadowColor = "rgb(3 15 19 / 80%)";
+    context.shadowBlur = 8;
+    context.fillStyle = "#f7f3e5";
+    context.beginPath();
+    context.arc(x, y, 4.5, 0, Math.PI * 2);
+    context.fill();
+    context.shadowBlur = 0;
+    context.strokeStyle = "#72c9b3";
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.arc(x, y, 8, 0, Math.PI * 2);
+    context.stroke();
+    context.restore();
   }
 
   private drawGraticules(): void {
@@ -413,6 +459,45 @@ export class GlobalForecastMap {
     const bounds = this.canvas.getBoundingClientRect();
     const x = event.clientX - bounds.left;
     const y = event.clientY - bounds.top;
+    const selection = this.selectionAtPointer(event);
+    if (!selection) {
+      this.tooltip.hidden = true;
+      return;
+    }
+    const definition =
+      this.data.metadata.variables[this.currentVariable];
+    const value = this.valueAt(
+      this.currentVariable,
+      this.currentDay,
+      selection.latitudeIndex,
+      selection.longitudeIndex,
+    );
+    const displayLongitude =
+      selection.longitude > 180
+        ? selection.longitude - 360
+        : selection.longitude;
+    const longitudeLabel =
+      displayLongitude < 0
+        ? `${Math.abs(displayLongitude).toFixed(1)}°W`
+        : `${displayLongitude.toFixed(1)}°E`;
+    const latitudeLabel =
+      selection.latitude < 0
+        ? `${Math.abs(selection.latitude).toFixed(1)}°S`
+        : `${selection.latitude.toFixed(1)}°N`;
+    this.tooltip.innerHTML = `
+      <span>${definition.short_label}</span>
+      <strong>${formatMapValue(value, definition.units)}</strong>
+      <small>${latitudeLabel} · ${longitudeLabel} · Lead ${String(this.currentDay + 1).padStart(2, "0")} · Click to inspect</small>
+    `;
+    this.tooltip.hidden = false;
+    this.tooltip.style.left = `${clamp(x + 18, 10, bounds.width - 205)}px`;
+    this.tooltip.style.top = `${clamp(y + 18, 10, bounds.height - 105)}px`;
+  }
+
+  private selectionAtPointer(event: PointerEvent): MapSelection | null {
+    const bounds = this.canvas.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const y = event.clientY - bounds.top;
     const rect = this.mapRect;
     if (
       x < rect.x ||
@@ -420,42 +505,22 @@ export class GlobalForecastMap {
       y < rect.y ||
       y > rect.y + rect.height
     ) {
-      this.tooltip.hidden = true;
-      return;
+      return null;
     }
     const longitude = ((x - rect.x) / rect.width) * 360 - 180;
     const latitude = 90 - ((y - rect.y) / rect.height) * 180;
     const sourceLongitude = longitude < 0 ? longitude + 360 : longitude;
-    const longitudeIndex =
-      Math.round(sourceLongitude / 1.5) % GRID_WIDTH;
+    const longitudeIndex = Math.round(sourceLongitude / 1.5) % GRID_WIDTH;
     const latitudeIndex = clamp(
       Math.round((90 - latitude) / 1.5),
       0,
       GRID_HEIGHT - 1,
     );
-    const definition =
-      this.data.metadata.variables[this.currentVariable];
-    const value = this.valueAt(
-      this.currentVariable,
-      this.currentDay,
+    return {
+      latitude: 90 - latitudeIndex * 1.5,
+      longitude: longitudeIndex * 1.5,
       latitudeIndex,
       longitudeIndex,
-    );
-    const longitudeLabel =
-      longitude < 0
-        ? `${Math.abs(longitude).toFixed(1)}°W`
-        : `${longitude.toFixed(1)}°E`;
-    const latitudeLabel =
-      latitude < 0
-        ? `${Math.abs(latitude).toFixed(1)}°S`
-        : `${latitude.toFixed(1)}°N`;
-    this.tooltip.innerHTML = `
-      <span>${definition.short_label}</span>
-      <strong>${formatMapValue(value, definition.units)}</strong>
-      <small>${latitudeLabel} · ${longitudeLabel} · Lead ${String(this.currentDay + 1).padStart(2, "0")}</small>
-    `;
-    this.tooltip.hidden = false;
-    this.tooltip.style.left = `${clamp(x + 18, 10, bounds.width - 205)}px`;
-    this.tooltip.style.top = `${clamp(y + 18, 10, bounds.height - 105)}px`;
+    };
   }
 }

@@ -6,6 +6,7 @@ from scripts.export_global_forecast import (
     GRAVITY_M_S2,
     VARIABLES,
     convert_fields,
+    convert_spread,
     quantize,
 )
 
@@ -33,3 +34,11 @@ def test_global_quantization_round_trip() -> None:
             atol=variable.scale / 2,
             rtol=0,
         )
+
+
+def test_global_spread_conversion_has_no_absolute_offset() -> None:
+    source_spread = np.asarray([1.0, 2.5, GRAVITY_M_S2 * 10.0])
+    converted = convert_spread(source_spread[:, None, None])
+    assert converted["precipitation"].item() == 24.0
+    assert converted["temperature"].item() == 2.5
+    assert converted["z500"].item() == 1.0

@@ -1,4 +1,7 @@
-import { GlobalForecastMap } from "../components/GlobalForecastMap";
+import {
+  GlobalForecastMap,
+  type MapSelection,
+} from "../components/GlobalForecastMap";
 import { createLegend } from "../components/Legend";
 import type { AppData, GlobalVariableKey } from "../types";
 
@@ -9,6 +12,7 @@ const VARIABLE_ORDER: GlobalVariableKey[] = [
 ];
 const SPEEDS = [0.5, 1, 2];
 const BASE_FRAME_MS = 1050;
+const FRAME_SIZE = 121 * 240;
 
 function friendlyDate(isoDate: string): string {
   return new Intl.DateTimeFormat("en-GB", {
@@ -23,6 +27,130 @@ function variableGlyph(variable: GlobalVariableKey): string {
   if (variable === "precipitation") return "◌";
   if (variable === "temperature") return "°";
   return "≋";
+}
+
+function pointLabel(selection: MapSelection): string {
+  const latitude =
+    selection.latitude < 0
+      ? `${Math.abs(selection.latitude).toFixed(1)}°S`
+      : `${selection.latitude.toFixed(1)}°N`;
+  const longitude = selection.longitude > 180
+    ? `${(360 - selection.longitude).toFixed(1)}°W`
+    : `${selection.longitude.toFixed(1)}°E`;
+  return `${latitude} · ${longitude}`;
+}
+
+function leadGuidance(day: number): { period: string; guidance: string } {
+  if (day < 14) {
+    return {
+      period: "Days 1–14 · weather → subseasonal",
+      guidance: "Synoptic features remain useful, but local timing becomes less certain with lead.",
+    };
+  }
+  if (day < 28) {
+    return {
+      period: "Weeks 3–4 · subseasonal range",
+      guidance: "Read persistent large-scale patterns and ensemble agreement—not exact day-to-day weather.",
+    };
+  }
+  return {
+    period: "Weeks 5–6 · broad outlook",
+    guidance: "Use only broad circulation and ensemble tendencies; local detail has low predictability.",
+  };
+}
+
+function noticeFor(variable: GlobalVariableKey): string {
+  if (variable === "precipitation") {
+    return "Watch rain belts, monsoon organization and storm-track shifts; isolated point peaks are less robust later.";
+  }
+  if (variable === "temperature") {
+    return "Watch persistent warm or cool zones and hemispheric gradients, especially where members remain clustered.";
+  }
+  return "Watch broad ridges, troughs and planetary-wave evolution—the clearest circulation-scale S2S signal.";
+}
+
+function linePath(values: number[], x: (index: number) => number, y: (value: number) => number): string {
+  return values
+    .map((value, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(1)},${y(value).toFixed(1)}`)
+    .join(" ");
+}
+
+function renderPointChart(
+  data: AppData["global"],
+  variable: GlobalVariableKey,
+  selection: MapSelection,
+  selectedDay: number,
+): string {
+  const definition = data.metadata.variables[variable];
+  const pointIndex =
+    selection.latitudeIndex * 240 + selection.longitudeIndex;
+  const means = Array.from({ length: 42 }, (_, index) => {
+    const encoded = data.fields[variable][index * FRAME_SIZE + pointIndex];
+    return encoded * definition.scale + definition.offset;
+  });
+  const spreads = Array.from({ length: 42 }, (_, index) => {
+    const encoded = data.spreads[variable][index * FRAME_SIZE + pointIndex];
+    return encoded * definition.spread.scale + definition.spread.offset;
+  });
+  const lower = means.map((mean, index) =>
+    variable === "precipitation"
+      ? Math.max(0, mean - spreads[index])
+      : mean - spreads[index],
+  );
+  const upper = means.map((mean, index) => mean + spreads[index]);
+  let minimum = Math.min(...lower);
+  let maximum = Math.max(...upper);
+  const rawRange = Math.max(maximum - minimum, Math.abs(maximum) * 0.05, 1);
+  const padding = rawRange * 0.1;
+  minimum = variable === "precipitation" ? 0 : minimum - padding;
+  maximum += padding;
+
+  const width = 320;
+  const height = 116;
+  const left = 8;
+  const right = 8;
+  const top = 8;
+  const bottom = 15;
+  const x = (index: number): number =>
+    left + (index / 41) * (width - left - right);
+  const y = (value: number): number =>
+    top + ((maximum - value) / (maximum - minimum)) * (height - top - bottom);
+  const band = [
+    ...upper.map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`),
+    ...lower
+      .map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`)
+      .reverse(),
+  ].join(" ");
+  const weekLines = [7, 14, 21, 28, 35]
+    .map(
+      (index) =>
+        `<line x1="${x(index - 0.5).toFixed(1)}" y1="${top}" x2="${x(index - 0.5).toFixed(1)}" y2="${height - bottom}" />`,
+    )
+    .join("");
+  const mean = means[selectedDay];
+  const spread = spreads[selectedDay];
+  const decimals = variable === "precipitation" && mean >= 10 ? 0 : 1;
+
+  return `
+    <div class="point-value">
+      <strong>${mean.toFixed(decimals)}</strong>
+      <span>± ${spread.toFixed(decimals)} ${definition.units}</span>
+      <small>Lead ${String(selectedDay + 1).padStart(2, "0")} · ensemble mean ±1σ</small>
+    </div>
+    <svg class="point-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="42-day ensemble mean and member spread at ${pointLabel(selection)}">
+      <g class="point-chart__weeks">${weekLines}</g>
+      <line class="point-chart__axis" x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}" />
+      <polygon class="point-chart__band" points="${band}" />
+      <path class="point-chart__mean" d="${linePath(means, x, y)}" />
+      <line class="point-chart__selected" x1="${x(selectedDay).toFixed(1)}" y1="${top}" x2="${x(selectedDay).toFixed(1)}" y2="${height - bottom}" />
+      <circle class="point-chart__dot" cx="${x(selectedDay).toFixed(1)}" cy="${y(mean).toFixed(1)}" r="3.2" />
+      <g class="point-chart__labels">
+        <text x="${left}" y="${height - 2}">D1</text>
+        <text x="${x(20.5).toFixed(1)}" y="${height - 2}" text-anchor="middle">D21</text>
+        <text x="${width - right}" y="${height - 2}" text-anchor="end">D42</text>
+      </g>
+    </svg>
+  `;
 }
 
 export function renderGlobalPage(container: HTMLElement, data: AppData): () => void {
@@ -46,16 +174,31 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
       <div class="global-title">
         <span class="global-eyebrow">Experimental ensemble guidance · Issue 01</span>
         <h1>Atmosphere<br><em>in motion.</em></h1>
-        <p>One global view. Three essential fields. Forty-two daily forecast periods.</p>
+        <p>Follow rain, heat and mid-tropospheric circulation from the weather range into Weeks 5–6.</p>
       </div>
 
-      <aside class="global-facts" aria-label="Forecast issue facts">
+      <aside class="global-facts" aria-label="Forecast issue and integrity facts">
         <div><span>Initialized</span><strong>28 Jul 2026 · 00 UTC</strong></div>
-        <div><span>Signal</span><strong>${global.metadata.issue.members}-member mean</strong></div>
-        <div><span>Resolution</span><strong>1.5° global grid</strong></div>
+        <div><span>Signal</span><strong>${global.metadata.issue.members}-member ensemble mean</strong></div>
+        <div><span>Verification</span><strong>Awaiting future observations</strong></div>
+        <div><span>Integrity</span><strong class="integrity-ok">✓ 6 files SHA-256 verified</strong></div>
       </aside>
 
       <div class="global-layer-dock" id="global-layer-dock" aria-label="Map layers"></div>
+
+      <aside class="global-inspector" aria-label="Selected-location 42-day ensemble trace">
+        <div class="global-inspector__head">
+          <span>Click map · 42-day point trace</span>
+          <strong id="point-location">28.5°N · 76.5°E</strong>
+        </div>
+        <div id="point-chart"></div>
+        <div class="spread-key"><i></i><span>Mean</span><b></b><span>±1 population σ</span></div>
+        <p class="spread-caution">Spread measures member disagreement, not calibrated confidence.</p>
+        <div class="notice-card">
+          <span>What to notice</span>
+          <p id="notice-copy"></p>
+        </div>
+      </aside>
 
       <div class="global-legend-panel">
         <div>
@@ -63,6 +206,11 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
           <strong id="global-legend-units"></strong>
         </div>
         <div id="global-legend"></div>
+      </div>
+
+      <div class="global-s2s-guide">
+        <span id="lead-period"></span>
+        <p id="lead-guidance"></p>
       </div>
 
       <div class="global-timeline">
@@ -82,18 +230,23 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
         <button class="speed-button" id="speed-button" type="button" aria-label="Change animation speed">1×</button>
       </div>
 
-      <p class="global-disclaimer">Research product · Daily fields · Visual transitions do not create additional forecast times</p>
+      <p class="global-disclaimer">Research product · Daily model fields · Long leads are broad guidance, not deterministic local forecasts</p>
     </section>
   `;
 
   let variable: GlobalVariableKey = "precipitation";
   let day = 0;
+  let selection: MapSelection = {
+    latitude: 28.5,
+    longitude: 76.5,
+    latitudeIndex: 41,
+    longitudeIndex: 51,
+  };
   let speedIndex = 1;
   let playing = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let cycleStart = performance.now();
   let animationFrame = 0;
   const mapHost = container.querySelector<HTMLElement>("#global-map")!;
-  const map = new GlobalForecastMap(mapHost, global, data.world);
   const layerDock =
     container.querySelector<HTMLDivElement>("#global-layer-dock")!;
   const slider = container.querySelector<HTMLInputElement>("#day-slider")!;
@@ -101,6 +254,10 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
     container.querySelector<HTMLButtonElement>("#play-button")!;
   const speedButton =
     container.querySelector<HTMLButtonElement>("#speed-button")!;
+  const map = new GlobalForecastMap(mapHost, global, data.world, (next) => {
+    selection = next;
+    updateInspector();
+  });
 
   VARIABLE_ORDER.forEach((key) => {
     const definition = global.metadata.variables[key];
@@ -121,6 +278,15 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
     layerDock.append(button);
   });
 
+  function updateInspector(): void {
+    container.querySelector("#point-location")!.textContent =
+      pointLabel(selection);
+    container.querySelector("#point-chart")!.innerHTML =
+      renderPointChart(global, variable, selection, day);
+    container.querySelector("#notice-copy")!.textContent =
+      noticeFor(variable);
+  }
+
   function updateStatic(): void {
     const definition = global.metadata.variables[variable];
     container
@@ -135,6 +301,10 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
     container.querySelector("#valid-label")!.textContent = friendlyDate(
       global.metadata.valid_period_starts[day],
     );
+    const guidance = leadGuidance(day);
+    container.querySelector("#lead-period")!.textContent = guidance.period;
+    container.querySelector("#lead-guidance")!.textContent =
+      guidance.guidance;
     slider.value = String(day);
     slider.style.setProperty("--timeline-progress", `${(day / 41) * 100}%`);
     container.querySelector("#global-legend-label")!.textContent =
@@ -149,6 +319,7 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
       playing ? "Pause animation" : "Play animation",
     );
     speedButton.textContent = `${SPEEDS[speedIndex]}×`;
+    updateInspector();
   }
 
   function animation(timestamp: number): void {

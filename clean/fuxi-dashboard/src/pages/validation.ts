@@ -49,10 +49,10 @@ export function renderValidationPage(
     <tr>
       <td>
         <strong>Global animation package</strong>
-        <span>42 daily leads × 3 ensemble-mean fields on the exact 121 × 240 grid.</span>
+        <span>42 daily leads × 3 ensemble-mean fields and their 100-member population spread on the exact 121 × 240 grid.</span>
       </td>
       <td><span class="status-pill status-pill--${globalStatus}"><i></i>${statusLabel(globalStatus)}</span></td>
-      <td class="checksum">3 browser-verified SHA-256 files</td>
+      <td class="checksum">6 browser-verified SHA-256 files</td>
     </tr>
   `;
 

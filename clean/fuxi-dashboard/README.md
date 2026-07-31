@@ -56,11 +56,12 @@ npm run dev
 
 ## Data contract
 
-The global contract stores three little-endian `uint16` binary arrays in
-lead-day, latitude, longitude order. `metadata.json` locks dimensions,
+The global contract stores six little-endian `uint16` binary arrays in
+lead-day, latitude, longitude order: three ensemble means and three population
+standard deviations across the 100 members. `metadata.json` locks dimensions,
 quantization, units, legends, valid periods, file sizes, and SHA-256 hashes.
 The browser verifies each binary before presentation. The complete global
-payload is about 7.3 MB before HTTP compression.
+payload is about 14.6 MB before HTTP compression.
 
 The India forecast JSON stores latitude and longitude vectors, a support mask,
 six week records, and flattened row-major fields. Every displayed field

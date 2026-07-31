@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T00:53:41.272154+00:00",
+  "generated_at": "2026-07-31T01:14:41.180887+00:00",
   "deployed_commit": "local-uncommitted",
   "inventory_scope": "Every deployed public-data file except manifest.json itself, whose self-checksum would be recursive.",
   "files": [
@@ -16,8 +16,13 @@
     },
     {
       "path": "data/global/metadata.json",
-      "size_bytes": 17139,
-      "sha256": "d71e64c051207eac91b1efa7133658d48516a8bfa81946b000e0ef312e55a1c1"
+      "size_bytes": 35963,
+      "sha256": "6f5ff1e92ba33687b4d1148b50de8ab5b30ba5442e52156bda7a7e951ac44760"
+    },
+    {
+      "path": "data/global/precipitation-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "d77c8a40485edb9e98b6e7fe6c6c3134ab68a0dbf469eb375ce3fb0e2b646f52"
     },
     {
       "path": "data/global/precipitation.bin",
@@ -25,9 +30,19 @@
       "sha256": "22023ddec3ecbe4898f5d8534ff336714ae3c25671dafad0957d20dcb3d47a4c"
     },
     {
+      "path": "data/global/temperature-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "4f19398525cf6d8dd1fdfcc1b91452121d23605350fe035b3e889a9fb6a6575f"
+    },
+    {
       "path": "data/global/temperature.bin",
       "size_bytes": 2439360,
       "sha256": "6cc3386245a93f19f562cd1a3d49dc9f285751bb8bd4296701c432039bf2994a"
+    },
+    {
+      "path": "data/global/z500-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "f3d7993fb8ffa50ab504c0c52262db9bbd1e9dae6f884157b3654c6960f2cf5c"
     },
     {
       "path": "data/global/z500.bin",
@@ -52,7 +67,7 @@
     {
       "path": "data/validation.json",
       "size_bytes": 5541,
-      "sha256": "175a92c188b0d6ed37ab879d33196126517ee4123dbef13b5e065254c804bb5f"
+      "sha256": "1c235700d6d6f42df9f259957a264db076018dbdd5f40d7491ddf6dec1a9e5d2"
     },
     {
       "path": "data/world-countries.geojson",

@@ -49,7 +49,18 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
         <span class="eyebrow">Animation contract</span>
         <h2>Daily evidence, smooth presentation</h2>
         <p class="large-copy">Only 42 daily model fields exist. The viewer cross-fades neighbouring maps for visual continuity; it does not claim additional hourly forecast information.</p>
-        <p>Hover values always come from the labelled daily field. The browser checks the size and SHA-256 digest of each compact binary file before rendering it.</p>
+        <p>Hover values always come from the labelled daily field. Clicking the map opens the exact nearest 1.5° grid cell through all 42 leads.</p>
+      </div>
+    </section>
+
+    <section class="methods-lead">
+      <span class="chapter-number">06</span>
+      <div>
+        <span class="eyebrow">Uncertainty and S2S interpretation</span>
+        <h2>Member disagreement, not a confidence score</h2>
+        <p class="large-copy">The point trace shows the 100-member arithmetic mean with a band of ±1 population standard deviation (<code>ddof=0</code>) at every daily lead.</p>
+        <p>A wider band means the members disagree more at that grid cell. It is not a calibrated probability interval and does not by itself measure forecast skill. In Days 1–14, synoptic detail can still be informative; in Weeks 3–4, emphasize persistent large-scale patterns; in Weeks 5–6, interpret only broad ensemble and circulation tendencies.</p>
+        <p>Verification metrics remain unpublished until every observation needed for the valid period is available on the identical grid, mask, and timing contract. The browser checks the size and SHA-256 digest of all six compact field files before rendering them.</p>
       </div>
     </section>
 

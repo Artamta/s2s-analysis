@@ -19,6 +19,11 @@ PHYSICAL_RANGES = {
     "temperature": (-150.0, 70.0),
     "z500": (250.0, 700.0),
 }
+SPREAD_RANGES = {
+    "precipitation": (0.0, 500.0),
+    "temperature": (0.0, 100.0),
+    "z500": (0.0, 100.0),
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,39 +68,85 @@ def main() -> None:
     expected_values = 42 * 121 * 240
     expected_bytes = expected_values * 2
     for key, definition in metadata["variables"].items():
-        path = args.data_dir / definition["path"]
-        if not path.is_file():
-            raise FileNotFoundError(path)
-        if path.stat().st_size != expected_bytes:
-            raise ValueError(f"{path} has an invalid byte length")
-        if definition["size_bytes"] != expected_bytes:
-            raise ValueError(f"{key} declares an invalid byte length")
-        if sha256(path) != definition["sha256"]:
-            raise ValueError(f"{key} failed SHA-256 validation")
-        encoded = array.array("H")
-        encoded.frombytes(path.read_bytes())
-        if sys.byteorder != "little":
-            encoded.byteswap()
-        if len(encoded) != expected_values:
-            raise ValueError(f"{key} has an invalid element count")
-        value_minimum = min(encoded) * definition["scale"] + definition["offset"]
-        value_maximum = max(encoded) * definition["scale"] + definition["offset"]
-        minimum, maximum = PHYSICAL_RANGES[key]
-        if not math.isfinite(value_minimum) or not math.isfinite(value_maximum):
-            raise ValueError(f"{key} contains non-finite decoded values")
-        if value_minimum < minimum or value_maximum > maximum:
-            raise ValueError(
-                f"{key} range {value_minimum:.2f} to {value_maximum:.2f} "
-                f"falls outside {minimum} to {maximum}"
-            )
-        if len(definition["frame_ranges"]) != 42:
-            raise ValueError(f"{key} must declare 42 per-frame ranges")
+        validate_binary(
+            args.data_dir,
+            key,
+            definition,
+            expected_values,
+            expected_bytes,
+            PHYSICAL_RANGES[key],
+        )
+        spread = definition.get("spread")
+        if not isinstance(spread, dict):
+            raise ValueError(f"{key} must declare ensemble spread")
+        if spread.get("offset") != 0.0:
+            raise ValueError(f"{key} spread must have zero offset")
+        validate_binary(
+            args.data_dir,
+            f"{key} spread",
+            spread,
+            expected_values,
+            expected_bytes,
+            SPREAD_RANGES[key],
+        )
+        if len(spread.get("frame_area_means", [])) != 42:
+            raise ValueError(f"{key} spread must declare 42 area means")
+        if any(
+            not math.isfinite(value) or value < 0
+            for value in spread["frame_area_means"]
+        ):
+            raise ValueError(f"{key} spread contains invalid area means")
+        statistic = spread.get("statistic", "").lower()
+        if (
+            "population standard deviation" not in statistic
+            or "not calibrated confidence" not in statistic
+        ):
+            raise ValueError(f"{key} spread statistic is incompletely documented")
 
     serialized = json.dumps(metadata)
     forbidden = ("/storage/", "/home/", "password", "secret", "credential")
     if any(token in serialized.lower() for token in forbidden):
         raise ValueError("global metadata contains private or sensitive information")
     print("global web data: validated")
+
+
+def validate_binary(
+    data_dir: Path,
+    key: str,
+    definition: dict[str, object],
+    expected_values: int,
+    expected_bytes: int,
+    physical_range: tuple[float, float],
+) -> None:
+    path = data_dir / str(definition["path"])
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    if path.stat().st_size != expected_bytes:
+        raise ValueError(f"{path} has an invalid byte length")
+    if definition["size_bytes"] != expected_bytes:
+        raise ValueError(f"{key} declares an invalid byte length")
+    if sha256(path) != definition["sha256"]:
+        raise ValueError(f"{key} failed SHA-256 validation")
+    encoded = array.array("H")
+    encoded.frombytes(path.read_bytes())
+    if sys.byteorder != "little":
+        encoded.byteswap()
+    if len(encoded) != expected_values:
+        raise ValueError(f"{key} has an invalid element count")
+    scale = float(definition["scale"])
+    offset = float(definition["offset"])
+    value_minimum = min(encoded) * scale + offset
+    value_maximum = max(encoded) * scale + offset
+    minimum, maximum = physical_range
+    if not math.isfinite(value_minimum) or not math.isfinite(value_maximum):
+        raise ValueError(f"{key} contains non-finite decoded values")
+    if value_minimum < minimum or value_maximum > maximum:
+        raise ValueError(
+            f"{key} range {value_minimum:.2f} to {value_maximum:.2f} "
+            f"falls outside {minimum} to {maximum}"
+        )
+    if len(definition["frame_ranges"]) != 42:
+        raise ValueError(f"{key} must declare 42 per-frame ranges")
 
 
 if __name__ == "__main__":

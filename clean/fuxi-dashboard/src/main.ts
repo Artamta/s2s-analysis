@@ -37,24 +37,51 @@ async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
 
 async function fetchGlobalData(metadata: GlobalMetadata): Promise<GlobalForecastData> {
   const keys = Object.keys(metadata.variables) as GlobalVariableKey[];
-  const entries = await Promise.all(
+  const fetchBinary = async (
+    path: string,
+    sizeBytes: number,
+    expectedSha256: string,
+  ): Promise<Uint16Array> => {
+    const response = await fetch(`./data/global/${path}`);
+    if (!response.ok) {
+      throw new Error(`${path} returned ${response.status}`);
+    }
+    const buffer = await response.arrayBuffer();
+    if (buffer.byteLength !== sizeBytes) {
+      throw new Error(`${path} has an unexpected byte length`);
+    }
+    if (await sha256Hex(buffer) !== expectedSha256) {
+      throw new Error(`${path} failed its SHA-256 check`);
+    }
+    return new Uint16Array(buffer);
+  };
+  const meanEntries = await Promise.all(
     keys.map(async (key) => {
       const definition = metadata.variables[key];
-      const response = await fetch(`./data/global/${definition.path}`);
-      if (!response.ok) {
-        throw new Error(`${definition.path} returned ${response.status}`);
-      }
-      const buffer = await response.arrayBuffer();
-      if (buffer.byteLength !== definition.size_bytes) {
-        throw new Error(`${definition.path} has an unexpected byte length`);
-      }
-      if (await sha256Hex(buffer) !== definition.sha256) {
-        throw new Error(`${definition.path} failed its SHA-256 check`);
-      }
-      return [key, new Uint16Array(buffer)] as const;
+      return [
+        key,
+        await fetchBinary(
+          definition.path,
+          definition.size_bytes,
+          definition.sha256,
+        ),
+      ] as const;
     }),
   );
-  return { metadata, fields: Object.fromEntries(entries) } as GlobalForecastData;
+  const spreadEntries = await Promise.all(
+    keys.map(async (key) => {
+      const spread = metadata.variables[key].spread;
+      return [
+        key,
+        await fetchBinary(spread.path, spread.size_bytes, spread.sha256),
+      ] as const;
+    }),
+  );
+  return {
+    metadata,
+    fields: Object.fromEntries(meanEntries),
+    spreads: Object.fromEntries(spreadEntries),
+  } as GlobalForecastData;
 }
 
 async function loadData(): Promise<AppData> {

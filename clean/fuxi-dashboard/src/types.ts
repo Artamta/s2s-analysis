@@ -164,7 +164,25 @@ export interface GlobalVariableDefinition {
     minimum: number;
     maximum: number;
   }>;
+  spread: GlobalSpreadDefinition;
   legend: LegendDefinition;
+}
+
+export interface GlobalSpreadDefinition {
+  path: string;
+  sha256: string;
+  size_bytes: number;
+  dtype: "uint16-little-endian";
+  offset: 0;
+  scale: number;
+  minimum: number;
+  maximum: number;
+  frame_ranges: Array<{
+    minimum: number;
+    maximum: number;
+  }>;
+  frame_area_means: number[];
+  statistic: string;
 }
 
 export interface GlobalMetadata {
@@ -200,6 +218,7 @@ export interface GlobalMetadata {
 export interface GlobalForecastData {
   metadata: GlobalMetadata;
   fields: Record<GlobalVariableKey, Uint16Array>;
+  spreads: Record<GlobalVariableKey, Uint16Array>;
 }
 
 export interface WorldCountriesData {

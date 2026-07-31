@@ -170,14 +170,43 @@ def convert_fields(mean: np.ndarray) -> dict[str, np.ndarray]:
     }
 
 
-def quantize(values: np.ndarray, variable: ExportVariable) -> np.ndarray:
-    encoded = np.rint((values - variable.offset) / variable.scale)
+def convert_spread(spread: np.ndarray) -> dict[str, np.ndarray]:
+    """Convert population spread without applying absolute-field offsets."""
+
+    return {
+        "precipitation": spread[0] * 24.0,
+        "temperature": spread[1],
+        "z500": spread[2] / GRAVITY_M_S2 / 10.0,
+    }
+
+
+def quantize_with(
+    values: np.ndarray, *, offset: float, scale: float, label: str
+) -> np.ndarray:
+    encoded = np.rint((values - offset) / scale)
     if encoded.min() < 0 or encoded.max() > np.iinfo(np.uint16).max:
         raise ValueError(
-            f"{variable.key} cannot be represented by its locked quantization: "
+            f"{label} cannot be represented by its locked quantization: "
             f"{float(values.min()):.3f} to {float(values.max()):.3f}"
         )
     return encoded.astype("<u2")
+
+
+def quantize(values: np.ndarray, variable: ExportVariable) -> np.ndarray:
+    return quantize_with(
+        values,
+        offset=variable.offset,
+        scale=variable.scale,
+        label=variable.key,
+    )
+
+
+def global_area_mean(values: np.ndarray) -> float:
+    """Return a cosine-latitude weighted global mean."""
+
+    latitude_weights = np.cos(np.deg2rad(EXPECTED_LATITUDE))[:, None]
+    weights = np.broadcast_to(latitude_weights, values.shape)
+    return float(np.average(values, weights=weights))
 
 
 def iso_day(initialization: dt.date, offset: int) -> str:
@@ -193,21 +222,51 @@ def main() -> None:
 
     variable_by_key = {variable.key: variable for variable in VARIABLES}
     frames: dict[str, list[np.ndarray]] = {key: [] for key in variable_by_key}
+    spread_frames: dict[str, list[np.ndarray]] = {
+        key: [] for key in variable_by_key
+    }
     frame_ranges: dict[str, list[dict[str, float]]] = {
+        key: [] for key in variable_by_key
+    }
+    spread_frame_ranges: dict[str, list[dict[str, float]]] = {
+        key: [] for key in variable_by_key
+    }
+    spread_frame_means: dict[str, list[float]] = {
         key: [] for key in variable_by_key
     }
 
     for lead_day in range(1, args.lead_days + 1):
         mean = np.zeros((3, 121, 240), dtype=np.float64)
+        second_moment = np.zeros_like(mean)
         for member in range(args.members):
             values = read_selected(raw_path(args.raw_dir, member, lead_day))
-            mean += (values - mean) / (member + 1)
+            delta = values - mean
+            mean += delta / (member + 1)
+            second_moment += delta * (values - mean)
+        population_spread = np.sqrt(second_moment / args.members)
         converted = convert_fields(mean)
+        converted_spread = convert_spread(population_spread)
         for key, values in converted.items():
             frames[key].append(quantize(values, variable_by_key[key]))
             frame_ranges[key].append(
                 {"minimum": float(values.min()), "maximum": float(values.max())}
             )
+            spread_values = converted_spread[key]
+            spread_frames[key].append(
+                quantize_with(
+                    spread_values,
+                    offset=0.0,
+                    scale=variable_by_key[key].scale,
+                    label=f"{key} spread",
+                )
+            )
+            spread_frame_ranges[key].append(
+                {
+                    "minimum": float(spread_values.min()),
+                    "maximum": float(spread_values.max()),
+                }
+            )
+            spread_frame_means[key].append(global_area_mean(spread_values))
         print(f"aggregated global lead {lead_day:02d}/{args.lead_days}", flush=True)
 
     file_records: dict[str, dict[str, object]] = {}
@@ -232,6 +291,31 @@ def main() -> None:
             "minimum": float(decoded.min()),
             "maximum": float(decoded.max()),
             "frame_ranges": frame_ranges[variable.key],
+        }
+        spread_path = args.output_dir / f"{variable.key}-spread.bin"
+        stacked_spread = np.stack(spread_frames[variable.key], axis=0)
+        spread_path.write_bytes(stacked_spread.tobytes(order="C"))
+        if spread_path.stat().st_size != expected_size:
+            raise ValueError(
+                f"{spread_path} has {spread_path.stat().st_size} bytes, "
+                f"expected {expected_size}"
+            )
+        decoded_spread = stacked_spread.astype(np.float64) * variable.scale
+        file_records[variable.key]["spread"] = {
+            "path": spread_path.name,
+            "sha256": sha256(spread_path),
+            "size_bytes": spread_path.stat().st_size,
+            "dtype": "uint16-little-endian",
+            "offset": 0.0,
+            "scale": variable.scale,
+            "minimum": float(decoded_spread.min()),
+            "maximum": float(decoded_spread.max()),
+            "frame_ranges": spread_frame_ranges[variable.key],
+            "frame_area_means": spread_frame_means[variable.key],
+            "statistic": (
+                "Population standard deviation across 100 members (ddof=0); "
+                "spread measures ensemble disagreement, not calibrated confidence."
+            ),
         }
 
     generated_at = dt.datetime.now(dt.timezone.utc).isoformat()
@@ -292,6 +376,8 @@ def main() -> None:
                 "finite TP, T2M, and Z500 fields",
                 "nonnegative precipitation",
                 "locked unit conversions and quantization",
+                "population ensemble spread with ddof=0",
+                "cosine-latitude global spread summaries",
                 "binary size and SHA-256 checks",
             ],
         },

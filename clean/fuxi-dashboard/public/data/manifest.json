@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T01:14:41.180887+00:00",
+  "generated_at": "2026-07-31T02:00:05.890514+00:00",
   "deployed_commit": "local-uncommitted",
   "inventory_scope": "Every deployed public-data file except manifest.json itself, whose self-checksum would be recursive.",
   "files": [
@@ -11,13 +11,38 @@
     },
     {
       "path": "data/formulas.json",
-      "size_bytes": 2468,
-      "sha256": "355332c9a36a39a33d6f11aaa69441508758ef8deeab82398a31a41baa20026d"
+      "size_bytes": 3121,
+      "sha256": "18c6162c4beef6ec38f60a6fc9d6d5f21ae0eaac6766ebaf5e89d809e41ced33"
     },
     {
       "path": "data/global/metadata.json",
-      "size_bytes": 35963,
-      "sha256": "6f5ff1e92ba33687b4d1148b50de8ab5b30ba5442e52156bda7a7e951ac44760"
+      "size_bytes": 94174,
+      "sha256": "1605338c090bb9d5d9f4001bdb5f735dfd5d709ef9d65051d653b4ba5a355e0c"
+    },
+    {
+      "path": "data/global/mslp-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "a8126110ba1e19bee101a21ccf5f11d4546c724aa8952670b1193cb107e277b7"
+    },
+    {
+      "path": "data/global/mslp.bin",
+      "size_bytes": 2439360,
+      "sha256": "1a9f533cf167cd11d6c2352c3a5e215c13135495e2f7f0f9c754d06133022358"
+    },
+    {
+      "path": "data/global/ocean-mask.bin",
+      "size_bytes": 29040,
+      "sha256": "554fe675cbc9e7d6095d7254b50a098d896c89b400766bf31a52e7af2df15c49"
+    },
+    {
+      "path": "data/global/olr-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "c7cf1f7a9575111be6cc5e68824aef1d0d01d0bed70a2c7393a8a8fe48950ea4"
+    },
+    {
+      "path": "data/global/olr.bin",
+      "size_bytes": 2439360,
+      "sha256": "6be5885bf500b7bee8cd3f22cb12742d351c6471519844007252aa977b05b507"
     },
     {
       "path": "data/global/precipitation-spread.bin",
@@ -27,7 +52,17 @@
     {
       "path": "data/global/precipitation.bin",
       "size_bytes": 2439360,
-      "sha256": "22023ddec3ecbe4898f5d8534ff336714ae3c25671dafad0957d20dcb3d47a4c"
+      "sha256": "2d945a6831aabd3cb813b4d68eae2b7561a306bfb609a9bb9c61930edf14b97f"
+    },
+    {
+      "path": "data/global/sst-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "b76402239ab647bee1ece2e16200b17c5bab66d9b1a8351af29e4cc7650be457"
+    },
+    {
+      "path": "data/global/sst.bin",
+      "size_bytes": 2439360,
+      "sha256": "23df84bbd4ad0acda5d8fa21f392870b35c758c5a5ae1563216e08343b2ac4fb"
     },
     {
       "path": "data/global/temperature-spread.bin",
@@ -37,7 +72,27 @@
     {
       "path": "data/global/temperature.bin",
       "size_bytes": 2439360,
-      "sha256": "6cc3386245a93f19f562cd1a3d49dc9f285751bb8bd4296701c432039bf2994a"
+      "sha256": "0416bd5f75c84cfbe4941d6e6991ee414d53182ad75135761aaa971f7bd87bc8"
+    },
+    {
+      "path": "data/global/wind850-spread.bin",
+      "size_bytes": 2439360,
+      "sha256": "10e923eebc4d1bda1d12371a823a9c93bd7be5bd09acbefcb6531e7ff27c2530"
+    },
+    {
+      "path": "data/global/wind850-u.bin",
+      "size_bytes": 2439360,
+      "sha256": "803a6bdcb9e64a01ec4ea8771915bafd664cd9a487f42a9dd26072068f245efb"
+    },
+    {
+      "path": "data/global/wind850-v.bin",
+      "size_bytes": 2439360,
+      "sha256": "27e9db933640eebc4f4e117ba52c3c5cd37f7768345c010f8e6761f9a4abcc6e"
+    },
+    {
+      "path": "data/global/wind850.bin",
+      "size_bytes": 2439360,
+      "sha256": "a214fedb16de9dc4e7063b1b4b9800886d120481d64d2c9a892898e703545e49"
     },
     {
       "path": "data/global/z500-spread.bin",
@@ -51,8 +106,13 @@
     },
     {
       "path": "data/index.json",
-      "size_bytes": 529,
-      "sha256": "c2ef85a1e23360a4fbe054503dfddc38ff45cbfe5d4ab494fed489150c8dc30f"
+      "size_bytes": 586,
+      "sha256": "0c5ef3fda561613c7f79713b006d118d8f051d45ca9ea03aefd38a4f0178b8e9"
+    },
+    {
+      "path": "data/india-admin.json",
+      "size_bytes": 255572,
+      "sha256": "39e157a2e21953426efe3e9ab54c45a97f197b0bd7209952ec3df6ecd2b4b6f8"
     },
     {
       "path": "data/india-outline.json",
@@ -66,8 +126,8 @@
     },
     {
       "path": "data/validation.json",
-      "size_bytes": 5541,
-      "sha256": "1c235700d6d6f42df9f259957a264db076018dbdd5f40d7491ddf6dec1a9e5d2"
+      "size_bytes": 5542,
+      "sha256": "26fc906d1e42f77a8ead8828373fe0c78057796032e121af8fd224a5ce1edb7a"
     },
     {
       "path": "data/world-countries.geojson",

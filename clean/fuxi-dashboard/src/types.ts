@@ -6,7 +6,14 @@ export type ProductKey =
   | "temperature_mean"
   | "temperature_anomaly";
 
-export type GlobalVariableKey = "precipitation" | "temperature" | "z500";
+export type GlobalVariableKey =
+  | "precipitation"
+  | "temperature"
+  | "z500"
+  | "wind850"
+  | "mslp"
+  | "sst"
+  | "olr";
 
 export interface LegendDefinition {
   boundaries: number[];
@@ -147,11 +154,7 @@ export interface OutlineData {
   };
 }
 
-export interface GlobalVariableDefinition {
-  label: string;
-  short_label: string;
-  units: string;
-  description: string;
+export interface GlobalBinaryDefinition {
   path: string;
   sha256: string;
   size_bytes: number;
@@ -164,23 +167,27 @@ export interface GlobalVariableDefinition {
     minimum: number;
     maximum: number;
   }>;
+}
+
+export interface GlobalVariableDefinition extends GlobalBinaryDefinition {
+  label: string;
+  short_label: string;
+  units: string;
+  description: string;
+  family: "surface" | "circulation" | "ocean-convection";
+  interpretation: string;
+  domain?: "global" | "ocean";
+  vector?: {
+    u: GlobalBinaryDefinition;
+    v: GlobalBinaryDefinition;
+    statistic: string;
+  };
   spread: GlobalSpreadDefinition;
   legend: LegendDefinition;
 }
 
-export interface GlobalSpreadDefinition {
-  path: string;
-  sha256: string;
-  size_bytes: number;
-  dtype: "uint16-little-endian";
+export interface GlobalSpreadDefinition extends GlobalBinaryDefinition {
   offset: 0;
-  scale: number;
-  minimum: number;
-  maximum: number;
-  frame_ranges: Array<{
-    minimum: number;
-    maximum: number;
-  }>;
   frame_area_means: number[];
   statistic: string;
 }
@@ -206,6 +213,13 @@ export interface GlobalMetadata {
     longitude_first: number;
     longitude_last: number;
     value_order: string;
+    ocean_mask: {
+      path: string;
+      sha256: string;
+      size_bytes: number;
+      dtype: "uint8";
+      meaning: string;
+    };
   };
   valid_period_starts: string[];
   variables: Record<GlobalVariableKey, GlobalVariableDefinition>;
@@ -217,18 +231,59 @@ export interface GlobalMetadata {
 
 export interface GlobalForecastData {
   metadata: GlobalMetadata;
-  fields: Record<GlobalVariableKey, Uint16Array>;
-  spreads: Record<GlobalVariableKey, Uint16Array>;
+  fields: Partial<Record<GlobalVariableKey, Uint16Array>>;
+  spreads: Partial<Record<GlobalVariableKey, Uint16Array>>;
+  vectors: Partial<
+    Record<GlobalVariableKey, { u: Uint16Array; v: Uint16Array }>
+  >;
+  oceanMask: Uint8Array;
+  loadVariable: (key: GlobalVariableKey) => Promise<void>;
 }
 
 export interface WorldCountriesData {
   type: "FeatureCollection";
   features: Array<{
     type: "Feature";
+    properties?: {
+      NAME?: string;
+      NAME_EN?: string;
+      ADMIN?: string;
+      LABEL_X?: number;
+      LABEL_Y?: number;
+      LABELRANK?: number;
+      MIN_LABEL?: number;
+      MAX_LABEL?: number;
+      POP_EST?: number;
+    };
     geometry: {
       type: "Polygon" | "MultiPolygon";
       coordinates: number[][][] | number[][][][];
     } | null;
+  }>;
+}
+
+export interface IndiaAdminData {
+  type: "FeatureCollection";
+  name: string;
+  description: string;
+  source: {
+    name: string;
+    product: string;
+    source_sha256: string;
+    display_note: string;
+  };
+  features: Array<{
+    type: "Feature";
+    properties: {
+      name: string;
+      label: boolean;
+      label_longitude: number;
+      label_latitude: number;
+    };
+    geometry: {
+      type: "Polygon" | "MultiPolygon";
+      coordinates: number[][][] | number[][][][];
+    };
   }>;
 }
 
@@ -240,4 +295,5 @@ export interface AppData {
   formulas: FormulasData;
   outline: OutlineData;
   world: WorldCountriesData;
+  indiaAdmin: IndiaAdminData;
 }

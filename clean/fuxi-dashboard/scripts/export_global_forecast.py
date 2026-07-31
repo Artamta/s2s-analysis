@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export compact global ensemble-mean fields for the static forecast viewer."""
+"""Export compact ensemble fields for the static global forecast viewer."""
 
 from __future__ import annotations
 
@@ -9,13 +9,31 @@ import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
+import sys
+from typing import Any
 
 import numpy as np
 import xarray as xr
+from shapely import contains_xy
+from shapely.geometry import shape
+from shapely.ops import unary_union
 
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from science.formulas import (  # noqa: E402
+    geopotential_to_height_dam,
+    kelvin_to_celsius,
+    pascal_to_hectopascal,
+    top_net_thermal_to_olr,
+    tp_mm_hour_to_mm_day,
+    wind_speed,
+)
 
 GRAVITY_M_S2 = 9.80665
-CHANNELS = ("tp", "t2m", "z500")
+CHANNELS = ("tp", "t2m", "z500", "u850", "v850", "msl", "sst", "ttr")
+CHANNEL_INDEX = {channel: index for index, channel in enumerate(CHANNELS)}
 EXPECTED_LATITUDE = np.linspace(90.0, -90.0, 121, dtype=np.float32)
 EXPECTED_LONGITUDE = np.linspace(0.0, 358.5, 240, dtype=np.float32)
 
@@ -28,12 +46,15 @@ class ExportVariable:
     short_label: str
     units: str
     description: str
+    family: str
+    interpretation: str
     offset: float
     scale: float
     legend_boundaries: tuple[float, ...]
     legend_colors: tuple[str, ...]
     under: str
     over: str
+    domain: str = "global"
 
 
 VARIABLES = (
@@ -44,6 +65,8 @@ VARIABLES = (
         short_label="Precipitation",
         units="mm/day",
         description="Ensemble-mean precipitation rate converted to a 24-hour total.",
+        family="surface",
+        interpretation="Rain belts, monsoon organization, and storm-track shifts.",
         offset=0.0,
         scale=0.01,
         legend_boundaries=(0.0, 0.5, 2.0, 5.0, 10.0, 20.0, 40.0, 80.0),
@@ -66,6 +89,8 @@ VARIABLES = (
         short_label="Temperature",
         units="°C",
         description="Daily ensemble-mean temperature two metres above the surface.",
+        family="surface",
+        interpretation="Persistent warm and cool regions; local values weaken with lead.",
         offset=-150.0,
         scale=0.01,
         legend_boundaries=(-60.0, -40.0, -20.0, 0.0, 15.0, 25.0, 35.0, 45.0),
@@ -88,6 +113,8 @@ VARIABLES = (
         short_label="Z500",
         units="dam",
         description="Ensemble-mean 500 hPa geopotential converted to decametres.",
+        family="circulation",
+        interpretation="Broad ridges, troughs, blocking, and planetary-wave evolution.",
         offset=0.0,
         scale=0.01,
         legend_boundaries=(460.0, 480.0, 500.0, 520.0, 540.0, 560.0, 580.0, 600.0),
@@ -103,6 +130,110 @@ VARIABLES = (
         under="#30244c",
         over="#873b4a",
     ),
+    ExportVariable(
+        key="wind850",
+        source_channel="u850,v850",
+        label="850 hPa wind speed",
+        short_label="850 hPa wind",
+        units="m/s",
+        description=(
+            "Arithmetic ensemble mean of member 850 hPa wind speed; arrows "
+            "show the ensemble-mean U/V direction."
+        ),
+        family="circulation",
+        interpretation="Monsoon flow, tropical inflow, and lower-tropospheric circulation.",
+        offset=0.0,
+        scale=0.01,
+        legend_boundaries=(0.0, 3.0, 6.0, 9.0, 12.0, 18.0, 25.0, 35.0),
+        legend_colors=(
+            "#10212b",
+            "#194554",
+            "#1d7180",
+            "#36a09b",
+            "#8ac483",
+            "#e1c969",
+            "#e8804c",
+        ),
+        under="#09171e",
+        over="#d84e43",
+    ),
+    ExportVariable(
+        key="mslp",
+        source_channel="msl",
+        label="Mean sea-level pressure",
+        short_label="MSLP",
+        units="hPa",
+        description="Daily ensemble-mean pressure reduced to mean sea level.",
+        family="circulation",
+        interpretation="Large pressure systems; exact centres matter mainly at shorter leads.",
+        offset=800.0,
+        scale=0.01,
+        legend_boundaries=(960.0, 980.0, 995.0, 1005.0, 1015.0, 1025.0, 1040.0, 1060.0),
+        legend_colors=(
+            "#454176",
+            "#35658e",
+            "#3c92a0",
+            "#8ab9a0",
+            "#d4d2a0",
+            "#d6a46e",
+            "#b96258",
+        ),
+        under="#2a2858",
+        over="#76384b",
+    ),
+    ExportVariable(
+        key="sst",
+        source_channel="sst",
+        label="Sea-surface temperature",
+        short_label="SST",
+        units="°C",
+        description="Daily ensemble-mean sea-surface temperature, displayed over ocean only.",
+        family="ocean-convection",
+        interpretation="Slow lower-boundary patterns; anomalies require a matched ocean climate.",
+        offset=-100.0,
+        scale=0.01,
+        legend_boundaries=(-2.0, 2.0, 8.0, 14.0, 20.0, 25.0, 28.0, 31.0, 35.0),
+        legend_colors=(
+            "#263d78",
+            "#2d67a0",
+            "#3b91b1",
+            "#62b8aa",
+            "#bad18c",
+            "#efd071",
+            "#ef994f",
+            "#d95343",
+        ),
+        under="#172851",
+        over="#7d263d",
+        domain="ocean",
+    ),
+    ExportVariable(
+        key="olr",
+        source_channel="ttr",
+        label="Outgoing longwave radiation",
+        short_label="OLR",
+        units="W/m²",
+        description=(
+            "Positive outgoing longwave radiation derived as the negative of "
+            "top net thermal radiation."
+        ),
+        family="ocean-convection",
+        interpretation="Low tropical OLR can indicate deep cloud and convection; it is not an MJO index.",
+        offset=0.0,
+        scale=0.01,
+        legend_boundaries=(80.0, 140.0, 180.0, 210.0, 240.0, 270.0, 300.0, 340.0),
+        legend_colors=(
+            "#14354d",
+            "#21647a",
+            "#389792",
+            "#8dbb87",
+            "#d7cf82",
+            "#e9a463",
+            "#d8684f",
+        ),
+        under="#0b2237",
+        over="#7f3545",
+    ),
 )
 
 
@@ -113,6 +244,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--members", type=int, default=100)
     parser.add_argument("--lead-days", type=int, default=42)
     parser.add_argument("--initialization", default="2026-07-28")
+    parser.add_argument(
+        "--world-geometry",
+        type=Path,
+        default=ROOT / "public/data/world-countries.geojson",
+    )
     return parser.parse_args()
 
 
@@ -151,32 +287,43 @@ def read_selected(path: Path) -> np.ndarray:
             .transpose("channel", "lat", "lon")
         )
         values = np.asarray(selected.values, dtype=np.float64)
-        if values.shape != (3, 121, 240):
+        if values.shape != (len(CHANNELS), 121, 240):
             raise ValueError(f"{path} produced shape {values.shape}")
         if not np.isfinite(values).all():
             raise ValueError(f"{path} contains non-finite selected fields")
-        if values[0].min() < -1e-5:
+        if values[CHANNEL_INDEX["tp"]].min() < -1e-5:
             raise ValueError(f"{path} contains negative precipitation")
         return values
     finally:
         source.close()
 
 
-def convert_fields(mean: np.ndarray) -> dict[str, np.ndarray]:
+def convert_fields(values: np.ndarray) -> dict[str, np.ndarray]:
+    """Convert one member or an ensemble mean to public display fields."""
+
+    get = lambda channel: values[CHANNEL_INDEX[channel]]  # noqa: E731
     return {
-        "precipitation": np.maximum(mean[0], 0.0) * 24.0,
-        "temperature": mean[1] - 273.15,
-        "z500": mean[2] / GRAVITY_M_S2 / 10.0,
+        "precipitation": tp_mm_hour_to_mm_day(np.maximum(get("tp"), 0.0)),
+        "temperature": kelvin_to_celsius(get("t2m")),
+        "z500": geopotential_to_height_dam(get("z500")),
+        "wind850": wind_speed(get("u850"), get("v850")),
+        "mslp": pascal_to_hectopascal(get("msl")),
+        "sst": kelvin_to_celsius(get("sst")),
+        "olr": top_net_thermal_to_olr(get("ttr")),
     }
 
 
 def convert_spread(spread: np.ndarray) -> dict[str, np.ndarray]:
-    """Convert population spread without applying absolute-field offsets."""
+    """Convert channel spread for independently linear public fields."""
 
+    get = lambda channel: spread[CHANNEL_INDEX[channel]]  # noqa: E731
     return {
-        "precipitation": spread[0] * 24.0,
-        "temperature": spread[1],
-        "z500": spread[2] / GRAVITY_M_S2 / 10.0,
+        "precipitation": get("tp") * 24.0,
+        "temperature": get("t2m"),
+        "z500": get("z500") / GRAVITY_M_S2 / 10.0,
+        "mslp": get("msl") / 100.0,
+        "sst": get("sst"),
+        "olr": get("ttr"),
     }
 
 
@@ -201,16 +348,73 @@ def quantize(values: np.ndarray, variable: ExportVariable) -> np.ndarray:
     )
 
 
-def global_area_mean(values: np.ndarray) -> float:
-    """Return a cosine-latitude weighted global mean."""
+def global_area_mean(values: np.ndarray, mask: np.ndarray | None = None) -> float:
+    """Return a cosine-latitude weighted global or masked mean."""
 
     latitude_weights = np.cos(np.deg2rad(EXPECTED_LATITUDE))[:, None]
-    weights = np.broadcast_to(latitude_weights, values.shape)
+    weights = np.broadcast_to(latitude_weights, values.shape).copy()
+    if mask is not None:
+        weights *= mask
     return float(np.average(values, weights=weights))
+
+
+def build_ocean_mask(world_path: Path) -> np.ndarray:
+    """Build a public 1-byte ocean mask from the Natural Earth land polygons."""
+
+    document = json.loads(world_path.read_text(encoding="utf-8"))
+    land = unary_union([
+        shape(feature["geometry"])
+        for feature in document["features"]
+        if feature.get("geometry")
+    ])
+    longitude = np.where(
+        EXPECTED_LONGITUDE > 180.0,
+        EXPECTED_LONGITUDE - 360.0,
+        EXPECTED_LONGITUDE,
+    )
+    lon_grid, lat_grid = np.meshgrid(longitude, EXPECTED_LATITUDE)
+    land_mask = contains_xy(land, lon_grid, lat_grid)
+    ocean_mask = (~land_mask).astype(np.uint8)
+    if ocean_mask.mean() < 0.6 or ocean_mask.mean() > 0.8:
+        raise ValueError("derived ocean support has an implausible fraction")
+    return ocean_mask
 
 
 def iso_day(initialization: dt.date, offset: int) -> str:
     return (initialization + dt.timedelta(days=offset)).isoformat()
+
+
+def range_record(values: np.ndarray) -> dict[str, float]:
+    return {"minimum": float(values.min()), "maximum": float(values.max())}
+
+
+def write_binary(
+    path: Path,
+    frames: list[np.ndarray],
+    *,
+    offset: float,
+    scale: float,
+    frame_ranges: list[dict[str, float]],
+) -> dict[str, Any]:
+    stacked = np.stack(frames, axis=0)
+    path.write_bytes(stacked.tobytes(order="C"))
+    expected_size = 42 * 121 * 240 * 2
+    if path.stat().st_size != expected_size:
+        raise ValueError(
+            f"{path} has {path.stat().st_size} bytes, expected {expected_size}"
+        )
+    decoded = stacked.astype(np.float64) * scale + offset
+    return {
+        "path": path.name,
+        "sha256": sha256(path),
+        "size_bytes": path.stat().st_size,
+        "dtype": "uint16-little-endian",
+        "offset": offset,
+        "scale": scale,
+        "minimum": float(decoded.min()),
+        "maximum": float(decoded.max()),
+        "frame_ranges": frame_ranges,
+    }
 
 
 def main() -> None:
@@ -219,8 +423,10 @@ def main() -> None:
         raise ValueError("the public global contract requires 42 leads and >=1 member")
     initialization = dt.date.fromisoformat(args.initialization)
     args.output_dir.mkdir(parents=True, exist_ok=True)
-
     variable_by_key = {variable.key: variable for variable in VARIABLES}
+    ocean_mask = build_ocean_mask(args.world_geometry)
+    sst_support = ocean_mask.copy()
+
     frames: dict[str, list[np.ndarray]] = {key: [] for key in variable_by_key}
     spread_frames: dict[str, list[np.ndarray]] = {
         key: [] for key in variable_by_key
@@ -234,93 +440,137 @@ def main() -> None:
     spread_frame_means: dict[str, list[float]] = {
         key: [] for key in variable_by_key
     }
+    vector_frames: dict[str, list[np.ndarray]] = {"u": [], "v": []}
+    vector_ranges: dict[str, list[dict[str, float]]] = {"u": [], "v": []}
 
     for lead_day in range(1, args.lead_days + 1):
-        mean = np.zeros((3, 121, 240), dtype=np.float64)
-        second_moment = np.zeros_like(mean)
+        means = {
+            key: np.zeros((121, 240), dtype=np.float64)
+            for key in variable_by_key
+        }
+        second_moments = {key: np.zeros_like(value) for key, value in means.items()}
+        vector_means = {
+            "u": np.zeros((121, 240), dtype=np.float64),
+            "v": np.zeros((121, 240), dtype=np.float64),
+        }
         for member in range(args.members):
             values = read_selected(raw_path(args.raw_dir, member, lead_day))
-            delta = values - mean
-            mean += delta / (member + 1)
-            second_moment += delta * (values - mean)
-        population_spread = np.sqrt(second_moment / args.members)
-        converted = convert_fields(mean)
-        converted_spread = convert_spread(population_spread)
-        for key, values in converted.items():
-            frames[key].append(quantize(values, variable_by_key[key]))
-            frame_ranges[key].append(
-                {"minimum": float(values.min()), "maximum": float(values.max())}
-            )
-            spread_values = converted_spread[key]
+            converted = convert_fields(values)
+            for key, member_values in converted.items():
+                delta = member_values - means[key]
+                means[key] += delta / (member + 1)
+                second_moments[key] += delta * (member_values - means[key])
+            for component, channel in (("u", "u850"), ("v", "v850")):
+                component_values = values[CHANNEL_INDEX[channel]]
+                vector_means[component] += (
+                    component_values - vector_means[component]
+                ) / (member + 1)
+
+        for key, values in means.items():
+            if key == "sst":
+                sst_support &= (values >= -3.0) & (values <= 45.0)
+            spread_values = np.sqrt(second_moments[key] / args.members)
+            variable = variable_by_key[key]
+            frames[key].append(quantize(values, variable))
             spread_frames[key].append(
                 quantize_with(
                     spread_values,
                     offset=0.0,
-                    scale=variable_by_key[key].scale,
+                    scale=variable.scale,
                     label=f"{key} spread",
                 )
             )
-            spread_frame_ranges[key].append(
-                {
-                    "minimum": float(spread_values.min()),
-                    "maximum": float(spread_values.max()),
-                }
+            frame_ranges[key].append(range_record(values))
+            spread_frame_ranges[key].append(range_record(spread_values))
+            mask = ocean_mask if variable.domain == "ocean" else None
+            spread_frame_means[key].append(
+                global_area_mean(spread_values, mask=mask)
             )
-            spread_frame_means[key].append(global_area_mean(spread_values))
+        for component, values in vector_means.items():
+            vector_frames[component].append(
+                quantize_with(
+                    values,
+                    offset=-100.0,
+                    scale=0.01,
+                    label=f"wind850 {component}",
+                )
+            )
+            vector_ranges[component].append(range_record(values))
         print(f"aggregated global lead {lead_day:02d}/{args.lead_days}", flush=True)
 
-    file_records: dict[str, dict[str, object]] = {}
+    ocean_mask = sst_support.astype(np.uint8)
+    if ocean_mask.mean() < 0.6 or ocean_mask.mean() > 0.8:
+        raise ValueError("stable physical SST support has an implausible fraction")
+    spread_frame_means["sst"] = [
+        global_area_mean(
+            frame.astype(np.float64) * variable_by_key["sst"].scale,
+            mask=ocean_mask,
+        )
+        for frame in spread_frames["sst"]
+    ]
+
+    file_records: dict[str, dict[str, Any]] = {}
     for variable in VARIABLES:
-        binary_path = args.output_dir / f"{variable.key}.bin"
-        stacked = np.stack(frames[variable.key], axis=0)
-        binary_path.write_bytes(stacked.tobytes(order="C"))
-        decoded = stacked.astype(np.float64) * variable.scale + variable.offset
-        expected_size = args.lead_days * 121 * 240 * 2
-        if binary_path.stat().st_size != expected_size:
-            raise ValueError(
-                f"{binary_path} has {binary_path.stat().st_size} bytes, "
-                f"expected {expected_size}"
-            )
-        file_records[variable.key] = {
-            "path": binary_path.name,
-            "sha256": sha256(binary_path),
-            "size_bytes": binary_path.stat().st_size,
-            "dtype": "uint16-little-endian",
-            "offset": variable.offset,
-            "scale": variable.scale,
-            "minimum": float(decoded.min()),
-            "maximum": float(decoded.max()),
-            "frame_ranges": frame_ranges[variable.key],
-        }
-        spread_path = args.output_dir / f"{variable.key}-spread.bin"
-        stacked_spread = np.stack(spread_frames[variable.key], axis=0)
-        spread_path.write_bytes(stacked_spread.tobytes(order="C"))
-        if spread_path.stat().st_size != expected_size:
-            raise ValueError(
-                f"{spread_path} has {spread_path.stat().st_size} bytes, "
-                f"expected {expected_size}"
-            )
-        decoded_spread = stacked_spread.astype(np.float64) * variable.scale
-        file_records[variable.key]["spread"] = {
-            "path": spread_path.name,
-            "sha256": sha256(spread_path),
-            "size_bytes": spread_path.stat().st_size,
-            "dtype": "uint16-little-endian",
-            "offset": 0.0,
-            "scale": variable.scale,
-            "minimum": float(decoded_spread.min()),
-            "maximum": float(decoded_spread.max()),
-            "frame_ranges": spread_frame_ranges[variable.key],
+        record = write_binary(
+            args.output_dir / f"{variable.key}.bin",
+            frames[variable.key],
+            offset=variable.offset,
+            scale=variable.scale,
+            frame_ranges=frame_ranges[variable.key],
+        )
+        record["spread"] = {
+            **write_binary(
+                args.output_dir / f"{variable.key}-spread.bin",
+                spread_frames[variable.key],
+                offset=0.0,
+                scale=variable.scale,
+                frame_ranges=spread_frame_ranges[variable.key],
+            ),
             "frame_area_means": spread_frame_means[variable.key],
             "statistic": (
-                "Population standard deviation across 100 members (ddof=0); "
-                "spread measures ensemble disagreement, not calibrated confidence."
+                f"Population standard deviation across {args.members} members "
+                "(ddof=0); spread measures ensemble disagreement, not "
+                "calibrated confidence."
             ),
         }
+        file_records[variable.key] = record
+
+    file_records["wind850"]["vector"] = {
+        "u": write_binary(
+            args.output_dir / "wind850-u.bin",
+            vector_frames["u"],
+            offset=-100.0,
+            scale=0.01,
+            frame_ranges=vector_ranges["u"],
+        ),
+        "v": write_binary(
+            args.output_dir / "wind850-v.bin",
+            vector_frames["v"],
+            offset=-100.0,
+            scale=0.01,
+            frame_ranges=vector_ranges["v"],
+        ),
+        "statistic": (
+            "Arithmetic ensemble-mean eastward and northward wind components; "
+            "arrows show vector direction while shading shows vector magnitude."
+        ),
+    }
+    ocean_path = args.output_dir / "ocean-mask.bin"
+    ocean_path.write_bytes(ocean_mask.tobytes(order="C"))
+    ocean_record = {
+        "path": ocean_path.name,
+        "sha256": sha256(ocean_path),
+        "size_bytes": ocean_path.stat().st_size,
+        "dtype": "uint8",
+        "meaning": (
+            "1 = stable physically valid open-ocean SST display support; "
+            "0 = land, sea ice, or unsupported"
+        ),
+    }
 
     generated_at = dt.datetime.now(dt.timezone.utc).isoformat()
     metadata = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": generated_at,
         "issue": {
             "initialization": f"{initialization.isoformat()}T00:00:00Z",
@@ -330,11 +580,11 @@ def main() -> None:
             "public_label": "Experimental global ensemble guidance",
             "input_description": "Operational global analysis proxy",
             "ensemble_relation": (
-                "Independent 100-member companion ensemble generated from the "
-                "same frozen initialization input as the India validation case."
+                f"Independent {args.members}-member companion ensemble generated "
+                "from the same frozen initialization input as the India validation case."
             ),
             "display_interpolation": (
-                "Cross-fades are a visual transition between daily fields; "
+                "Smooth cross-fades are a visual transition between daily fields; "
                 "they are not additional forecast times."
             ),
         },
@@ -346,6 +596,7 @@ def main() -> None:
             "longitude_first": 0.0,
             "longitude_last": 358.5,
             "value_order": "lead_day, latitude north-to-south, longitude eastward",
+            "ocean_mask": ocean_record,
         },
         "valid_period_starts": [
             iso_day(initialization, offset) for offset in range(args.lead_days)
@@ -356,6 +607,9 @@ def main() -> None:
                 "short_label": variable.short_label,
                 "units": variable.units,
                 "description": variable.description,
+                "family": variable.family,
+                "interpretation": variable.interpretation,
+                "domain": variable.domain,
                 "legend": {
                     "boundaries": variable.legend_boundaries,
                     "colors": variable.legend_colors,
@@ -373,11 +627,13 @@ def main() -> None:
                 f"all {args.members} members present for every lead",
                 "companion-ensemble relationship declared",
                 "all 42 daily leads present",
-                "finite TP, T2M, and Z500 fields",
-                "nonnegative precipitation",
+                "finite TP, T2M, Z500, U850, V850, MSLP, SST, and TTR",
+                "nonnegative precipitation and OLR",
                 "locked unit conversions and quantization",
                 "population ensemble spread with ddof=0",
-                "cosine-latitude global spread summaries",
+                "850 hPa vector components exported separately",
+                "SST restricted to derived ocean display support",
+                "cosine-latitude spread summaries",
                 "binary size and SHA-256 checks",
             ],
         },

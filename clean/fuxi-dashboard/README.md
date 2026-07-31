@@ -2,7 +2,9 @@
 
 A static interactive global outlook and validated India case for the 28 July
 2026 experimental forecast. The global viewer animates 42 daily ensemble-mean
-fields for precipitation, 2 m temperature, and 500 hPa geopotential height.
+fields for precipitation, 2 m temperature, 500 hPa geopotential height,
+850 hPa wind, mean sea-level pressure, sea-surface temperature, and outgoing
+longwave radiation.
 The site publishes compact ensemble-derived fields only. It does not contain
 raw model inputs, member fields, observations, reforecasts, model weights,
 credentials, or cluster paths.
@@ -56,12 +58,18 @@ npm run dev
 
 ## Data contract
 
-The global contract stores six little-endian `uint16` binary arrays in
-lead-day, latitude, longitude order: three ensemble means and three population
-standard deviations across the 100 members. `metadata.json` locks dimensions,
+The global contract stores little-endian `uint16` binary arrays in lead-day,
+latitude, longitude order: seven ensemble means, seven population standard
+deviations, and separate U/V component means for 850 hPa wind. A one-byte
+ocean mask limits SST display support. `metadata.json` locks dimensions,
 quantization, units, legends, valid periods, file sizes, and SHA-256 hashes.
-The browser verifies each binary before presentation. The complete global
-payload is about 14.6 MB before HTTP compression.
+The default precipitation layer loads first; other fields load and verify
+lazily when selected. The complete optional global payload is about 38 MB
+before HTTP compression.
+
+Country boundaries and labels use Natural Earth. `india-admin.json` is a
+simplified display derivative of the Survey of India Administrative Boundary
+Database state/UT layer and contains no raw shapefile.
 
 The India forecast JSON stores latitude and longitude vectors, a support mask,
 six week records, and flattened row-major fields. Every displayed field

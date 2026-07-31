@@ -1,5 +1,6 @@
 import {
   GlobalForecastMap,
+  type MapOverlays,
   type MapSelection,
 } from "../components/GlobalForecastMap";
 import { createLegend } from "../components/Legend";
@@ -9,9 +10,18 @@ const VARIABLE_ORDER: GlobalVariableKey[] = [
   "precipitation",
   "temperature",
   "z500",
+  "wind850",
+  "mslp",
+  "sst",
+  "olr",
 ];
+const FAMILY_LABELS = {
+  surface: "Surface",
+  circulation: "Circulation",
+  "ocean-convection": "Ocean & convection",
+} as const;
 const SPEEDS = [0.5, 1, 2];
-const BASE_FRAME_MS = 1050;
+const BASE_FRAME_MS = 1250;
 const FRAME_SIZE = 121 * 240;
 
 function friendlyDate(isoDate: string): string {
@@ -24,54 +34,77 @@ function friendlyDate(isoDate: string): string {
 }
 
 function variableGlyph(variable: GlobalVariableKey): string {
-  if (variable === "precipitation") return "◌";
-  if (variable === "temperature") return "°";
-  return "≋";
+  const glyphs: Record<GlobalVariableKey, string> = {
+    precipitation: "◌",
+    temperature: "°",
+    z500: "≋",
+    wind850: "↗",
+    mslp: "P",
+    sst: "≈",
+    olr: "☁",
+  };
+  return glyphs[variable];
 }
 
-function pointLabel(selection: MapSelection): string {
+function titleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function coordinateLabel(selection: MapSelection): string {
   const latitude =
     selection.latitude < 0
       ? `${Math.abs(selection.latitude).toFixed(1)}°S`
       : `${selection.latitude.toFixed(1)}°N`;
-  const longitude = selection.longitude > 180
-    ? `${(360 - selection.longitude).toFixed(1)}°W`
-    : `${selection.longitude.toFixed(1)}°E`;
+  const longitude =
+    selection.longitude > 180
+      ? `${(360 - selection.longitude).toFixed(1)}°W`
+      : `${selection.longitude.toFixed(1)}°E`;
   return `${latitude} · ${longitude}`;
+}
+
+function pointLabel(selection: MapSelection): string {
+  const place = selection.state
+    ? `${titleCase(selection.state)}, India`
+    : selection.country;
+  return place
+    ? `${place} · ${coordinateLabel(selection)}`
+    : coordinateLabel(selection);
 }
 
 function leadGuidance(day: number): { period: string; guidance: string } {
   if (day < 14) {
     return {
       period: "Days 1–14 · weather → subseasonal",
-      guidance: "Synoptic features remain useful, but local timing becomes less certain with lead.",
+      guidance:
+        "Synoptic features remain useful, but local timing becomes less certain with lead.",
     };
   }
   if (day < 28) {
     return {
       period: "Weeks 3–4 · subseasonal range",
-      guidance: "Read persistent large-scale patterns and ensemble agreement—not exact day-to-day weather.",
+      guidance:
+        "Read persistent large-scale patterns and ensemble agreement—not exact day-to-day weather.",
     };
   }
   return {
     period: "Weeks 5–6 · broad outlook",
-    guidance: "Use only broad circulation and ensemble tendencies; local detail has low predictability.",
+    guidance:
+      "Use only broad circulation and ensemble tendencies; local detail has low predictability.",
   };
 }
 
-function noticeFor(variable: GlobalVariableKey): string {
-  if (variable === "precipitation") {
-    return "Watch rain belts, monsoon organization and storm-track shifts; isolated point peaks are less robust later.";
-  }
-  if (variable === "temperature") {
-    return "Watch persistent warm or cool zones and hemispheric gradients, especially where members remain clustered.";
-  }
-  return "Watch broad ridges, troughs and planetary-wave evolution—the clearest circulation-scale S2S signal.";
-}
-
-function linePath(values: number[], x: (index: number) => number, y: (value: number) => number): string {
+function linePath(
+  values: number[],
+  x: (index: number) => number,
+  y: (value: number) => number,
+): string {
   return values
-    .map((value, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(1)},${y(value).toFixed(1)}`)
+    .map(
+      (value, index) =>
+        `${index === 0 ? "M" : "L"}${x(index).toFixed(1)},${y(value).toFixed(1)}`,
+    )
     .join(" ");
 }
 
@@ -84,16 +117,29 @@ function renderPointChart(
   const definition = data.metadata.variables[variable];
   const pointIndex =
     selection.latitudeIndex * 240 + selection.longitudeIndex;
+  if (definition.domain === "ocean" && data.oceanMask[pointIndex] !== 1) {
+    return `
+      <div class="point-unavailable">
+        <strong>Open-ocean field</strong>
+        <p>Select a supported ocean grid cell to inspect the 42-day SST trace.</p>
+      </div>
+    `;
+  }
+  const field = data.fields[variable];
+  const spreadField = data.spreads[variable];
+  if (!field || !spreadField) {
+    return `<div class="point-unavailable"><strong>Loading field…</strong></div>`;
+  }
   const means = Array.from({ length: 42 }, (_, index) => {
-    const encoded = data.fields[variable][index * FRAME_SIZE + pointIndex];
+    const encoded = field[index * FRAME_SIZE + pointIndex];
     return encoded * definition.scale + definition.offset;
   });
   const spreads = Array.from({ length: 42 }, (_, index) => {
-    const encoded = data.spreads[variable][index * FRAME_SIZE + pointIndex];
+    const encoded = spreadField[index * FRAME_SIZE + pointIndex];
     return encoded * definition.spread.scale + definition.spread.offset;
   });
   const lower = means.map((mean, index) =>
-    variable === "precipitation"
+    variable === "precipitation" || variable === "wind850"
       ? Math.max(0, mean - spreads[index])
       : mean - spreads[index],
   );
@@ -102,7 +148,10 @@ function renderPointChart(
   let maximum = Math.max(...upper);
   const rawRange = Math.max(maximum - minimum, Math.abs(maximum) * 0.05, 1);
   const padding = rawRange * 0.1;
-  minimum = variable === "precipitation" ? 0 : minimum - padding;
+  minimum =
+    variable === "precipitation" || variable === "wind850"
+      ? 0
+      : minimum - padding;
   maximum += padding;
 
   const width = 320;
@@ -114,11 +163,17 @@ function renderPointChart(
   const x = (index: number): number =>
     left + (index / 41) * (width - left - right);
   const y = (value: number): number =>
-    top + ((maximum - value) / (maximum - minimum)) * (height - top - bottom);
+    top +
+    ((maximum - value) / (maximum - minimum)) *
+      (height - top - bottom);
   const band = [
-    ...upper.map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`),
+    ...upper.map(
+      (value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`,
+    ),
     ...lower
-      .map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`)
+      .map(
+        (value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`,
+      )
       .reverse(),
   ].join(" ");
   const weekLines = [7, 14, 21, 28, 35]
@@ -129,7 +184,11 @@ function renderPointChart(
     .join("");
   const mean = means[selectedDay];
   const spread = spreads[selectedDay];
-  const decimals = variable === "precipitation" && mean >= 10 ? 0 : 1;
+  const decimals =
+    definition.units === "W/m²" ||
+    (variable === "precipitation" && mean >= 10)
+      ? 0
+      : 1;
 
   return `
     <div class="point-value">
@@ -137,7 +196,7 @@ function renderPointChart(
       <span>± ${spread.toFixed(decimals)} ${definition.units}</span>
       <small>Lead ${String(selectedDay + 1).padStart(2, "0")} · ensemble mean ±1σ</small>
     </div>
-    <svg class="point-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="42-day ensemble mean and member spread at ${pointLabel(selection)}">
+    <svg class="point-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="42-day ensemble mean and member spread at ${coordinateLabel(selection)}">
       <g class="point-chart__weeks">${weekLines}</g>
       <line class="point-chart__axis" x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}" />
       <polygon class="point-chart__band" points="${band}" />
@@ -153,7 +212,10 @@ function renderPointChart(
   `;
 }
 
-export function renderGlobalPage(container: HTMLElement, data: AppData): () => void {
+export function renderGlobalPage(
+  container: HTMLElement,
+  data: AppData,
+): () => void {
   const { global } = data;
   if (global.metadata.validation.status === "failure") {
     container.innerHTML = `
@@ -172,24 +234,43 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
       <div class="global-stage-shade" aria-hidden="true"></div>
 
       <div class="global-title">
-        <span class="global-eyebrow">Experimental ensemble guidance · Issue 01</span>
+        <span class="global-eyebrow"><b>Experimental</b> · research ensemble · not operational</span>
         <h1>Atmosphere<br><em>in motion.</em></h1>
-        <p>Follow rain, heat and mid-tropospheric circulation from the weather range into Weeks 5–6.</p>
+        <p>Explore coupled rain, heat, circulation, ocean and convection signals from Day 1 through Week 6.</p>
       </div>
 
       <aside class="global-facts" aria-label="Forecast issue and integrity facts">
+        <div><span>Status</span><strong class="experimental-text">Experimental research guidance</strong></div>
         <div><span>Initialized</span><strong>28 Jul 2026 · 00 UTC</strong></div>
         <div><span>Signal</span><strong>${global.metadata.issue.members}-member ensemble mean</strong></div>
         <div><span>Verification</span><strong>Awaiting future observations</strong></div>
-        <div><span>Integrity</span><strong class="integrity-ok">✓ 6 files SHA-256 verified</strong></div>
+        <div><span>Integrity</span><strong class="integrity-ok" id="integrity-status">✓ Active layer SHA-256 verified</strong></div>
       </aside>
 
-      <div class="global-layer-dock" id="global-layer-dock" aria-label="Map layers"></div>
+      <aside class="global-layer-dock" aria-label="Forecast fields">
+        <div class="layer-dock-heading"><span>Base field</span><small id="layer-load-status">SHA-256 verified</small></div>
+        <div id="global-layer-groups"></div>
+        <div class="overlay-controls">
+          <span>Map overlays</span>
+          <label><input id="overlay-countries" type="checkbox" checked><i></i>Country names</label>
+          <label><input id="overlay-india" type="checkbox"><i></i>India states · SoI ABDB</label>
+          <label><input id="overlay-wind" type="checkbox"><i></i>850 hPa vectors</label>
+          <label><input id="overlay-pressure" type="checkbox"><i></i>Pressure contours</label>
+        </div>
+      </aside>
+
+      <div class="global-map-nav" aria-label="Map navigation">
+        <button id="zoom-in" type="button" aria-label="Zoom in">+</button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-out" type="button" aria-label="Zoom out">−</button>
+        <button id="india-focus" type="button">India</button>
+        <button id="world-focus" type="button">World</button>
+      </div>
 
       <aside class="global-inspector" aria-label="Selected-location 42-day ensemble trace">
         <div class="global-inspector__head">
           <span>Click map · 42-day point trace</span>
-          <strong id="point-location">28.5°N · 76.5°E</strong>
+          <strong id="point-location">India · 28.5°N · 76.5°E</strong>
         </div>
         <div id="point-chart"></div>
         <div class="spread-key"><i></i><span>Mean</span><b></b><span>±1 population σ</span></div>
@@ -230,7 +311,7 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
         <button class="speed-button" id="speed-button" type="button" aria-label="Change animation speed">1×</button>
       </div>
 
-      <p class="global-disclaimer">Research product · Daily model fields · Long leads are broad guidance, not deterministic local forecasts</p>
+      <p class="global-disclaimer">Experimental research product · Daily model fields · Long leads are broad guidance, not deterministic local forecasts</p>
     </section>
   `;
 
@@ -241,50 +322,111 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
     longitude: 76.5,
     latitudeIndex: 41,
     longitudeIndex: 51,
+    country: "India",
+  };
+  let overlays: MapOverlays = {
+    countryLabels: true,
+    indiaStates: false,
+    windVectors: false,
+    pressureContours: false,
   };
   let speedIndex = 1;
   let playing = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let cycleStart = performance.now();
   let animationFrame = 0;
   const mapHost = container.querySelector<HTMLElement>("#global-map")!;
-  const layerDock =
-    container.querySelector<HTMLDivElement>("#global-layer-dock")!;
+  const layerGroups =
+    container.querySelector<HTMLDivElement>("#global-layer-groups")!;
   const slider = container.querySelector<HTMLInputElement>("#day-slider")!;
   const playButton =
     container.querySelector<HTMLButtonElement>("#play-button")!;
   const speedButton =
     container.querySelector<HTMLButtonElement>("#speed-button")!;
-  const map = new GlobalForecastMap(mapHost, global, data.world, (next) => {
-    selection = next;
-    updateInspector();
+  const map = new GlobalForecastMap(
+    mapHost,
+    global,
+    data.world,
+    data.indiaAdmin,
+    (next) => {
+      selection = next;
+      updateInspector();
+    },
+    (zoom) => {
+      container.querySelector("#zoom-level")!.textContent =
+        `${Math.round(zoom * 100)}%`;
+    },
+  );
+
+  (
+    ["surface", "circulation", "ocean-convection"] as const
+  ).forEach((family) => {
+    const group = document.createElement("div");
+    group.className = "layer-family";
+    group.innerHTML = `<span>${FAMILY_LABELS[family]}</span><div></div>`;
+    const buttons = group.querySelector<HTMLDivElement>("div")!;
+    VARIABLE_ORDER.filter(
+      (key) => global.metadata.variables[key].family === family,
+    ).forEach((key) => {
+      const definition = global.metadata.variables[key];
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "global-layer-button";
+      button.dataset.variable = key;
+      button.innerHTML = `
+        <span class="layer-glyph" aria-hidden="true">${variableGlyph(key)}</span>
+        <span><strong>${definition.short_label}</strong><small>${definition.units}</small></span>
+      `;
+      button.addEventListener("click", () => void selectVariable(key, button));
+      buttons.append(button);
+    });
+    layerGroups.append(group);
   });
 
-  VARIABLE_ORDER.forEach((key) => {
-    const definition = global.metadata.variables[key];
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "global-layer-button";
-    button.dataset.variable = key;
-    button.innerHTML = `
-      <span class="layer-glyph" aria-hidden="true">${variableGlyph(key)}</span>
-      <span><strong>${definition.short_label}</strong><small>${definition.units}</small></span>
-    `;
-    button.addEventListener("click", () => {
+  async function selectVariable(
+    key: GlobalVariableKey,
+    button?: HTMLButtonElement,
+  ): Promise<void> {
+    if (key === variable && global.fields[key]) return;
+    const status = container.querySelector("#layer-load-status")!;
+    button?.classList.add("is-loading");
+    status.textContent = "Verifying…";
+    try {
+      await global.loadVariable(key);
       variable = key;
+      if (key === "wind850") {
+        overlays.windVectors = true;
+        container.querySelector<HTMLInputElement>("#overlay-wind")!.checked =
+          true;
+      }
+      if (key === "mslp") {
+        overlays.pressureContours = true;
+        container.querySelector<HTMLInputElement>(
+          "#overlay-pressure",
+        )!.checked = true;
+      }
+      map.setOverlays(overlays);
       cycleStart = performance.now();
       updateStatic();
       map.render(variable, day, 0);
-    });
-    layerDock.append(button);
-  });
+      status.textContent = "SHA-256 verified";
+    } catch {
+      status.textContent = "Layer unavailable";
+    } finally {
+      button?.classList.remove("is-loading");
+    }
+  }
 
   function updateInspector(): void {
     container.querySelector("#point-location")!.textContent =
       pointLabel(selection);
-    container.querySelector("#point-chart")!.innerHTML =
-      renderPointChart(global, variable, selection, day);
+    container.querySelector("#point-chart")!.innerHTML = renderPointChart(
+      global,
+      variable,
+      selection,
+      day,
+    );
     container.querySelector("#notice-copy")!.textContent =
-      noticeFor(variable);
+      global.metadata.variables[variable].interpretation;
   }
 
   function updateStatic(): void {
@@ -332,8 +474,9 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
         cycleStart += advance * duration;
         updateStatic();
       }
-      const mix = Math.min((timestamp - cycleStart) / duration, 1);
-      map.render(variable, day, day === 41 ? 0 : mix);
+      const linearMix = Math.min((timestamp - cycleStart) / duration, 1);
+      const smoothMix = linearMix * linearMix * (3 - 2 * linearMix);
+      map.render(variable, day, day === 41 ? 0 : smoothMix);
     }
     animationFrame = window.requestAnimationFrame(animation);
   }
@@ -355,9 +498,52 @@ export function renderGlobalPage(container: HTMLElement, data: AppData): () => v
     updateStatic();
     map.render(variable, day, 0);
   });
+
+  const countryInput =
+    container.querySelector<HTMLInputElement>("#overlay-countries")!;
+  const indiaInput =
+    container.querySelector<HTMLInputElement>("#overlay-india")!;
+  const windInput =
+    container.querySelector<HTMLInputElement>("#overlay-wind")!;
+  const pressureInput =
+    container.querySelector<HTMLInputElement>("#overlay-pressure")!;
+  const updateOverlays = async (): Promise<void> => {
+    overlays = {
+      countryLabels: countryInput.checked,
+      indiaStates: indiaInput.checked,
+      windVectors: windInput.checked,
+      pressureContours: pressureInput.checked,
+    };
+    if (overlays.windVectors) await global.loadVariable("wind850");
+    if (overlays.pressureContours) await global.loadVariable("mslp");
+    map.setOverlays(overlays);
+    map.render(variable, day, 0);
+  };
+  [countryInput, indiaInput, windInput, pressureInput].forEach((input) => {
+    input.addEventListener("change", () => void updateOverlays());
+  });
+  container.querySelector("#zoom-in")!.addEventListener("click", () => {
+    map.zoomBy(1.35);
+  });
+  container.querySelector("#zoom-out")!.addEventListener("click", () => {
+    map.zoomBy(1 / 1.35);
+  });
+  container.querySelector("#india-focus")!.addEventListener("click", () => {
+    indiaInput.checked = true;
+    overlays.indiaStates = true;
+    map.setOverlays(overlays);
+    map.focusIndia();
+  });
+  container.querySelector("#world-focus")!.addEventListener("click", () => {
+    map.resetView();
+  });
+
   const keyboardHandler = (event: KeyboardEvent): void => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    day = Math.max(0, Math.min(41, day + (event.key === "ArrowRight" ? 1 : -1)));
+    day = Math.max(
+      0,
+      Math.min(41, day + (event.key === "ArrowRight" ? 1 : -1)),
+    );
     playing = false;
     cycleStart = performance.now();
     updateStatic();

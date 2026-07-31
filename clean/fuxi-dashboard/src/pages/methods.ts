@@ -7,7 +7,7 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
         <span class="eyebrow">Methods · Version ${data.formulas.formula_version}</span>
         <h1>Clarity before<br><em>complexity</em></h1>
       </div>
-      <p class="intro-copy">What the global animation shows, how the fields were converted, and where this experimental guidance must stop.</p>
+      <p class="intro-copy">What the experimental global animation shows, how the fields were converted, and where interpretation must stop.</p>
     </section>
 
     <section class="methods-lead">
@@ -41,10 +41,34 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
         <code>Z500 (dam) = geopotential ÷ 9.80665 ÷ 10</code>
         <p>The 500 hPa field is shown as geopotential height in decametres. Contours make large-scale ridges, troughs, and circulation changes easier to follow.</p>
       </article>
+      <article>
+        <span>05 / Lower-tropospheric flow</span>
+        <h3>850 hPa wind</h3>
+        <code>speed = √(U² + V²)</code>
+        <p>Shading is the arithmetic ensemble mean of member wind speed. Arrows use the separately averaged U and V components, making monsoon and tropical inflow easier to follow.</p>
+      </article>
+      <article>
+        <span>06 / Pressure</span>
+        <h3>Pa to hPa</h3>
+        <code>MSLP (hPa) = pressure ÷ 100</code>
+        <p>Pressure is available as a base field and a contour overlay. Exact low and high centres should not be interpreted deterministically at long leads.</p>
+      </article>
+      <article>
+        <span>07 / Ocean boundary</span>
+        <h3>Sea-surface temperature</h3>
+        <code>°C = Kelvin − 273.15</code>
+        <p>SST is masked to a fixed, stable open-ocean support: Natural Earth ocean cells that remain within the physical −3 to 45 °C range through all 42 ensemble-mean leads. Absolute SST is shown; a scientifically matched SST anomaly is not yet published.</p>
+      </article>
+      <article>
+        <span>08 / Tropical convection context</span>
+        <h3>Outgoing longwave radiation</h3>
+        <code>OLR = − top net thermal radiation</code>
+        <p>Lower tropical OLR often accompanies higher cloud tops and deep convection. This is useful MJO context, but it is not a filtered OLR anomaly or an MJO phase/index.</p>
+      </article>
     </section>
 
     <section class="methods-lead">
-      <span class="chapter-number">05</span>
+      <span class="chapter-number">09</span>
       <div>
         <span class="eyebrow">Animation contract</span>
         <h2>Daily evidence, smooth presentation</h2>
@@ -54,13 +78,33 @@ export function renderMethodsPage(container: HTMLElement, data: AppData): void {
     </section>
 
     <section class="methods-lead">
-      <span class="chapter-number">06</span>
+      <span class="chapter-number">10</span>
       <div>
         <span class="eyebrow">Uncertainty and S2S interpretation</span>
         <h2>Member disagreement, not a confidence score</h2>
         <p class="large-copy">The point trace shows the 100-member arithmetic mean with a band of ±1 population standard deviation (<code>ddof=0</code>) at every daily lead.</p>
         <p>A wider band means the members disagree more at that grid cell. It is not a calibrated probability interval and does not by itself measure forecast skill. In Days 1–14, synoptic detail can still be informative; in Weeks 3–4, emphasize persistent large-scale patterns; in Weeks 5–6, interpret only broad ensemble and circulation tendencies.</p>
         <p>Verification metrics remain unpublished until every observation needed for the valid period is available on the identical grid, mask, and timing contract. The browser checks the size and SHA-256 digest of all six compact field files before rendering them.</p>
+      </div>
+    </section>
+
+    <section class="methods-lead">
+      <span class="chapter-number">11</span>
+      <div>
+        <span class="eyebrow">Geography and interaction</span>
+        <h2>World context, India-standard focus</h2>
+        <p class="large-copy">Country outlines and label points use Natural Earth at global scale. The India-focus overlay is a simplified display derivative of the Survey of India Administrative Boundary Database state/UT layer.</p>
+        <p>Use the India button or zoom controls to reveal state and union-territory names. The simplified web derivative retains the complete supplied depiction but is not a legal or cadastral boundary product. The source standard and product catalogue are described by the <a href="https://onlinemaps.surveyofindia.gov.in/AboutPortal.aspx">Survey of India Online Maps Portal</a>.</p>
+      </div>
+    </section>
+
+    <section class="methods-lead">
+      <span class="chapter-number">12</span>
+      <div>
+        <span class="eyebrow">MJO publication gate</span>
+        <h2>Context now; formal index later</h2>
+        <p class="large-copy">A defensible MJO product needs equatorial OLR, U850 and U200 anomalies, temporal filtering, a matched daily climatology, and projection onto documented EOF patterns.</p>
+        <p>The current viewer therefore exposes OLR and 850 hPa flow without calling either an MJO index. A Wheeler–Hendon-style phase-space product will be added only after those climatology and reproducibility contracts pass.</p>
       </div>
     </section>
 

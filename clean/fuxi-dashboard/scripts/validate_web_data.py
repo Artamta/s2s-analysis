@@ -235,6 +235,7 @@ def publication_gate(public_data: Path) -> tuple[str, dict[str, Any]]:
         "formulas.json",
         "validation.json",
         "india-outline.json",
+        "india-admin.json",
         "20260728.json",
     }
     present = {path.name for path in files}

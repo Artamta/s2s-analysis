@@ -13,15 +13,19 @@ from science.formulas import (
     climatology_terciles,
     ensemble_mean,
     forecast_spread,
+    geopotential_to_height_dam,
     kelvin_to_celsius,
+    pascal_to_hectopascal,
     probability_above_normal,
     probability_below_normal,
     tp_mm_hour_to_mm_day,
+    top_net_thermal_to_olr,
     verification_metrics,
     weekly_mean,
     weekly_mean_rainfall,
     weekly_total,
     weighted_spatial_correlation,
+    wind_speed,
 )
 
 
@@ -32,6 +36,14 @@ def test_forecast_unit_conversions_are_exact() -> None:
     np.testing.assert_allclose(
         kelvin_to_celsius([273.15, 300.0]), [0.0, 26.85], atol=1e-12
     )
+    np.testing.assert_allclose(
+        geopotential_to_height_dam([98.0665]), [1.0], atol=1e-12
+    )
+    np.testing.assert_array_equal(wind_speed([3.0], [4.0]), [5.0])
+    np.testing.assert_array_equal(
+        pascal_to_hectopascal([101_325.0]), [1013.25]
+    )
+    np.testing.assert_array_equal(top_net_thermal_to_olr([-240.0]), [240.0])
 
 
 def test_seven_daily_fields_reproduce_weekly_total_and_rate() -> None:

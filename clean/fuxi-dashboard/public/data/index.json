@@ -10,7 +10,11 @@
     "variables": [
       "precipitation",
       "temperature",
-      "z500"
+      "z500",
+      "wind850",
+      "mslp",
+      "sst",
+      "olr"
     ]
   },
   "available_issues": [

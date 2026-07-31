@@ -131,7 +131,14 @@ without weakening the original India validation case.
   121 × 240 native grid.
 - Require 42 complete leads, 100 complete members, finite fields, physical
   ranges, exact file sizes, and SHA-256 checks before publication.
-- Verify the three binary files again in the browser before drawing the map.
+- Verify the active mean/spread binaries again in the browser before drawing
+  each lazily loaded map layer.
+- Offer seven defensible daily fields: precipitation, 2 m temperature, Z500,
+  850 hPa wind, MSLP, ocean-masked SST, and OLR.
+- Support wheel/button zoom, drag pan, country labels, pressure and wind
+  overlays, plus a Survey of India ABDB-derived state/UT focus layer.
+- Treat OLR and 850 hPa wind as MJO context only; do not publish an MJO
+  phase/index without a matched climatology, anomaly/filter, and EOF contract.
 - Cross-fade daily maps for presentation only; do not describe the visual
   transition as an additional forecast time.
 - Keep the global interface model-neutral while retaining exact provenance in

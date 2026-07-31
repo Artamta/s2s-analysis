@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "formula_version": "1.0.0",
+  "formula_version": "1.1.0",
   "generated_at": "2026-07-30T23:40:19.068463+00:00",
   "definitions": {
     "rain_mm_day": {
@@ -18,6 +18,22 @@
     "temperature_deg_c": {
       "expression": "t2m_kelvin \u2212 273.15",
       "description": "Kelvin-to-Celsius conversion."
+    },
+    "geopotential_height_dam": {
+      "expression": "geopotential \u00f7 9.80665 \u00f7 10",
+      "description": "Geopotential converted from m\u00b2 s\u207b\u00b2 to decametres."
+    },
+    "wind_speed": {
+      "expression": "\u221a(U\u00b2 + V\u00b2)",
+      "description": "Wind-vector magnitude in m s\u207b\u00b9."
+    },
+    "pressure_hpa": {
+      "expression": "pressure_pa \u00f7 100",
+      "description": "Mean sea-level pressure converted from Pa to hPa."
+    },
+    "outgoing_longwave_radiation": {
+      "expression": "\u2212 top_net_thermal_radiation",
+      "description": "Positive outgoing longwave flux in W m\u207b\u00b2."
     },
     "calendar_interpolation": {
       "expression": "(1 \u2212 w) \u00d7 left_slot + w \u00d7 right_slot",

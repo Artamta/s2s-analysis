@@ -474,7 +474,7 @@ def main() -> int:
         args.output_dir / "formulas.json",
         {
             "schema_version": 1,
-            "formula_version": "1.0.0",
+            "formula_version": "1.1.0",
             "generated_at": utc_now(),
             "definitions": FORMULA_DEFINITIONS,
             "statistics": {

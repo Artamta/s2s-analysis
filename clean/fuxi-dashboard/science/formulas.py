@@ -28,6 +28,34 @@ def kelvin_to_celsius(t2m_kelvin: ArrayLike) -> FloatArray:
     return _float_array(t2m_kelvin) - 273.15
 
 
+def geopotential_to_height_dam(
+    geopotential_m2_s2: ArrayLike, *, gravity_m_s2: float = 9.80665
+) -> FloatArray:
+    """Convert geopotential in m2 s-2 to geopotential height in decametres."""
+
+    if gravity_m_s2 <= 0:
+        raise ValueError("gravity must be positive")
+    return _float_array(geopotential_m2_s2) / gravity_m_s2 / 10.0
+
+
+def wind_speed(u_component: ArrayLike, v_component: ArrayLike) -> FloatArray:
+    """Return vector magnitude from eastward and northward wind components."""
+
+    return np.hypot(_float_array(u_component), _float_array(v_component))
+
+
+def pascal_to_hectopascal(pressure_pa: ArrayLike) -> FloatArray:
+    """Convert pressure from pascals to hectopascals."""
+
+    return _float_array(pressure_pa) / 100.0
+
+
+def top_net_thermal_to_olr(top_net_thermal_w_m2: ArrayLike) -> FloatArray:
+    """Convert negative top net thermal radiation to positive outgoing flux."""
+
+    return -_float_array(top_net_thermal_w_m2)
+
+
 def _weekly_reduce(
     daily_values: ArrayLike, *, day_axis: int, operation: str
 ) -> FloatArray:
@@ -258,6 +286,22 @@ FORMULA_DEFINITIONS: dict[str, dict[str, Any]] = {
     "temperature_deg_c": {
         "expression": "t2m_kelvin − 273.15",
         "description": "Kelvin-to-Celsius conversion.",
+    },
+    "geopotential_height_dam": {
+        "expression": "geopotential ÷ 9.80665 ÷ 10",
+        "description": "Geopotential converted from m² s⁻² to decametres.",
+    },
+    "wind_speed": {
+        "expression": "√(U² + V²)",
+        "description": "Wind-vector magnitude in m s⁻¹.",
+    },
+    "pressure_hpa": {
+        "expression": "pressure_pa ÷ 100",
+        "description": "Mean sea-level pressure converted from Pa to hPa.",
+    },
+    "outgoing_longwave_radiation": {
+        "expression": "− top_net_thermal_radiation",
+        "description": "Positive outgoing longwave flux in W m⁻².",
     },
     "calendar_interpolation": {
         "expression": "(1 − w) × left_slot + w × right_slot",

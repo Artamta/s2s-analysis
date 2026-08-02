@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from science.formulas import (  # noqa: E402
+    anomaly as calculate_anomaly,
     geopotential_to_height_dam,
     kelvin_to_celsius,
     pascal_to_hectopascal,
@@ -65,6 +66,19 @@ class ExportVariable:
     under: str
     over: str
     domain: str = "global"
+
+
+@dataclass(frozen=True)
+class AnomalyStyle:
+    label: str
+    short_label: str
+    description: str
+    offset: float
+    scale: float
+    legend_boundaries: tuple[float, ...]
+    legend_colors: tuple[str, ...]
+    under: str
+    over: str
 
 
 VARIABLES = (
@@ -278,6 +292,78 @@ VARIABLES = (
     ),
 )
 
+ANOMALY_STYLES = {
+    "precipitation": AnomalyStyle(
+        label="Daily precipitation anomaly",
+        short_label="Rainfall anomaly",
+        description=(
+            "Ensemble-mean daily precipitation minus the exact-initialization, "
+            "lead-matched 2002–2021 native model climatology."
+        ),
+        offset=-100.0,
+        scale=0.01,
+        legend_boundaries=(-40.0, -20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0, 40.0),
+        legend_colors=(
+            "#8c4d32",
+            "#b87a50",
+            "#d7ae80",
+            "#e8dfc7",
+            "#c8e2dd",
+            "#7fc0b9",
+            "#3b8d98",
+            "#24536f",
+        ),
+        under="#613026",
+        over="#142d50",
+    ),
+    "temperature": AnomalyStyle(
+        label="2 m temperature anomaly",
+        short_label="Temperature anomaly",
+        description=(
+            "Ensemble-mean 2 m temperature minus the exact-initialization, "
+            "lead-matched 2002–2021 native model climatology."
+        ),
+        offset=-100.0,
+        scale=0.01,
+        legend_boundaries=(-10.0, -6.0, -3.0, -1.0, 0.0, 1.0, 3.0, 6.0, 10.0),
+        legend_colors=(
+            "#344f91",
+            "#5680ba",
+            "#8eb8d2",
+            "#d5e3df",
+            "#eadfca",
+            "#e6aa79",
+            "#cc6b50",
+            "#8d3544",
+        ),
+        under="#24346c",
+        over="#63243c",
+    ),
+    "z500": AnomalyStyle(
+        label="500 hPa height anomaly",
+        short_label="Z500 anomaly",
+        description=(
+            "Ensemble-mean 500 hPa geopotential height minus the "
+            "exact-initialization, lead-matched 2002–2021 native model climatology."
+        ),
+        offset=-250.0,
+        scale=0.01,
+        legend_boundaries=(-30.0, -20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0, 30.0),
+        legend_colors=(
+            "#3e4c8c",
+            "#627db1",
+            "#9aafd0",
+            "#d7dce0",
+            "#e5dbc9",
+            "#d6aa7a",
+            "#b76d56",
+            "#803b4d",
+        ),
+        under="#293266",
+        over="#592a43",
+    ),
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -286,6 +372,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--members", type=int, default=100)
     parser.add_argument("--lead-days", type=int, default=42)
     parser.add_argument("--initialization", default="2026-07-28")
+    parser.add_argument(
+        "--climatology-dir",
+        type=Path,
+        help=(
+            "Directory containing tp_clima_MMDD.nc, t2m_clima_MMDD.nc, and "
+            "z500_clima_MMDD.nc. When supplied, locked anomaly binaries are exported."
+        ),
+    )
     parser.add_argument(
         "--world-geometry",
         type=Path,
@@ -369,6 +463,68 @@ def convert_spread(spread: np.ndarray) -> dict[str, np.ndarray]:
         "olr": get("ttr"),
         "tcwv": get("tcwv"),
     }
+
+
+def load_climatologies(
+    directory: Path,
+    initialization: dt.date,
+) -> tuple[dict[str, np.ndarray], dict[str, dict[str, Any]]]:
+    """Load and validate exact-date, lead-matched global model climatologies."""
+
+    mmdd = initialization.strftime("%m%d")
+    source_variables = {
+        "precipitation": ("tp", tp_mm_hour_to_mm_day),
+        "temperature": ("t2m", kelvin_to_celsius),
+        "z500": ("z500", geopotential_to_height_dam),
+    }
+    climatologies: dict[str, np.ndarray] = {}
+    provenance: dict[str, dict[str, Any]] = {}
+    for key, (source_name, converter) in source_variables.items():
+        path = directory / f"{source_name}_clima_{mmdd}.nc"
+        if not path.is_file() or path.stat().st_size == 0:
+            raise FileNotFoundError(path)
+        dataset = xr.open_dataset(path, decode_times=False)
+        try:
+            mean_name = f"{source_name}_mean"
+            if mean_name not in dataset:
+                raise ValueError(f"{path} does not contain {mean_name}")
+            mean = dataset[mean_name].transpose("step", "lat", "lon")
+            if mean.shape != (42, 121, 240):
+                raise ValueError(f"{path} has unexpected shape {mean.shape}")
+            if not np.array_equal(mean.step.values, np.arange(1, 43)):
+                raise ValueError(f"{path} does not contain lead days 1–42")
+            if not np.allclose(mean.lat.values, EXPECTED_LATITUDE):
+                raise ValueError(f"{path} has an unexpected latitude coordinate")
+            if not np.allclose(mean.lon.values, EXPECTED_LONGITUDE):
+                raise ValueError(f"{path} has an unexpected longitude coordinate")
+            description = str(dataset.attrs.get("description", ""))
+            if "20 years x 51 members" not in description:
+                raise ValueError(
+                    f"{path} does not declare the locked 20-year × 51-member sample"
+                )
+            converted = np.asarray(converter(mean.values), dtype=np.float64)
+            if not np.isfinite(converted).all():
+                raise ValueError(f"{path} contains non-finite climatology values")
+            if key == "precipitation" and converted.min() < -1e-6:
+                raise ValueError(f"{path} contains negative climatological rainfall")
+            climatologies[key] = converted
+            provenance[key] = {
+                "source_file": path.name,
+                "source_sha256": sha256(path),
+                "initialization_slot": mmdd,
+                "hindcast_years": list(range(2002, 2022)),
+                "years": 20,
+                "native_members_per_year": 51,
+                "lead_days": 42,
+                "weighting": (
+                    "Native members have equal weight within each complete year; "
+                    "the 20 yearly means have equal weight. With 51 complete members "
+                    "in every year, this equals the stored 1020-sample arithmetic mean."
+                ),
+            }
+        finally:
+            dataset.close()
+    return climatologies, provenance
 
 
 def quantize_with(
@@ -470,8 +626,21 @@ def main() -> None:
     variable_by_key = {variable.key: variable for variable in VARIABLES}
     ocean_mask = build_ocean_mask(args.world_geometry)
     sst_support = ocean_mask.copy()
+    climatologies: dict[str, np.ndarray] = {}
+    climatology_provenance: dict[str, dict[str, Any]] = {}
+    if args.climatology_dir:
+        climatologies, climatology_provenance = load_climatologies(
+            args.climatology_dir,
+            initialization,
+        )
 
     frames: dict[str, list[np.ndarray]] = {key: [] for key in variable_by_key}
+    anomaly_frames: dict[str, list[np.ndarray]] = {
+        key: [] for key in climatologies
+    }
+    anomaly_frame_ranges: dict[str, list[dict[str, float]]] = {
+        key: [] for key in climatologies
+    }
     spread_frames: dict[str, list[np.ndarray]] = {
         key: [] for key in variable_by_key
     }
@@ -525,6 +694,21 @@ def main() -> None:
                 )
             )
             frame_ranges[key].append(range_record(values))
+            if key in climatologies:
+                anomaly = calculate_anomaly(
+                    values,
+                    climatologies[key][lead_day - 1],
+                )
+                style = ANOMALY_STYLES[key]
+                anomaly_frames[key].append(
+                    quantize_with(
+                        anomaly,
+                        offset=style.offset,
+                        scale=style.scale,
+                        label=f"{key} anomaly",
+                    )
+                )
+                anomaly_frame_ranges[key].append(range_record(anomaly))
             spread_frame_ranges[key].append(range_record(spread_values))
             mask = ocean_mask if variable.domain == "ocean" else None
             spread_frame_means[key].append(
@@ -578,6 +762,34 @@ def main() -> None:
             ),
         }
         file_records[variable.key] = record
+        if variable.key in anomaly_frames:
+            style = ANOMALY_STYLES[variable.key]
+            record["anomaly"] = {
+                "label": style.label,
+                "short_label": style.short_label,
+                "units": variable.units,
+                "description": style.description,
+                "baseline": {
+                    "name": (
+                        "Native model reforecast climatology · 2002–2021 · "
+                        f"initialization {initialization.strftime('%d %b')}"
+                    ),
+                    **climatology_provenance[variable.key],
+                },
+                "legend": {
+                    "boundaries": style.legend_boundaries,
+                    "colors": style.legend_colors,
+                    "under": style.under,
+                    "over": style.over,
+                },
+                **write_binary(
+                    args.output_dir / f"{variable.key}-anomaly.bin",
+                    anomaly_frames[variable.key],
+                    offset=style.offset,
+                    scale=style.scale,
+                    frame_ranges=anomaly_frame_ranges[variable.key],
+                ),
+            }
 
     file_records["wind850"]["vector"] = {
         "u": write_binary(
@@ -614,7 +826,7 @@ def main() -> None:
 
     generated_at = dt.datetime.now(dt.timezone.utc).isoformat()
     metadata = {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at": generated_at,
         "issue": {
             "initialization": f"{initialization.isoformat()}T00:00:00Z",
@@ -677,6 +889,9 @@ def main() -> None:
                 "population ensemble spread with ddof=0",
                 "850 hPa vector components exported separately",
                 "SST restricted to derived ocean display support",
+                "global TP, T2M, and Z500 anomalies use an exact 28 July slot",
+                "20 complete hindcast years with 51 native members per year",
+                "lead-matched anomaly subtraction on the native global grid",
                 "cosine-latitude spread summaries",
                 "binary size and SHA-256 checks",
             ],

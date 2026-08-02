@@ -4,7 +4,12 @@ import {
   type MapSelection,
 } from "../components/GlobalForecastMap";
 import { createLegend } from "../components/Legend";
-import type { AppData, GlobalVariableKey } from "../types";
+import type {
+  AppData,
+  GlobalDisplayMode,
+  GlobalForecastData,
+  GlobalVariableKey,
+} from "../types";
 
 const VARIABLE_ORDER: GlobalVariableKey[] = [
   "precipitation",
@@ -111,12 +116,17 @@ function linePath(
 }
 
 function renderPointChart(
-  data: AppData["global"],
+  data: GlobalForecastData,
   variable: GlobalVariableKey,
   selection: MapSelection,
   selectedDay: number,
+  mode: GlobalDisplayMode,
 ): string {
   const definition = data.metadata.variables[variable];
+  const displayDefinition =
+    mode === "anomaly" && definition.anomaly
+      ? definition.anomaly
+      : definition;
   const pointIndex =
     selection.latitudeIndex * 240 + selection.longitudeIndex;
   if (definition.domain === "ocean" && data.oceanMask[pointIndex] !== 1) {
@@ -127,21 +137,23 @@ function renderPointChart(
       </div>
     `;
   }
-  const field = data.fields[variable];
+  const field =
+    mode === "anomaly" ? data.anomalies[variable] : data.fields[variable];
   const spreadField = data.spreads[variable];
   if (!field || !spreadField) {
     return `<div class="point-unavailable"><strong>Loading field…</strong></div>`;
   }
   const means = Array.from({ length: 42 }, (_, index) => {
     const encoded = field[index * FRAME_SIZE + pointIndex];
-    return encoded * definition.scale + definition.offset;
+    return encoded * displayDefinition.scale + displayDefinition.offset;
   });
   const spreads = Array.from({ length: 42 }, (_, index) => {
     const encoded = spreadField[index * FRAME_SIZE + pointIndex];
     return encoded * definition.spread.scale + definition.spread.offset;
   });
   const lower = means.map((mean, index) =>
-    variable === "precipitation" || variable === "wind850"
+    mode === "absolute" &&
+    (variable === "precipitation" || variable === "wind850")
       ? Math.max(0, mean - spreads[index])
       : mean - spreads[index],
   );
@@ -151,7 +163,8 @@ function renderPointChart(
   const rawRange = Math.max(maximum - minimum, Math.abs(maximum) * 0.05, 1);
   const padding = rawRange * 0.1;
   minimum =
-    variable === "precipitation" || variable === "wind850"
+    mode === "absolute" &&
+    (variable === "precipitation" || variable === "wind850")
       ? 0
       : minimum - padding;
   maximum += padding;
@@ -187,7 +200,7 @@ function renderPointChart(
   const mean = means[selectedDay];
   const spread = spreads[selectedDay];
   const decimals =
-    definition.units === "W/m²" ||
+    displayDefinition.units === "W/m²" ||
     (variable === "precipitation" && mean >= 10)
       ? 0
       : 1;
@@ -195,8 +208,8 @@ function renderPointChart(
   return `
     <div class="point-value">
       <strong>${mean.toFixed(decimals)}</strong>
-      <span>± ${spread.toFixed(decimals)} ${definition.units}</span>
-      <small>Lead ${String(selectedDay + 1).padStart(2, "0")} · ensemble mean ±1σ</small>
+      <span>± ${spread.toFixed(decimals)} ${displayDefinition.units}</span>
+      <small>Lead ${String(selectedDay + 1).padStart(2, "0")} · ${mode === "anomaly" ? "mean anomaly" : "ensemble mean"} ±1σ</small>
     </div>
     <svg class="point-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="42-day ensemble mean and member spread at ${coordinateLabel(selection)}">
       <g class="point-chart__weeks">${weekLines}</g>
@@ -218,7 +231,18 @@ export function renderGlobalPage(
   container: HTMLElement,
   data: AppData,
 ): () => void {
-  const { global } = data;
+  const { global, world, indiaAdmin } = data;
+  if (!global || !world || !indiaAdmin) {
+    container.innerHTML = `
+      <section class="blocked-state blocked-state--dark">
+        <span class="eyebrow">Global data unavailable</span>
+        <h1>The Global Beta package could not be loaded.</h1>
+        <p>No partial map has been shown.</p>
+      </section>
+    `;
+    return () => undefined;
+  }
+  const activeGlobal = global;
   if (global.metadata.validation.status === "failure") {
     container.innerHTML = `
       <section class="blocked-state blocked-state--dark">
@@ -236,20 +260,25 @@ export function renderGlobalPage(
       <div class="global-stage-shade" aria-hidden="true"></div>
 
       <div class="global-title">
-        <span class="global-eyebrow"><b>Experimental</b> · research ensemble · not operational</span>
-        <h1>Global outlook</h1>
-        <p>42 daily fields · 100 members · Week 1 to Week 6</p>
+        <span class="global-eyebrow"><b>Global beta</b> · Experimental S2S ensemble guidance · not operational</span>
+        <h1>Global outlook <small>Beta</small></h1>
+        <p>42-day ensemble guidance · 100 members · Weeks 1–6</p>
       </div>
 
       <aside class="global-facts" aria-label="Forecast issue and integrity facts">
         <div><span>Initialized</span><strong>28 Jul 2026 · 00 UTC</strong></div>
-        <div><span>Product</span><strong class="experimental-text">Experimental ensemble mean</strong></div>
+        <div><span>Product</span><strong class="experimental-text">Global beta · Experimental prototype</strong></div>
         <div><span>Integrity</span><strong class="integrity-ok" id="integrity-status">✓ Active layer SHA-256 verified</strong></div>
       </aside>
 
       <aside class="global-layer-dock" aria-label="Forecast fields">
         <div class="layer-dock-heading"><span>Shaded field · choose one</span><small id="layer-load-status">SHA-256 verified</small></div>
         <div id="global-layer-groups"></div>
+        <div class="field-mode" role="group" aria-label="Absolute or anomaly display">
+          <button id="mode-absolute" class="is-active" type="button">Absolute</button>
+          <button id="mode-anomaly" type="button">Anomaly</button>
+        </div>
+        <p class="field-mode-note" id="field-mode-note">Anomaly available against the matched 2002–2021 model climate.</p>
         <div class="overlay-controls">
           <span>Overlays · combine freely</span>
           <label><input id="overlay-countries" type="checkbox" checked><i></i>Country names</label>
@@ -257,11 +286,6 @@ export function renderGlobalPage(
           <label><input id="overlay-wind" type="checkbox"><i></i>850 hPa vectors</label>
           <label><input id="overlay-pressure" type="checkbox"><i></i>MSLP · 10 hPa dashed</label>
           <label><input id="overlay-z500" type="checkbox"><i></i>Z500 · 20 dam solid</label>
-        </div>
-        <div class="anomaly-note">
-          <strong>Absolute fields</strong>
-          <span>Global anomalies stay locked until a matched 20-year global model climatology is complete.</span>
-          <a href="#india">Validated India anomalies →</a>
         </div>
       </aside>
 
@@ -317,11 +341,12 @@ export function renderGlobalPage(
         <button class="speed-button" id="speed-button" type="button" aria-label="Change animation speed">1×</button>
       </div>
 
-      <p class="global-disclaimer">Experimental research product · Daily model fields · Long leads are broad guidance, not deterministic local forecasts</p>
+      <p class="global-disclaimer">Experimental S2S forecast prototype · Long leads show broad guidance, not deterministic local forecasts</p>
     </section>
   `;
 
   let variable: GlobalVariableKey = "precipitation";
+  let mode: GlobalDisplayMode = "absolute";
   let day = 0;
   let selection: MapSelection = {
     latitude: 28.5,
@@ -352,8 +377,8 @@ export function renderGlobalPage(
   const map = new GlobalForecastMap(
     mapHost,
     global,
-    data.world,
-    data.indiaAdmin,
+    world,
+    indiaAdmin,
     (next) => {
       selection = next;
       updateInspector();
@@ -393,13 +418,20 @@ export function renderGlobalPage(
     key: GlobalVariableKey,
     button?: HTMLButtonElement,
   ): Promise<void> {
-    if (key === variable && global.fields[key]) return;
+    if (
+      key === variable &&
+      activeGlobal.fields[key] &&
+      activeGlobal.spreads[key]
+    ) return;
     const status = container.querySelector("#layer-load-status")!;
     button?.classList.add("is-loading");
     status.textContent = "Verifying…";
     try {
-      await global.loadVariable(key);
+      await activeGlobal.loadVariable(key);
       variable = key;
+      if (mode === "anomaly" && !activeGlobal.metadata.variables[key].anomaly) {
+        mode = "absolute";
+      }
       if (key === "wind850") {
         overlays.windVectors = true;
         container.querySelector<HTMLInputElement>("#overlay-wind")!.checked =
@@ -414,7 +446,7 @@ export function renderGlobalPage(
       map.setOverlays(overlays);
       cycleStart = performance.now();
       updateStatic();
-      map.render(variable, day, 0);
+      map.render(variable, day, 0, mode);
       status.textContent = "SHA-256 verified";
     } catch {
       status.textContent = "Layer unavailable";
@@ -427,17 +459,25 @@ export function renderGlobalPage(
     container.querySelector("#point-location")!.textContent =
       pointLabel(selection);
     container.querySelector("#point-chart")!.innerHTML = renderPointChart(
-      global,
+      activeGlobal,
       variable,
       selection,
       day,
+      mode,
     );
+    const definition = activeGlobal.metadata.variables[variable];
     container.querySelector("#notice-copy")!.textContent =
-      global.metadata.variables[variable].interpretation;
+      mode === "anomaly" && definition.anomaly
+        ? definition.anomaly.description
+        : definition.interpretation;
   }
 
   function updateStatic(): void {
-    const definition = global.metadata.variables[variable];
+    const definition = activeGlobal.metadata.variables[variable];
+    const displayDefinition =
+      mode === "anomaly" && definition.anomaly
+        ? definition.anomaly
+        : definition;
     container
       .querySelectorAll<HTMLButtonElement>(".global-layer-button")
       .forEach((button) => {
@@ -448,7 +488,7 @@ export function renderGlobalPage(
     container.querySelector("#lead-label")!.textContent =
       `Lead ${String(day + 1).padStart(2, "0")} / 42`;
     container.querySelector("#valid-label")!.textContent = friendlyDate(
-      global.metadata.valid_period_starts[day],
+      activeGlobal.metadata.valid_period_starts[day],
     );
     const guidance = leadGuidance(day);
     container.querySelector("#lead-period")!.textContent = guidance.period;
@@ -457,11 +497,34 @@ export function renderGlobalPage(
     slider.value = String(day);
     slider.style.setProperty("--timeline-progress", `${(day / 41) * 100}%`);
     container.querySelector("#global-legend-label")!.textContent =
-      definition.label;
+      displayDefinition.label;
     container.querySelector("#global-legend-units")!.textContent =
-      definition.units;
+      displayDefinition.units;
     const legend = container.querySelector<HTMLDivElement>("#global-legend")!;
-    legend.replaceChildren(createLegend(definition));
+    legend.replaceChildren(createLegend(displayDefinition));
+    const absoluteButton =
+      container.querySelector<HTMLButtonElement>("#mode-absolute")!;
+    const anomalyButton =
+      container.querySelector<HTMLButtonElement>("#mode-anomaly")!;
+    absoluteButton.classList.toggle("is-active", mode === "absolute");
+    anomalyButton.classList.toggle("is-active", mode === "anomaly");
+    const anomalyReady = Boolean(
+      definition.anomaly && activeGlobal.anomalies[variable],
+    );
+    anomalyButton.disabled = !anomalyReady;
+    anomalyButton.title = anomalyReady
+      ? "Show departure from the exact-date, lead-matched model climate"
+      : definition.anomaly
+        ? "Loading matched anomaly field…"
+      : "No matched global anomaly baseline is published for this field";
+    container.querySelector("#field-mode-note")!.textContent =
+      definition.anomaly && !anomalyReady
+        ? "Mean map ready · loading ensemble spread and matched anomaly…"
+        : definition.anomaly
+        ? mode === "anomaly"
+          ? "2002–2021 · exact 28 July initialization · lead matched"
+          : "Anomaly available against the matched 2002–2021 model climate."
+        : "Absolute field only · no matched global baseline published.";
     playButton.innerHTML = `<span aria-hidden="true">${playing ? "Ⅱ" : "▶"}</span>`;
     playButton.setAttribute(
       "aria-label",
@@ -483,7 +546,7 @@ export function renderGlobalPage(
       }
       const linearMix = Math.min((timestamp - cycleStart) / duration, 1);
       const smoothMix = linearMix * linearMix * (3 - 2 * linearMix);
-      map.render(variable, day, day === 41 ? 0 : smoothMix);
+      map.render(variable, day, day === 41 ? 0 : smoothMix, mode);
     }
     animationFrame = window.requestAnimationFrame(animation);
   }
@@ -492,7 +555,7 @@ export function renderGlobalPage(
     playing = !playing;
     cycleStart = performance.now();
     updateStatic();
-    map.render(variable, day, 0);
+    map.render(variable, day, 0, mode);
   });
   speedButton.addEventListener("click", () => {
     speedIndex = (speedIndex + 1) % SPEEDS.length;
@@ -503,7 +566,7 @@ export function renderGlobalPage(
     day = Number(slider.value);
     cycleStart = performance.now();
     updateStatic();
-    map.render(variable, day, 0);
+    map.render(variable, day, 0, mode);
   });
 
   const countryInput =
@@ -524,14 +587,32 @@ export function renderGlobalPage(
       pressureContours: pressureInput.checked,
       z500Contours: z500Input.checked,
     };
-    if (overlays.windVectors) await global.loadVariable("wind850");
-    if (overlays.pressureContours) await global.loadVariable("mslp");
-    if (overlays.z500Contours) await global.loadVariable("z500");
+    if (overlays.windVectors) await activeGlobal.loadVariable("wind850");
+    if (overlays.pressureContours) await activeGlobal.loadVariable("mslp");
+    if (overlays.z500Contours) await activeGlobal.loadVariable("z500");
     map.setOverlays(overlays);
-    map.render(variable, day, 0);
+    map.render(variable, day, 0, mode);
   };
-  [countryInput, indiaInput, windInput, pressureInput, z500Input].forEach((input) => {
-    input.addEventListener("change", () => void updateOverlays());
+  [countryInput, indiaInput, windInput, pressureInput, z500Input].forEach(
+    (input) => {
+      input.addEventListener("change", () => void updateOverlays());
+    },
+  );
+  container.querySelector("#mode-absolute")!.addEventListener("click", () => {
+    mode = "absolute";
+    cycleStart = performance.now();
+    updateStatic();
+    map.render(variable, day, 0, mode);
+  });
+  container.querySelector("#mode-anomaly")!.addEventListener("click", () => {
+    if (
+      !activeGlobal.metadata.variables[variable].anomaly ||
+      !activeGlobal.anomalies[variable]
+    ) return;
+    mode = "anomaly";
+    cycleStart = performance.now();
+    updateStatic();
+    map.render(variable, day, 0, mode);
   });
   container.querySelector("#zoom-in")!.addEventListener("click", () => {
     map.zoomBy(1.35);
@@ -558,12 +639,24 @@ export function renderGlobalPage(
     playing = false;
     cycleStart = performance.now();
     updateStatic();
-    map.render(variable, day, 0);
+    map.render(variable, day, 0, mode);
   };
   window.addEventListener("keydown", keyboardHandler);
 
   updateStatic();
-  map.render(variable, day, 0);
+  map.render(variable, day, 0, mode);
+  const initialStatus = container.querySelector("#layer-load-status")!;
+  initialStatus.textContent = "Loading diagnostics…";
+  void activeGlobal.loadVariable("precipitation").then(
+    () => {
+      initialStatus.textContent = "SHA-256 verified";
+      updateStatic();
+      map.render(variable, day, 0, mode);
+    },
+    () => {
+      initialStatus.textContent = "Mean ready · diagnostics unavailable";
+    },
+  );
   animationFrame = window.requestAnimationFrame(animation);
 
   return () => {

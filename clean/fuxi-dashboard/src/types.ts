@@ -1,4 +1,5 @@
 export type ValidationStatus = "green" | "warning" | "failure";
+export type InitialConditionSourceId = "gfs" | "era5";
 
 export type ProductKey =
   | "rainfall_total"
@@ -15,6 +16,8 @@ export type GlobalVariableKey =
   | "sst"
   | "olr"
   | "tcwv";
+
+export type GlobalDisplayMode = "absolute" | "anomaly";
 
 export interface LegendDefinition {
   boundaries: number[];
@@ -59,6 +62,19 @@ export interface ForecastData {
     lead_days: number;
     status: "green" | "warning";
     scientific_status: string;
+    initial_condition_source: {
+      id: InitialConditionSourceId;
+      label: string;
+      short_label: string;
+      category: "operational_proxy" | "reanalysis_reference";
+      availability: "near_real_time" | "delayed_reference";
+      description: string;
+    };
+    downloads: {
+      compact_json: string;
+      india_pdf: string;
+      india_pdf_sha256: string;
+    };
     climatology_alignment: {
       target_model_state_calendar_day: string;
       left_slot: string;
@@ -69,6 +85,14 @@ export interface ForecastData {
     hindcast_years: number[];
     observation_verification: {
       status: string;
+      message: string;
+    };
+    initialization_comparison?: {
+      status: "initialization_sensitivity_only";
+      counterpart_source_id: InitialConditionSourceId;
+      comparison: string;
+      week1_rainfall_gfs_minus_era5_mm_day: number;
+      week1_temperature_gfs_minus_era5_deg_c: number;
       message: string;
     };
   };
@@ -87,6 +111,97 @@ export interface ForecastData {
     temperature_weekly_mean_max_deg_c: number;
   };
   weeks: ForecastWeek[];
+}
+
+export type TercileCategory =
+  | "below_normal"
+  | "near_normal"
+  | "above_normal";
+
+export interface TercileProbabilityRecord {
+  below_normal: number;
+  near_normal: number;
+  above_normal: number;
+  dominant_category: TercileCategory | "mixed";
+  dominant_probability: number;
+}
+
+export interface RegionalVariableSummary {
+  weekly_mean_mm_day?: number;
+  anomaly_mm_day?: number;
+  ensemble_spread_mm_day?: number;
+  weekly_mean_deg_c?: number;
+  anomaly_deg_c?: number;
+  ensemble_spread_deg_c?: number;
+  tercile_probability_percent: TercileProbabilityRecord;
+}
+
+export interface RegionalOutlookWeek {
+  week: number;
+  valid_start: string;
+  valid_end: string;
+  probability_fields: Record<
+    "rainfall" | "temperature",
+    Record<TercileCategory, number[]>
+  >;
+  regions: Array<{
+    id: string;
+    label: string;
+    short_label: string;
+    rainfall: RegionalVariableSummary;
+    temperature: RegionalVariableSummary;
+  }>;
+}
+
+export interface RegionalOutlookData {
+  schema_version: 1;
+  generated_at: string;
+  issue: {
+    initialization: string;
+    source_id: InitialConditionSourceId;
+    source_label: string;
+    members: 100;
+    lead_days: 42;
+    status: "experimental";
+    probability_type: "raw_ensemble_tercile_probability";
+    calibration:
+      | "uncalibrated_gfs_proxy"
+      | "raw_ensemble_reanalysis_reference";
+    forecast_sha256: string;
+    climatology_sha256: string;
+    hindcast_years: number[];
+  };
+  grid: {
+    shape: [27, 27];
+    spacing_degrees: 1.5;
+    latitude: number[];
+    longitude: number[];
+    value_order: string;
+  };
+  region_definition: {
+    name: string;
+    geometry_source: IndiaAdminData["source"];
+    geometry_sha256: string;
+    aggregation: string;
+    reference: string;
+    interpretation: string;
+    excluded_geometry_features: string[];
+    regions: Array<{
+      id: string;
+      label: string;
+      short_label: string;
+      states_and_union_territories: string[];
+      equivalent_native_grid_cells: number;
+    }>;
+  };
+  probability_definition: {
+    below_normal: string;
+    near_normal: string;
+    above_normal: string;
+    terciles: string;
+    warning: string;
+  };
+  weeks: RegionalOutlookWeek[];
 }
 
 export interface ValidationCheck {
@@ -184,6 +299,26 @@ export interface GlobalVariableDefinition extends GlobalBinaryDefinition {
     statistic: string;
   };
   spread: GlobalSpreadDefinition;
+  anomaly?: GlobalAnomalyDefinition;
+  legend: LegendDefinition;
+}
+
+export interface GlobalAnomalyDefinition extends GlobalBinaryDefinition {
+  label: string;
+  short_label: string;
+  units: string;
+  description: string;
+  baseline: {
+    name: string;
+    source_file: string;
+    source_sha256: string;
+    initialization_slot: string;
+    hindcast_years: number[];
+    years: 20;
+    native_members_per_year: 51;
+    lead_days: 42;
+    weighting: string;
+  };
   legend: LegendDefinition;
 }
 
@@ -233,6 +368,7 @@ export interface GlobalMetadata {
 export interface GlobalForecastData {
   metadata: GlobalMetadata;
   fields: Partial<Record<GlobalVariableKey, Uint16Array>>;
+  anomalies: Partial<Record<GlobalVariableKey, Uint16Array>>;
   spreads: Partial<Record<GlobalVariableKey, Uint16Array>>;
   vectors: Partial<
     Record<GlobalVariableKey, { u: Uint16Array; v: Uint16Array }>
@@ -288,13 +424,58 @@ export interface IndiaAdminData {
   }>;
 }
 
+export interface IndiaMapGeographyData {
+  schema_version: 1;
+  description: string;
+  view_box: [0, 0, 620, 620];
+  world_path: string;
+  india_outline_path: string;
+  india_admin_path: string;
+  sources: {
+    world_countries_sha256: string;
+    india_outline_sha256: string;
+    india_admin_sha256: string;
+  };
+}
+
+export interface IssueIndexData {
+  schema_version: number;
+  default_view: "india";
+  default_source: InitialConditionSourceId;
+  latest_successful_issue: string;
+  initial_condition_sources: Array<{
+    id: InitialConditionSourceId;
+    label: string;
+    short_label: string;
+    category: "operational_proxy" | "reanalysis_reference";
+    status: "experimental" | "reference";
+    description: string;
+    default_issue: string;
+    issues: Array<{
+      id: string;
+      initialization: string;
+      members: number;
+      status: "green" | "warning";
+      role: "operational_experimental" | "reference" | "rapid_prototype";
+      forecast: string;
+      regional_outlook?: string;
+    }>;
+  }>;
+  available_issues: Array<{
+    id: string;
+    initialization: string;
+    status: "green" | "warning";
+    forecast: string;
+  }>;
+}
+
 export interface AppData {
-  forecast: ForecastData;
-  global: GlobalForecastData;
-  validation: ValidationData;
-  sources: SourcesData;
-  formulas: FormulasData;
-  outline: OutlineData;
-  world: WorldCountriesData;
-  indiaAdmin: IndiaAdminData;
+  index?: IssueIndexData;
+  forecast?: ForecastData;
+  validation?: ValidationData;
+  indiaGeography?: IndiaMapGeographyData;
+  regionalOutlook?: RegionalOutlookData;
+  global?: GlobalForecastData;
+  world?: WorldCountriesData;
+  indiaAdmin?: IndiaAdminData;
 }

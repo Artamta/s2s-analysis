@@ -1,12 +1,85 @@
 {
-  "schema_version": 1,
-  "generated_at": "2026-07-30T23:40:19.069182+00:00",
-  "latest_successful_issue": "20260728",
+  "available_issues": [
+    {
+      "forecast": "forecasts/gfs/20260802.json",
+      "id": "20260802",
+      "initialization": "2026-08-02T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260801.json",
+      "id": "20260801",
+      "initialization": "2026-08-01T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260731.json",
+      "id": "20260731",
+      "initialization": "2026-07-31T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260730.json",
+      "id": "20260730",
+      "initialization": "2026-07-30T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260729.json",
+      "id": "20260729",
+      "initialization": "2026-07-29T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260728.json",
+      "id": "20260728",
+      "initialization": "2026-07-28T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260724.json",
+      "id": "20260724",
+      "initialization": "2026-07-24T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260723.json",
+      "id": "20260723",
+      "initialization": "2026-07-23T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260722.json",
+      "id": "20260722",
+      "initialization": "2026-07-22T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260721.json",
+      "id": "20260721",
+      "initialization": "2026-07-21T00:00:00Z",
+      "status": "warning"
+    },
+    {
+      "forecast": "forecasts/gfs/20260720.json",
+      "id": "20260720",
+      "initialization": "2026-07-20T00:00:00Z",
+      "status": "warning"
+    }
+  ],
+  "default_source": "gfs",
+  "default_view": "india",
+  "generated_at": "2026-08-02T14:22:50.510512+00:00",
   "global_viewer": {
+    "anomaly_variables": [
+      "precipitation",
+      "temperature",
+      "z500"
+    ],
     "issue": "20260728",
-    "status": "experimental",
-    "metadata": "global/metadata.json",
     "lead_days": 42,
+    "metadata": "global/metadata.json",
+    "status": "beta",
     "variables": [
       "precipitation",
       "temperature",
@@ -18,12 +91,172 @@
       "olr"
     ]
   },
-  "available_issues": [
+  "initial_condition_sources": [
     {
-      "id": "20260728",
-      "initialization": "2026-07-28T00:00:00Z",
-      "status": "warning",
-      "forecast": "forecasts/20260728.json"
+      "category": "operational_proxy",
+      "default_issue": "20260801",
+      "description": "Near-real-time operational inputs for twice-weekly experimental guidance. No matched GFS-initialized hindcast calibration is currently available.",
+      "id": "gfs",
+      "issues": [
+        {
+          "forecast": "forecasts/gfs/20260802.json",
+          "id": "20260802",
+          "initialization": "2026-08-02T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260801.json",
+          "id": "20260801",
+          "initialization": "2026-08-01T00:00:00Z",
+          "members": 100,
+          "regional_outlook": "regional/gfs/20260801.json",
+          "role": "operational_experimental",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260731.json",
+          "id": "20260731",
+          "initialization": "2026-07-31T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260730.json",
+          "id": "20260730",
+          "initialization": "2026-07-30T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260729.json",
+          "regional_outlook": "regional/gfs/20260729.json",
+          "id": "20260729",
+          "initialization": "2026-07-29T00:00:00Z",
+          "members": 100,
+          "role": "operational_experimental",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260728.json",
+          "id": "20260728",
+          "initialization": "2026-07-28T00:00:00Z",
+          "members": 100,
+          "regional_outlook": "regional/gfs/20260728.json",
+          "role": "operational_experimental",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260724.json",
+          "id": "20260724",
+          "initialization": "2026-07-24T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260723.json",
+          "id": "20260723",
+          "initialization": "2026-07-23T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260722.json",
+          "id": "20260722",
+          "initialization": "2026-07-22T00:00:00Z",
+          "members": 100,
+          "regional_outlook": "regional/gfs/20260722.json",
+          "role": "operational_experimental",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260721.json",
+          "id": "20260721",
+          "initialization": "2026-07-21T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/gfs/20260720.json",
+          "id": "20260720",
+          "initialization": "2026-07-20T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        }
+      ],
+      "label": "GFS operational proxy",
+      "short_label": "GFS",
+      "status": "experimental"
+    },
+    {
+      "category": "reanalysis_reference",
+      "default_issue": "20260722",
+      "description": "Delayed, scientifically matched reanalysis initializations for reference experiments and IC-sensitivity comparisons; not near-real-time guidance.",
+      "id": "era5",
+      "issues": [
+        {
+          "forecast": "forecasts/era5/20260724.json",
+          "id": "20260724",
+          "initialization": "2026-07-24T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/era5/20260723.json",
+          "id": "20260723",
+          "initialization": "2026-07-23T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/era5/20260722.json",
+          "id": "20260722",
+          "initialization": "2026-07-22T00:00:00Z",
+          "members": 100,
+          "regional_outlook": "regional/era5/20260722.json",
+          "role": "reference",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/era5/20260721.json",
+          "id": "20260721",
+          "initialization": "2026-07-21T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/era5/20260720.json",
+          "id": "20260720",
+          "initialization": "2026-07-20T00:00:00Z",
+          "members": 5,
+          "role": "rapid_prototype",
+          "status": "warning"
+        },
+        {
+          "forecast": "forecasts/era5/20260715.json",
+          "id": "20260715",
+          "initialization": "2026-07-15T00:00:00Z",
+          "members": 100,
+          "regional_outlook": "regional/era5/20260715.json",
+          "role": "reference",
+          "status": "warning"
+        }
+      ],
+      "label": "ERA5 reanalysis reference",
+      "short_label": "ERA5",
+      "status": "reference"
     }
-  ]
+  ],
+  "latest_successful_issue": "20260802",
+  "schema_version": 2
 }

@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PUBLIC_DATA = ROOT / "public/data"
+PUBLIC_ROOT = ROOT / "public"
+PUBLIC_DATA = PUBLIC_ROOT / "data"
 
 
 def sha256(path: Path) -> str:
@@ -22,17 +23,17 @@ def sha256(path: Path) -> str:
 
 
 def build_manifest(commit: str = "local-uncommitted") -> Path:
-    """Write the non-recursive public-data manifest and return its path."""
+    """Write the complete, non-self-referential public inventory."""
 
     files = []
-    for path in sorted(PUBLIC_DATA.rglob("*")):
+    for path in sorted(PUBLIC_ROOT.rglob("*")):
         if not path.is_file():
             continue
-        if path.name == "manifest.json":
+        if path == PUBLIC_DATA / "manifest.json":
             continue
         files.append(
             {
-                "path": path.relative_to(ROOT / "public").as_posix(),
+                "path": path.relative_to(PUBLIC_ROOT).as_posix(),
                 "size_bytes": path.stat().st_size,
                 "sha256": sha256(path),
             }
@@ -42,7 +43,7 @@ def build_manifest(commit: str = "local-uncommitted") -> Path:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "deployed_commit": commit,
         "inventory_scope": (
-            "Every deployed public-data file except manifest.json itself, "
+            "Every deployed public file except data/manifest.json itself, "
             "whose self-checksum would be recursive."
         ),
         "files": files,

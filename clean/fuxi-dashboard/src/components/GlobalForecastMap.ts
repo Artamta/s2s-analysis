@@ -1,5 +1,6 @@
 import { colorFor } from "../lib/color";
 import type {
+  GlobalDisplayMode,
   GlobalForecastData,
   GlobalVariableKey,
   IndiaAdminData,
@@ -118,10 +119,12 @@ export class GlobalForecastMap {
   private fieldA: HTMLCanvasElement | null = null;
   private fieldB: HTMLCanvasElement | null = null;
   private cachedVariable: GlobalVariableKey | null = null;
+  private cachedMode: GlobalDisplayMode | null = null;
   private cachedDay = -1;
   private z500ContourPath: Path2D | null = null;
   private pressureContourPath: Path2D | null = null;
   private currentVariable: GlobalVariableKey = "precipitation";
+  private currentMode: GlobalDisplayMode = "absolute";
   private currentDay = 0;
   private currentMix = 0;
   private mapRect: MapRect = { x: 0, y: 0, width: 1, height: 1 };
@@ -226,22 +229,38 @@ export class GlobalForecastMap {
     this.resizeObserver.disconnect();
   }
 
-  render(variable: GlobalVariableKey, day: number, mix = 0): void {
+  render(
+    variable: GlobalVariableKey,
+    day: number,
+    mix = 0,
+    mode: GlobalDisplayMode = "absolute",
+  ): void {
     if (!this.data.fields[variable]) return;
     const lastDay = this.data.metadata.issue.lead_days - 1;
     this.currentVariable = variable;
+    this.currentMode =
+      mode === "anomaly" && this.data.anomalies[variable]
+        ? "anomaly"
+        : "absolute";
     this.currentDay = clamp(Math.round(day), 0, lastDay);
     this.currentMix = clamp(mix, 0, 1);
     if (
       this.cachedVariable !== this.currentVariable ||
+      this.cachedMode !== this.currentMode ||
       this.cachedDay !== this.currentDay
     ) {
-      this.fieldA = this.buildFieldCanvas(this.currentVariable, this.currentDay);
+      this.fieldA = this.buildFieldCanvas(
+        this.currentVariable,
+        this.currentDay,
+        this.currentMode,
+      );
       this.fieldB = this.buildFieldCanvas(
         this.currentVariable,
         Math.min(this.currentDay + 1, lastDay),
+        this.currentMode,
       );
       this.cachedVariable = this.currentVariable;
+      this.cachedMode = this.currentMode;
       this.cachedDay = this.currentDay;
       this.rebuildContours();
     }
@@ -332,6 +351,26 @@ export class GlobalForecastMap {
     return encoded * definition.scale + definition.offset;
   }
 
+  private displayValueAt(
+    variable: GlobalVariableKey,
+    day: number,
+    latitudeIndex: number,
+    longitudeIndex: number,
+    mode: GlobalDisplayMode = this.currentMode,
+  ): number {
+    const definition = this.data.metadata.variables[variable];
+    const anomalyDefinition = definition.anomaly;
+    const anomaly = this.data.anomalies[variable];
+    if (mode !== "anomaly" || !anomalyDefinition || !anomaly) {
+      return this.valueAt(variable, day, latitudeIndex, longitudeIndex);
+    }
+    const encoded =
+      anomaly[
+        day * FRAME_SIZE + latitudeIndex * GRID_WIDTH + longitudeIndex
+      ];
+    return encoded * anomalyDefinition.scale + anomalyDefinition.offset;
+  }
+
   private vectorValueAt(
     component: "u" | "v",
     day: number,
@@ -351,6 +390,7 @@ export class GlobalForecastMap {
   private buildFieldCanvas(
     variable: GlobalVariableKey,
     day: number,
+    mode: GlobalDisplayMode,
   ): HTMLCanvasElement {
     const offscreen = document.createElement("canvas");
     offscreen.width = GRID_WIDTH;
@@ -359,6 +399,10 @@ export class GlobalForecastMap {
     if (!context) throw new Error("Offscreen Canvas 2D is not available");
     const image = context.createImageData(GRID_WIDTH, GRID_HEIGHT);
     const definition = this.data.metadata.variables[variable];
+    const displayDefinition =
+      mode === "anomaly" && definition.anomaly
+        ? definition.anomaly
+        : definition;
 
     for (let latitudeIndex = 0; latitudeIndex < GRID_HEIGHT; latitudeIndex += 1) {
       for (
@@ -375,13 +419,14 @@ export class GlobalForecastMap {
         const color = isMasked
           ? "#102329"
           : colorFor(
-              this.valueAt(
+              this.displayValueAt(
                 variable,
                 day,
                 latitudeIndex,
                 sourceLongitudeIndex,
+                mode,
               ),
-              definition.legend,
+              displayDefinition.legend,
             );
         const rgb = this.hexToRgb(color);
         const pixel =
@@ -1046,12 +1091,16 @@ export class GlobalForecastMap {
       return;
     }
     const definition = this.data.metadata.variables[this.currentVariable];
+    const displayDefinition =
+      this.currentMode === "anomaly" && definition.anomaly
+        ? definition.anomaly
+        : definition;
     const sourceIndex =
       selection.latitudeIndex * GRID_WIDTH + selection.longitudeIndex;
     const isMasked =
       definition.domain === "ocean" &&
       this.data.oceanMask[sourceIndex] !== 1;
-    const value = this.valueAt(
+    const value = this.displayValueAt(
       this.currentVariable,
       this.currentDay,
       selection.latitudeIndex,
@@ -1070,8 +1119,8 @@ export class GlobalForecastMap {
         ? `${Math.abs(selection.latitude).toFixed(1)}°S`
         : `${selection.latitude.toFixed(1)}°N`;
     this.tooltip.innerHTML = `
-      <span>${definition.short_label}</span>
-      <strong>${isMasked ? "Open-ocean field" : formatMapValue(value, definition.units)}</strong>
+      <span>${displayDefinition.short_label}</span>
+      <strong>${isMasked ? "Open-ocean field" : formatMapValue(value, displayDefinition.units)}</strong>
       <small>${latitudeLabel} · ${longitudeLabel} · Lead ${String(this.currentDay + 1).padStart(2, "0")} · Click to inspect</small>
     `;
     this.tooltip.hidden = false;

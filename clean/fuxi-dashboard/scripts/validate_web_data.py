@@ -14,6 +14,7 @@ from typing import Any, Callable
 
 import jsonschema
 import numpy as np
+import xarray as xr
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = ROOT.parent
@@ -24,6 +25,9 @@ from science.formulas import (  # noqa: E402
     area_weights,
     calendar_interpolation,
     kelvin_to_celsius,
+    probability_above_normal,
+    probability_below_normal,
+    probability_near_normal,
     tp_mm_hour_to_mm_day,
     verification_metrics,
     weekly_mean_rainfall,
@@ -36,7 +40,7 @@ from science.validators import (  # noqa: E402
     utc_now,
     write_json,
 )
-from scripts.stamp_deploy import build_manifest  # noqa: E402
+from scripts.stamp_deploy import build_manifest, sha256  # noqa: E402
 from scripts.validate_sources import DEFAULT_FORECAST, DEFAULT_FUXI_CLIMO  # noqa: E402
 
 LEGACY_BUILDER = (
@@ -113,6 +117,15 @@ def formula_gate() -> tuple[str, dict[str, Any]]:
     )
     weights = area_weights([0.0, 60.0], [[1.0], [1.0]])
     np.testing.assert_allclose(weights.sum(), 1.0, atol=1e-15)
+    members = np.asarray([0.0, 1.0, 2.0, 3.0])
+    tercile_probabilities = np.asarray(
+        [
+            probability_below_normal(members, 1.0),
+            probability_near_normal(members, 1.0, 2.0),
+            probability_above_normal(members, 2.0),
+        ]
+    )
+    np.testing.assert_allclose(tercile_probabilities, [25.0, 50.0, 25.0])
     metrics = verification_metrics(
         [2.0, 4.0, 6.0],
         [1.0, 5.0, 5.0],
@@ -126,7 +139,7 @@ def formula_gate() -> tuple[str, dict[str, Any]]:
     np.testing.assert_allclose(metrics["acc"], 1.0)
     return (
         "Conversions, weekly aggregation, anomalies, interpolation, weights, and metrics passed.",
-        {"formula_version": "1.0.0", "independent_examples": 9},
+        {"formula_version": "1.1.0", "independent_examples": 10},
     )
 
 
@@ -168,6 +181,144 @@ def schema_gate(public_data: Path) -> tuple[str, dict[str, Any]]:
     return (
         "JSON Schema and all six weeks × four products passed.",
         {"weeks": 6, "products": 4, "finite_values": 6 * 4 * 729},
+    )
+
+
+def source_catalog_gate(public_data: Path) -> tuple[str, dict[str, Any]]:
+    """Validate source separation, issue topology, and derived downloads."""
+
+    index = load_json(public_data / "index.json")
+    sources = index["initial_condition_sources"]
+    if [source["id"] for source in sources] != ["gfs", "era5"]:
+        raise ValueError("initial-condition sources must be explicit GFS then ERA5")
+    if index["default_source"] != "gfs" or index["default_view"] != "india":
+        raise ValueError("India/GFS defaults are not locked")
+    schema = load_json(ROOT / "science/web-data.schema.json")
+    issue_count = 0
+    regional_count = 0
+    public_root = public_data.parent
+    matched_22 = set()
+    for source in sources:
+        if not source["issues"]:
+            raise ValueError(f"{source['id']} has no registered issues")
+        for issue in source["issues"]:
+            issue_count += 1
+            forecast_path = public_data / issue["forecast"]
+            forecast = load_json(forecast_path)
+            jsonschema.Draft202012Validator(schema).validate(forecast)
+            source_id = forecast["issue"]["initial_condition_source"]["id"]
+            if source_id != source["id"]:
+                raise ValueError(f"source mismatch in {forecast_path}")
+            if forecast["issue"]["members"] != issue["members"]:
+                raise ValueError(f"member mismatch in {forecast_path}")
+            regional_path_text = issue.get("regional_outlook")
+            if issue["members"] == 100 and not regional_path_text:
+                raise ValueError(
+                    f"100-member issue lacks regional outlook: {source_id}/{issue['id']}"
+                )
+            if issue["members"] < 100 and regional_path_text:
+                raise ValueError(
+                    f"limited ensemble must not publish probabilities: {source_id}/{issue['id']}"
+                )
+            if regional_path_text:
+                regional_count += 1
+                regional = load_json(public_data / regional_path_text)
+                if regional["issue"]["source_id"] != source_id:
+                    raise ValueError("regional outlook source does not match its issue")
+                if regional["issue"]["initialization"] != issue["initialization"]:
+                    raise ValueError("regional outlook initialization does not match")
+                if regional["issue"]["members"] != 100:
+                    raise ValueError("regional probability sample is not 100 members")
+                if regional["issue"]["hindcast_years"] != list(range(2002, 2022)):
+                    raise ValueError("regional outlook lacks the locked 20 years")
+                if regional["grid"]["shape"] != [27, 27]:
+                    raise ValueError("regional probability grid is not 27 by 27")
+                if len(regional["weeks"]) != 6:
+                    raise ValueError("regional outlook must contain six weeks")
+                expected_regions = [
+                    "all_india",
+                    "northwest",
+                    "central",
+                    "south_peninsula",
+                    "east_northeast",
+                ]
+                for week_number, regional_week in enumerate(
+                    regional["weeks"], start=1
+                ):
+                    if regional_week["week"] != week_number:
+                        raise ValueError("regional week order is incorrect")
+                    if [item["id"] for item in regional_week["regions"]] != expected_regions:
+                        raise ValueError("regional identities or order are incorrect")
+                    for variable in ("rainfall", "temperature"):
+                        probability = regional_week["probability_fields"][variable]
+                        arrays = [
+                            np.asarray(probability[category], dtype=np.float64)
+                            for category in (
+                                "below_normal",
+                                "near_normal",
+                                "above_normal",
+                            )
+                        ]
+                        if any(array.shape != (729,) for array in arrays):
+                            raise ValueError("regional probability field shape is invalid")
+                        if any(
+                            not np.isfinite(array).all()
+                            or np.any((array < 0.0) | (array > 100.0))
+                            for array in arrays
+                        ):
+                            raise ValueError("regional probability field is invalid")
+                        np.testing.assert_allclose(
+                            arrays[0] + arrays[1] + arrays[2],
+                            100.0,
+                            rtol=0.0,
+                            atol=0.0,
+                        )
+                    for region in regional_week["regions"]:
+                        for variable in ("rainfall", "temperature"):
+                            probability = region[variable][
+                                "tercile_probability_percent"
+                            ]
+                            if sum(
+                                probability[category]
+                                for category in (
+                                    "below_normal",
+                                    "near_normal",
+                                    "above_normal",
+                                )
+                            ) != 100:
+                                raise ValueError(
+                                    "regional summary probabilities do not sum to 100"
+                                )
+            if issue["id"] == "20260722":
+                matched_22.add(source_id)
+            downloads = forecast["issue"]["downloads"]
+            if set(downloads) != {
+                "compact_json",
+                "india_pdf",
+                "india_pdf_sha256",
+            }:
+                raise ValueError(
+                    "only compact map data and PDF metadata may be public for "
+                    f"{source_id}/{issue['id']}"
+                )
+            pdf_path = public_root / downloads["india_pdf"]
+            pdf_bytes = pdf_path.read_bytes()
+            if not pdf_bytes.startswith(b"%PDF-"):
+                raise ValueError(f"invalid PDF header: {pdf_path}")
+            if len(re.findall(rb"/Type /Page\b", pdf_bytes)) != 4:
+                raise ValueError(f"PDF must contain four product pages: {pdf_path}")
+            if sha256(pdf_path) != downloads["india_pdf_sha256"]:
+                raise ValueError(f"PDF checksum mismatch: {pdf_path}")
+    if matched_22 != {"gfs", "era5"}:
+        raise ValueError("the matched 22 July GFS/ERA5 IC pair is incomplete")
+    return (
+        "GFS and ERA5 issues are source-separated with PDF-only public briefings.",
+        {
+            "sources": len(sources),
+            "issues": issue_count,
+            "regional_outlooks": regional_count,
+            "matched_issue": "20260722",
+        },
     )
 
 
@@ -236,6 +387,7 @@ def publication_gate(public_data: Path) -> tuple[str, dict[str, Any]]:
         "validation.json",
         "india-outline.json",
         "india-admin.json",
+        "india-map-geography.json",
         "20260728.json",
     }
     present = {path.name for path in files}
@@ -283,6 +435,12 @@ def main() -> int:
             "Web export",
             "publication",
             lambda: schema_gate(args.public_data),
+        ),
+        run_check(
+            "initial_condition_catalog",
+            "Initial-condition source catalog",
+            "publication",
+            lambda: source_catalog_gate(args.public_data),
         ),
         run_check(
             "publication_safety",

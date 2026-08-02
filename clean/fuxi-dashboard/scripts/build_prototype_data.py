@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import sys
 from datetime import timedelta
 from pathlib import Path
@@ -13,6 +15,12 @@ from typing import Any
 import numpy as np
 import shapefile
 import xarray as xr
+PROJ_DATA = Path(sys.prefix) / "share" / "proj"
+if PROJ_DATA.is_dir():
+    os.environ.setdefault("PROJ_DATA", str(PROJ_DATA))
+import pyproj
+if PROJ_DATA.is_dir():
+    pyproj.datadir.set_data_dir(str(PROJ_DATA))
 from pyproj import CRS, Transformer
 from shapely import contains_xy
 from shapely.geometry import mapping, shape
@@ -21,7 +29,6 @@ from shapely.ops import transform, unary_union
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from science.contracts import FUXI_FORECAST  # noqa: E402
 from science.formulas import (  # noqa: E402
     FORMULA_DEFINITIONS,
     anomaly,
@@ -45,6 +52,37 @@ from scripts.validate_sources import (  # noqa: E402
 DEFAULT_SHAPEFILE = Path(
     "/storage/raj.ayush/archive/s2s-forecast-/STATE_BOUNDARY.shp"
 )
+
+INITIAL_CONDITION_SOURCES: dict[str, dict[str, str]] = {
+    "gfs": {
+        "label": "GFS operational proxy",
+        "short_label": "GFS",
+        "category": "operational_proxy",
+        "availability": "near_real_time",
+        "description": (
+            "Near-real-time operational analyses and short-range forecasts "
+            "aggregated into the model's two daily input states. Experimental."
+        ),
+        "scientific_status": (
+            "Experimental GFS-proxy initialization; no matched GFS-initialized "
+            "hindcast calibration is available."
+        ),
+    },
+    "era5": {
+        "label": "ERA5 reanalysis reference",
+        "short_label": "ERA5",
+        "category": "reanalysis_reference",
+        "availability": "delayed_reference",
+        "description": (
+            "Delayed ERA5 reanalysis daily means used as a scientifically "
+            "matched reference initialization; not a real-time forecast feed."
+        ),
+        "scientific_status": (
+            "ERA5 reference initialization matched to the native model "
+            "reforecast system; research reference, not near-real-time guidance."
+        ),
+    },
+}
 
 PRODUCTS: dict[str, dict[str, Any]] = {
     "rainfall_total": {
@@ -156,9 +194,61 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--india-shapefile", type=Path, default=DEFAULT_SHAPEFILE)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "public/data")
     parser.add_argument(
+        "--source-id",
+        choices=sorted(INITIAL_CONDITION_SOURCES),
+        help="Initialization source; inferred from input metadata when omitted.",
+    )
+    parser.add_argument(
+        "--run-manifest",
+        type=Path,
+        help="Validated run manifest used to verify status and forecast checksum.",
+    )
+    parser.add_argument(
+        "--forecast-only",
+        action="store_true",
+        help="Write only the source-aware issue and download package.",
+    )
+    parser.add_argument(
         "--validation", type=Path, default=ROOT / "public/data/validation.json"
     )
     return parser.parse_args()
+
+
+def sha256(path: Path) -> str:
+    """Return the SHA-256 checksum for a file."""
+
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def source_id_for(input_source: str, requested: str | None) -> str:
+    """Resolve the declared initialization source without silent guessing."""
+
+    inferred = "gfs" if "gfs" in input_source.lower() else "era5"
+    if requested is not None and requested != inferred:
+        raise ValueError(
+            f"declared source {requested!r} conflicts with forecast metadata {input_source!r}"
+        )
+    return requested or inferred
+
+
+def validate_run_manifest(path: Path | None, forecast: Path, members: int, leads: int) -> None:
+    """Verify a forecast against its private validated run manifest."""
+
+    if path is None:
+        return
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("status") not in {"generated_valid", "existing_valid"}:
+        raise ValueError(f"run manifest is not publishable: {path}")
+    if int(payload.get("members", -1)) != members:
+        raise ValueError("run manifest member count does not match forecast")
+    if int(payload.get("lead_days", -1)) != leads:
+        raise ValueError("run manifest lead count does not match forecast")
+    if payload.get("output_sha256") != sha256(forecast):
+        raise ValueError("run manifest output checksum does not match forecast")
 
 
 def climatology_bracket(
@@ -276,10 +366,12 @@ def build_fields(
         week_end_exclusive = list(
             forecast.forecast_period_end.values[6::7].astype("datetime64[D]")
         )
+        model_state_day = forecast.model_state_time.values.astype("datetime64[D]")
+        target_month_day = np.datetime_as_string(model_state_day, unit="D")[5:].replace("-", "")
 
     with xr.open_dataset(climatology_path) as climatology:
         left, right, right_weight = climatology_bracket(
-            climatology.init_slot.values, "0727"
+            climatology.init_slot.values, target_month_day
         )
         rain_left = climatology.tp_ensemble_mean.sel(init_slot=left).values
         rain_right = climatology.tp_ensemble_mean.sel(init_slot=right).values
@@ -313,7 +405,7 @@ def build_fields(
     }
     diagnostics = {
         "alignment": {
-            "target_model_state_calendar_day": "0727",
+            "target_model_state_calendar_day": target_month_day,
             "left_slot": left,
             "right_slot": right,
             "right_weight": right_weight,
@@ -397,25 +489,55 @@ def main() -> int:
         if validation["overall_status"] == "warning"
         else "green"
     )
+    with xr.open_dataset(args.forecast) as source:
+        initialization_day = source.forecast_reference_time.values.astype("datetime64[D]")
+        model_state_day = source.model_state_time.values.astype("datetime64[D]")
+        issue_id = np.datetime_as_string(initialization_day, unit="D").replace("-", "")
+        initialization = np.datetime_as_string(initialization_day, unit="D") + "T00:00:00Z"
+        model_state_time = np.datetime_as_string(model_state_day, unit="D") + "T00:00:00Z"
+        input_days = [
+            np.datetime_as_string(model_state_day - np.timedelta64(1, "D"), unit="D"),
+            np.datetime_as_string(model_state_day, unit="D"),
+        ]
+        members = int(source.sizes["member"])
+        lead_days = int(source.sizes["lead_day"])
+        input_source = str(source.attrs.get("input_source", "Experimental operational proxy inputs"))
+    source_id = source_id_for(input_source, args.source_id)
+    source_definition = INITIAL_CONDITION_SOURCES[source_id]
+    validate_run_manifest(args.run_manifest, args.forecast, members, lead_days)
+    relative_forecast_path = Path("data/forecasts") / source_id / f"{issue_id}.json"
+    products = json.loads(json.dumps(PRODUCTS))
+    for product in products.values():
+        product["description"] = product["description"].replace(
+            "100-member", f"{members}-member"
+        )
     forecast_payload = {
         "schema_version": 1,
         "generated_at": utc_now(),
         "issue": {
-            "initialization": FUXI_FORECAST.initialization + "Z",
-            "information_cutoff": FUXI_FORECAST.information_cutoff + "Z",
-            "model_state_time": FUXI_FORECAST.model_state_time + "Z",
-            "input_days": ["2026-07-26", "2026-07-27"],
-            "input_source": (
-                "NCEP operational GFS 1.0° analyses and 0–6 h forecasts, "
-                "aggregated to two UTC daily proxy inputs"
-            ),
-            "members": FUXI_FORECAST.members,
-            "lead_days": FUXI_FORECAST.lead_days,
+            "initialization": initialization,
+            "information_cutoff": initialization,
+            "model_state_time": model_state_time,
+            "input_days": input_days,
+            "input_source": input_source,
+            "members": members,
+            "lead_days": lead_days,
             "status": status,
-            "scientific_status": (
-                "Experimental GFS-proxy initialization; no matched "
-                "GFS-initialized FuXi hindcast calibration"
-            ),
+            "scientific_status": source_definition["scientific_status"],
+            "initial_condition_source": {
+                key: source_definition[key]
+                for key in (
+                    "label",
+                    "short_label",
+                    "category",
+                    "availability",
+                    "description",
+                )
+            }
+            | {"id": source_id},
+            "downloads": {
+                "compact_json": relative_forecast_path.as_posix(),
+            },
             "climatology_alignment": diagnostics["alignment"],
             "hindcast_years": diagnostics["hindcast_years"],
             "observation_verification": {
@@ -435,13 +557,21 @@ def main() -> int:
             "supported_cell_count": int(india_mask.sum()),
             "value_order": "latitude-major row order; latitude is north-to-south",
         },
-        "products": PRODUCTS,
+        "products": products,
         "diagnostics": diagnostics["forecast_population_spread"],
         "weeks": weeks,
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    forecast_dir = args.output_dir / "forecasts"
-    write_json(forecast_dir / "20260728.json", forecast_payload)
+    forecast_path = args.output_dir / "forecasts" / source_id / f"{issue_id}.json"
+    write_json(forecast_path, forecast_payload)
+    if source_id == "gfs" and issue_id == "20260728":
+        write_json(args.output_dir / "forecasts" / "20260728.json", forecast_payload)
+    if args.forecast_only:
+        print(
+            f"wrote {forecast_path}; "
+            f"India support contains {int(india_mask.sum())} native-grid cells"
+        )
+        return 0
     write_json(
         args.output_dir / "india-outline.json",
         {
@@ -515,6 +645,11 @@ def main() -> int:
                     "sst",
                     "tcwv",
                     "olr",
+                ],
+                "anomaly_variables": [
+                    "precipitation",
+                    "temperature",
+                    "z500",
                 ],
             },
             "available_issues": [

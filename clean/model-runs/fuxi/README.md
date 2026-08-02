@@ -1,5 +1,8 @@
 # FuXi-S2S Benchmarks
 
+For the reusable Wednesday/Saturday 100-member and intervening 5-member
+forecast workflow, see [OPERATIONAL_RUNBOOK.md](OPERATIONAL_RUNBOOK.md).
+
 The primary experiment is a strict information-matched comparison against
 physics forecasts issued at 00 UTC. It produces official FuXi-S2S forecasts
 for the 621 exact physics-model issue dates in 2020-2025. Here, "biweekly"

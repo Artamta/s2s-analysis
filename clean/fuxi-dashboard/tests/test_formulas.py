@@ -18,6 +18,7 @@ from science.formulas import (
     pascal_to_hectopascal,
     probability_above_normal,
     probability_below_normal,
+    probability_near_normal,
     tp_mm_hour_to_mm_day,
     top_net_thermal_to_olr,
     verification_metrics,
@@ -92,6 +93,12 @@ def test_tercile_probabilities_use_strict_member_counts() -> None:
     members = np.asarray([0.0, 1.0, 2.0, 3.0])
     assert probability_below_normal(members, 1.0) == 25.0
     assert probability_above_normal(members, 2.0) == 25.0
+    assert probability_near_normal(members, 1.0, 2.0) == 50.0
+    assert (
+        probability_below_normal(members, 1.0)
+        + probability_near_normal(members, 1.0, 2.0)
+        + probability_above_normal(members, 2.0)
+    ) == 100.0
 
 
 def test_area_weights_are_positive_and_normalized() -> None:

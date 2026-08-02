@@ -107,55 +107,37 @@ a {
 
 .brand {
   display: inline-flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   width: max-content;
   text-decoration: none;
 }
 
-.brand > span:last-child {
+.brand-logo {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.brand-copy {
   display: grid;
   line-height: 1.05;
 }
 
-.brand strong {
+.brand-copy strong {
+  color: #fff;
   font-size: 15px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
-.brand small {
+.brand-copy small {
   margin-top: 5px;
-  color: #afc5c8;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.13em;
+  color: #a9c4cb;
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.brand-mark {
-  position: relative;
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 34%);
-  border-radius: 50%;
-}
-
-.brand-mark i {
-  position: absolute;
-  width: 19px;
-  height: 7px;
-  border-top: 1.5px solid #8fd5d3;
-  border-radius: 50%;
-}
-
-.brand-mark i:nth-child(2) {
-  transform: rotate(60deg);
-}
-
-.brand-mark i:nth-child(3) {
-  transform: rotate(120deg);
 }
 
 .site-nav {
@@ -193,6 +175,18 @@ a {
 .site-nav a:hover,
 .site-nav a.is-active {
   color: var(--white);
+}
+
+.site-nav a small {
+  margin-left: 4px;
+  padding: 2px 4px;
+  color: #8fd5d3;
+  font-size: 7px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgb(143 213 211 / 35%);
+  border-radius: 2px;
 }
 
 .site-nav a.is-active::after {
@@ -557,6 +551,16 @@ a {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.forecast-map--interactive {
+  cursor: crosshair;
+  outline: none;
+}
+
+.forecast-map--interactive:focus-visible {
+  outline: 2px solid #173f8a;
+  outline-offset: -2px;
 }
 
 .map-ocean {
@@ -2498,14 +2502,15 @@ a {
   .global-route .brand {
     flex: 0 0 auto;
     justify-self: auto;
+    gap: 6px;
   }
 
-  .global-route .brand-mark {
-    width: 29px;
-    height: 29px;
+  .global-route .brand-logo {
+    width: 30px;
+    height: 30px;
   }
 
-  .global-route .brand strong {
+  .global-route .brand-copy strong {
     font-size: 12px;
   }
 
@@ -2677,6 +2682,744 @@ a {
     font-size: 6px;
     text-align: center;
     text-overflow: ellipsis;
+  }
+}
+
+/* India presentation sheet — mirrors the supplied four-panel scientific PDF. */
+
+.india-route {
+  color: #172033;
+  background: #edf0f4;
+}
+
+.india-route .site-header {
+  background: rgb(10 28 53 / 98%);
+}
+
+.india-route .site-footer {
+  display: none;
+}
+
+.india-sheet {
+  max-width: 1460px;
+  margin: 34px auto 64px;
+  padding: 52px 58px 34px;
+  background: #fff;
+  border: 1px solid #d6dce5;
+  box-shadow: 0 20px 60px rgb(20 37 65 / 10%);
+}
+
+.india-sheet__header {
+  position: relative;
+  display: flex;
+  gap: 30px;
+  align-items: start;
+  justify-content: space-between;
+  padding-bottom: 26px;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.india-sheet__brand {
+  display: block;
+  margin-bottom: 22px;
+  color: #a63f2d;
+  font-size: 14px;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+}
+
+.india-sheet__header h1 {
+  margin: 0;
+  color: #172033;
+  font-size: clamp(32px, 3.2vw, 48px);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.india-sheet__header p {
+  margin: 20px 0 0;
+  color: #596579;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+.india-sheet__header p i {
+  padding: 0 8px;
+  font-style: normal;
+}
+
+.india-experimental {
+  margin-top: 3px;
+  padding: 7px 10px;
+  color: #793816;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  background: #fff0dc;
+  border: 1px solid #efc38c;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.india-toolbar {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 22px 0 30px;
+}
+
+.india-run-console {
+  display: grid;
+  grid-template-columns: minmax(230px, 1.25fr) minmax(300px, 1.4fr) minmax(220px, 0.9fr);
+  gap: 14px 18px;
+  align-items: end;
+  margin: 24px 0 14px;
+  padding: 18px;
+  background: #f7f9fc;
+  border: 1px solid #dbe2ec;
+  border-radius: 4px;
+}
+
+.india-run-console__heading {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 24px;
+  align-items: end;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #dbe2ec;
+}
+
+.india-run-console__heading > div {
+  display: grid;
+  gap: 4px;
+}
+
+.india-run-console__heading span,
+.india-run-actions > span {
+  color: #6b7789;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.india-run-console__heading strong {
+  color: #173f8a;
+  font-size: 16px;
+}
+
+.india-run-console__heading p {
+  max-width: 720px;
+  margin: 0;
+  color: #596579;
+  font-size: 10px;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.india-source-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.india-source-tabs a {
+  display: grid;
+  gap: 3px;
+  min-height: 52px;
+  padding: 10px 12px;
+  color: #4f6079;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #d4dce8;
+  border-radius: 3px;
+  transition: 140ms ease;
+}
+
+.india-source-tabs a:hover {
+  color: #173f8a;
+  border-color: #8ea7d0;
+}
+
+.india-source-tabs a.is-active {
+  color: #fff;
+  background: #173f8a;
+  border-color: #173f8a;
+}
+
+.india-source-tabs span {
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.india-source-tabs small {
+  font-size: 8px;
+  font-weight: 650;
+  opacity: 0.76;
+}
+
+.india-run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.india-run-actions > span {
+  flex-basis: 100%;
+}
+
+.india-run-actions a {
+  padding: 7px 9px;
+  color: #173f8a;
+  font-size: 8px;
+  font-weight: 800;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #b9c7dc;
+  border-radius: 3px;
+}
+
+.india-run-actions a:hover {
+  color: #fff;
+  background: #173f8a;
+}
+
+.india-run-actions .india-pdf-download {
+  display: inline-block;
+  padding: 10px 16px;
+  color: #fff;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  background: #173f8a;
+  border-color: #173f8a;
+  border-radius: 3px;
+}
+
+.india-run-actions .india-pdf-download::before {
+  margin-right: 7px;
+  content: "↓";
+}
+
+.india-run-actions .india-pdf-download:hover {
+  background: #0f2f6d;
+}
+
+.india-run-actions button.india-pdf-download:disabled {
+  color: #68758a;
+  cursor: not-allowed;
+  background: #e8edf5;
+  border-color: #c6d0df;
+}
+
+.india-matched-run {
+  grid-column: 1 / -1;
+  color: #365d9e;
+  font-size: 9px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.india-ic-comparison {
+  display: grid;
+  grid-template-columns: minmax(300px, 1.5fr) minmax(300px, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  margin: 14px 0 22px;
+  padding: 16px 18px;
+  background: #fff8ec;
+  border: 1px solid #ecd6ae;
+  border-radius: 4px;
+}
+
+.india-ic-comparison span {
+  display: block;
+  color: #8a5a20;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.india-ic-comparison strong {
+  display: block;
+  margin-top: 4px;
+  color: #663f13;
+  font-size: 15px;
+}
+
+.india-ic-comparison p {
+  margin: 5px 0 0;
+  color: #735f45;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.india-ic-comparison dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+
+.india-ic-comparison dl div {
+  padding: 8px 10px;
+  background: rgb(255 255 255 / 72%);
+  border: 1px solid #ead9bc;
+}
+
+.india-ic-comparison dt {
+  color: #7b6b55;
+  font-size: 8px;
+}
+
+.india-ic-comparison dd {
+  margin: 3px 0 0;
+  color: #523512;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.india-ic-comparison > a {
+  color: #6b4618;
+  font-size: 8px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.india-product-tabs,
+.india-range-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.india-date-select {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.india-date-select span {
+  color: #68758a;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.india-date-select select {
+  width: 100%;
+  min-height: 38px;
+  padding: 7px 30px 7px 10px;
+  color: #173f8a;
+  font: 800 10px/1.2 inherit;
+  background: #fff;
+  border: 1px solid #8ea7d0;
+  border-radius: 2px;
+}
+
+.india-product-tabs button,
+.india-range-tabs button {
+  min-height: 38px;
+  color: #4f6079;
+  background: #f4f6f9;
+  border: 1px solid #d7dde7;
+  cursor: pointer;
+  transition: 140ms ease;
+}
+
+.india-product-tabs button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.india-product-tabs button strong {
+  font-size: 10px;
+}
+
+.india-product-tabs button:hover,
+.india-range-tabs button:hover {
+  color: #173f8a;
+  border-color: #8ea7d0;
+}
+
+.india-product-tabs button.is-active,
+.india-range-tabs button.is-active {
+  color: #fff;
+  background: #173f8a;
+  border-color: #173f8a;
+}
+
+.india-product-tabs .product-swatch {
+  width: 22px;
+  height: 7px;
+}
+
+.india-product-tabs .product-swatch--rainfall_total {
+  background: linear-gradient(90deg, #b7ffb8, #24d13b, #003d0c);
+}
+
+.india-product-tabs .product-swatch--rainfall_anomaly {
+  background: linear-gradient(90deg, #ff5200, #fff4a5, #fff, #8c8cbf, #3c3c87);
+}
+
+.india-product-tabs .product-swatch--temperature_mean {
+  background: linear-gradient(90deg, #bebee2, #ffe271, #ff6a00, #730000);
+}
+
+.india-product-tabs .product-swatch--temperature_anomaly {
+  background: linear-gradient(90deg, #383880, #dcdcf7, #fffacd, #ff7605, #c30400);
+}
+
+.india-range-tabs button {
+  padding: 8px 13px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.india-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 76px;
+  max-width: 1030px;
+  margin: 0 auto;
+}
+
+.india-map-panel {
+  min-width: 0;
+}
+
+.india-map-panel h2 {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin: 0 0 7px;
+  color: #173f8a;
+  font-size: clamp(13px, 1.25vw, 18px);
+  line-height: 1.2;
+}
+
+.india-map-panel h2 strong {
+  text-transform: uppercase;
+}
+
+.india-map-panel h2 i {
+  font-style: normal;
+  font-weight: 400;
+}
+
+.india-map-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: #edf5fb;
+  border: 1px solid #202631;
+}
+
+.india-map-frame .forecast-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.india-map-frame .map-raster {
+  image-rendering: auto;
+}
+
+.india-map-frame .map-graticule {
+  stroke: none;
+}
+
+.india-map-frame .map-coordinate {
+  fill: #202631;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.india-map-frame .map-world-outline,
+.india-map-frame .map-india-admin,
+.india-map-frame .map-outline {
+  pointer-events: none;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.india-map-frame .map-world-outline {
+  stroke: #555;
+  stroke-width: 0.55;
+}
+
+.india-map-frame .map-outline {
+  stroke: #171717;
+  stroke-width: 1.65;
+}
+
+.india-map-frame .map-india-admin {
+  stroke: #333;
+  stroke-width: 0.55;
+}
+
+.india-map-frame .map-cell {
+  stroke: transparent;
+  stroke-width: 0.8;
+}
+
+.india-map-frame .map-cell:hover,
+.india-map-frame .map-cell:focus {
+  filter: none;
+  stroke: #111;
+  stroke-width: 1.4;
+}
+
+.india-map-frame .map-tooltip {
+  min-width: 125px;
+  padding: 8px 10px;
+  color: #fff;
+  background: rgb(14 29 48 / 96%);
+}
+
+.india-shared-legend {
+  max-width: 1030px;
+  margin: 24px auto 0;
+}
+
+.india-shared-legend .legend {
+  margin: 0 18px;
+}
+
+.india-shared-legend .legend__bar {
+  position: relative;
+  height: 16px;
+  overflow: visible;
+  border-color: #202631;
+}
+
+.india-shared-legend .legend__bar::before,
+.india-shared-legend .legend__bar::after {
+  position: absolute;
+  top: -1px;
+  z-index: 2;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  content: "";
+}
+
+.india-shared-legend .legend__bar::before {
+  right: 100%;
+  border-right: 18px solid var(--legend-under, #d70e00);
+}
+
+.india-shared-legend .legend__bar::after {
+  left: 100%;
+  border-left: 18px solid var(--legend-over, #00001e);
+}
+
+.india-shared-legend .legend__ticks span {
+  color: #202631;
+  font-size: 9px;
+}
+
+.india-shared-legend .legend__caption {
+  justify-content: center;
+  color: #172033;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.india-shared-legend .legend__caption span {
+  display: none;
+}
+
+.india-visual-note {
+  max-width: 1030px;
+  margin: 5px auto 0;
+  color: #596579;
+  font-size: 9px;
+  text-align: center;
+}
+
+.india-sheet__footer {
+  display: flex;
+  gap: 30px;
+  align-items: end;
+  justify-content: space-between;
+  margin-top: 42px;
+  padding-top: 18px;
+  color: #596579;
+  font-size: 10px;
+  border-top: 1px solid #e0e4eb;
+}
+
+.india-sheet__footer p {
+  max-width: 900px;
+  margin: 0;
+}
+
+.india-sheet__footer span {
+  flex: 0 0 auto;
+  color: #8a4d28;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1100px) {
+  .india-sheet {
+    margin: 20px;
+    padding: 40px;
+  }
+
+  .india-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .india-run-console {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .india-run-actions {
+    grid-column: 1 / -1;
+  }
+
+  .india-ic-comparison {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .india-ic-comparison > a {
+    grid-column: 1 / -1;
+  }
+
+  .india-product-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .india-product-tabs button {
+    justify-content: center;
+  }
+
+  .india-range-tabs {
+    justify-content: flex-end;
+  }
+
+  .india-panel-grid {
+    gap: 28px 42px;
+  }
+}
+
+@media (max-width: 700px) {
+  .india-sheet {
+    margin: 0;
+    padding: 28px 16px;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .india-sheet__header {
+    display: block;
+  }
+
+  .india-sheet__brand {
+    margin-bottom: 14px;
+    font-size: 11px;
+  }
+
+  .india-sheet__header h1 {
+    font-size: 30px;
+  }
+
+  .india-sheet__header p {
+    font-size: 10px;
+    line-height: 1.7;
+  }
+
+  .india-experimental {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  .india-run-console {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+    padding: 14px;
+  }
+
+  .india-run-console__heading {
+    display: grid;
+    gap: 10px;
+  }
+
+  .india-run-console__heading p {
+    text-align: left;
+  }
+
+  .india-source-tabs,
+  .india-date-select,
+  .india-run-actions,
+  .india-matched-run {
+    grid-column: 1;
+  }
+
+  .india-ic-comparison {
+    grid-template-columns: 1fr;
+  }
+
+  .india-ic-comparison > a {
+    grid-column: 1;
+  }
+
+  .india-product-tabs {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .india-product-tabs button {
+    justify-content: start;
+  }
+
+  .india-range-tabs {
+    justify-content: stretch;
+  }
+
+  .india-range-tabs button {
+    flex: 1;
+  }
+
+  .india-panel-grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .india-map-panel h2 {
+    font-size: 14px;
+  }
+
+  .india-shared-legend {
+    margin-top: 28px;
+  }
+
+  .india-shared-legend .legend__ticks span {
+    font-size: 7px;
+  }
+
+  .india-sheet__footer {
+    align-items: start;
+    flex-direction: column;
   }
 }
 
@@ -3153,6 +3896,47 @@ a {
   grid-template-columns: 1fr;
 }
 
+.field-mode {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  padding: 8px 0 0;
+  border-top: 1px solid rgb(213 235 229 / 12%);
+}
+
+.field-mode button {
+  min-height: 28px;
+  padding: 5px 7px;
+  color: rgb(216 231 226 / 58%);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgb(157 213 198 / 20%);
+}
+
+.field-mode button:hover:not(:disabled),
+.field-mode button.is-active {
+  color: #f5fbf8;
+  background: rgb(112 193 173 / 18%);
+  border-color: rgb(142 209 190 / 52%);
+}
+
+.field-mode button:disabled {
+  cursor: not-allowed;
+  opacity: 0.28;
+}
+
+.field-mode-note {
+  min-height: 21px;
+  margin: 5px 1px 7px;
+  color: rgb(198 222 215 / 46%);
+  font-size: 7px;
+  line-height: 1.45;
+}
+
 .overlay-controls label {
   min-height: 22px;
 }
@@ -3408,6 +4192,28 @@ a {
     display: none;
   }
 
+  .field-mode {
+    float: left;
+    grid-template-columns: repeat(2, 58px);
+    width: 121px;
+    margin-top: 2px;
+    padding-top: 4px;
+  }
+
+  .field-mode button {
+    min-height: 24px;
+    padding: 3px 4px;
+    font-size: 6px;
+  }
+
+  .field-mode-note {
+    display: none;
+  }
+
+  .field-mode + .field-mode-note + .overlay-controls {
+    margin-left: 132px;
+  }
+
   .global-legend-panel {
     top: 503px;
     right: 12px;
@@ -3431,5 +4237,727 @@ a {
     right: 8px;
     bottom: auto;
     width: calc(100vw - 16px);
+  }
+}
+
+/* Focused India regional and probabilistic outlook */
+
+.outlook-route {
+  color: #172033;
+  background: #edf0f4;
+}
+
+.outlook-route .site-header {
+  background: rgb(10 28 53 / 98%);
+}
+
+.outlook-route .site-footer {
+  display: none;
+}
+
+.outlook-page {
+  max-width: 1460px;
+  margin: 34px auto 64px;
+  padding: 52px 58px 38px;
+  background: #fff;
+  border: 1px solid #d6dce5;
+  box-shadow: 0 20px 60px rgb(20 37 65 / 10%);
+}
+
+.outlook-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: end;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.outlook-eyebrow {
+  display: block;
+  margin-bottom: 15px;
+  color: #a63f2d;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.outlook-hero h1,
+.outlook-unavailable h1 {
+  max-width: 850px;
+  margin: 0;
+  color: #172033;
+  font-size: clamp(34px, 4vw, 58px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.outlook-hero > div:first-child > p {
+  max-width: 760px;
+  margin: 18px 0 0;
+  color: #596579;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.outlook-hero__status {
+  display: grid;
+  gap: 4px;
+  min-width: 230px;
+  padding: 16px 18px;
+  color: #663f13;
+  background: #fff8ec;
+  border: 1px solid #ecd6ae;
+}
+
+.outlook-hero__status span,
+.outlook-runbar label > span,
+.outlook-map-card header span,
+.outlook-regions > header span,
+.outlook-method-strip span {
+  color: #7a6a55;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.outlook-hero__status strong {
+  color: #653d12;
+  font-size: 13px;
+}
+
+.outlook-hero__status small {
+  color: #79664e;
+  font-size: 9px;
+}
+
+.outlook-runbar {
+  display: grid;
+  grid-template-columns: 300px minmax(280px, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+  margin: 22px 0 18px;
+  padding: 14px;
+  background: #f7f9fc;
+  border: 1px solid #dbe2ec;
+}
+
+.outlook-source-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.outlook-source-tabs a {
+  display: grid;
+  gap: 2px;
+  padding: 9px 11px;
+  color: #506078;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #d4dce8;
+}
+
+.outlook-source-tabs a.is-active {
+  color: #fff;
+  background: #173f8a;
+  border-color: #173f8a;
+}
+
+.outlook-source-tabs strong {
+  font-size: 11px;
+}
+
+.outlook-source-tabs span {
+  font-size: 8px;
+  opacity: 0.75;
+}
+
+.outlook-runbar label {
+  display: grid;
+  gap: 5px;
+}
+
+.outlook-runbar select {
+  width: 100%;
+  min-height: 40px;
+  padding: 7px 32px 7px 10px;
+  color: #173f8a;
+  font-size: 11px;
+  font-weight: 750;
+  background: #fff;
+  border: 1px solid #8ea7d0;
+}
+
+.outlook-map-link,
+.outlook-primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 13px;
+  color: #173f8a;
+  font-size: 9px;
+  font-weight: 800;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #b9c7dc;
+}
+
+.outlook-control-deck {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.outlook-variable-tabs,
+.outlook-week-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.outlook-variable-tabs button,
+.outlook-week-tabs button {
+  min-height: 40px;
+  color: #4f6079;
+  font-size: 10px;
+  font-weight: 800;
+  background: #f4f6f9;
+  border: 1px solid #d7dde7;
+  cursor: pointer;
+}
+
+.outlook-variable-tabs button {
+  min-width: 125px;
+  padding: 8px 18px;
+}
+
+.outlook-week-tabs button {
+  width: 46px;
+}
+
+.outlook-variable-tabs button.is-active,
+.outlook-week-tabs button.is-active {
+  color: #fff;
+  background: #173f8a;
+  border-color: #173f8a;
+}
+
+.outlook-headline {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) minmax(240px, 0.65fr);
+  gap: 18px;
+  align-items: center;
+  margin: 0 0 24px;
+  padding: 17px 20px;
+  color: #153f3f;
+  background: #eef7f4;
+  border: 1px solid #c9ded8;
+}
+
+.outlook-headline span {
+  color: #31716b;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.outlook-headline strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.outlook-headline p {
+  margin: 0;
+  color: #56706d;
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.outlook-grid {
+  display: grid;
+  grid-template-columns: minmax(430px, 0.86fr) minmax(520px, 1.14fr);
+  gap: 30px;
+  align-items: start;
+}
+
+.outlook-map-card,
+.outlook-regions {
+  padding: 20px;
+  background: #fbfcfd;
+  border: 1px solid #d9e0e9;
+}
+
+.outlook-map-card > header,
+.outlook-regions > header {
+  display: flex;
+  gap: 20px;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.outlook-map-card h2,
+.outlook-regions h2 {
+  margin: 4px 0 0;
+  color: #173f8a;
+  font-size: 17px;
+}
+
+.outlook-map-card header small {
+  color: #68758a;
+  font-size: 8px;
+}
+
+.outlook-map-frame {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 580px);
+  margin: 0 auto;
+  aspect-ratio: 1;
+  background: #edf5fb;
+  border: 1px solid #202631;
+}
+
+.outlook-map-frame .forecast-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.outlook-map-frame .map-world-outline,
+.outlook-map-frame .map-india-admin,
+.outlook-map-frame .map-outline {
+  pointer-events: none;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.outlook-map-frame .map-world-outline {
+  stroke: #8a9098;
+  stroke-width: 0.45;
+}
+
+.outlook-map-frame .map-outline {
+  stroke: #171717;
+  stroke-width: 1.8;
+}
+
+.outlook-map-frame .map-india-admin {
+  stroke: #313843;
+  stroke-width: 0.6;
+}
+
+.outlook-map-frame .map-graticule {
+  stroke: rgb(35 51 69 / 12%);
+  stroke-width: 0.45;
+  vector-effect: non-scaling-stroke;
+}
+
+.outlook-map-frame .map-tooltip {
+  min-width: 190px;
+  padding: 9px 11px;
+  color: #fff;
+  background: rgb(14 29 48 / 96%);
+}
+
+.outlook-map-frame .map-tooltip span {
+  font-size: 9px;
+}
+
+.outlook-map-legend {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.outlook-map-legend span {
+  padding: 8px 6px;
+  color: #28313c;
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  border: 1px solid rgb(32 38 49 / 15%);
+}
+
+.outlook-map-legend .is-below {
+  background: #dfaa8d;
+}
+
+.outlook-map-legend .is-near {
+  background: #d8dcdf;
+}
+
+.outlook-map-legend .is-above {
+  background: #92c2ae;
+}
+
+.outlook-map-legend .is-below.is-temperature {
+  background: #9db8d5;
+}
+
+.outlook-map-legend .is-above.is-temperature {
+  background: #dda091;
+}
+
+.outlook-map-card > p {
+  margin: 9px 0 0;
+  color: #68758a;
+  font-size: 8px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.outlook-region-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.outlook-region-card {
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #dce2ea;
+}
+
+.outlook-region-card.is-all-india {
+  grid-column: 1 / -1;
+  background: #f5f8fd;
+  border-color: #b9c9df;
+}
+
+.outlook-region-card > header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.outlook-region-card > header span {
+  color: #27364a;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.outlook-region-card > header strong {
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.outlook-region-card .signal-below_normal {
+  color: #a44d25;
+}
+
+.outlook-region-card .signal-near_normal,
+.outlook-region-card .signal-mixed {
+  color: #64717c;
+}
+
+.outlook-region-card .signal-above_normal {
+  color: #137252;
+}
+
+.outlook-page[data-variable="temperature"] .signal-below_normal {
+  color: #315f9a;
+}
+
+.outlook-page[data-variable="temperature"] .signal-above_normal {
+  color: #b9422f;
+}
+
+.outlook-region-signal {
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+  margin: 11px 0 8px;
+}
+
+.outlook-region-signal b {
+  color: #173f8a;
+  font-size: 25px;
+  letter-spacing: -0.04em;
+}
+
+.outlook-region-signal span {
+  color: #6d7888;
+  font-size: 8px;
+}
+
+.outlook-probability-bar {
+  display: flex;
+  overflow: hidden;
+  height: 7px;
+  background: #eef1f4;
+  border-radius: 999px;
+}
+
+.outlook-probability-bar i {
+  display: block;
+  min-width: 0;
+}
+
+.outlook-probability-bar .is-below {
+  background: #bf6033;
+}
+
+.outlook-probability-bar .is-near {
+  background: #9da5ac;
+}
+
+.outlook-probability-bar .is-above {
+  background: #197d5b;
+}
+
+.outlook-page[data-variable="temperature"] .outlook-probability-bar .is-below {
+  background: #3f70a9;
+}
+
+.outlook-page[data-variable="temperature"] .outlook-probability-bar .is-above {
+  background: #c64c38;
+}
+
+.outlook-probability-values {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  color: #7a8491;
+  font-size: 7px;
+  font-weight: 750;
+}
+
+.outlook-region-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin: 11px 0 0;
+}
+
+.outlook-region-card dl div {
+  min-width: 0;
+  padding-top: 7px;
+  border-top: 1px solid #e3e7ed;
+}
+
+.outlook-region-card dt {
+  color: #7a8491;
+  font-size: 7px;
+}
+
+.outlook-region-card dd {
+  margin: 3px 0 0;
+  color: #28364a;
+  font-size: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.outlook-method-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+  padding: 18px 20px;
+  background: #f7f8fa;
+  border: 1px solid #dde2e9;
+}
+
+.outlook-method-strip > div {
+  display: grid;
+  gap: 4px;
+}
+
+.outlook-method-strip strong {
+  color: #37465a;
+  font-size: 10px;
+}
+
+.outlook-method-strip p {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: #68758a;
+  font-size: 8px;
+  line-height: 1.55;
+}
+
+.outlook-unavailable {
+  min-height: 520px;
+  padding-top: 100px;
+}
+
+.outlook-unavailable > p {
+  max-width: 680px;
+  margin: 22px 0;
+  color: #596579;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.outlook-unavailable__actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.outlook-unavailable__actions a {
+  color: #173f8a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.outlook-unavailable__actions .outlook-primary-action {
+  color: #fff;
+  background: #173f8a;
+}
+
+@media (max-width: 1100px) {
+  .site-nav {
+    gap: 22px;
+  }
+
+  .outlook-page {
+    margin: 20px;
+    padding: 40px;
+  }
+
+  .outlook-runbar {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .outlook-map-link {
+    grid-column: 1 / -1;
+  }
+
+  .outlook-headline {
+    grid-template-columns: 130px 1fr;
+  }
+
+  .outlook-headline p {
+    grid-column: 1 / -1;
+  }
+
+  .outlook-grid {
+    grid-template-columns: minmax(360px, 0.8fr) minmax(440px, 1.2fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 850px) {
+  .outlook-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-hero__status {
+    min-width: 0;
+  }
+
+  .outlook-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-map-frame {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 700px) {
+  .outlook-page {
+    margin: 0;
+    padding: 28px 16px;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .outlook-hero {
+    gap: 22px;
+  }
+
+  .outlook-hero h1,
+  .outlook-unavailable h1 {
+    font-size: 34px;
+  }
+
+  .outlook-runbar {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-map-link {
+    grid-column: 1;
+  }
+
+  .outlook-control-deck {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .outlook-variable-tabs button {
+    flex: 1;
+  }
+
+  .outlook-week-tabs {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .outlook-week-tabs button {
+    width: auto;
+  }
+
+  .outlook-headline {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-headline p {
+    grid-column: 1;
+  }
+
+  .outlook-map-card,
+  .outlook-regions {
+    padding: 14px;
+  }
+
+  .outlook-map-card > header,
+  .outlook-regions > header {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .outlook-region-list {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-region-card.is-all-india {
+    grid-column: 1;
+  }
+
+  .outlook-method-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-method-strip p {
+    grid-column: 1;
+  }
+
+  .outlook-unavailable {
+    min-height: 540px;
+    padding-top: 70px;
+  }
+
+  .outlook-unavailable__actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

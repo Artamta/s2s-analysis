@@ -170,6 +170,24 @@ def probability_above_normal(
     )
 
 
+def probability_near_normal(
+    members: ArrayLike,
+    lower_tercile: ArrayLike,
+    upper_tercile: ArrayLike,
+    *,
+    member_axis: int = 0,
+) -> FloatArray:
+    """Return the percentage at or between the two climatological terciles."""
+
+    member_values = _float_array(members)
+    lower = _float_array(lower_tercile)
+    upper = _float_array(upper_tercile)
+    return (
+        ((member_values >= lower) & (member_values <= upper)).mean(axis=member_axis)
+        * 100.0
+    )
+
+
 def area_weights(
     latitude: ArrayLike, supported_land_fraction: ArrayLike, *, normalize: bool = True
 ) -> FloatArray:

@@ -3,11 +3,13 @@ from __future__ import annotations
 import numpy as np
 
 from scripts.export_global_forecast import (
+    ANOMALY_STYLES,
     GRAVITY_M_S2,
     VARIABLES,
     convert_fields,
     convert_spread,
     quantize,
+    quantize_with,
 )
 
 
@@ -87,3 +89,29 @@ def test_total_column_water_vapour_is_nonnegative() -> None:
     source[8, 0] = [-2.0, 12.0]
     converted = convert_fields(source)
     np.testing.assert_array_equal(converted["tcwv"], [[0.0, 12.0]])
+
+
+def test_global_anomaly_quantization_preserves_sign_and_zero() -> None:
+    examples = {
+        "precipitation": np.asarray([-38.52, 0.0, 109.97]),
+        "temperature": np.asarray([-82.22, 0.0, 20.36]),
+        "z500": np.asarray([-107.98, 0.0, 38.29]),
+    }
+    for key, values in examples.items():
+        style = ANOMALY_STYLES[key]
+        encoded = quantize_with(
+            values,
+            offset=style.offset,
+            scale=style.scale,
+            label=f"{key} anomaly test",
+        )
+        decoded = encoded.astype(np.float64) * style.scale + style.offset
+        np.testing.assert_allclose(
+            decoded,
+            values,
+            atol=style.scale / 2,
+            rtol=0,
+        )
+        assert decoded[0] < 0
+        assert decoded[1] == 0
+        assert decoded[2] > 0

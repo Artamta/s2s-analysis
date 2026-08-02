@@ -23,6 +23,7 @@ EXPECTED_VARIABLES = {
     "olr",
     "tcwv",
 }
+EXPECTED_ANOMALIES = {"precipitation", "temperature", "z500"}
 PHYSICAL_RANGES = {
     "precipitation": (0.0, 500.0),
     "temperature": (-150.0, 70.0),
@@ -42,6 +43,11 @@ SPREAD_RANGES = {
     "sst": (0.0, 100.0),
     "olr": (0.0, 300.0),
     "tcwv": (0.0, 100.0),
+}
+ANOMALY_RANGES = {
+    "precipitation": (-100.0, 200.0),
+    "temperature": (-100.0, 100.0),
+    "z500": (-250.0, 150.0),
 }
 
 
@@ -67,7 +73,7 @@ def main() -> None:
     args = parse_args()
     metadata_path = args.data_dir / "metadata.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    if metadata["schema_version"] != 2:
+    if metadata["schema_version"] != 3:
         raise ValueError("unsupported global schema version")
     if metadata["validation"]["status"] != "green":
         raise ValueError("global publication gate is not green")
@@ -161,6 +167,41 @@ def main() -> None:
                 )
         elif vector is not None:
             raise ValueError(f"{key} must not declare vector components")
+        anomaly = definition.get("anomaly")
+        if key in EXPECTED_ANOMALIES:
+            if not isinstance(anomaly, dict):
+                raise ValueError(f"{key} must declare its matched anomaly field")
+            validate_binary(
+                args.data_dir,
+                f"{key} anomaly",
+                anomaly,
+                expected_values,
+                expected_bytes,
+                ANOMALY_RANGES[key],
+            )
+            baseline = anomaly.get("baseline")
+            if not isinstance(baseline, dict):
+                raise ValueError(f"{key} anomaly must name its baseline")
+            if baseline.get("initialization_slot") != "0728":
+                raise ValueError(f"{key} anomaly must use the exact 28 July slot")
+            if baseline.get("hindcast_years") != list(range(2002, 2022)):
+                raise ValueError(f"{key} anomaly must use exactly 2002–2021")
+            if (
+                baseline.get("years") != 20
+                or baseline.get("native_members_per_year") != 51
+                or baseline.get("lead_days") != 42
+            ):
+                raise ValueError(f"{key} anomaly has an invalid sample contract")
+            if "equal weight" not in str(baseline.get("weighting", "")).lower():
+                raise ValueError(f"{key} anomaly does not document equal weighting")
+            source_checksum = str(baseline.get("source_sha256", ""))
+            if len(source_checksum) != 64:
+                raise ValueError(f"{key} anomaly source checksum is invalid")
+            boundaries = anomaly.get("legend", {}).get("boundaries", [])
+            if not boundaries or min(boundaries) >= 0 or max(boundaries) <= 0:
+                raise ValueError(f"{key} anomaly must use a diverging zero-centred legend")
+        elif anomaly is not None:
+            raise ValueError(f"{key} must not publish an unmatched anomaly")
 
     if metadata["variables"]["sst"].get("domain") != "ocean":
         raise ValueError("SST must be restricted to ocean display support")

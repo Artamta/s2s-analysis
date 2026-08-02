@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-02T14:38:03.420857+00:00",
+  "issue_date": "2026-07-23T00:00:00Z",
+  "comparison_type": "matched_initialization_source_sensitivity",
+  "skill_status": "not_yet_verifiable",
+  "interpretation": "GFS-minus-ERA5 differences measure sensitivity to the initial-state source. They do not show which forecast is better; skill requires observations for the complete valid period.",
+  "sources": {
+    "gfs": {
+      "members": 5,
+      "forecast_sha256": "6d5df558184cfcc47f1e6ca776083f9cea378cecac023cd9eb0c702362a23678"
+    },
+    "era5": {
+      "members": 5,
+      "forecast_sha256": "510ae30658f7e50a6c6049db0ab04164fa5649ad3c15640e8001a0ccc3579219"
+    }
+  },
+  "weeks": [
+    {
+      "week": 1,
+      "valid_start": "2026-07-23",
+      "valid_end": "2026-07-29",
+      "rainfall": {
+        "gfs_minus_era5_india_mean_mm_day": -1.6571,
+        "mean_absolute_difference_mm_day": 2.8699,
+        "ensemble_mean_pattern_correlation": 0.8385,
+        "gfs_mean_spread_mm_day": 0.6153,
+        "era5_mean_spread_mm_day": 0.8105
+      },
+      "temperature": {
+        "gfs_minus_era5_india_mean_deg_c": -0.8059,
+        "mean_absolute_difference_deg_c": 1.2347,
+        "ensemble_mean_pattern_correlation": 0.9758,
+        "gfs_mean_spread_deg_c": 0.0829,
+        "era5_mean_spread_deg_c": 0.0916
+      }
+    },
+    {
+      "week": 2,
+      "valid_start": "2026-07-30",
+      "valid_end": "2026-08-05",
+      "rainfall": {
+        "gfs_minus_era5_india_mean_mm_day": -0.2506,
+        "mean_absolute_difference_mm_day": 2.7652,
+        "ensemble_mean_pattern_correlation": 0.7619,
+        "gfs_mean_spread_mm_day": 1.2618,
+        "era5_mean_spread_mm_day": 1.2968
+      },
+      "temperature": {
+        "gfs_minus_era5_india_mean_deg_c": -1.5048,
+        "mean_absolute_difference_deg_c": 1.8041,
+        "ensemble_mean_pattern_correlation": 0.9733,
+        "gfs_mean_spread_deg_c": 0.1962,
+        "era5_mean_spread_deg_c": 0.1954
+      }
+    },
+    {
+      "week": 3,
+      "valid_start": "2026-08-06",
+      "valid_end": "2026-08-12",
+      "rainfall": {
+        "gfs_minus_era5_india_mean_mm_day": 0.828,
+        "mean_absolute_difference_mm_day": 2.0662,
+        "ensemble_mean_pattern_correlation": 0.87,
+        "gfs_mean_spread_mm_day": 1.7944,
+        "era5_mean_spread_mm_day": 1.3202
+      },
+      "temperature": {
+        "gfs_minus_era5_india_mean_deg_c": -2.005,
+        "mean_absolute_difference_deg_c": 2.2292,
+        "ensemble_mean_pattern_correlation": 0.9712,
+        "gfs_mean_spread_deg_c": 0.3236,
+        "era5_mean_spread_deg_c": 0.2828
+      }
+    },
+    {
+      "week": 4,
+      "valid_start": "2026-08-13",
+      "valid_end": "2026-08-19",
+      "rainfall": {
+        "gfs_minus_era5_india_mean_mm_day": 1.6381,
+        "mean_absolute_difference_mm_day": 4.7246,
+        "ensemble_mean_pattern_correlation": 0.4684,
+        "gfs_mean_spread_mm_day": 1.9259,
+        "era5_mean_spread_mm_day": 2.1885
+      },
+      "temperature": {
+        "gfs_minus_era5_india_mean_deg_c": -2.3177,
+        "mean_absolute_difference_deg_c": 2.6649,
+        "ensemble_mean_pattern_correlation": 0.9623,
+        "gfs_mean_spread_deg_c": 0.3346,
+        "era5_mean_spread_deg_c": 0.4025
+      }
+    },
+    {
+      "week": 5,
+      "valid_start": "2026-08-20",
+      "valid_end": "2026-08-26",
+      "rainfall": {
+        "gfs_minus_era5_india_mean_mm_day": 1.9159,
+        "mean_absolute_difference_mm_day": 3.4561,
+        "ensemble_mean_pattern_correlation": 0.6012,
+        "gfs_mean_spread_mm_day": 2.2629,
+        "era5_mean_spread_mm_day": 2.089
+      },
+      "temperature": {
+        "gfs_minus_era5_india_mean_deg_c": -2.5863,
+        "mean_absolute_difference_deg_c": 2.9784,
+        "ensemble_mean_pattern_correlation": 0.9646,
+        "gfs_mean_spread_deg_c": 0.4474,
+        "era5_mean_spread_deg_c": 0.5043
+      }
+    },
+    {
+      "week": 6,
+      "valid_start": "2026-08-27",
+      "valid_end": "2026-09-02",
+      "rainfall": {
+        "gfs_minus_era5_india_mean_mm_day": -0.1459,
+        "mean_absolute_difference_mm_day": 2.1955,
+        "ensemble_mean_pattern_correlation": 0.7642,
+        "gfs_mean_spread_mm_day": 2.8646,
+        "era5_mean_spread_mm_day": 1.8779
+      },
+      "temperature": {
+        "gfs_minus_era5_india_mean_deg_c": -2.4786,
+        "mean_absolute_difference_deg_c": 2.8758,
+        "ensemble_mean_pattern_correlation": 0.9706,
+        "gfs_mean_spread_deg_c": 0.6197,
+        "era5_mean_spread_deg_c": 0.4981
+      }
+    }
+  ]
+}

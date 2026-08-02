@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T02:38:20.207454+00:00",
+  "generated_at": "2026-08-02T14:39:32.479953+00:00",
   "overall_status": "warning",
   "presentation_allowed": true,
   "checks": [
@@ -117,8 +117,8 @@
       "status": "green",
       "summary": "Conversions, weekly aggregation, anomalies, interpolation, weights, and metrics passed.",
       "details": {
-        "formula_version": "1.0.0",
-        "independent_examples": 9
+        "formula_version": "1.1.0",
+        "independent_examples": 10
       }
     },
     {
@@ -149,14 +149,27 @@
       }
     },
     {
+      "id": "initial_condition_catalog",
+      "label": "Initial-condition source catalog",
+      "group": "publication",
+      "status": "green",
+      "summary": "GFS and ERA5 issues are source-separated with PDF-only public briefings.",
+      "details": {
+        "sources": 2,
+        "issues": 17,
+        "regional_outlooks": 6,
+        "matched_issue": "20260722"
+      }
+    },
+    {
       "id": "publication_safety",
       "label": "Publication safety",
       "group": "publication",
       "status": "green",
       "summary": "Public JSON is finite and free of internal paths, credentials, and raw assets.",
       "details": {
-        "json_files_scanned": 9,
-        "bytes_scanned": 1170814
+        "json_files_scanned": 40,
+        "bytes_scanned": 10660505
       }
     }
   ],

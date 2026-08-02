@@ -1,0 +1,91 @@
+{
+  "cadence": "single_case_gfs_operational_framework",
+  "calendar": "clean/config/operational/fuxi_gfs_20260729_ens100.csv",
+  "date_count": 1,
+  "domain": {
+    "grid_degrees": 1.5,
+    "latitude_count": 27,
+    "latitude_first": 39.0,
+    "latitude_last": 0.0,
+    "longitude_count": 27,
+    "longitude_first": 60.0,
+    "longitude_last": 99.0
+  },
+  "input": {
+    "builder": "gfs_daily_proxy",
+    "daily_statistic": "daily_mean_proxy",
+    "gfs": {
+      "flux_forecast_hour": 6,
+      "grid_label": "1p00",
+      "raw_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20260729/ens100/gfs-raw",
+      "retain_grib": true,
+      "state_cycles_utc": [
+        0,
+        6,
+        12,
+        18
+      ],
+      "state_forecast_hour": 0,
+      "url_template": "https://storage.googleapis.com/global-forecast-system/gfs.{date}/{cycle}/atmos/gfs.t{cycle}z.pgrb2.1p00.f{forecast_hour}"
+    },
+    "hourly_sampling": "four_6_hourly_analyses_plus_four_6_hour_accumulation_windows",
+    "retain_input_nc": true,
+    "scientific_status": "experimental; FuXi-S2S was trained on ERA5 daily statistics and no GFS-initialized hindcast calibration is available",
+    "shape": [
+      2,
+      76,
+      121,
+      240
+    ],
+    "source": "NCEP operational GFS 1.0-degree analyses and 0-6 hour forecasts for 2026-07-27 and 2026-07-28; experimental proxy for ERA5-initialized FuXi-S2S",
+    "temporal_statistic": "UTC daily proxy mean derived from 6-hourly GFS analyses and 0-6 hour GFS forecasts",
+    "time_zone": "utc+00:00",
+    "times": "two complete UTC proxy daily means ending at the 00 UTC issue time"
+  },
+  "lead_days": 42,
+  "member_generation": "official_onnx_native_stochastic_latent_prior_ensemble_no_external_perturbations",
+  "members": 100,
+  "model": {
+    "external_data": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/model/fuxi_s2s",
+    "external_data_sha256": "628d86076810d3d5c53a7a27f10e67b08051e2d2e5c9224a2df96cba8ecd8ea8",
+    "external_data_size_bytes": 2078823204,
+    "inference_script": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/inference.py",
+    "inference_sha256": "ade527b11b96664311add149318ca28054d3257da4f795173a6bda4a17fd36e1",
+    "inference_size_bytes": 5301,
+    "mask": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/data/mask.nc",
+    "mask_sha256": "252acc576bf32c47af244191c1a77cb7c750adfaaeeeaf1dfb70f0ecc07682ab",
+    "mask_size_bytes": 41140,
+    "onnx": "analysis-code/data-download/fuxi_s2s/FuXi-S2S/model/fuxi_s2s.onnx",
+    "onnx_sha256": "bcc3419ef698cb894b17fae2c5e40ded05d87ed8d4ba9f6342c9f0afff3c70f5",
+    "onnx_size_bytes": 1588847,
+    "repository": "analysis-code/data-download/fuxi_s2s/FuXi-S2S",
+    "repository_commit": "cfcc829"
+  },
+  "retained_variables": [
+    "tp",
+    "t2m"
+  ],
+  "run_label": "fuxi_s2s_gfs_case_20260729_ens100",
+  "runtime": {
+    "driver_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python",
+    "inference_python": "/home/raj.ayush/.conda/envs/fuxi_s2s/bin/python",
+    "input_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python"
+  },
+  "schema_version": 4,
+  "storage_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20260729/ens100",
+  "temporal_alignment": {
+    "benchmark_mode": "experimental_gfs_initialized_00utc",
+    "contract": "For the 2026-07-29 00 UTC issue, use complete GFS daily proxy means for 2026-07-27 and 2026-07-28. State fields use four analyses per day; TP/TTR use four successive 0-6 h forecasts.",
+    "first_forecast_period_start_offset_days": 0,
+    "input_day_offsets": [
+      -2,
+      -1
+    ],
+    "issue_hour_utc": 0,
+    "strict_operational": true,
+    "valid_time_role": "period_end"
+  },
+  "years": [
+    2026
+  ]
+}

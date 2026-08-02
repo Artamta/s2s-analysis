@@ -1,0 +1,3 @@
+year,init_date,provider,init_offset_days,common_end_day,selection,source
+2026,2026-07-30,gfs,0,42,two_case_gfs_proxy,gfs_analysis_short_forecast_daily_mean
+2026,2026-07-31,gfs,0,42,two_case_gfs_proxy,gfs_analysis_short_forecast_daily_mean

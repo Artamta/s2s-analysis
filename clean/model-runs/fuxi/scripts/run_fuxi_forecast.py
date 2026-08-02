@@ -197,6 +197,20 @@ def paths_for(config: dict[str, Any], date: pd.Timestamp) -> dict[str, Path]:
     }
 
 
+def input_builder_script(config: dict[str, Any]) -> Path:
+    builder = str(config["input"].get("builder", "era5_daily"))
+    scripts = {
+        "era5_daily": "prepare_fuxi_input.py",
+        "gfs_daily_proxy": "prepare_fuxi_gfs_input.py",
+    }
+    if builder not in scripts:
+        raise ValueError(
+            f"unsupported FuXi input builder {builder!r}; "
+            f"expected one of {sorted(scripts)}"
+        )
+    return Path(__file__).with_name(scripts[builder])
+
+
 def expected_raw_files(raw_dir: Path, members: int, steps: int):
     for member in range(members):
         for step in range(1, steps + 1):
@@ -308,7 +322,10 @@ def combine_output(
             ).lower(),
             "valid_time_role": timing["valid_time_role"],
             "input_source": config["input"]["source"],
-            "ensemble": "50 repeated calls to the official stochastic ONNX model; no separate control member",
+            "ensemble": (
+                f"{members} repeated calls to the official stochastic ONNX model; "
+                "no separate control member"
+            ),
             "member_generation": config["member_generation"],
             "input_daily_statistic": config["input"]["daily_statistic"],
             "input_hourly_sampling": config["input"]["hourly_sampling"],
@@ -444,6 +461,14 @@ def validate_output(
             raise ValueError(
                 "output does not declare the FuXi daily-mean forecast statistic"
             )
+        expected_ensemble = (
+            f"{members} repeated calls to the official stochastic ONNX model; "
+            "no separate control member"
+        )
+        if dataset.attrs.get("ensemble") != expected_ensemble:
+            raise ValueError(
+                "output ensemble provenance does not match configured member count"
+            )
         stats: dict[str, Any] = {}
         for name in EXPECTED_CHANNELS:
             values = dataset[name].values
@@ -457,19 +482,48 @@ def validate_output(
             raise ValueError(f"implausible FuXi TP range: {stats['tp']}")
         if stats["t2m"]["minimum"] < 180.0 or stats["t2m"]["maximum"] > 350.0:
             raise ValueError(f"implausible FuXi T2M range: {stats['t2m']}")
-        spread = max(
-            float(
-                abs(dataset[name].isel(member=0) - dataset[name].isel(member=1)).max()
+        spread: float | None = None
+        unique_member_fingerprints: int | None = None
+        if members >= 2:
+            spread = max(
+                float(
+                    abs(
+                        dataset[name].isel(member=0)
+                        - dataset[name].isel(member=1)
+                    ).max()
+                )
+                for name in EXPECTED_CHANNELS
             )
-            for name in EXPECTED_CHANNELS
-        )
-        if spread <= 1e-6:
-            raise ValueError(
-                "FuXi members 0 and 1 are identical; stochastic ensemble QC failed"
-            )
+            if spread <= 1e-6:
+                raise ValueError(
+                    "FuXi members 0 and 1 are identical; stochastic ensemble QC failed"
+                )
+            fingerprints = []
+            for member in range(members):
+                digest = hashlib.sha256()
+                for name in EXPECTED_CHANNELS:
+                    values = np.ascontiguousarray(
+                        dataset[name].isel(member=member).values.astype(
+                            np.float32, copy=False
+                        )
+                    )
+                    digest.update(values.tobytes())
+                fingerprints.append(digest.hexdigest())
+            unique_member_fingerprints = len(set(fingerprints))
+            if unique_member_fingerprints != members:
+                raise ValueError(
+                    "FuXi stochastic ensemble contains exact duplicate members: "
+                    f"{unique_member_fingerprints} unique of {members}"
+                )
         return {
             "size_bytes": path.stat().st_size,
             "member_0_1_max_difference": spread,
+            "unique_member_fingerprints": unique_member_fingerprints,
+            "spread_check": (
+                "passed"
+                if members >= 2
+                else "not_applicable_single_member_trial"
+            ),
             "fields": stats,
         }
     finally:
@@ -598,7 +652,7 @@ def run(args: argparse.Namespace) -> int:
                 print(f"existing forecast valid: {paths['output']}", flush=True)
                 return 0
 
-        input_builder = Path(__file__).with_name("prepare_fuxi_input.py")
+        input_builder = input_builder_script(config)
         input_command = [
             config["runtime"]["input_python"],
             str(input_builder),

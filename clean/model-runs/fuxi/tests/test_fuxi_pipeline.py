@@ -37,6 +37,10 @@ runner = load_module(
     "run_fuxi_forecast",
     "clean/model-runs/fuxi/scripts/run_fuxi_forecast.py",
 )
+gfs_prepare = load_module(
+    "prepare_fuxi_gfs_input",
+    "clean/model-runs/fuxi/scripts/prepare_fuxi_gfs_input.py",
+)
 stage = load_module(
     "stage_era5_daily",
     "clean/model-runs/fuxi/scripts/stage_era5_daily.py",
@@ -52,6 +56,10 @@ arco_stage = load_module(
 arco_remote_stage = load_module(
     "stage_arco_hourly_daily",
     "clean/model-runs/fuxi/scripts/stage_arco_hourly_daily.py",
+)
+operational = load_module(
+    "fuxi_operational",
+    "clean/model-runs/fuxi/scripts/fuxi_operational.py",
 )
 
 
@@ -81,6 +89,81 @@ def test_strict_alignment_uses_only_information_available_at_issue_time():
     assert pd.Timestamp(valid[0]) == pd.Timestamp("2020-01-03")
     assert pd.Timestamp(start[-1]) == pd.Timestamp("2020-02-12")
     assert pd.Timestamp(end[-1]) == pd.Timestamp("2020-02-13")
+
+
+def test_gfs_proxy_plan_and_builder_are_explicit():
+    path = REPO_ROOT / "clean/config/fuxi_gfs_case_20260728.json"
+    config = runner.load_config(path)
+    issue = pd.Timestamp("2026-07-28")
+    plan = gfs_prepare.source_plan(issue, config)
+    assert len(plan) == 16
+    assert {record["day"] for record in plan} == {
+        pd.Timestamp("2026-07-26"),
+        pd.Timestamp("2026-07-27"),
+    }
+    assert {record["cycle"] for record in plan} == {0, 6, 12, 18}
+    assert {record["forecast_hour"] for record in plan} == {0, 6}
+    assert runner.input_builder_script(config).name == "prepare_fuxi_gfs_input.py"
+
+
+def test_gfs_proxy_plan_supports_issue_scoped_raw_cache():
+    path = REPO_ROOT / "clean/config/fuxi_gfs_case_20260730_31_ens100.json"
+    config = json.loads(path.read_text())
+    issue = pd.Timestamp("2026-07-31")
+    plan = gfs_prepare.source_plan(issue, config)
+    assert len(plan) == 16
+    assert all("20260731" in str(record["path"]) for record in plan)
+    assert {record["day"].strftime("%Y%m%d") for record in plan} == {
+        "20260729",
+        "20260730",
+    }
+    assert config["input"]["scientific_status"].startswith("experimental")
+
+
+def test_gfs_proxy_regrid_and_channel_contract():
+    source_lat = np.linspace(90.0, -90.0, 181, dtype=np.float32)
+    source_lon = np.arange(360, dtype=np.float32)
+    field = source_lat[:, None] + source_lon[None, :]
+    actual = gfs_prepare.regrid(field)
+    assert actual.shape == (121, 240)
+    assert actual[0, 0] == pytest.approx(90.0)
+    assert actual[-1, 0] == pytest.approx(-90.0)
+    assert actual[60, 100] == pytest.approx(150.0)
+    assert gfs_prepare.expected_channels() == prepare.expected_channels()
+
+
+def test_operational_configs_lock_mixed_member_schedule_and_archive_source():
+    rapid_path = REPO_ROOT / "clean/config/operational/fuxi_gfs_20260802_ens5.json"
+    production_path = (
+        REPO_ROOT / "clean/config/operational/fuxi_gfs_20260729_ens100.json"
+    )
+    rapid = runner.load_config(rapid_path)
+    production = runner.load_config(production_path)
+    assert rapid["members"] == 5
+    assert production["members"] == 100
+    assert rapid["lead_days"] == production["lead_days"] == 42
+    assert "global-forecast-system" in rapid["input"]["gfs"]["url_template"]
+    assert operational.config_date(rapid) == pd.Timestamp("2026-08-02")
+    assert operational.config_date(production) == pd.Timestamp("2026-07-29")
+
+
+def test_operational_catalog_publishes_probabilities_only_for_full_ensembles():
+    date = pd.Timestamp("2026-08-05")
+    production = operational.issue_record("gfs", date, 100)
+    rapid = operational.issue_record("gfs", date, 5)
+    assert production["regional_outlook"] == "regional/gfs/20260805.json"
+    assert "regional_outlook" not in rapid
+    assert production["role"] == "operational_experimental"
+    assert rapid["role"] == "rapid_prototype"
+
+
+def test_operational_era5_config_records_complete_object_probe():
+    path = REPO_ROOT / "clean/config/operational/fuxi_era5_20260724_ens5.json"
+    config = runner.load_config(path)
+    remote = config["input"]["remote_hourly_arco"]
+    assert config["members"] == 5
+    assert remote["coverage_override_stop"] == "2026-07-24T00:00:00"
+    assert "768/768 chunks" in remote["coverage_override_evidence"]
 
 
 def test_published_alignment_is_rejected_as_strict_00utc():
@@ -349,6 +432,7 @@ def test_strict_output_has_physics_matching_daily_bounds(tmp_path: Path):
     runner.combine_output(paths["raw"], paths["output"], issue, config)
     details = runner.validate_output(paths["output"], issue, config)
     assert details["member_0_1_max_difference"] > 0
+    assert details["unique_member_fingerprints"] == 2
     dataset = xr.open_dataset(paths["output"])
     try:
         assert pd.Timestamp(dataset.forecast_reference_time.values) == issue
@@ -366,6 +450,39 @@ def test_strict_output_has_physics_matching_daily_bounds(tmp_path: Path):
         assert dataset.valid_time.attrs["bounds"] == "forecast_period_bounds"
     finally:
         dataset.close()
+
+
+def test_single_member_trial_skips_only_ensemble_spread_qc(tmp_path: Path):
+    config = runner.load_config(STRICT_CONFIG_PATH)
+    config["storage_root"] = str(tmp_path)
+    config["members"] = 1
+    config["lead_days"] = 1
+    issue = pd.Timestamp("2020-01-02")
+    paths = runner.paths_for(config, issue)
+    lat, lon = runner.expected_grid(config)
+    values = np.empty((1, 1, 2, len(lat), len(lon)), dtype=np.float32)
+    values[:, :, 0] = 1.0
+    values[:, :, 1] = 290.0
+    raw = xr.DataArray(
+        values,
+        dims=("time", "lead_time", "channel", "lat", "lon"),
+        coords={
+            "time": [pd.Timestamp("2020-01-01")],
+            "lead_time": [1],
+            "channel": ["tp", "t2m"],
+            "lat": lat,
+            "lon": lon,
+        },
+    )
+    path = paths["raw"] / "member" / "00" / "01.nc"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    raw.to_netcdf(path)
+
+    runner.combine_output(paths["raw"], paths["output"], issue, config)
+    details = runner.validate_output(paths["output"], issue, config)
+    assert details["member_0_1_max_difference"] is None
+    assert details["unique_member_fingerprints"] is None
+    assert details["spread_check"] == "not_applicable_single_member_trial"
 
 
 def test_official_sample_round_trips_through_monthly_staging(tmp_path: Path):

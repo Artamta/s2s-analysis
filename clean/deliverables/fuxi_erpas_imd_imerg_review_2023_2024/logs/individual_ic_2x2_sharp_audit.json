@@ -1,0 +1,89 @@
+{
+  "status": "PASSED",
+  "created_utc": "2026-07-24T09:05:45.612331+00:00",
+  "purpose": "individual paired-case 2x2 Week-1--4 rainfall-anomaly figures for presentation",
+  "data_source": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/processed/review_fields_2023_2024.nc",
+  "imerg_native_observation_source": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/imd_acc_1p5_full_2023_2024/data/observations/imerg_final_v07b_jjas_2023_2024_india.nc",
+  "imerg_native_observation_product": "GPM_3IMERGDF.07",
+  "imerg_native_climatology": {
+    "status": "VALIDATED_EXISTING",
+    "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_native_0p1_daily.nc",
+    "shape": [
+      142,
+      348,
+      333
+    ],
+    "baseline_year_count": 22
+  },
+  "verification_reference": "IMERG Final V07B",
+  "shared_levels_mm_day": [
+    -20.0,
+    -15.0,
+    -10.0,
+    -5.0,
+    -2.0,
+    2.0,
+    5.0,
+    10.0,
+    15.0,
+    20.0
+  ],
+  "shared_colors": [
+    "#ff5200",
+    "#ff8e1d",
+    "#ffca59",
+    "#fff4a5",
+    "#ffffff",
+    "#c8c8e9",
+    "#8c8cbf",
+    "#6464a3",
+    "#3c3c87"
+  ],
+  "under_color": "#d70e00",
+  "over_color": "#00001e",
+  "scientific_grids": "IMERG 0.1-degree native; FuXi-S2S 1.5-degree native; ERPAS 1.0-degree native",
+  "display": "IMERG remains on native 0.1-degree grid; FuXi-S2S and ERPAS are bilinearly refined to 0.15 degrees after anomaly calculation",
+  "checks": {
+    "requested_cases_exist": true,
+    "three_products_per_case": true,
+    "all_png_and_pdf_outputs_exist": true,
+    "four_weeks_in_dataset": true,
+    "fuxi_grid_is_1p5_degrees": true,
+    "imerg_native_grid_is_0p1_degrees": true,
+    "erpas_native_grid_is_1p0_degrees": true,
+    "erpas_source_counts_positive": true,
+    "official_boundary_has_40_records": true,
+    "exact_requested_color_levels": true
+  },
+  "cases": [
+    {
+      "case_id": "paired_20240724",
+      "fuxi_initialization": "2024-07-22",
+      "erpas_initialization": "2024-07-24",
+      "imerg_native_shape": [
+        4,
+        348,
+        333
+      ],
+      "erpas_native_shape": [
+        4,
+        36,
+        35
+      ],
+      "erpas_climatology_slots": [
+        "0724",
+        "0724"
+      ],
+      "erpas_climatology_right_weight": 0.0,
+      "erpas_source_count": 20,
+      "outputs": [
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_sharp/paired_20240724/01_imerg_observed_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_sharp/paired_20240724/01_imerg_observed_anomaly_paired_20240724.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_sharp/paired_20240724/02_fuxi_s2s_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_sharp/paired_20240724/02_fuxi_s2s_anomaly_paired_20240724.pdf",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_sharp/paired_20240724/03_erpas_anomaly_paired_20240724.png",
+        "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/figures/individual_ic_2x2_sharp/paired_20240724/03_erpas_anomaly_paired_20240724.pdf"
+      ]
+    }
+  ]
+}

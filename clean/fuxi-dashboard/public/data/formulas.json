@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "formula_version": "1.1.0",
+  "generated_at": "2026-07-30T23:40:19.068463+00:00",
+  "definitions": {
+    "rain_mm_day": {
+      "expression": "tp_mm_hour \u00d7 24",
+      "description": "FuXi 24-hour mean precipitation rate converted to daily rainfall."
+    },
+    "weekly_total_mm": {
+      "expression": "sum(seven daily rain_mm_day values)",
+      "description": "Seven consecutive, non-overlapping UTC model periods."
+    },
+    "weekly_mean_mm_day": {
+      "expression": "weekly_total_mm \u00f7 7",
+      "description": "Weekly-mean daily rainfall rate."
+    },
+    "temperature_deg_c": {
+      "expression": "t2m_kelvin \u2212 273.15",
+      "description": "Kelvin-to-Celsius conversion."
+    },
+    "geopotential_height_dam": {
+      "expression": "geopotential \u00f7 9.80665 \u00f7 10",
+      "description": "Geopotential converted from m\u00b2 s\u207b\u00b2 to decametres."
+    },
+    "wind_speed": {
+      "expression": "\u221a(U\u00b2 + V\u00b2)",
+      "description": "Wind-vector magnitude in m s\u207b\u00b9."
+    },
+    "pressure_hpa": {
+      "expression": "pressure_pa \u00f7 100",
+      "description": "Mean sea-level pressure converted from Pa to hPa."
+    },
+    "outgoing_longwave_radiation": {
+      "expression": "\u2212 top_net_thermal_radiation",
+      "description": "Positive outgoing longwave flux in W m\u207b\u00b2."
+    },
+    "calendar_interpolation": {
+      "expression": "(1 \u2212 w) \u00d7 left_slot + w \u00d7 right_slot",
+      "description": "Interpolation is applied to each yearly mean before averaging years."
+    },
+    "model_anomaly": {
+      "expression": "forecast weekly mean \u2212 matched model-climatology weekly mean",
+      "description": "FuXi model anomaly; not an IMD or IMERG anomaly."
+    },
+    "imd_anomaly": {
+      "expression": "IMD observation \u2212 IMD 1991\u20132020 calendar-day climatology",
+      "description": "Gauge-analysis observation anomaly."
+    },
+    "imerg_anomaly": {
+      "expression": "IMERG observation \u2212 IMERG Final V07B 2001\u20132022 calendar-day climatology",
+      "description": "Satellite observation anomaly using the fixed audited baseline."
+    },
+    "area_weight": {
+      "expression": "cos(latitude) \u00d7 supported land fraction",
+      "description": "Weights are normalized across finite supported cells for scores."
+    }
+  },
+  "statistics": {
+    "ensemble_mean": "arithmetic mean across 100 members",
+    "forecast_spread": "population standard deviation across members (ddof=0)",
+    "climatology_spread": "sample standard deviation across 20 yearly means (ddof=1)",
+    "terciles": "1/3 and 2/3 quantiles across 20 yearly ensemble means",
+    "probabilities": "100 \u00d7 qualifying members \u00f7 100",
+    "verification": "Bias, MAE, RMSE, and weighted spatial Pearson ACC use identical valid periods, target grid, India support, and weights."
+  },
+  "baseline_separation": {
+    "fuxi": "2002\u20132021 native reforecast model climatology",
+    "imd": "1991\u20132020 native daily gauge climatology",
+    "imerg": "Final V07B 2001\u20132022 fixed daily climatology"
+  }
+}

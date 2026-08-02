@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Atmosphere 42 · Meeting Presentation</title>
+  <style>
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:#172033;background:#eef2f7;font-family:Inter,Arial,sans-serif}
+    nav{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 4vw;color:#fff;background:#123a82;box-shadow:0 2px 14px #001b4933}
+    nav strong{margin-right:auto;font-size:14px}nav a{padding:8px 11px;color:#fff;font-size:11px;font-weight:750;text-decoration:none;border:1px solid #ffffff55;border-radius:4px}
+    header{padding:28px 5vw 18px;text-align:center;background:#fff}header h1{margin:0 0 8px;font-size:clamp(25px,4vw,44px)}header p{margin:0;color:#5a6577;font-size:13px}
+    .warning{display:inline-block;margin-top:13px;padding:7px 10px;color:#793816;background:#fff0dc;border:1px solid #efc38c;border-radius:3px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    main{display:grid;gap:24px;padding:24px 3vw 60px}section{scroll-margin-top:60px;max-width:1500px;margin:auto;padding:12px;background:#fff;box-shadow:0 8px 28px #19325c1a;border-radius:6px}
+    img{display:block;width:100%;height:auto}footer{padding:22px;text-align:center;color:#d6e0f1;background:#102a54;font-size:11px}
+    @media(max-width:700px){nav{overflow:auto}nav strong{display:none}nav a{white-space:nowrap}main{padding:10px}section{padding:4px}}
+  </style>
+</head>
+<body>
+  <nav>
+    <strong>Atmosphere 42 · 31 July 2026</strong>
+    <a href="#rain-anomaly">Rain anomaly</a>
+    <a href="#rain">Rainfall</a>
+    <a href="#temp-anomaly">Temp anomaly</a>
+    <a href="#temp">Temperature</a>
+  </nav>
+  <header>
+    <h1>Experimental S2S Forecast Prototype</h1>
+    <p>31 July 2026 initialization · 42 forecast days · India Week 1–4 briefing</p>
+    <span class="warning">Experimental 5-member ensemble · Research demonstration only</span>
+  </header>
+  <main>
+    <section id="rain-anomaly"><img src="./meeting/20260731/rainfall-anomaly.png" alt="Weekly-mean rainfall anomaly forecast"></section>
+    <section id="rain"><img src="./meeting/20260731/rainfall.png" alt="Weekly-mean rainfall forecast"></section>
+    <section id="temp-anomaly"><img src="./meeting/20260731/temperature-anomaly.png" alt="Weekly-mean temperature anomaly forecast"></section>
+    <section id="temp"><img src="./meeting/20260731/temperature.png" alt="Weekly-mean temperature forecast"></section>
+  </main>
+  <footer>Experimental S2S guidance · Not an operational warning</footer>
+</body>
+</html>

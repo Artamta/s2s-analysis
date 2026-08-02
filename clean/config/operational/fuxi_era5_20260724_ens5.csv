@@ -1,0 +1,2 @@
+year,init_date,core_providers,cnrm_available,lead_days,date_policy,source
+2026,2026-07-24,era5,0,42,single_case_strict_daily_mean,arco_hourly_daily_mean

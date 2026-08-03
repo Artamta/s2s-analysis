@@ -12,6 +12,7 @@ MODULES = (
     "pyarrow",
     "h5py",
     "h5netcdf",
+    "matplotlib",
     "scipy",
     "cfgrib",
     "eccodes",

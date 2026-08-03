@@ -28,6 +28,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("inventory")
     sub.add_parser("build-spatial")
+    plots = sub.add_parser("plot-pilot-qc")
+    plots.add_argument("--output", type=Path)
     sub.add_parser("pilot")
     pilot_task = sub.add_parser("pilot-task")
     pilot_task.add_argument("--task-index", required=True, type=int)
@@ -446,6 +448,10 @@ def main(argv: list[str] | None = None) -> None:
         result = inventory_command(config, inventory, root)
     elif args.command == "build-spatial":
         result = spatial_command(config, root)
+    elif args.command == "plot-pilot-qc":
+        from .plotting import plot_pilot_qc
+
+        result = plot_pilot_qc(config, root, args.output)
     elif args.command == "pilot":
         result = pilot_command(config, inventory, root)
     elif args.command == "pilot-task":

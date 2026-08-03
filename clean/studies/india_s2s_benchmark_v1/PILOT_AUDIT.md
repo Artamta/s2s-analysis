@@ -90,3 +90,13 @@ the canonical weight store for later ACC/MAE calculations.
 Earlier `v1`–`v3` pilot directories are development evidence only. Downstream
 evaluation must use the final v4 catalog above. Full multi-year production was
 not submitted as part of this pilot gate.
+
+## Visual-QC gate
+
+The catalog-driven visual review also passed with documented cautions. Its 18
+PNG and 12 PDF outputs cover spatial support, shared-scale weekly fields, an
+exactly valid-time-matched six-day precipitation total, matched daily sheets,
+ensemble spread and membership, ERPAS remapping and pressure levels, negative
+precipitation diagnostics, and temporal alignment. See `VISUAL_QC_REVIEW.md`
+for the evidence and scientific limitations. This is a preprocessing decision,
+not a forecast ranking.

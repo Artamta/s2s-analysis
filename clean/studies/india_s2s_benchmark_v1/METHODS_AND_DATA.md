@@ -197,6 +197,14 @@ it is not a forecast ranking. Full production should begin only after all 25
 pilot stores, the spatial support, the validation report, and the deterministic
 catalog pass.
 
+Visual QC is generated from that finalized catalog rather than by scanning the
+storage tree. Shared color limits are used for comparable common-grid fields.
+Because the ERPAS pilot starts one day earlier, equal lead numbers do not mean
+equal valid times: the direct precipitation comparison therefore uses the
+six-day intersection 2023-06-30 through 2023-07-05. NCEP `t2m_proxy` and ERPAS
+instantaneous `tsfc` are plotted separately from daily-mean T2M. The visual
+gate complements, but never replaces, the numerical validation above.
+
 The later verification stage should be a separate versioned workflow. The
 planned primary ACC comparison uses a five-year model climatology and a 30-year
 observational climatology, with those exact periods and leave-one-out policy to

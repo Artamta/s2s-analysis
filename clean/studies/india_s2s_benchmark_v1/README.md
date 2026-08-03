@@ -32,6 +32,8 @@ python studies/india_s2s_benchmark_v1/benchmark.py build-spatial
 python studies/india_s2s_benchmark_v1/benchmark.py pilot
 python studies/india_s2s_benchmark_v1/benchmark.py validate --pilot
 python studies/india_s2s_benchmark_v1/benchmark.py build-index --pilot
+PYTHONPATH=/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/_deps \
+  python studies/india_s2s_benchmark_v1/benchmark.py plot-pilot-qc
 python studies/india_s2s_benchmark_v1/benchmark.py status --pilot
 ```
 
@@ -50,6 +52,13 @@ Paper scripts must pin the generated catalog filename and SHA256.
 their union (`india_fraction`), exact spherical cell areas, and the canonical
 `india_area_weight_km2` weights. ACC/MAE scripts should consume those weights
 directly instead of rasterizing the India mask again.
+
+The visual-QC command reads the finalized pilot catalog and writes maps,
+valid-time diagnostics, ensemble spread/member plots, ERPAS native/common
+comparisons, and negative-TP diagnostics below the pilot `qc_plots/` directory.
+Those plots are preprocessing checks, not skill or ranking figures.
+The explicit `PYTHONPATH` selects the same pinned Zarr 2 runtime used by the
+validated SLURM pilot and avoids incompatible user-level Zarr installations.
 
 ## SLURM parallelization
 

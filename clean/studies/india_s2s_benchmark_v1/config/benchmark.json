@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "archive_id": "india_s2s_benchmark_v1",
+  "inventory": "deliverables/s2s_data_inventory_20260803/inventory.json",
+  "archive_root": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1",
+  "common_grid": {
+    "id": "india_1p5_27x27_v1",
+    "latitude": [39.0, 0.0, -1.5],
+    "longitude": [60.0, 99.0, 1.5],
+    "shape": [27, 27]
+  },
+  "native_india_box": {
+    "latitude_min": -2.0,
+    "latitude_max": 41.0,
+    "longitude_min": 58.0,
+    "longitude_max": 101.0,
+    "note": "India verification box plus a two-degree remapping halo"
+  },
+  "spatial_support": {
+    "source": "/storage/raj.ayush/s2s-forecast-data-prev/era5/daily/imd_region_masks.nc",
+    "regions": [
+      "northwest_india",
+      "central_india",
+      "south_peninsula",
+      "east_northeast_india"
+    ],
+    "output": "spatial/spatial_support.zarr",
+    "method": "spherical cell-overlap fraction from the existing Survey of India-derived IMD mask grid"
+  },
+  "pilot": {
+    "id": "pilot_20230628_29_week1_v4",
+    "dense_initialization": "2023-06-29",
+    "erpas_initialization": "2023-06-28",
+    "lead_days": 7,
+    "models": [
+      "ecmwf", "ukmo", "cma", "ncep", "cnrm", "fuxi_s2s",
+      "dlesym_v0", "dlesym_v1", "neuralgcm", "fcn3", "erpas"
+    ]
+  },
+  "storage": {
+    "zarr_format": 2,
+    "compressor": "blosc-zstd-bitshuffle",
+    "float_dtype": "float32",
+    "ensemble_std_ddof": 0,
+    "complete_week_days": 7
+  }
+}

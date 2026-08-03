@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "variables": {
+    "tp": {
+      "standard_name": "precipitation_flux",
+      "units": "mm day-1",
+      "temporal_statistic": "daily_mean_rate",
+      "weekly_products": ["weekly_mean", "weekly_total"],
+      "comparability_class": "precipitation"
+    },
+    "t2m": {
+      "standard_name": "air_temperature",
+      "units": "degC",
+      "temporal_statistic": "daily_mean",
+      "weekly_products": ["weekly_mean"],
+      "comparability_class": "daily_mean_2m_air_temperature"
+    },
+    "t2m_proxy": {
+      "standard_name": "air_temperature",
+      "units": "degC",
+      "temporal_statistic": "daily_proxy_mean",
+      "weekly_products": ["weekly_mean"],
+      "comparability_class": "ncep_temperature_proxy",
+      "warning": "Never label or pool this field as native daily-mean T2M."
+    },
+    "tsfc": {
+      "standard_name": "surface_temperature",
+      "units": "degC",
+      "temporal_statistic": "instantaneous_daily_sample",
+      "weekly_products": ["weekly_mean_of_daily_samples"],
+      "comparability_class": "instantaneous_surface_temperature",
+      "warning": "ERPAS surface temperature is not daily-mean 2-m air temperature."
+    },
+    "gh": {
+      "standard_name": "geopotential_height",
+      "units": "gpm",
+      "temporal_statistic": "instantaneous_daily_sample",
+      "weekly_products": ["weekly_mean_of_daily_samples"],
+      "comparability_class": "pressure_level_geopotential_height"
+    }
+  }
+}

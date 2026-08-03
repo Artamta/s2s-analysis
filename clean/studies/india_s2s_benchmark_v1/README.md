@@ -59,6 +59,8 @@ comparisons, and negative-TP diagnostics below the pilot `qc_plots/` directory.
 Those plots are preprocessing checks, not skill or ranking figures.
 The explicit `PYTHONPATH` selects the same pinned Zarr 2 runtime used by the
 validated SLURM pilot and avoids incompatible user-level Zarr installations.
+A reviewable home/repository copy of the final pilot plots is kept in
+`results/pilot_20230628_29_week1_v4/qc_plots/` alongside the scripts.
 
 ## SLURM parallelization
 

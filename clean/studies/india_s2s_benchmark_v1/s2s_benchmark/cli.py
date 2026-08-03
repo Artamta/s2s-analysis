@@ -12,7 +12,7 @@ import pandas as pd
 from .catalog import build_catalog
 from .readers import EXPERIMENT_IDS, MODEL_VARIABLES, load_field
 from .spatial import build_spatial_support, validate_spatial_support
-from .storage import store_path, validate_store, write_manifest, write_store
+from .storage import recover_manifest, store_path, validate_store, write_manifest, write_store
 from .core import COMMON_LAT, COMMON_LON, sha256_file
 
 
@@ -92,6 +92,13 @@ def _write_one(
         if existing.get("zmetadata_sha256") != validation["zmetadata_sha256"]:
             raise ValueError(f"completed store metadata differs from manifest: {destination}")
         return existing
+    if destination.exists():
+        validation = validate_store(destination)
+        manifest = recover_manifest([field], destination, grid, validation)
+        manifest["validation"] = validation
+        manifest["manifest_path"] = str(path)
+        write_manifest(manifest, path)
+        return manifest
     manifest = write_store([field], destination, grid, member_axis=member_axis)
     validation = validate_store(destination)
     manifest["validation"] = validation
@@ -350,6 +357,14 @@ def preprocess_command(
     def all_fields():
         yield first
         yield from iterator
+
+    if destination.exists():
+        validation = validate_store(destination)
+        manifest = recover_manifest(all_fields(), destination, args.grid, validation)
+        manifest["validation"] = validation
+        manifest["manifest_path"] = str(existing_manifest_path)
+        write_manifest(manifest, existing_manifest_path)
+        return manifest
 
     manifest = write_store(all_fields(), destination, args.grid, member_axis=member_axis)
     manifest["validation"] = validate_store(destination)

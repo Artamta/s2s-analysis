@@ -9,7 +9,7 @@ import pandas as pd
 
 from s2s_benchmark.catalog import build_catalog
 from s2s_benchmark.core import StandardField
-from s2s_benchmark.storage import validate_store, write_manifest, write_store
+from s2s_benchmark.storage import recover_manifest, validate_store, write_manifest, write_store
 
 
 def field(source: Path) -> StandardField:
@@ -89,3 +89,40 @@ def test_multi_init_store_records_every_source_path(tmp_path: Path) -> None:
         assert json.loads(ds.attrs["source_paths"]) == sorted(
             [str(tmp_path / "source_one.nc"), str(tmp_path / "source_two.nc")]
         )
+
+
+def test_validation_uses_writer_float64_ensemble_accumulation(tmp_path: Path) -> None:
+    rng = np.random.default_rng(0)
+    values = (10_000.0 + rng.normal(size=(51, 7, 2, 2))).astype(np.float32)
+    float32_std = np.nanstd(values, axis=0, ddof=0)
+    writer_std = np.nanstd(values, axis=0, ddof=0, dtype=np.float64).astype(np.float32)
+    assert not np.allclose(float32_std, writer_std, rtol=1e-6, atol=1e-6)
+
+    source = tmp_path / "source_ens51.nc"
+    source.write_bytes(b"source")
+    challenging = replace(
+        field(tmp_path / "unused_source.nc"),
+        values=values,
+        member=np.arange(51, dtype=np.int16),
+        source_paths=(str(source),),
+    )
+    output = tmp_path / "2023.zarr"
+    write_store([challenging], output, "common_1p5")
+
+    assert validate_store(output)["status"] == "passed"
+
+
+def test_missing_manifest_recovery_does_not_mutate_store(tmp_path: Path) -> None:
+    source_field = field(tmp_path / "source.nc")
+    output = tmp_path / "2023.zarr"
+    original = write_store([source_field], output, "common_1p5")
+    metadata_before = original["zmetadata_sha256"]
+    validation = validate_store(output)
+
+    recovered = recover_manifest(
+        [source_field], output, "common_1p5", validation
+    )
+
+    assert recovered["zmetadata_sha256"] == metadata_before
+    assert recovered["qc"] == original["qc"]
+    assert recovered["recovery"]["store_mutated"] is False

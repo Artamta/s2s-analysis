@@ -135,6 +135,86 @@ def write_manifest(manifest: dict, path: Path) -> None:
     path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def recover_manifest(
+    fields: Iterable[StandardField],
+    destination: Path,
+    grid: str,
+    validation: dict,
+) -> dict:
+    """Recover only a missing manifest after a store passed read-back validation.
+
+    A worker can stop after the atomic store rename but before its manifest is
+    written. Recovery never changes the store: every regenerated source field
+    is compared exactly with the stored forecast before metadata are emitted.
+    """
+    if not destination.exists():
+        raise FileNotFoundError(f"cannot recover manifest without store: {destination}")
+    if validation.get("status") != "passed" or validation.get("store") != str(destination):
+        raise ValueError("manifest recovery requires validation for the same passed store")
+
+    qcs = []
+    init_values: list[str] = []
+    all_source_paths: set[str] = set()
+    first_field: StandardField | None = None
+    with xr.open_zarr(destination, consolidated=True) as stored:
+        stored_members = stored["member"].values
+        for index, field in enumerate(fields):
+            if index >= stored.sizes["init"]:
+                raise ValueError(f"too many regenerated initializations for {destination}")
+            first_field = first_field or field
+            expected = field_to_dataset(field, grid).reindex(member=stored_members)
+            expected_forecast = expected["forecast"].isel(init=0).values
+            stored_forecast = stored["forecast"].isel(init=index).values
+            if not np.array_equal(stored_forecast, expected_forecast, equal_nan=True):
+                raise ValueError(
+                    f"{destination}: regenerated forecast differs at initialization {field.initialization}"
+                )
+            expected_init = np.datetime64(field.initialization, "ns")
+            if stored["init"].values[index] != expected_init:
+                raise ValueError(
+                    f"{destination}: initialization order differs at index {index}"
+                )
+            qcs.append(qc_summary(field))
+            all_source_paths.update(field.source_paths)
+            init_values.append(field.initialization)
+            expected.close()
+        if first_field is None:
+            raise ValueError("no fields supplied for manifest recovery")
+        if len(init_values) != stored.sizes["init"]:
+            raise ValueError(
+                f"{destination}: recovered {len(init_values)} of {stored.sizes['init']} initializations"
+            )
+        stored_sources = set(json.loads(stored.attrs["source_paths"]))
+        if stored_sources != all_source_paths:
+            raise ValueError(f"{destination}: regenerated source paths differ from stored metadata")
+
+    return {
+        "schema_version": 1,
+        "archive_id": "india_s2s_benchmark_v1",
+        "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "status": "complete",
+        "model": first_field.model,
+        "experiment_id": first_field.experiment_id,
+        "variable": first_field.variable,
+        "grid": grid,
+        "year": int(init_values[0][:4]),
+        "store": str(destination),
+        "initializations": init_values,
+        "initialization_count": len(init_values),
+        "distribution_representation": first_field.distribution_representation,
+        "units": first_field.units,
+        "temporal_statistic": first_field.temporal_statistic,
+        "source_paths": sorted(all_source_paths),
+        "zmetadata_sha256": _store_metadata_checksum(destination),
+        "qc": qcs,
+        "recovery": {
+            "reason": "store rename completed before manifest write",
+            "store_mutated": False,
+            "forecast_exact_match": True,
+        },
+    }
+
+
 def validate_store(path: Path) -> dict:
     with xr.open_zarr(path, consolidated=True) as ds:
         required = {"forecast", "ensemble_mean", "ensemble_std", "ensemble_member_count", "member_available"}
@@ -142,8 +222,14 @@ def validate_store(path: Path) -> dict:
         if missing:
             raise ValueError(f"{path}: missing variables {sorted(missing)}")
         forecast = ds["forecast"].values
-        expected_mean = np.nanmean(forecast, axis=1)
-        expected_std = np.nanstd(forecast, axis=1, ddof=0)
+        # Match ensemble_statistics exactly. NumPy otherwise accumulates
+        # float32 inputs in float32, which can create false validation failures
+        # for large ensembles even though the stored statistic was correctly
+        # accumulated in float64 and then encoded as float32.
+        expected_mean = np.nanmean(forecast, axis=1, dtype=np.float64).astype(np.float32)
+        expected_std = np.nanstd(
+            forecast, axis=1, ddof=0, dtype=np.float64
+        ).astype(np.float32)
         if not np.allclose(ds["ensemble_mean"].values, expected_mean, equal_nan=True, rtol=1e-6, atol=1e-6):
             raise ValueError(f"{path}: ensemble mean mismatch")
         if not np.allclose(ds["ensemble_std"].values, expected_std, equal_nan=True, rtol=1e-6, atol=1e-6):

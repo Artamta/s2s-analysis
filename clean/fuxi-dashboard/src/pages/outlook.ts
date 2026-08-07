@@ -1,4 +1,8 @@
 import { TercileProbabilityMap } from "../components/TercileProbabilityMap";
+import {
+  defaultIssueForSource,
+  issueIsCurrent,
+} from "../lib/catalog";
 import type {
   AppData,
   InitialConditionSourceId,
@@ -116,15 +120,16 @@ function unavailablePage(container: HTMLElement, data: AppData): void {
   const sourceId = forecast.issue.initial_condition_source.id;
   const source = index.initial_condition_sources.find((item) => item.id === sourceId)!;
   const issueId = forecast.issue.initialization.slice(0, 10).replaceAll("-", "");
-  const recommended = source.issues.find((issue) => issue.regional_outlook);
+  const recommended = defaultIssueForSource(index, source);
   container.innerHTML = `
     <section class="outlook-page outlook-unavailable">
       <span class="outlook-eyebrow">India · Regional Outlook</span>
       <h1>Probabilistic guidance is withheld for this issue.</h1>
-      <p>The ${friendlyDate(forecast.issue.initialization, true)} run contains ${forecast.issue.members} members. Tercile probabilities are published only for complete 100-member ensembles.</p>
+      <p>The ${friendlyDate(forecast.issue.initialization, true)} run does not have a seasonally supported probability product. Regional terciles require both a complete 100-member ensemble and a matched, validated model climatology.</p>
       <div class="outlook-unavailable__actions">
-        ${recommended ? `<a class="outlook-primary-action" href="${sourceLink(sourceId, recommended.id)}">Open ${friendlyDate(recommended.initialization, true)} · ${recommended.members} members</a>` : ""}
+        ${recommended?.regional_outlook ? `<a class="outlook-primary-action" href="${sourceLink(sourceId, recommended.id)}">Open ${friendlyDate(recommended.initialization, true)} · supported issue</a>` : ""}
         <a href="./?source=${sourceId}&issue=${issueId}#india">Return to deterministic India maps</a>
+        <a href="./#archive">Browse all archived issues</a>
       </div>
     </section>
   `;
@@ -165,6 +170,20 @@ export function renderOutlookPage(container: HTMLElement, data: AppData): void {
   const sourceId = forecast.issue.initial_condition_source.id;
   const source = index.initial_condition_sources.find((item) => item.id === sourceId)!;
   const currentIssueId = forecast.issue.initialization.slice(0, 10).replaceAll("-", "");
+  const catalogIssue = source.issues.find((issue) => issue.id === currentIssueId);
+  if (!catalogIssue) throw new Error("Regional issue is absent from the catalogue");
+  const isCurrent = issueIsCurrent(index, source, catalogIssue);
+  const archiveBanner = !isCurrent
+    ? `
+      <aside class="india-archive-banner outlook-archive-banner">
+        <div>
+          <strong>${sourceId === "era5" ? "Delayed ERA5 reference" : "Archived regional issue"}</strong>
+          <p>${sourceId === "era5" ? "This reference experiment normally arrives 5–7 days after real time and is never labeled current." : "The current forecast is the newest validated 100-member GFS-proxy issue."}</p>
+        </div>
+        <a href="./#outlook">Return to current regional outlook →</a>
+      </aside>
+    `
+    : "";
 
   container.innerHTML = `
     <section class="outlook-page">
@@ -183,21 +202,26 @@ export function renderOutlookPage(container: HTMLElement, data: AppData): void {
 
       <section class="outlook-runbar" aria-label="Regional outlook run selection">
         <div class="outlook-source-tabs">
-          ${index.initial_condition_sources.map((candidate) => `
-            <a href="${sourceLink(candidate.id, candidate.default_issue)}" class="${candidate.id === sourceId ? "is-active" : ""}">
+          ${index.initial_condition_sources.map((candidate) => {
+            const preferred = defaultIssueForSource(index, candidate);
+            if (!preferred) return "";
+            return `
+            <a href="${sourceLink(candidate.id, preferred.id)}" class="${candidate.id === sourceId ? "is-active" : ""}">
               <strong>${candidate.short_label}</strong><span>${candidate.category === "operational_proxy" ? "Operational proxy" : "Reanalysis reference"}</span>
             </a>
-          `).join("")}
+          `;}).join("")}
         </div>
-        <label>
-          <span>Initialization</span>
-          <select id="outlook-date-select">
-            ${source.issues.map((issue) => `<option value="${issue.id}" ${issue.id === currentIssueId ? "selected" : ""}>${friendlyDate(issue.initialization, true)} · ${issue.members} members${issue.regional_outlook ? "" : " · probabilities unavailable"}</option>`).join("")}
-          </select>
-        </label>
+        <dl class="outlook-issue-facts">
+          <div><dt>Initialized</dt><dd>${friendlyDate(forecast.issue.initialization, true)}</dd></div>
+          <div><dt>Valid through</dt><dd>${friendlyDate(regionalOutlook.weeks.at(-1)!.valid_end, true)}</dd></div>
+          <div><dt>Members</dt><dd>${forecast.issue.members}</dd></div>
+          <div><dt>Source</dt><dd>${sourceId === "gfs" ? "GFS proxy" : "ERA5 delayed"}</dd></div>
+        </dl>
         <a class="outlook-map-link" href="./?source=${sourceId}&issue=${currentIssueId}#india">Open four-map India forecast →</a>
+        <a class="outlook-map-link" href="./#archive">Browse archive →</a>
       </section>
 
+      ${archiveBanner}
       <section class="outlook-control-deck">
         <div class="outlook-variable-tabs" aria-label="Regional outlook variable">
           <button type="button" data-variable="rainfall" class="is-active">Rainfall</button>
@@ -252,10 +276,6 @@ export function renderOutlookPage(container: HTMLElement, data: AppData): void {
     indiaGeography,
   );
 
-  container.querySelector<HTMLSelectElement>("#outlook-date-select")!.addEventListener("change", (event) => {
-    const issue = (event.currentTarget as HTMLSelectElement).value;
-    window.location.assign(sourceLink(sourceId, issue));
-  });
   container.querySelectorAll<HTMLButtonElement>(".outlook-variable-tabs button").forEach((button) => {
     button.addEventListener("click", () => {
       selectedVariable = button.dataset.variable as OutlookVariable;

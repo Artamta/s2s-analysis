@@ -33,7 +33,7 @@ Create a reusable case configuration:
   --source gfs --date 20260801 --members 100
 ```
 
-Submit staging, inference, and dependent web publication:
+For manual compatibility, submit staging, inference, and dependent publication:
 
 ```bash
 /home/raj.ayush/.conda/envs/s2s-hind/bin/python \
@@ -41,6 +41,12 @@ Submit staging, inference, and dependent web publication:
   --date 20260801 \
   --configs clean/config/operational/fuxi_gfs_20260801_ens100.json
 ```
+
+Production automation instead uses the compute-only scheduler documented in
+`clean/fuxi-dashboard/automation/README.md`. It exports only after the private
+manifest validates, targets `S2S_DASHBOARD_ROOT` at a disposable clean
+worktree, and pushes through the allow-listed publisher. This avoids mixing
+generated forecast files with a research checkout.
 
 ## Mixed job array
 
@@ -69,11 +75,13 @@ maps are stored under:
 
 ## Website and comparisons
 
-Successful publication adds source-aware issue JSON, India NetCDF/CSV/PDF
-downloads, and the issue catalog. Complete 100-member issues additionally
-receive six-week raw ensemble tercile probabilities and area-weighted summaries
-for All India and IMD's four broad homogeneous rainfall regions. Five-member
-rapid guidance deliberately withholds probability products. When both sources
+Successful publication adds source-aware compact issue JSON, an optional PDF,
+and the issue catalog. During validated JJAS slots, complete 100-member issues
+also receive six-week raw ensemble tercile probabilities and area-weighted
+summaries for All India and IMD's four broad homogeneous rainfall regions.
+Outside the seasonal model climatology, only raw rainfall and temperature are
+published. Five-member rapid guidance deliberately withholds probability
+products. When both sources
 exist for one issue, the publisher also writes a six-week GFS-minus-ERA5
 initialization-sensitivity comparison and exposes its Week-1 summary on the
 forecast page.
@@ -90,3 +98,9 @@ reported only after the complete valid weeks have observations.
 - finite values, plausible TP/T2M ranges, and non-collapsed spread;
 - unique full-forecast fingerprint for every ensemble member;
 - private run-manifest checksum must match before web publication.
+
+Repository, dashboard, storage, Python, templates, and climatology paths can be
+injected with `S2S_REPO_ROOT`, `S2S_DASHBOARD_ROOT`,
+`S2S_FUXI_STORAGE_ROOT`, `S2S_DRIVER_PYTHON`, `S2S_FUXI_GFS_TEMPLATE`,
+`S2S_FUXI_ERA5_TEMPLATE`, and `S2S_FUXI_CLIMATOLOGY`. Defaults preserve the
+current cluster layout.

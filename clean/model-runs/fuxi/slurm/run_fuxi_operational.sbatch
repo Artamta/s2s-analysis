@@ -17,8 +17,8 @@ set -euo pipefail
 : "${FUXI_DATE:?FUXI_DATE must be exported by the submitter}"
 : "${FUXI_SOURCE:?FUXI_SOURCE must be exported by the submitter}"
 
-REPO=/home/raj.ayush/s2s/s2s_anlysis
-PYTHON=/home/raj.ayush/.conda/envs/s2s-hind/bin/python
+REPO=${S2S_REPO_ROOT:-/home/raj.ayush/s2s/s2s_anlysis}
+PYTHON=${S2S_DRIVER_PYTHON:-/home/raj.ayush/.conda/envs/s2s-hind/bin/python}
 RUNNER=${REPO}/clean/model-runs/fuxi/scripts/run_fuxi_forecast.py
 TASK_CACHE=/tmp/fuxi_infer_${FUXI_SOURCE}_${FUXI_DATE}_${SLURM_JOB_ID}
 

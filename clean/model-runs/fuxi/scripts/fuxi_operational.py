@@ -26,22 +26,44 @@ from typing import Any, Iterable
 import pandas as pd
 
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(
+    os.environ.get("S2S_REPO_ROOT", Path(__file__).resolve().parents[4])
+).resolve()
 CLEAN_ROOT = REPO_ROOT / "clean"
 SCRIPT_ROOT = CLEAN_ROOT / "model-runs/fuxi/scripts"
 SLURM_ROOT = CLEAN_ROOT / "model-runs/fuxi/slurm"
 CONFIG_ROOT = CLEAN_ROOT / "config/operational"
-DASHBOARD_ROOT = CLEAN_ROOT / "fuxi-dashboard"
+DASHBOARD_ROOT = Path(
+    os.environ.get("S2S_DASHBOARD_ROOT", CLEAN_ROOT / "fuxi-dashboard")
+).resolve()
 STORAGE_ROOT = Path(
-    "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational"
+    os.environ.get(
+        "S2S_FUXI_STORAGE_ROOT",
+        "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational",
+    )
 )
-DRIVER_PYTHON = "/home/raj.ayush/.conda/envs/s2s-hind/bin/python"
-GFS_TEMPLATE = CLEAN_ROOT / "config/fuxi_gfs_case_20260730_31_ens100.json"
-ERA5_TEMPLATE = CLEAN_ROOT / "config/fuxi_strict00z_case_20260722_ens100.json"
+DRIVER_PYTHON = os.environ.get(
+    "S2S_DRIVER_PYTHON", "/home/raj.ayush/.conda/envs/s2s-hind/bin/python"
+)
+GFS_TEMPLATE = Path(
+    os.environ.get(
+        "S2S_FUXI_GFS_TEMPLATE",
+        CLEAN_ROOT / "config/fuxi_gfs_case_20260730_31_ens100.json",
+    )
+)
+ERA5_TEMPLATE = Path(
+    os.environ.get(
+        "S2S_FUXI_ERA5_TEMPLATE",
+        CLEAN_ROOT / "config/fuxi_strict00z_case_20260722_ens100.json",
+    )
+)
 FU_XI_CLIMATOLOGY = Path(
-    "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/"
-    "native_reforecast_jjas_2002_2021/"
-    "fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc"
+    os.environ.get(
+        "S2S_FUXI_CLIMATOLOGY",
+        "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/"
+        "native_reforecast_jjas_2002_2021/"
+        "fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+    )
 )
 PRODUCTION_MEMBERS = 100
 PRODUCTION_LEADS = 42
@@ -400,7 +422,12 @@ def stage_case(config_path: Path, date: pd.Timestamp) -> None:
         )
 
 
-def issue_record(source: str, date: pd.Timestamp, members: int) -> dict[str, Any]:
+def issue_record(
+    source: str,
+    date: pd.Timestamp,
+    members: int,
+    regional_available: bool | None = None,
+) -> dict[str, Any]:
     record = {
         "id": ymd(date),
         "initialization": date.strftime("%Y-%m-%dT00:00:00Z"),
@@ -413,17 +440,24 @@ def issue_record(source: str, date: pd.Timestamp, members: int) -> dict[str, Any
         ),
         "forecast": f"forecasts/{source}/{ymd(date)}.json",
     }
-    if members == PRODUCTION_MEMBERS:
+    if regional_available is None:
+        # Compatibility for callers that build a record without an exported
+        # forecast. Operational publication always passes the capability
+        # derived from that forecast explicitly.
+        regional_available = members == PRODUCTION_MEMBERS
+    if regional_available:
         record["regional_outlook"] = f"regional/{source}/{ymd(date)}.json"
     return record
 
 
-def update_dashboard_index(entries: Iterable[tuple[str, pd.Timestamp, int]]) -> None:
+def update_dashboard_index(
+    entries: Iterable[tuple[str, pd.Timestamp, int, bool]],
+) -> None:
     path = DASHBOARD_ROOT / "public/data/index.json"
     index = json.loads(path.read_text(encoding="utf-8"))
     by_source = {item["id"]: item for item in index["initial_condition_sources"]}
-    for source, date, members in entries:
-        record = issue_record(source, date, members)
+    for source, date, members, regional_available in entries:
+        record = issue_record(source, date, members, regional_available)
         catalog = by_source[source]
         catalog["issues"] = [
             item for item in catalog["issues"] if item["id"] != record["id"]
@@ -440,8 +474,15 @@ def update_dashboard_index(entries: Iterable[tuple[str, pd.Timestamp, int]]) -> 
                 production_issues, key=lambda item: item["id"]
             )["id"]
     gfs_issues = by_source["gfs"]["issues"]
-    if gfs_issues:
-        index["latest_successful_issue"] = max(item["id"] for item in gfs_issues)
+    production_gfs_issues = [
+        item
+        for item in gfs_issues
+        if int(item.get("members", 0)) == PRODUCTION_MEMBERS
+    ]
+    if production_gfs_issues:
+        index["latest_successful_issue"] = max(
+            item["id"] for item in production_gfs_issues
+        )
         index["available_issues"] = [
             {
                 "id": item["id"],
@@ -456,7 +497,7 @@ def update_dashboard_index(entries: Iterable[tuple[str, pd.Timestamp, int]]) -> 
 
 
 def publish_cases(config_paths: list[Path], date: pd.Timestamp) -> None:
-    entries: list[tuple[str, pd.Timestamp, int]] = []
+    entries: list[tuple[str, pd.Timestamp, int, bool]] = []
     for config_path in config_paths:
         config = load_config(config_path)
         source = config_source(config)
@@ -485,7 +526,20 @@ def publish_cases(config_paths: list[Path], date: pd.Timestamp) -> None:
             cwd=DASHBOARD_ROOT,
         )
         members = int(config["members"])
-        if members == PRODUCTION_MEMBERS:
+        public_forecast = (
+            DASHBOARD_ROOT
+            / "public/data/forecasts"
+            / source
+            / f"{ymd(date)}.json"
+        )
+        public_payload = json.loads(public_forecast.read_text(encoding="utf-8"))
+        regional_available = bool(
+            members == PRODUCTION_MEMBERS
+            and public_payload.get("issue", {})
+            .get("capabilities", {})
+            .get("regional_probabilities_eligible", False)
+        )
+        if regional_available:
             run_command(
                 [
                     DRIVER_PYTHON,
@@ -493,20 +547,15 @@ def publish_cases(config_paths: list[Path], date: pd.Timestamp) -> None:
                     "--forecast",
                     str(paths["forecast"]),
                     "--public-forecast",
-                    str(
-                        DASHBOARD_ROOT
-                        / "public/data/forecasts"
-                        / source
-                        / f"{ymd(date)}.json"
-                    ),
+                    str(public_forecast),
                     "--climatology",
                     str(FU_XI_CLIMATOLOGY),
                 ],
                 cwd=DASHBOARD_ROOT,
             )
-        entries.append((source, date, members))
+        entries.append((source, date, members, regional_available))
     update_dashboard_index(entries)
-    for source, issue_date, _ in entries:
+    for source, issue_date, _, _ in entries:
         run_command(
             [
                 DRIVER_PYTHON,
@@ -518,7 +567,14 @@ def publish_cases(config_paths: list[Path], date: pd.Timestamp) -> None:
             ],
             cwd=DASHBOARD_ROOT,
         )
-    if {source for source, _, _ in entries} == {"gfs", "era5"}:
+    matched_forecasts = [
+        DASHBOARD_ROOT
+        / "public/data/forecasts"
+        / source
+        / f"{ymd(date)}.json"
+        for source in ("gfs", "era5")
+    ]
+    if all(path.is_file() for path in matched_forecasts):
         run_command(
             [
                 DRIVER_PYTHON,

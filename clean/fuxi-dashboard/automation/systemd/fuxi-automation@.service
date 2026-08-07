@@ -1,0 +1,15 @@
+[Unit]
+Description=FuXi forecast automation (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard
+Environment=S2S_SCHEDULER_CONFIG=/home/raj.ayush/.config/s2s-fuxi/scheduler.json
+EnvironmentFile=-/home/raj.ayush/.config/s2s-fuxi/automation.env
+ExecStart=/usr/bin/python3 automation/fuxi_scheduler.py --config ${S2S_SCHEDULER_CONFIG} %i
+
+# This is an example user unit. The controller also takes a private advisory lock.
+NoNewPrivileges=true
+PrivateTmp=true

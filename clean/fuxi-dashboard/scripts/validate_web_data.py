@@ -212,9 +212,24 @@ def source_catalog_gate(public_data: Path) -> tuple[str, dict[str, Any]]:
             if forecast["issue"]["members"] != issue["members"]:
                 raise ValueError(f"member mismatch in {forecast_path}")
             regional_path_text = issue.get("regional_outlook")
-            if issue["members"] == 100 and not regional_path_text:
+            capabilities = issue.get("capabilities", {})
+            anomalies_available = capabilities.get(
+                "anomalies",
+                {
+                    "rainfall_anomaly",
+                    "temperature_anomaly",
+                }.issubset(forecast["products"]),
+            )
+            regional_advertised = capabilities.get(
+                "regional_probabilities", bool(regional_path_text)
+            )
+            if regional_advertised and not regional_path_text:
                 raise ValueError(
-                    f"100-member issue lacks regional outlook: {source_id}/{issue['id']}"
+                    f"regional probability capability lacks an asset: {source_id}/{issue['id']}"
+                )
+            if not anomalies_available and regional_path_text:
+                raise ValueError(
+                    f"regional probabilities require a supported climatology: {source_id}/{issue['id']}"
                 )
             if issue["members"] < 100 and regional_path_text:
                 raise ValueError(
@@ -305,8 +320,11 @@ def source_catalog_gate(public_data: Path) -> tuple[str, dict[str, Any]]:
             pdf_bytes = pdf_path.read_bytes()
             if not pdf_bytes.startswith(b"%PDF-"):
                 raise ValueError(f"invalid PDF header: {pdf_path}")
-            if len(re.findall(rb"/Type /Page\b", pdf_bytes)) != 4:
-                raise ValueError(f"PDF must contain four product pages: {pdf_path}")
+            page_count = len(re.findall(rb"/Type /Page\b", pdf_bytes))
+            if page_count != len(forecast["products"]):
+                raise ValueError(
+                    f"PDF page count does not match available products: {pdf_path}"
+                )
             if sha256(pdf_path) != downloads["india_pdf_sha256"]:
                 raise ValueError(f"PDF checksum mismatch: {pdf_path}")
     if matched_22 != {"gfs", "era5"}:

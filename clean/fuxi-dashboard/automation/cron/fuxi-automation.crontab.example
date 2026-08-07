@@ -1,0 +1,15 @@
+# Review and install only after dry-run rehearsal. This host runs Asia/Kolkata
+# cron, whose Debian implementation does not support per-user CRON_TZ.
+S2S_LAUNCHER=/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard/automation/run_scheduler.py
+
+# The lightweight heartbeat runs every 15 minutes. The controller itself gates
+# network probes to Wednesday/Saturday 00:15-12:00 UTC, so cron timezone and DST
+# cannot shift the scientific issue window.
+*/15 * * * * /usr/bin/python3 $S2S_LAUNCHER gfs-poll 2>&1 | /usr/bin/logger -t s2s-fuxi-gfs
+
+# ERA5: daily at 18:35 IST, which is 13:05 UTC on this no-DST host.
+35 18 * * * /usr/bin/python3 $S2S_LAUNCHER era5-watch 2>&1 | /usr/bin/logger -t s2s-fuxi-era5
+
+# Reconcile every ten minutes, offset by two minutes to avoid deterministic
+# overlap with the GFS heartbeat and its private advisory lock.
+2-52/10 * * * * /usr/bin/python3 $S2S_LAUNCHER reconcile 2>&1 | /usr/bin/logger -t s2s-fuxi-reconcile

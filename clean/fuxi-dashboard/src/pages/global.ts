@@ -236,7 +236,7 @@ export function renderGlobalPage(
     container.innerHTML = `
       <section class="blocked-state blocked-state--dark">
         <span class="eyebrow">Global data unavailable</span>
-        <h1>The Global Beta package could not be loaded.</h1>
+        <h1>The dated Global Demo package could not be loaded.</h1>
         <p>No partial map has been shown.</p>
       </section>
     `;
@@ -260,14 +260,14 @@ export function renderGlobalPage(
       <div class="global-stage-shade" aria-hidden="true"></div>
 
       <div class="global-title">
-        <span class="global-eyebrow"><b>Global beta</b> · Experimental S2S ensemble guidance · not operational</span>
-        <h1>Global outlook <small>Beta</small></h1>
-        <p>42-day ensemble guidance · 100 members · Weeks 1–6</p>
+        <span class="global-eyebrow"><b>Dated demo</b> · Pinned dataset · not the current forecast</span>
+        <h1>Global forecast <small>Demo</small></h1>
+        <p>Initialized 28 Jul 2026 · 42-day guidance · 100 members</p>
       </div>
 
       <aside class="global-facts" aria-label="Forecast issue and integrity facts">
         <div><span>Initialized</span><strong>28 Jul 2026 · 00 UTC</strong></div>
-        <div><span>Product</span><strong class="experimental-text">Global beta · Experimental prototype</strong></div>
+        <div><span>Product</span><strong class="experimental-text">Pinned 28 Jul 2026 research demo</strong></div>
         <div><span>Integrity</span><strong class="integrity-ok" id="integrity-status">✓ Active layer SHA-256 verified</strong></div>
       </aside>
 
@@ -341,7 +341,7 @@ export function renderGlobalPage(
         <button class="speed-button" id="speed-button" type="button" aria-label="Change animation speed">1×</button>
       </div>
 
-      <p class="global-disclaimer">Experimental S2S forecast prototype · Long leads show broad guidance, not deterministic local forecasts</p>
+      <p class="global-disclaimer">Dated 28 Jul 2026 demonstration · not updated with the current India forecast · broad guidance, not local weather · <a href="mailto:raj.ayush@students.iiserpune.ac.in">public contact</a></p>
     </section>
   `;
 

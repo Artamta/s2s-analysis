@@ -1,5 +1,12 @@
 import { ForecastMap } from "../components/ForecastMap";
 import { createLegend } from "../components/Legend";
+import {
+  currentGfsIssue,
+  defaultIssueForSource,
+  issueIsCurrent,
+  nextWednesdayOrSaturday,
+  productKeysForForecast,
+} from "../lib/catalog";
 import type {
   AppData,
   ForecastWeek,
@@ -7,13 +14,6 @@ import type {
   ProductDefinition,
   ProductKey,
 } from "../types";
-
-const PRODUCT_ORDER: ProductKey[] = [
-  "rainfall_total",
-  "rainfall_anomaly",
-  "temperature_mean",
-  "temperature_anomaly",
-];
 
 const PRESENTATION_PRODUCTS: Record<ProductKey, ProductDefinition> = {
   rainfall_total: {
@@ -126,13 +126,26 @@ function friendlyDate(isoDate: string, includeYear = false): string {
 
 function displayWeek(week: ForecastWeek, product: ProductKey): ForecastWeek {
   if (product !== "rainfall_total") return week;
+  const rainfall = week.fields.rainfall_total;
+  if (!rainfall) return week;
   return {
     ...week,
     fields: {
       ...week.fields,
-      rainfall_total: week.fields.rainfall_total.map((value) => value / 7),
+      rainfall_total: rainfall.map((value) => value / 7),
     },
   };
+}
+
+function nextUpdateLabel(value: string | undefined, fallback: Date): string {
+  const date = value ? new Date(value) : fallback;
+  if (Number.isNaN(date.getTime())) return "Wed / Sat · after checks";
+  return new Intl.DateTimeFormat("en-IN", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    timeZone: "UTC",
+  }).format(date);
 }
 
 export function renderForecastPage(container: HTMLElement, data: AppData): void {
@@ -174,6 +187,30 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
     return;
   }
   const currentIssueId = forecast.issue.initialization.slice(0, 10).replaceAll("-", "");
+  const catalogIssue = source.issues.find((issue) => issue.id === currentIssueId);
+  if (!catalogIssue) {
+    throw new Error("The loaded forecast is not present in the issue catalogue");
+  }
+  const currentGfs = currentGfsIssue(index);
+  const isCurrent = issueIsCurrent(index, source, catalogIssue);
+  const availableProducts = productKeysForForecast(
+    forecast,
+    catalogIssue.available_products,
+  );
+  if (availableProducts.length === 0) {
+    container.innerHTML = `
+      <section class="blocked-state">
+        <span class="eyebrow">Products unavailable</span>
+        <h1>This issue has no publishable India fields.</h1>
+        <p>The catalogue remains available, but no partial map has been shown.</p>
+        <a href="./#archive">Return to the forecast archive</a>
+      </section>
+    `;
+    return;
+  }
+  const defaultProduct: ProductKey = availableProducts.includes("rainfall_anomaly")
+    ? "rainfall_anomaly"
+    : availableProducts[0];
   const sourceLink = (id: InitialConditionSourceId, issue: string): string =>
     `./?source=${id}&issue=${issue}#india`;
   const matchedSource = index.initial_condition_sources.find(
@@ -181,12 +218,16 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
       candidate.id !== sourceId &&
       candidate.issues.some((issue) => issue.id === currentIssueId),
   );
-  const sourceBadge = sourceId === "gfs"
-    ? "Experimental operational proxy"
-    : "Delayed reference run";
-  const pdfPath = forecast.issue.downloads.india_pdf;
+  const sourceBadge = isCurrent
+    ? "Current · Experimental GFS proxy"
+    : catalogIssue.members < 100
+      ? "Archive · Limited experiment"
+      : sourceId === "era5"
+        ? "Archive · Delayed ERA5 reference"
+        : "Archive · Complete ensemble";
+  const pdfPath = forecast.issue.downloads?.india_pdf;
   const pdfReady = typeof pdfPath === "string" && pdfPath.endsWith(".pdf");
-  const pdfChecksum = forecast.issue.downloads.india_pdf_sha256;
+  const pdfChecksum = forecast.issue.downloads?.india_pdf_sha256;
   const pdfVersion = typeof pdfChecksum === "string" && pdfChecksum.length >= 12
     ? pdfChecksum.slice(0, 12)
     : encodeURIComponent(forecast.generated_at);
@@ -194,6 +235,33 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
     ? `./${pdfPath}?v=${pdfVersion}`
     : "";
   const initializationComparison = forecast.issue.initialization_comparison;
+  const nextUpdate = nextUpdateLabel(
+    index.publication?.next_expected_at ??
+      index.operations?.next_expected_at ??
+      index.operational_status?.next_update_at ??
+      index.operational_status?.next_update,
+    nextWednesdayOrSaturday(currentGfs?.initialization ?? forecast.issue.initialization),
+  );
+  const updateIsStale = index.operations?.status === "stale" || Boolean(
+    index.operations?.stale_after &&
+      Date.now() > new Date(index.operations.stale_after).getTime(),
+  );
+  const validThrough = forecast.weeks.at(-1)?.valid_end ?? "";
+  const archiveBanner = !isCurrent
+    ? `
+      <aside class="india-archive-banner" aria-label="Archived forecast notice">
+        <div>
+          <strong>${sourceId === "era5" ? "Delayed reference—not the current forecast" : "You are viewing an archived issue"}</strong>
+          <p>${sourceId === "era5"
+            ? "ERA5 initialization is retained for controlled reference experiments and normally arrives 5–7 days after real time."
+            : catalogIssue.members < 100
+              ? "This limited-member experiment is preserved for research transparency and must not be compared as a full operational ensemble."
+              : "The current page always points to the newest validated 100-member GFS-proxy issue."}</p>
+        </div>
+        <a href="./#india">Return to current forecast →</a>
+      </aside>
+    `
+    : "";
   const comparisonCard = initializationComparison
     ? `
       <section class="india-ic-comparison" aria-label="Matched GFS and ERA5 initialization comparison">
@@ -214,7 +282,7 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
       <header class="india-sheet__header">
         <div>
           <span class="india-sheet__brand">S2S RESEARCH · EXPERIMENTAL SUBSEASONAL FORECASTING</span>
-          <h1 id="india-product-title">Weekly-mean rainfall anomaly</h1>
+          <h1 id="india-product-title">${PRESENTATION_PRODUCTS[defaultProduct].label}</h1>
           <p>${friendlyDate(forecast.issue.initialization.slice(0, 10), true)} forecast start <i>•</i> ${forecast.issue.input_days.map((day) => friendlyDate(day)).join("–")} daily-mean inputs <i>•</i> ${forecast.issue.members}-member ensemble mean <i>•</i> Weeks 1–6</p>
         </div>
         <span class="india-experimental">${sourceBadge}</span>
@@ -223,34 +291,40 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
       <section class="india-run-console" aria-label="Forecast run selection and downloads">
         <div class="india-run-console__heading">
           <div>
-            <span>Initial-condition source</span>
+            <span>${isCurrent ? "Current forecast" : "Selected archive issue"}</span>
             <strong>${forecast.issue.initial_condition_source.label}</strong>
           </div>
           <p>${forecast.issue.initial_condition_source.description}</p>
         </div>
         <div class="india-source-tabs" role="navigation" aria-label="Initial-condition source">
-          ${index.initial_condition_sources.map((candidate) => `
-            <a href="${sourceLink(candidate.id, candidate.default_issue)}" class="${candidate.id === sourceId ? "is-active" : ""}" ${candidate.id === sourceId ? "aria-current=\"page\"" : ""}>
+          ${index.initial_condition_sources.map((candidate) => {
+            const preferred = defaultIssueForSource(index, candidate);
+            if (!preferred) return "";
+            return `
+            <a href="${sourceLink(candidate.id, preferred.id)}" class="${candidate.id === sourceId ? "is-active" : ""}" ${candidate.id === sourceId ? "aria-current=\"page\"" : ""}>
               <span>${candidate.short_label}</span>
-              <small>${candidate.category === "operational_proxy" ? "Operational proxy" : "Reanalysis reference"}</small>
+              <small>${candidate.category === "operational_proxy" ? "Current 100-member proxy" : "Latest delayed reference"}</small>
             </a>
-          `).join("")}
+          `;}).join("")}
         </div>
-        <label class="india-date-select">
-          <span>Initialization date</span>
-          <select id="india-date-select" aria-label="Forecast initialization date">
-            ${source.issues.map((issue) => `<option value="${issue.id}" ${issue.id === currentIssueId ? "selected" : ""}>${friendlyDate(issue.initialization.slice(0, 10), true)} · ${issue.members} members${issue.role === "rapid_prototype" ? " · limited ensemble" : ""}</option>`).join("")}
-          </select>
-        </label>
+        <dl class="india-status-grid" aria-label="Issue status">
+          <div><dt>Initialized</dt><dd>${friendlyDate(forecast.issue.initialization.slice(0, 10), true)} · 00 UTC</dd></div>
+          <div><dt>Valid through</dt><dd>${friendlyDate(validThrough, true)}</dd></div>
+          <div><dt>Ensemble</dt><dd>${forecast.issue.members} members</dd></div>
+          <div><dt>Source</dt><dd>${sourceId === "gfs" ? "GFS proxy" : "ERA5 delayed"}</dd></div>
+          <div><dt>Next target</dt><dd>${nextUpdate} · ${updateIsStale ? "update delayed" : "after checks"}</dd></div>
+        </dl>
         <div class="india-run-actions" aria-label="Forecast downloads">
           <span>Forecast briefing</span>
           ${pdfReady
             ? `<a class="india-pdf-download" href="${pdfUrl}" download type="application/pdf">Download PDF</a>`
             : `<button class="india-pdf-download" type="button" disabled>PDF preparing · refresh shortly</button>`}
+          <a href="./#archive">Browse archive</a>
         </div>
         ${matchedSource ? `<a class="india-matched-run" href="${sourceLink(matchedSource.id, currentIssueId)}">Same ${friendlyDate(forecast.issue.initialization.slice(0, 10), true)} issue is available with ${matchedSource.short_label} initial conditions →</a>` : ""}
       </section>
 
+      ${archiveBanner}
       ${comparisonCard}
 
       <div class="india-toolbar">
@@ -272,22 +346,12 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
     </section>
   `;
 
-  let selectedProduct: ProductKey = "rainfall_anomaly";
+  let selectedProduct: ProductKey = defaultProduct;
   let rangeStart = 0;
   const productTabs = container.querySelector<HTMLDivElement>("#india-product-tabs")!;
   const panelGrid = container.querySelector<HTMLDivElement>("#india-panel-grid")!;
 
-  container.querySelector<HTMLSelectElement>("#india-date-select")!.addEventListener("change", (event) => {
-    const issue = (event.currentTarget as HTMLSelectElement).value;
-    const url = new URL(window.location.href);
-    url.searchParams.delete("view");
-    url.searchParams.set("source", sourceId);
-    url.searchParams.set("issue", issue);
-    url.hash = "india";
-    window.location.assign(url);
-  });
-
-  PRODUCT_ORDER.forEach((productKey) => {
+  availableProducts.forEach((productKey) => {
     const product = PRESENTATION_PRODUCTS[productKey];
     const button = document.createElement("button");
     button.type = "button";

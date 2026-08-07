@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "operational_python": "/home/raj.ayush/.conda/envs/s2s-hind/bin/python",
+  "operational_script": "/home/raj.ayush/s2s/s2s_anlysis/clean/model-runs/fuxi/scripts/fuxi_operational.py",
+  "sbatch_path": "/usr/bin/sbatch",
+  "sacct_path": "/usr/bin/sacct",
+  "slurm_root": "/home/raj.ayush/s2s/s2s_anlysis/clean/model-runs/fuxi/slurm",
+  "submission_mode": "inference_only",
+  "dashboard_root": "/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard",
+  "generated_config_root": "/home/raj.ayush/s2s/s2s_anlysis/clean/config/operational",
+  "state_root": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/automation-state",
+  "sendmail_path": "/usr/sbin/sendmail",
+  "schedule": {
+    "start_date": "2026-08-08",
+    "gfs_window_start_utc": "00:15",
+    "gfs_window_end_utc": "12:00",
+    "gfs_poll_minutes": 15,
+    "era5_lookback_days": 35,
+    "era5_max_probes_per_run": 4,
+    "era5_poll_hours": 24
+  },
+  "timeouts_seconds": {
+    "probe": 300,
+    "create": 1200,
+    "submit": 120,
+    "slurm_status": 30,
+    "audit": 120
+  },
+  "retry": {
+    "max_safe_attempts": 4,
+    "base_seconds": 60,
+    "max_seconds": 1800
+  },
+  "submission_stale_hours": 12,
+  "publication": {
+    "command": [
+      "/usr/bin/python3",
+      "/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard/scripts/export_and_publish_operational_issue.py",
+      "--source",
+      "{source}",
+      "--issue",
+      "{issue}",
+      "--config",
+      "{config}",
+      "--receipt",
+      "{receipt}"
+    ],
+    "timeout_seconds": 7200,
+    "deployment_check_command": [
+      "/usr/bin/python3",
+      "/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard/scripts/postdeploy_smoke.py",
+      "--base-url",
+      "https://artamta.github.io/s2s-analysis/",
+      "--expected-commit",
+      "{commit_sha}",
+      "--expected-source",
+      "{source}",
+      "--expected-issue",
+      "{issue}"
+    ],
+    "deployment_check_timeout_seconds": 120,
+    "deployment_stale_hours": 6
+  }
+}

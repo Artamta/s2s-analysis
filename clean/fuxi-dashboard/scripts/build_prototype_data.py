@@ -346,7 +346,12 @@ def build_fields(
     dict[str, np.ndarray],
     dict[str, Any],
 ]:
-    """Calculate six-week fields solely through the locked formulas."""
+    """Calculate six-week fields solely through the locked formulas.
+
+    The native 2002–2021 climatology currently covers JJAS initialization
+    slots only.  Forecasts outside that window remain publishable, but only as
+    raw rainfall totals and mean temperature; anomaly fields are withheld.
+    """
 
     with xr.open_dataset(forecast_path) as forecast:
         latitude = forecast.latitude.values.astype(np.float64)
@@ -369,51 +374,77 @@ def build_fields(
         model_state_day = forecast.model_state_time.values.astype("datetime64[D]")
         target_month_day = np.datetime_as_string(model_state_day, unit="D")[5:].replace("-", "")
 
-    with xr.open_dataset(climatology_path) as climatology:
-        left, right, right_weight = climatology_bracket(
-            climatology.init_slot.values, target_month_day
-        )
-        rain_left = climatology.tp_ensemble_mean.sel(init_slot=left).values
-        rain_right = climatology.tp_ensemble_mean.sel(init_slot=right).values
-        temperature_left = climatology.t2m_ensemble_mean.sel(init_slot=left).values
-        temperature_right = climatology.t2m_ensemble_mean.sel(init_slot=right).values
-        years = climatology.hindcast_year.values.astype(int)
-
-    rain_history = calendar_interpolation(rain_left, rain_right, right_weight)
-    temperature_history = calendar_interpolation(
-        temperature_left, temperature_right, right_weight
-    )
-    rain_climatology = ensemble_mean(
-        weekly_mean_rainfall(rain_history, day_axis=1), member_axis=0
-    )
-    temperature_climatology = ensemble_mean(
-        weekly_mean(kelvin_to_celsius(temperature_history), day_axis=1),
-        member_axis=0,
-    )
     fields = {
         "rainfall_total": ensemble_mean(rain_total_members, member_axis=0),
-        "rainfall_anomaly": anomaly(
-            ensemble_mean(rain_mean_members, member_axis=0), rain_climatology
-        ),
         "temperature_mean": ensemble_mean(
             temperature_mean_members, member_axis=0
         ),
-        "temperature_anomaly": anomaly(
-            ensemble_mean(temperature_mean_members, member_axis=0),
-            temperature_climatology,
-        ),
     }
+    alignment: dict[str, Any]
+    years: np.ndarray
+    with xr.open_dataset(climatology_path) as climatology:
+        try:
+            left, right, right_weight = climatology_bracket(
+                climatology.init_slot.values, target_month_day
+            )
+        except ValueError:
+            alignment = {
+                "status": "unavailable_outside_jjas",
+                "target_model_state_calendar_day": target_month_day,
+                "available_slot_start": str(
+                    min(str(value) for value in climatology.init_slot.values)
+                ),
+                "available_slot_end": str(
+                    max(str(value) for value in climatology.init_slot.values)
+                ),
+                "message": (
+                    "Anomalies are withheld because the validated native "
+                    "2002–2021 climatology does not cover this calendar day."
+                ),
+            }
+            years = np.asarray([], dtype=int)
+        else:
+            rain_left = climatology.tp_ensemble_mean.sel(init_slot=left).values
+            rain_right = climatology.tp_ensemble_mean.sel(init_slot=right).values
+            temperature_left = climatology.t2m_ensemble_mean.sel(init_slot=left).values
+            temperature_right = climatology.t2m_ensemble_mean.sel(init_slot=right).values
+            years = climatology.hindcast_year.values.astype(int)
+            rain_history = calendar_interpolation(
+                rain_left, rain_right, right_weight
+            )
+            temperature_history = calendar_interpolation(
+                temperature_left, temperature_right, right_weight
+            )
+            rain_climatology = ensemble_mean(
+                weekly_mean_rainfall(rain_history, day_axis=1), member_axis=0
+            )
+            temperature_climatology = ensemble_mean(
+                weekly_mean(
+                    kelvin_to_celsius(temperature_history), day_axis=1
+                ),
+                member_axis=0,
+            )
+            fields["rainfall_anomaly"] = anomaly(
+                ensemble_mean(rain_mean_members, member_axis=0),
+                rain_climatology,
+            )
+            fields["temperature_anomaly"] = anomaly(
+                ensemble_mean(temperature_mean_members, member_axis=0),
+                temperature_climatology,
+            )
+            alignment = {
+                "status": "available",
+                "target_model_state_calendar_day": target_month_day,
+                "left_slot": left,
+                "right_slot": right,
+                "right_weight": right_weight,
+                "operation_order": (
+                    "interpolate each yearly native-ensemble mean, aggregate "
+                    "seven lead days, then equally average 20 years"
+                ),
+            }
     diagnostics = {
-        "alignment": {
-            "target_model_state_calendar_day": target_month_day,
-            "left_slot": left,
-            "right_slot": right,
-            "right_weight": right_weight,
-            "operation_order": (
-                "interpolate each yearly native-ensemble mean, aggregate seven "
-                "lead days, then equally average 20 years"
-            ),
-        },
+        "alignment": alignment,
         "hindcast_years": years.tolist(),
         "forecast_population_spread": {
             "rainfall_weekly_mean_max_mm_day": float(
@@ -506,7 +537,10 @@ def main() -> int:
     source_definition = INITIAL_CONDITION_SOURCES[source_id]
     validate_run_manifest(args.run_manifest, args.forecast, members, lead_days)
     relative_forecast_path = Path("data/forecasts") / source_id / f"{issue_id}.json"
-    products = json.loads(json.dumps(PRODUCTS))
+    products = {
+        key: json.loads(json.dumps(PRODUCTS[key]))
+        for key in fields
+    }
     for product in products.values():
         product["description"] = product["description"].replace(
             "100-member", f"{members}-member"
@@ -538,6 +572,21 @@ def main() -> int:
             "downloads": {
                 "compact_json": relative_forecast_path.as_posix(),
             },
+            "available_products": list(products),
+            "capabilities": {
+                "raw_fields": True,
+                "anomalies": {
+                    "rainfall_anomaly",
+                    "temperature_anomaly",
+                }.issubset(products),
+                "regional_probabilities_eligible": (
+                    members == 100
+                    and {
+                        "rainfall_anomaly",
+                        "temperature_anomaly",
+                    }.issubset(products)
+                ),
+            },
             "climatology_alignment": diagnostics["alignment"],
             "hindcast_years": diagnostics["hindcast_years"],
             "observation_verification": {
@@ -568,7 +617,7 @@ def main() -> int:
         write_json(args.output_dir / "forecasts" / "20260728.json", forecast_payload)
     if args.forecast_only:
         print(
-            f"wrote {forecast_path}; "
+            f"wrote {forecast_path} with {len(products)} products; "
             f"India support contains {int(india_mask.sum())} native-grid cells"
         )
         return 0
@@ -625,45 +674,8 @@ def main() -> int:
             },
         },
     )
-    write_json(
-        args.output_dir / "index.json",
-        {
-            "schema_version": 1,
-            "generated_at": utc_now(),
-            "latest_successful_issue": "20260728",
-            "global_viewer": {
-                "issue": "20260728",
-                "status": "experimental",
-                "metadata": "global/metadata.json",
-                "lead_days": 42,
-                "variables": [
-                    "precipitation",
-                    "temperature",
-                    "z500",
-                    "wind850",
-                    "mslp",
-                    "sst",
-                    "tcwv",
-                    "olr",
-                ],
-                "anomaly_variables": [
-                    "precipitation",
-                    "temperature",
-                    "z500",
-                ],
-            },
-            "available_issues": [
-                {
-                    "id": "20260728",
-                    "initialization": "2026-07-28T00:00:00Z",
-                    "status": status,
-                    "forecast": "forecasts/20260728.json",
-                }
-            ],
-        },
-    )
     print(
-        "wrote six weeks × four products; "
+        f"wrote six weeks × {len(products)} products; "
         f"India support contains {int(india_mask.sum())} native-grid cells"
     )
     return 0

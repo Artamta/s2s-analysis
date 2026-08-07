@@ -85,6 +85,7 @@ export class ForecastMap {
     product: ProductDefinition,
   ): void {
     const values = week.fields[productKey];
+    if (!values) throw new Error(`${productKey} is unavailable for Week ${week.week}`);
     const { latitude, longitude } = this.forecast.grid;
     const canvas = document.createElement("canvas");
     canvas.width = VISUAL_GRID_SIZE;
@@ -175,6 +176,7 @@ export class ForecastMap {
     product: ProductDefinition,
   ): void {
     const values = week.fields[productKey];
+    if (!values) throw new Error(`${productKey} is unavailable for Week ${week.week}`);
     const { latitude, longitude } = this.forecast.grid;
     svg.setAttribute("tabindex", "0");
     svg.classList.add("forecast-map--interactive");

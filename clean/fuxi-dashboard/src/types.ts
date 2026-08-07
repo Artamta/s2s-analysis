@@ -7,6 +7,36 @@ export type ProductKey =
   | "temperature_mean"
   | "temperature_anomaly";
 
+export type AvailableProductKey =
+  | ProductKey
+  | "regional_probabilities"
+  | "india_pdf";
+
+export interface IssueCapabilities {
+  raw_fields?: boolean;
+  anomalies?: boolean;
+  regional_probabilities?: boolean;
+  regional_probabilities_eligible?: boolean;
+  pdf?: boolean;
+  india_pdf?: boolean;
+}
+
+export interface IssuePointer {
+  source_id: InitialConditionSourceId;
+  issue_id: string;
+  initialization: string;
+  members: number;
+  forecast: string;
+  forecast_sha256?: string;
+  valid_through?: string;
+  published_at?: string;
+  available_products?: AvailableProductKey[];
+  capabilities?: IssueCapabilities;
+  regional_outlook?: string;
+  pdf?: string;
+  pdf_available?: boolean;
+}
+
 export type GlobalVariableKey =
   | "precipitation"
   | "temperature"
@@ -45,8 +75,8 @@ export interface ForecastWeek {
   week: number;
   valid_start: string;
   valid_end: string;
-  fields: Record<ProductKey, number[]>;
-  summary: Record<ProductKey, FieldSummary>;
+  fields: Partial<Record<ProductKey, number[]>>;
+  summary: Partial<Record<ProductKey, FieldSummary>>;
 }
 
 export interface ForecastData {
@@ -70,19 +100,25 @@ export interface ForecastData {
       availability: "near_real_time" | "delayed_reference";
       description: string;
     };
-    downloads: {
-      compact_json: string;
-      india_pdf: string;
-      india_pdf_sha256: string;
+    available_products?: AvailableProductKey[];
+    capabilities?: IssueCapabilities;
+    downloads?: {
+      compact_json?: string;
+      india_pdf?: string;
+      india_pdf_sha256?: string;
     };
-    climatology_alignment: {
+    climatology_alignment?: {
+      status?: "available" | "unavailable_outside_jjas";
       target_model_state_calendar_day: string;
-      left_slot: string;
-      right_slot: string;
-      right_weight: number;
-      operation_order: string;
+      left_slot?: string;
+      right_slot?: string;
+      right_weight?: number;
+      operation_order?: string;
+      available_slot_start?: string;
+      available_slot_end?: string;
+      message?: string;
     };
-    hindcast_years: number[];
+    hindcast_years?: number[];
     observation_verification: {
       status: string;
       message: string;
@@ -105,7 +141,7 @@ export interface ForecastData {
     supported_cell_count: number;
     value_order: string;
   };
-  products: Record<ProductKey, ProductDefinition>;
+  products: Partial<Record<ProductKey, ProductDefinition>>;
   diagnostics: {
     rainfall_weekly_mean_max_mm_day: number;
     temperature_weekly_mean_max_deg_c: number;
@@ -443,6 +479,38 @@ export interface IssueIndexData {
   default_view: "india";
   default_source: InitialConditionSourceId;
   latest_successful_issue: string;
+  current?: IssuePointer;
+  latest_reference?: IssuePointer;
+  publication?: {
+    cadence_days_utc: string[];
+    target_time_utc: string;
+    last_successful_at?: string;
+    next_expected_at?: string;
+  };
+  operations?: {
+    status: "on_schedule" | "delayed" | "stale";
+    last_successful_at?: string;
+    next_expected_at?: string;
+    stale_after?: string;
+  };
+  retention?: {
+    interactive_days: number;
+    pdf_days: number;
+    metadata: "indefinite";
+  };
+  cache?: {
+    catalog: "no-store";
+    assets: "checksum-versioned";
+  };
+  published_at?: string;
+  operational_status?: {
+    latest_successful_issue?: string;
+    latest_success_at?: string;
+    next_update?: string;
+    next_update_at?: string;
+    stale?: boolean;
+    status?: "healthy" | "delayed" | "stale";
+  };
   initial_condition_sources: Array<{
     id: InitialConditionSourceId;
     label: string;
@@ -459,6 +527,44 @@ export interface IssueIndexData {
       role: "operational_experimental" | "reference" | "rapid_prototype";
       forecast: string;
       regional_outlook?: string;
+      validation?: string;
+      pdf?: string;
+      published_at?: string;
+      available_products?: AvailableProductKey[];
+      capabilities?: IssueCapabilities;
+      presentation?:
+        | "current"
+        | "archive"
+        | "limited_experiment"
+        | "delayed_reference"
+        | {
+          section: "current" | "archive";
+          label: string;
+          member_class: "production" | "limited";
+        };
+      archive_available?: boolean;
+      archive?: {
+        interactive_available: boolean;
+        pdf_available: boolean;
+        interactive_until?: string;
+        pdf_until?: string;
+        metadata: "indefinite";
+      };
+      valid_through?: string;
+      checksums?: {
+        forecast?: string;
+        regional_outlook?: string;
+        validation?: string;
+        pdf?: string;
+        forecast_sha256?: string;
+        regional_sha256?: string;
+        validation_sha256?: string;
+        pdf_sha256?: string;
+      };
+      forecast_sha256?: string;
+      regional_outlook_sha256?: string;
+      validation_sha256?: string;
+      pdf_sha256?: string;
     }>;
   }>;
   available_issues: Array<{

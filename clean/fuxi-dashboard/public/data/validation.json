@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-02T14:39:32.479953+00:00",
+  "generated_at": "2026-08-05T14:53:49.691270+00:00",
   "overall_status": "warning",
   "presentation_allowed": true,
   "checks": [
@@ -156,8 +156,8 @@
       "summary": "GFS and ERA5 issues are source-separated with PDF-only public briefings.",
       "details": {
         "sources": 2,
-        "issues": 17,
-        "regional_outlooks": 6,
+        "issues": 18,
+        "regional_outlooks": 7,
         "matched_issue": "20260722"
       }
     },
@@ -168,8 +168,8 @@
       "status": "green",
       "summary": "Public JSON is finite and free of internal paths, credentials, and raw assets.",
       "details": {
-        "json_files_scanned": 40,
-        "bytes_scanned": 10660505
+        "json_files_scanned": 42,
+        "bytes_scanned": 11455857
       }
     }
   ],

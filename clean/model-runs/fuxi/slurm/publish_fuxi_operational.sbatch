@@ -15,11 +15,11 @@ set -euo pipefail
 : "${FUXI_CONFIGS:?FUXI_CONFIGS must be exported by the submitter}"
 : "${FUXI_DATE:?FUXI_DATE must be exported by the submitter}"
 
-REPO=/home/raj.ayush/s2s/s2s_anlysis
-PYTHON=/home/raj.ayush/.conda/envs/s2s-hind/bin/python
+REPO=${S2S_REPO_ROOT:-/home/raj.ayush/s2s/s2s_anlysis}
+PYTHON=${S2S_DRIVER_PYTHON:-/home/raj.ayush/.conda/envs/s2s-hind/bin/python}
 SCRIPT=${REPO}/clean/model-runs/fuxi/scripts/fuxi_operational.py
 IFS=: read -r -a CONFIG_ARRAY <<< "${FUXI_CONFIGS}"
-LOCK_ROOT=/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational
+LOCK_ROOT=${S2S_FUXI_STORAGE_ROOT:-/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational}
 mkdir -p "${LOCK_ROOT}"
 exec 9>"${LOCK_ROOT}/dashboard-publish.lock"
 flock 9

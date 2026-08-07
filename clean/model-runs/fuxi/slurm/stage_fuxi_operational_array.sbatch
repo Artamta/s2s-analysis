@@ -14,8 +14,8 @@
 set -euo pipefail
 : "${FUXI_BATCH:?FUXI_BATCH must be exported by the submitter}"
 
-REPO=/home/raj.ayush/s2s/s2s_anlysis
-PYTHON=/home/raj.ayush/.conda/envs/s2s-hind/bin/python
+REPO=${S2S_REPO_ROOT:-/home/raj.ayush/s2s/s2s_anlysis}
+PYTHON=${S2S_DRIVER_PYTHON:-/home/raj.ayush/.conda/envs/s2s-hind/bin/python}
 SCRIPT=${REPO}/clean/model-runs/fuxi/scripts/fuxi_operational.py
 TASK_CACHE=/tmp/fuxi_stage_array_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}
 mkdir -p "${TASK_CACHE}/xdg" "${TASK_CACHE}/mpl"

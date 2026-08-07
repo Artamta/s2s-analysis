@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build presentation-ready four-page PDFs from compact India forecast JSON."""
+"""Build product-aware PDFs from compact India forecast JSON."""
 
 from __future__ import annotations
 
@@ -7,7 +7,8 @@ import argparse
 import hashlib
 import json
 import os
-from datetime import datetime
+import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -21,9 +22,13 @@ from matplotlib.collections import LineCollection  # noqa: E402
 from matplotlib.colors import BoundaryNorm, ListedColormap  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 PUBLIC = ROOT / "public"
 DATA = PUBLIC / "data"
 BRAND_ASSETS = ROOT / "scripts" / "assets"
+
+from science.catalog import build_catalog  # noqa: E402
+from science.validators import write_json  # noqa: E402
 
 PRODUCTS = {
     "rainfall_total": {
@@ -232,8 +237,14 @@ def build_pdf(
         "Subject": "Experimental India subseasonal forecast guidance, Weeks 1–4",
         "Keywords": "India, S2S, rainfall, temperature, anomaly, experimental",
     }
+    available_products = [
+        key for key in PRODUCTS if key in forecast.get("products", {})
+    ]
+    if not available_products:
+        raise ValueError(f"{forecast_path}: no supported products")
     with PdfPages(output, metadata=metadata) as pdf:
-        for product_key, definition in PRODUCTS.items():
+        for product_key in available_products:
+            definition = PRODUCTS[product_key]
             cmap = ListedColormap(definition["colors"])
             cmap.set_under(definition["under"])
             cmap.set_over(definition["over"])
@@ -410,6 +421,12 @@ def main() -> int:
     legacy = DATA / "forecasts/20260728.json"
     canonical = DATA / "forecasts/gfs/20260728.json"
     legacy.write_text(canonical.read_text(encoding="utf-8"), encoding="utf-8")
+    refreshed_index = build_catalog(
+        json.loads(args.index.read_text(encoding="utf-8")),
+        PUBLIC,
+        datetime.now(timezone.utc),
+    )
+    write_json(args.index, refreshed_index)
     print(json.dumps({"pdfs": len(built), "paths": [str(path) for path in built]}, indent=2))
     return 0
 

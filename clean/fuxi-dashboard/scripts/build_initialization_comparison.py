@@ -11,6 +11,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -20,8 +22,19 @@ import xarray as xr
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 PUBLIC = ROOT / "public"
 DATA = PUBLIC / "data"
+
+from science.catalog import build_catalog  # noqa: E402
+from science.validators import write_json as write_catalog_json  # noqa: E402
+
+PRIVATE_OPERATIONAL_ROOT = Path(
+    os.environ.get(
+        "S2S_FUXI_STORAGE_ROOT",
+        "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational",
+    )
+)
 
 
 def sha256(path: Path) -> str:
@@ -45,9 +58,14 @@ def private_forecast_path(public_forecast: dict[str, Any]) -> Path:
     source = public_forecast["issue"]["initial_condition_source"]["id"]
     issue = public_forecast["issue"]["initialization"][:10].replace("-", "")
     members = int(public_forecast["issue"]["members"])
-    return Path(
-        "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/"
-        f"operational/{source}/{issue}/ens{members}/forecasts/annual{issue[:4]}/{issue}.nc"
+    return (
+        PRIVATE_OPERATIONAL_ROOT
+        / source
+        / issue
+        / f"ens{members}"
+        / "forecasts"
+        / f"annual{issue[:4]}"
+        / f"{issue}.nc"
     )
 
 
@@ -237,6 +255,15 @@ def build(
             "message": payload["interpretation"],
         }
         write_json(forecast_path, forecast)
+    index_path = DATA / "index.json"
+    write_catalog_json(
+        index_path,
+        build_catalog(
+            json.loads(index_path.read_text(encoding="utf-8")),
+            PUBLIC,
+            datetime.now(timezone.utc),
+        ),
+    )
     return output
 
 

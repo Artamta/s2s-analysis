@@ -1,4 +1,12 @@
-# One-Day FuXi-S2S Validated Website Prototype
+# Historical Design Record: One-Day FuXi-S2S Validated Website Prototype
+
+> **Historical status:** This document records the scope and decisions for the
+> original 28 July 2026 one-day prototype. It is not the current operations
+> plan or roadmap. The rolling archive, Wednesday/Saturday automation, delayed
+> ERA5 watcher, and guarded deployment workflow described as future work below
+> have since been implemented. See [README.md](README.md),
+> [automation/README.md](automation/README.md), and
+> [deployment/README.md](deployment/README.md) for the current system.
 
 ## Goal
 
@@ -153,7 +161,10 @@ without weakening the original India validation case.
   repository documentation and source code.
 - Preserve the validated India product under a separate navigation route.
 
-## Next milestones
+## Historical next milestones (superseded)
+
+The following list is retained to show the original prototype handoff. It does
+not describe the current implementation status.
 
 1. Build a full-year 2002–2021 FuXi climatology.
 2. Add date-driven GFS/FuXi automation.

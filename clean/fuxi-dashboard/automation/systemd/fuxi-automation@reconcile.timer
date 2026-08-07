@@ -1,0 +1,11 @@
+[Unit]
+Description=Reconcile FuXi compute and publication state
+
+[Timer]
+OnCalendar=*-*-* *:0/10:00 UTC
+Persistent=true
+AccuracySec=30s
+Unit=fuxi-automation@reconcile.service
+
+[Install]
+WantedBy=timers.target

@@ -1,12 +1,19 @@
 # S2S Research
 
 A static, source-aware India subseasonal research forecast interface with a
-separate global viewer in beta. India is the default page. It separates
+separate dated Global Demo. India is the default page. It separates
 near-real-time GFS-proxy initializations from delayed ERA5 reference
 initializations, exposes the available issue dates and ensemble sizes, and
 provides compact issue-level downloads.
 
-The global beta viewer animates 42 daily ensemble-mean fields for
+The **Models** page separates the model powering current guidance from models
+used only in historical research. FuXi-S2S supplies the published forecast
+maps. NeuralGCM is represented as a 2020–2025, 10-member historical
+precipitation benchmark; it is not presented as a live forecast source and no
+unsupported NeuralGCM 2 m temperature product is implied.
+
+The dated Global Demo animates a pinned 28 July 2026 set of 42 daily
+ensemble-mean fields for
 precipitation, 2 m temperature, 500 hPa geopotential height, 850 hPa wind,
 mean sea-level pressure, sea-surface temperature, outgoing longwave radiation,
 and total-column water vapour.
@@ -46,11 +53,12 @@ respective owners, and are not covered by any source-code licence for this
 prototype. The web interface itself retains the neutral S2S Research identity.
 
 The India anomalies use a calendar-interpolated, lead-matched FuXi 2002–2021
-native reforecast climatology. They are not IMD or IMERG anomalies. The standardized
-FuXi climatology and audited IMERG Final climatology are currently
-season-limited; both cover this issue, while full-year automation remains a
-pipeline milestone. The India climatology does not extend beyond its 27 × 27
-grid. The global viewer uses a separate exact-28-July, lead-matched 2002–2021
+native reforecast climatology. They are not IMD or IMERG anomalies. The
+validated native climatology currently covers JJAS initialization slots.
+Outside that window, year-round automation publishes only raw weekly rainfall
+and mean temperature; anomalies and regional probabilities are withheld. The
+India climatology does not extend beyond its 27 × 27 grid. The global viewer
+uses a separate exact-28-July, lead-matched 2002–2021
 model climatology for
 precipitation, 2 m temperature, and Z500 anomalies on the full global grid.
 
@@ -100,21 +108,22 @@ The India startup path uses `india-map-geography.json`, a compact,
 pre-projected display derivative of those same checked geography files. It
 preserves the displayed boundaries while avoiding the full global geography
 download and thousands of per-cell SVG nodes. Global metadata and forecast
-fields are loaded only when the Global Beta route is opened.
+fields are loaded only when the dated Global Demo route is opened.
 
 The India forecast JSON stores latitude and longitude vectors, a support mask,
 six week records, and flattened row-major fields. Every displayed field
 contains exactly `latitude.length × longitude.length` finite values.
 
 Source-aware packages live under
-`public/data/forecasts/{gfs,era5}/YYYYMMDD.json`. Each issue links to its compact
-web JSON and a four-page PDF briefing under
-`public/downloads/<source>/YYYYMMDD/`. The public download tree contains PDFs
-only; NetCDF, CSV, raw initial conditions, and ensemble-member fields are never
-published.
+`public/data/forecasts/{gfs,era5}/YYYYMMDD.json`. Each issue links to compact
+web JSON, an optional regional-probability package, a product-aware PDF
+briefing, and checksums. The website presents only compact derived fields and
+the PDF download. Raw initial conditions, NetCDF files, and ensemble-member
+fields are never published.
 
-Each PDF contains four product pages with a 2 × 2 Weeks 1–4 map layout. The
-interactive website retains all six forecast weeks for exploratory research.
+JJAS PDFs contain four product pages; raw-only out-of-season PDFs contain two.
+Each page uses a 2 × 2 Weeks 1–4 map layout. The interactive website retains all
+six forecast weeks for exploratory research.
 
 The India presentation follows the supplied four-panel PDF structure: one
 shared fixed legend, exact reference colour levels, surrounding-country and
@@ -126,15 +135,23 @@ The site has no backend. Hash navigation keeps the GitHub Pages deployment
 portable, and a failed validation status blocks forecast rendering while
 the scientific checks remain internal to the publication workflow.
 
+## Automation
+
+The production scheduler, clean export/publish bridge, private-state contract,
+dry-run procedure, alert setup, and reviewed cron/systemd examples are documented in
+[automation/README.md](automation/README.md). No schedule is installed merely
+by cloning this repository.
+
 ## Deployment
 
-The repository-root `.github/workflows/deploy-fuxi-dashboard.yml` workflow
-builds and deploys the static site on dashboard changes pushed to `main`.
-During the build it stamps the exact `GITHUB_SHA` into
+The repository-root `.github/workflows/deploy-fuxi-dashboard.yml` builds and deploys the static site on
+push to `main`. During the build it stamps the exact `GITHUB_SHA` into
 `public/data/manifest.json`; this avoids the impossible self-referential task
 of committing a file containing its own commit hash.
 
-See [PLAN.md](PLAN.md) for the complete prototype contract and next steps.
+See [PLAN.md](PLAN.md) for the historical one-day prototype design record.
+Current automation and release procedures are documented in the Automation
+and Deployment sections above.
 
 Global geography is derived from the public-domain Natural Earth 1:110m
 administrative boundary dataset.

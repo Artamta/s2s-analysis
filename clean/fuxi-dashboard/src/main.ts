@@ -12,11 +12,23 @@ import type {
   ValidationData,
   WorldCountriesData,
 } from "./types";
+import {
+  checksumVersionedPath,
+  currentGfsIssue,
+  findIssue,
+  issueChecksum,
+  issueHasRegionalOutlook,
+} from "./lib/catalog";
 
-type Route = "forecast" | "india" | "outlook";
+type Route = "forecast" | "india" | "outlook" | "archive" | "models";
 
-const ROUTES = new Set<Route>(["forecast", "india", "outlook"]);
-const PUBLIC_DATA_VERSION = "20260802-regional1";
+const ROUTES = new Set<Route>([
+  "forecast",
+  "india",
+  "outlook",
+  "archive",
+  "models",
+]);
 let routeCleanup: (() => void) | undefined;
 
 function currentRoute(): Route {
@@ -27,11 +39,8 @@ function currentRoute(): Route {
   return ROUTES.has(hash) ? hash : "india";
 }
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const separator = path.includes("?") ? "&" : "?";
-  const response = await fetch(
-    `${path}${separator}v=${encodeURIComponent(PUBLIC_DATA_VERSION)}`,
-  );
+async function fetchJson<T>(path: string, cache?: RequestCache): Promise<T> {
+  const response = await fetch(path, cache ? { cache } : undefined);
   if (!response.ok) {
     throw new Error(`${path} returned ${response.status}`);
   }
@@ -159,7 +168,16 @@ async function fetchGlobalData(
 }
 
 async function loadData(): Promise<AppData> {
-  if (currentRoute() === "forecast") {
+  const route = currentRoute();
+  if (route === "models") return {};
+
+  if (route === "archive") {
+    return {
+      index: await fetchJson<IssueIndexData>("./data/index.json", "no-store"),
+    };
+  }
+
+  if (route === "forecast") {
     const [globalMetadata, world, indiaAdmin] = await Promise.all([
       fetchJson<GlobalMetadata>("./data/global/metadata.json"),
       fetchJson<WorldCountriesData>("./data/world-countries.geojson"),
@@ -169,25 +187,31 @@ async function loadData(): Promise<AppData> {
     return { global, world, indiaAdmin };
   }
 
-  const index = await fetchJson<IssueIndexData>("./data/index.json");
+  const index = await fetchJson<IssueIndexData>("./data/index.json", "no-store");
   const parameters = new URLSearchParams(window.location.search);
-  const requestedSource = parameters.get("source") ?? index.default_source;
-  const source =
-    index.initial_condition_sources.find((item) => item.id === requestedSource) ??
-    index.initial_condition_sources.find((item) => item.id === index.default_source);
-  if (!source) throw new Error("No initial-condition source is available");
-  const requestedIssue = parameters.get("issue") ?? source.default_issue;
-  const issue =
-    source.issues.find((item) => item.id === requestedIssue) ??
-    source.issues.find((item) => item.id === source.default_issue);
-  if (!issue) throw new Error(`${source.label} has no available forecast issue`);
+  const selection = findIssue(
+    index,
+    parameters.get("source"),
+    parameters.get("issue"),
+  );
+  if (!selection) throw new Error("No forecast issue is available");
+  const { source, issue } = selection;
   const regionalPromise: Promise<RegionalOutlookData | undefined> =
-    issue.regional_outlook
-      ? fetchJson<RegionalOutlookData>(`./data/${issue.regional_outlook}`)
+    issueHasRegionalOutlook(index, issue)
+      ? fetchJson<RegionalOutlookData>(checksumVersionedPath(
+        `./data/${issue.regional_outlook}`,
+        issueChecksum(issue, "regional_outlook"),
+      ))
       : Promise.resolve(undefined);
   const [forecast, validation, indiaGeography, regionalOutlook] = await Promise.all([
-    fetchJson<ForecastData>(`./data/${issue.forecast}`),
-    fetchJson<ValidationData>("./data/validation.json"),
+    fetchJson<ForecastData>(checksumVersionedPath(
+      `./data/${issue.forecast}`,
+      issueChecksum(issue, "forecast"),
+    )),
+    fetchJson<ValidationData>(checksumVersionedPath(
+      issue.validation ? `./data/${issue.validation}` : "./data/validation.json",
+      issueChecksum(issue, "validation"),
+    ), issue.validation ? undefined : "no-store"),
     fetchJson<IndiaMapGeographyData>("./data/india-map-geography.json"),
     regionalPromise,
   ]);
@@ -208,22 +232,57 @@ function shell(): string {
         </span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="./#india" data-route="india">India Forecasts</a>
-        <a href="./#outlook" data-route="outlook">Regional Outlook</a>
-        <a href="./?view=global#forecast" data-route="forecast">Global <small>Beta</small></a>
+        <a href="./#india" data-route="india">Forecast</a>
+        <a href="./#outlook" data-route="outlook">Regional</a>
+        <a href="./?view=global#forecast" data-route="forecast">Global Demo</a>
+        <a href="./#archive" data-route="archive">Archive</a>
+        <a href="./#models" data-route="models">Models <small>S2S Lab</small></a>
       </nav>
-      <div class="header-status">
-        <span class="live-dot" aria-hidden="true"></span>
-        <span>Research prototype</span>
+      <div class="header-partner">
+        <a
+          class="institution-lockup"
+          href="https://scdlds.ashoka.edu.in/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Safexpress Centre for Data, Learning and Decision Sciences at Ashoka University"
+        >
+          <img
+            class="institution-lockup__centre"
+            src="./brand/scdlds-centre.png"
+            alt="Safexpress Centre for Data, Learning and Decision Sciences"
+          />
+          <span aria-hidden="true"></span>
+          <img
+            class="institution-lockup__ashoka"
+            src="./brand/ashoka-university.png"
+            alt="Ashoka University"
+          />
+        </a>
+        <div class="header-status">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="header-status__label">Research prototype</span>
+        </div>
       </div>
     </header>
     <main id="content" tabindex="-1"></main>
-    <footer class="site-footer">
-      <div>
+    <footer class="site-footer" aria-label="About this forecast service">
+      <div class="site-footer__brand">
         <strong>S2S Research</strong>
-        <span>Experimental subseasonal forecast guidance</span>
+        <span>Safexpress Centre for Data, Learning and Decision Sciences · Ashoka University</span>
+        <p>Experimental research guidance · Not an operational forecast, warning, or decision trigger.</p>
       </div>
-      <p>Research use only · Not an operational weather forecast or warning</p>
+      <div class="site-footer__section" id="about">
+        <strong>About & methods</strong>
+        <p>FuXi-S2S ensemble output is summarized as weekly India fields. Anomalies and raw tercile probabilities appear only when a seasonally matched model climatology is available.</p>
+      </div>
+      <div class="site-footer__section" id="schedule">
+        <strong>Update schedule</strong>
+        <p>GFS-proxy runs are targeted every Wednesday and Saturday after source-data checks. ERA5 is a delayed reference, normally 5–7 days behind.</p>
+      </div>
+      <div class="site-footer__section" id="limitations">
+        <strong>Limitations & contact</strong>
+        <p>Long leads describe broad ensemble tendencies, not local weather. Public contact: <a href="mailto:raj.ayush@students.iiserpune.ac.in">raj.ayush@students.iiserpune.ac.in</a> · <a href="https://scdlds.ashoka.edu.in/" target="_blank" rel="noreferrer">Centre website ↗</a></p>
+      </div>
     </footer>
   `;
 }
@@ -244,13 +303,36 @@ async function renderRoute(data: AppData): Promise<void> {
   document.body.classList.toggle("global-route", route === "forecast");
   document.body.classList.toggle("india-route", route === "india");
   document.body.classList.toggle("outlook-route", route === "outlook");
+  document.body.classList.toggle("archive-route", route === "archive");
+  document.body.classList.toggle("models-route", route === "models");
   const statusDate = route === "forecast"
     ? data.global!.metadata.issue.initialization
-    : data.forecast!.issue.initialization;
-  const statusLabel = new Intl.DateTimeFormat("en-IN", {
-    day: "2-digit", month: "short", year: "numeric", timeZone: "UTC",
-  }).format(new Date(statusDate));
-  document.querySelector<HTMLElement>(".header-status span:last-child")!.textContent = statusLabel;
+    : data.forecast?.issue.initialization ??
+      (data.index ? currentGfsIssue(data.index)?.initialization : undefined);
+  const statusLabel = statusDate
+    ? new Intl.DateTimeFormat("en-IN", {
+      day: "2-digit", month: "short", year: "numeric", timeZone: "UTC",
+    }).format(new Date(statusDate))
+    : route === "archive" ? "Forecast archive" : "Research models";
+  document.querySelector<HTMLElement>(".header-status__label")!.textContent = statusLabel;
+  const regionalLink = document.querySelector<HTMLAnchorElement>(
+    '.site-nav a[data-route="outlook"]',
+  );
+  if (regionalLink && data.index) {
+    const selected = data.forecast
+      ? findIssue(
+        data.index,
+        data.forecast.issue.initial_condition_source.id,
+        data.forecast.issue.initialization.slice(0, 10).replaceAll("-", ""),
+      )
+      : undefined;
+    const issue = selected?.issue ?? currentGfsIssue(data.index);
+    regionalLink.hidden = Boolean(issue) && !issueHasRegionalOutlook(
+      data.index,
+      issue!,
+      selected ? data.forecast : undefined,
+    );
+  }
   document
     .querySelectorAll<HTMLAnchorElement>(".site-nav a")
     .forEach((link) => {
@@ -271,6 +353,14 @@ async function renderRoute(data: AppData): Promise<void> {
   if (route === "outlook") {
     const { renderOutlookPage } = await import("./pages/outlook");
     renderOutlookPage(content, data);
+  }
+  if (route === "archive") {
+    const { renderArchivePage } = await import("./pages/archive");
+    renderArchivePage(content, data);
+  }
+  if (route === "models") {
+    const { renderModelsPage } = await import("./pages/models");
+    renderModelsPage(content);
   }
   window.scrollTo({ top: 0, behavior: "instant" });
 }
@@ -302,7 +392,11 @@ async function start(): Promise<void> {
         (currentRoute() === "india" || currentRoute() === "outlook") &&
         !data.forecast
       ) {
-        window.location.assign("./#india");
+        window.location.reload();
+        return;
+      }
+      if (currentRoute() === "archive" && !data.index) {
+        window.location.reload();
         return;
       }
       void renderRoute(data).catch(renderLoadFailure);

@@ -1,0 +1,11 @@
+[Unit]
+Description=Check delayed ERA5 availability daily
+
+[Timer]
+OnCalendar=*-*-* 13:05:00 UTC
+Persistent=true
+AccuracySec=1min
+Unit=fuxi-automation@era5-watch.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Check the FuXi GFS schedule every 15 minutes
+
+[Timer]
+# The controller skips all non-Wednesday/Saturday and out-of-window invocations.
+OnCalendar=*-*-* *:0/15:00 UTC
+Persistent=true
+AccuracySec=10s
+Unit=fuxi-automation@gfs-poll.service
+
+[Install]
+WantedBy=timers.target

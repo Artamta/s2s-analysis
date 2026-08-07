@@ -129,7 +129,11 @@ def test_regional_outlooks_use_complete_ensembles_and_locked_terciles() -> None:
     for source in index["initial_condition_sources"]:
         for issue in source["issues"]:
             regional_path = issue.get("regional_outlook")
-            if issue["members"] < 100:
+            capabilities = issue.get("capabilities", {})
+            regional_advertised = capabilities.get(
+                "regional_probabilities", bool(regional_path)
+            )
+            if not regional_advertised:
                 assert regional_path is None
                 continue
             assert regional_path is not None
@@ -172,7 +176,9 @@ def test_regional_outlooks_use_complete_ensembles_and_locked_terciles() -> None:
                             )
                         ) == 100
     expected_count = sum(
-        issue["members"] == 100
+        issue.get("capabilities", {}).get(
+            "regional_probabilities", bool(issue.get("regional_outlook"))
+        )
         for source in index["initial_condition_sources"]
         for issue in source["issues"]
     )
@@ -194,7 +200,9 @@ def test_each_issue_has_one_verified_pdf_download() -> None:
             pdf_path = public_root / downloads["india_pdf"]
             pdf_bytes = pdf_path.read_bytes()
             assert pdf_bytes.startswith(b"%PDF-")
-            assert len(re.findall(rb"/Type /Page\b", pdf_bytes)) == 4
+            assert len(re.findall(rb"/Type /Page\b", pdf_bytes)) == len(
+                forecast["products"]
+            )
             assert pdf_path.stat().st_size < 10_000_000
             assert hashlib.sha256(pdf_bytes).hexdigest() == downloads["india_pdf_sha256"]
 

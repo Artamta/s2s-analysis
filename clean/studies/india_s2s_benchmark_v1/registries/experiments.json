@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "experiments": {
+    "ecmwf": {"id": "physics/ecmwf_operational_2020_2025", "variables": ["tp", "t2m"], "grid_policy": "common_only", "representation": "members"},
+    "ukmo": {"id": "physics/ukmo_operational_2020_2025", "variables": ["tp", "t2m"], "grid_policy": "common_only", "representation": "members"},
+    "cma": {"id": "physics/cma_operational_2020_2025", "variables": ["tp", "t2m"], "grid_policy": "common_only", "representation": "members"},
+    "ncep": {"id": "physics/ncep_operational_2020_2025", "variables": ["tp", "t2m_proxy"], "grid_policy": "common_only", "representation": "members"},
+    "cnrm": {"id": "physics/cnrm_operational_2020_2025", "variables": ["tp", "t2m"], "grid_policy": "common_only", "representation": "members"},
+    "fuxi_s2s": {"id": "model-run/fuxi/fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50", "variables": ["tp", "t2m"], "grid_policy": "common_only", "representation": "members"},
+    "dlesym_v0": {"id": "model-run/dlesym/dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1", "variables": ["tp", "t2m"], "grid_policy": "common_only", "representation": "deterministic"},
+    "dlesym_v1": {"id": "model-run/dlesym/dlesym_v1_era5_t2m_00z_2020_2024_ens4", "variables": ["t2m"], "grid_policy": "common_only", "representation": "members"},
+    "neuralgcm": {"id": "model-run/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10", "variables": ["tp"], "grid_policy": "common_only", "representation": "members"},
+    "fcn3": {"id": "model-run/fcn3/fcn3_v1_t2m_00z_2020_2024_ens3", "variables": ["t2m"], "grid_policy": "common_only", "representation": "members", "known_gap": "2021-03-08"},
+    "erpas": {"id": "provider/erpas_forecast_2023_2025", "variables": ["tp", "tp_india_0p5", "tsfc", "gh"], "grid_policy": "native_india_and_common", "representation": "mean_only"}
+  }
+}

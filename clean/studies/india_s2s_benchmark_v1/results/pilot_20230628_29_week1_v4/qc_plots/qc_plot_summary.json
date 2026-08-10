@@ -1,0 +1,379 @@
+{
+  "automated_checks": {
+    "all_plot_inputs_opened": true,
+    "catalog_finalized": true,
+    "daily_tp_uses_common_valid_time_intersection": true,
+    "noncomparable_temperature_separated": true
+  },
+  "catalog": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/indexes/catalog_pilot_20230628_29_week1_v4_d3ce84adc9f1a7ca.json",
+  "catalog_id": "d3ce84adc9f1a7ca",
+  "files": [
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/00_spatial_support.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/00_spatial_support.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/01_tp_week1_total_common.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/01_tp_week1_total_common.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/01b_tp_matched_6day_total_common.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/01b_tp_matched_6day_total_common.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/02_t2m_week1_mean_common.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/02_t2m_week1_mean_common.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/03_temperature_noncomparable.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/03_temperature_noncomparable.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/04_erpas_tp_native_vs_common.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/04_erpas_tp_native_vs_common.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/05_tp_ensemble_spread.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/05_tp_ensemble_spread.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/06_member_inventory.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/06_member_inventory.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/07_negative_tp_diagnostics.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/07_negative_tp_diagnostics.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/08_erpas_gh_pressure_levels.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/08_erpas_gh_pressure_levels.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/09_valid_time_alignment.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/09_valid_time_alignment.pdf",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/daily_tp_matched_valid_time/tp_valid_2023-06-30.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/daily_tp_matched_valid_time/tp_valid_2023-07-01.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/daily_tp_matched_valid_time/tp_valid_2023-07-02.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/daily_tp_matched_valid_time/tp_valid_2023-07-03.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/daily_tp_matched_valid_time/tp_valid_2023-07-04.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/daily_tp_matched_valid_time/tp_valid_2023-07-05.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/10_tp_india_area_mean_timeseries.png",
+    "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/10_tp_india_area_mean_timeseries.pdf"
+  ],
+  "generated_at": "2026-08-03T20:56:35.688678+00:00",
+  "index": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/QC_PLOT_INDEX.md",
+  "matched_tp_aggregate_valid_times": [
+    "2023-06-30",
+    "2023-07-01",
+    "2023-07-02",
+    "2023-07-03",
+    "2023-07-04",
+    "2023-07-05"
+  ],
+  "matched_tp_valid_times": [
+    "2023-06-30",
+    "2023-07-01",
+    "2023-07-02",
+    "2023-07-03",
+    "2023-07-04",
+    "2023-07-05"
+  ],
+  "member_inventory": [
+    {
+      "label": "ERPAS global \u00b7 gh",
+      "representation": "mean_only",
+      "represented_members": 20,
+      "stored_members": 1,
+      "variable": "gh"
+    },
+    {
+      "label": "CMA \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 4,
+      "stored_members": 4,
+      "variable": "t2m"
+    },
+    {
+      "label": "CNRM \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 25,
+      "stored_members": 25,
+      "variable": "t2m"
+    },
+    {
+      "label": "DLESyM-v0 \u00b7 t2m",
+      "representation": "deterministic",
+      "represented_members": 1,
+      "stored_members": 1,
+      "variable": "t2m"
+    },
+    {
+      "label": "DLESyM-v1 \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 4,
+      "stored_members": 4,
+      "variable": "t2m"
+    },
+    {
+      "label": "ECMWF \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 101,
+      "stored_members": 101,
+      "variable": "t2m"
+    },
+    {
+      "label": "FCN3 \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 3,
+      "stored_members": 3,
+      "variable": "t2m"
+    },
+    {
+      "label": "FuXi-S2S \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 50,
+      "stored_members": 50,
+      "variable": "t2m"
+    },
+    {
+      "label": "UKMO \u00b7 t2m",
+      "representation": "members",
+      "represented_members": 4,
+      "stored_members": 4,
+      "variable": "t2m"
+    },
+    {
+      "label": "NCEP \u00b7 t2m_proxy",
+      "representation": "members",
+      "represented_members": 16,
+      "stored_members": 16,
+      "variable": "t2m_proxy"
+    },
+    {
+      "label": "CMA \u00b7 tp",
+      "representation": "members",
+      "represented_members": 4,
+      "stored_members": 4,
+      "variable": "tp"
+    },
+    {
+      "label": "CNRM \u00b7 tp",
+      "representation": "members",
+      "represented_members": 25,
+      "stored_members": 25,
+      "variable": "tp"
+    },
+    {
+      "label": "DLESyM-v0 \u00b7 tp",
+      "representation": "deterministic",
+      "represented_members": 1,
+      "stored_members": 1,
+      "variable": "tp"
+    },
+    {
+      "label": "ECMWF \u00b7 tp",
+      "representation": "members",
+      "represented_members": 101,
+      "stored_members": 101,
+      "variable": "tp"
+    },
+    {
+      "label": "ERPAS 0.5\u00b0 sensitivity \u00b7 tp",
+      "representation": "mean_only",
+      "represented_members": 20,
+      "stored_members": 1,
+      "variable": "tp"
+    },
+    {
+      "label": "ERPAS global \u00b7 tp",
+      "representation": "mean_only",
+      "represented_members": 20,
+      "stored_members": 1,
+      "variable": "tp"
+    },
+    {
+      "label": "FuXi-S2S \u00b7 tp",
+      "representation": "members",
+      "represented_members": 50,
+      "stored_members": 50,
+      "variable": "tp"
+    },
+    {
+      "label": "NCEP \u00b7 tp",
+      "representation": "members",
+      "represented_members": 16,
+      "stored_members": 16,
+      "variable": "tp"
+    },
+    {
+      "label": "NeuralGCM \u00b7 tp",
+      "representation": "members",
+      "represented_members": 10,
+      "stored_members": 10,
+      "variable": "tp"
+    },
+    {
+      "label": "UKMO \u00b7 tp",
+      "representation": "members",
+      "represented_members": 4,
+      "stored_members": 4,
+      "variable": "tp"
+    },
+    {
+      "label": "ERPAS global \u00b7 tsfc",
+      "representation": "mean_only",
+      "represented_members": 20,
+      "stored_members": 1,
+      "variable": "tsfc"
+    }
+  ],
+  "negative_tp": [
+    {
+      "count": 25,
+      "label": "CMA",
+      "minimum_mm_day": -0.0078125
+    },
+    {
+      "count": 395,
+      "label": "CNRM",
+      "minimum_mm_day": -0.00390625
+    },
+    {
+      "count": 0,
+      "label": "DLESyM-v0",
+      "minimum_mm_day": 0.0031064474023878574
+    },
+    {
+      "count": 3243,
+      "label": "ECMWF",
+      "minimum_mm_day": -0.015625
+    },
+    {
+      "count": 0,
+      "label": "ERPAS global",
+      "minimum_mm_day": 0.0
+    },
+    {
+      "count": 0,
+      "label": "FuXi-S2S",
+      "minimum_mm_day": 0.0
+    },
+    {
+      "count": 317,
+      "label": "NCEP",
+      "minimum_mm_day": -0.0078125
+    },
+    {
+      "count": 0,
+      "label": "NeuralGCM",
+      "minimum_mm_day": 0.0
+    },
+    {
+      "count": 18,
+      "label": "UKMO",
+      "minimum_mm_day": -1.52587890625e-05
+    }
+  ],
+  "pilot_id": "pilot_20230628_29_week1_v4",
+  "plot_count_pdf": 12,
+  "plot_count_png": 18,
+  "purpose": "visual preprocessing QC only; not model ranking",
+  "schema_version": 1,
+  "shared_plot_limits": {
+    "t2m_weekly_mean_degc": [
+      0.7945834845304489,
+      37.36068939208984
+    ],
+    "tp_matched_period_total_mm": [
+      0.0,
+      223.2867004394531
+    ],
+    "tp_weekly_total_mm": [
+      0.0,
+      257.5122616577148
+    ]
+  },
+  "spatial_support": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/spatial/spatial_support.zarr",
+  "status": "generated_requires_human_review",
+  "summary": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/pilots/pilot_20230628_29_week1_v4/qc_plots/qc_plot_summary.json",
+  "valid_times_by_model": {
+    "CMA": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "CNRM": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "DLESyM-v0": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "DLESyM-v1": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "ECMWF": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "ERPAS global": [
+      "2023-06-29",
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05"
+    ],
+    "FCN3": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "FuXi-S2S": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "NCEP": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "NeuralGCM": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ],
+    "UKMO": [
+      "2023-06-30",
+      "2023-07-01",
+      "2023-07-02",
+      "2023-07-03",
+      "2023-07-04",
+      "2023-07-05",
+      "2023-07-06"
+    ]
+  }
+}

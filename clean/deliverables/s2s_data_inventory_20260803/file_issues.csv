@@ -1,0 +1,5 @@
+experiment_id,model,initialization_date,variable,path,status,issues,open_qc
+model-run/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50,fuxi,2023-06-05,"tp,t2m",/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230605.nc,missing,declared_path_missing,not_run
+model-run/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50,fuxi,2023-06-08,"tp,t2m",/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230608.nc,missing,declared_path_missing,not_run
+model-run/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50,fuxi,2023-06-12,"tp,t2m",/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230612.nc,missing,declared_path_missing,not_run
+model-run/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50,fuxi,2023-06-15,"tp,t2m",/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/fuxi_s2s_twice_weekly_2020_2025_ens50/forecasts/annual2023/20230615.nc,missing,declared_path_missing,not_run

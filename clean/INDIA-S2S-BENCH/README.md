@@ -12,8 +12,10 @@ predeclared ACC gate against the validation-selected individual system because
 that interval is -0.002 to 0.093. The manuscript therefore reports a bounded,
 lead- and region-dependent gain rather than a universal headline improvement.
 
-The compiled five-page draft is `paper/submission_draft.pdf`; its sources,
-generated tables, and submission hashes are under `paper/`.
+The single canonical manuscript is `paper/main.tex`, compiled to
+`paper/main.pdf`. Git history records revisions; do not create parallel
+version-named drafts. The writing and experiment decisions are in
+`paper/WRITING_HANDOFF.md` and `EXPERIMENT_REGISTER.md`.
 
 The confirmatory contract is frozen in `protocol.json`. The runner uses seven
 forecast systems on the common 1.5 degree India grid, IMD rainfall as truth, a
@@ -44,10 +46,11 @@ PYTHONPATH=src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
   /home/raj.ayush/.conda/envs/weather_forecast/bin/python -m pytest -q tests
 ```
 
-Regenerate manuscript numbers only after a passing audit:
+Regenerate manuscript numbers, tables, and figures only after a passing audit:
 
 ```bash
-PYTHONPATH=src /home/raj.ayush/.conda/envs/weather_forecast/bin/python make_paper.py
+MPLCONFIGDIR=/tmp/india-s2s-mpl PYTHONPATH=src \
+  /home/raj.ayush/.conda/envs/weather_forecast/bin/python make_paper.py
 ```
 
 ## Output contract
@@ -68,3 +71,9 @@ The neural FuXi correction is a complementary method, not a stage after the
 multi-model mixer. Its existing frozen evaluator uses a different valid-day
 alignment (+0...+6), so it is deliberately excluded from the common-date
 headline result until retrained with the +1...+7 contract.
+
+The current paper is intentionally precipitation-only and JJAS-specific.
+Temperature and multi-season extensions are deferred. The smallest useful
+pre-submission additions are an IMD climatology error reference and one
+additive bias-corrected equal-weight baseline; because 2025 has already been
+opened, both must be labelled exploratory.

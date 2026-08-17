@@ -1,49 +1,131 @@
-\section{Supplementary protocol and diagnostics}
+\section{Supplementary material}
 
-\subsection{Complete coverage}
+All reported appendix scores use IMD as the observational reference and the
+same dates, grid, anomaly normal, and fractional-area support as the main
+paper. No IMERG or temperature result is included in the current claims.
 
-The common initialization counts are 35 in each of 2020--2023, 30 in 2024,
-and 35 in 2025. Exact ISO dates are stored in
-\texttt{coverage.csv}; per-model availability and source metadata hashes are
-stored in \texttt{preflight/coverage\_preflight.csv} and
-\texttt{preflight/preflight.json}. The metadata-only preflight records
-\texttt{forecast\_values\_read=false}.
+\subsection{Forecast inventory and coverage}
 
-\subsection{Claim gates}
+\begin{table*}[h]
+\centering\small
+\caption{Forecast cohort. The 2024 common intersection contains 30 cases;
+2020--2023 and 2025 contain 35 per year. Operational ensemble size changes
+where shown do not alter the ensemble-mean evaluation contract.}
+\label{tab:inventory}
+\resizebox{0.78\textwidth}{!}{\input{tables/inventory}}
+\end{table*}
 
-The headline requires positive lower 95\% ACC endpoints against both equal
-weighting and the validation-selected individual system, a positive
-forecast-only versus location-only endpoint, at most 5\% relative RMSE
-regression, at most 0.5 mm day$^{-1}$ absolute-bias regression, and positive
-regional ACC deltas in at least three of four IMD regions. All pass except the
-selected-model ACC endpoint, -0.002. The machine-readable decision is in
-\texttt{gate\_report.json}.
+The five missing 2024 common initializations are June 6, 10, 13, 17, and
+August 5. Exact ISO dates are stored in \texttt{coverage.csv}; per-system
+availability, coordinates, units, and source metadata hashes are stored in
+\texttt{preflight/coverage\_preflight.csv} and
+\texttt{preflight/preflight.json}. The metadata-only coverage preflight
+records \texttt{forecast\_values\_read=false}. DLESyM and NeuralGCM 2025 files
+enter through native-file adapters after the same coordinate, unit, and
+42-period completeness checks as the standardized stores.
 
-\subsection{Regional intervals}
+\subsection{All systems and all lead weeks}
+
+\begin{table*}[h]
+\centering\scriptsize
+\caption{Complete 2025 national score table. RMSE, MAE, and bias are in mm
+day$^{-1}$; wet-area error is forecast minus observed weighted fraction at
+1 mm day$^{-1}$. Negative support is the area-weighted fraction of evaluated
+support below zero under the no-clipping policy.}
+\label{tab:all-methods}
+\resizebox{\textwidth}{!}{\input{tables/all_methods}}
+\end{table*}
+
+\begin{figure*}[h]
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendix_all_models_imd.pdf}
+  \caption{IMD-referenced 2025 national comparison for every base system,
+  equal weighting, and full PiggyCast at Weeks 1--6. The defensible pattern is
+  rapid, heterogeneous skill decay rather than a blanket statement that the
+  systems are unskillful: several Week-1 forecasts have useful anomaly-pattern
+  agreement, while Weeks 5--6 are consistently difficult.}
+  \label{fig:all-models}
+\end{figure*}
+
+Figure~\ref{fig:all-models} replaces a visually crowded multi-line plot. It
+also keeps ACC and RMSE together: a method can reduce rainfall-amplitude error
+without improving the spatial anomaly pattern, as full PiggyCast does at the
+longest leads.
+
+\subsection{Regional and lead-wise behavior}
 
 \begin{table}[h]
 \centering\small
-\caption{Full PiggyCast minus equal-weight regional ACC.}
+\caption{Full PiggyCast minus equal-weight regional ACC, averaged across
+initializations and leads.}
+\label{tab:regions}
 \resizebox{\columnwidth}{!}{\input{tables/regions}}
 \end{table}
 
+The lead-by-region diagnostic is shown in Figure~\ref{fig:effects} of the main
+paper so that local lead-time failures are not hidden in the supplement.
+
+\subsection{Claim gates and uncertainty}
+
+The pre-specified headline requires positive lower 95\% ACC endpoints against
+both equal weighting and the per-lead 2024-RMSE-selected baseline, a positive
+forecast-only versus location/calendar-only endpoint, at most 5\% relative
+RMSE regression, at most 0.5 mm day$^{-1}$ absolute-bias regression, and
+positive regional ACC point differences in at least three of four regions.
+All checks pass except the selected-baseline ACC endpoint. The regional point
+gate should not be read as evidence of uniform benefit: only northwest and
+south intervals exclude zero positively, while east/northeast excludes zero
+negatively. The machine-readable decision is in
+\texttt{gate\_report.json}.
+
+\begin{table}[h]
+\centering\small
+\caption{95\% paired ACC intervals under alternative moving-block lengths.
+Point effects are 0.040 (full minus equal) and 0.052 (full minus per-lead
+selected) at every length.}
+\label{tab:bootstrap}
+\resizebox{\columnwidth}{!}{\input{tables/bootstrap}}
+\end{table}
+
+The equal-weight result is stable to the tested block lengths. The stronger
+selected-baseline comparison is sensitive at its lower endpoint, which
+motivates the conservative main-text interpretation.
+
+\subsection{Preprocessing and quality control}
+
+Daily precipitation is expressed as mm day$^{-1}$ before weekly averaging.
+Each week requires seven finite daily periods; partial weeks are rejected.
+Latitude order, longitude convention, initialization timestamps, accumulation
+period endpoints, and ensemble dimensions are checked before scoring. The
+same IMD observation fraction and fractional polygon overlap enter every
+method's area weights. ACC is undefined for a case with zero weighted spatial
+variance; such a case is recorded as missing rather than replaced by zero.
+
+Small finite negative increments created when accumulated precipitation is
+differenced are retained. Full PiggyCast has
+\FullNegativePercent{}\% negative area-weighted national support overall. This
+choice avoids a test-informed clipping rule and exposes a calibration issue
+for future work.
+
 \subsection{Hyperparameters and compute}
 
-XGBoost uses squared-error loss, histogram trees, CPU execution, maximum depth
-4, minimum child weight 5, learning rate 0.03, row subsampling 0.8, column
-subsampling 0.9, $L_2$ regularization 1, and seed 42. The maximum tree count is
-600 with patience 50. The exact selected count, feature names, and row counts
-for every lead/variant are in \texttt{fit\_metadata.json}. Runtime and energy
-were not instrumented reliably enough for a numerical emissions claim.
+XGBoost uses squared-error loss, histogram trees on CPU, maximum depth 4,
+minimum child weight 5, learning rate 0.03, row subsampling 0.8, column
+subsampling 0.9, $L_2$ regularization 1, seed 42, and at most 600 trees with
+patience 50. Exact selected tree counts, feature names, weighted row counts,
+and serialized model paths for all 18 lead--variant combinations are stored in
+\texttt{fit\_metadata.json}. Runtime and energy were not instrumented
+reliably, so no numerical efficiency or emissions claim is made.
 
 \subsection{Neural correction exclusion}
 
 The available FuXi neural-correction control defines Week 1 as initialization
-through initialization+6 days, while every benchmark forecast defines daily
-lead 1 as the accumulation interval ending initialization+1 day. Applying its
-saved model or scores here would shift labels by one day. It is excluded from
-the common-date result and may only be revisited after training under the
-frozen +1--+42 endpoint contract.
+through initialization+6 days, while this benchmark defines daily lead 1 as
+the accumulation interval ending initialization+1 day. Using its saved model
+or scores would shift every weekly label by one day. It is therefore excluded
+from the common-date result and can be revisited only after training under the
++1 through +42 endpoint contract. It would be a complementary alternative,
+not a correction applied after PiggyCast.
 
 \subsection{Reproduction commands}
 
@@ -51,10 +133,12 @@ frozen +1--+42 endpoint contract.
 PYTHONPATH=src python run.py preflight
 PYTHONPATH=src python run.py run
 PYTHONPATH=src python run.py audit
-PYTHONPATH=src python make_paper.py
+MPLCONFIGDIR=/tmp/india-s2s-mpl \
+  PYTHONPATH=src python make_paper.py
 \end{verbatim}
 
-The runner refuses an existing output directory. A repeated test must use a
-new path and is a distinct confirmatory run, never a replacement chosen by
-score. SHA256 values for every saved artifact appear in
-\texttt{manifest.json}.
+The runner refuses an existing output directory. A repeat must use a new path
+and is a distinct evaluation run, never a replacement selected by score.
+SHA256 values for saved scientific artifacts appear in
+\texttt{manifest.json}; manuscript-source and PDF hashes appear in
+\texttt{submission\_manifest.json}.

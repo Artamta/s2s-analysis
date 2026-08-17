@@ -5,252 +5,286 @@
 \hypersetup{colorlinks=true,allcolors=blue!55!black}
 \input{generated_numbers}
 
-\title{Lightweight Post-processing of Multi-model Subseasonal Rainfall Forecasts over India: A Leakage-Safe 2025 Benchmark}
+\title{When Does Lightweight Post-processing Help?\\
+A Seven-system JJAS Rainfall Benchmark over India}
 \author{Anonymous authors}
 \date{}
 
 \begin{document}
+\raggedbottom
 \maketitle
 
 \begin{abstract}
-Reliable weekly rainfall guidance at subseasonal leads can support climate
-adaptation decisions, yet heterogeneous model calendars, grids, climatologies,
-and test reuse make regional comparisons fragile. We construct a valid-date-
-aligned benchmark of seven physics, data-driven, and hybrid systems over India
-for JJAS initializations and lead Weeks 1--6. All forecasts and India
-Meteorological Department (IMD) observations use one 1.5-degree grid, one
-1991--2019 IMD climatology, and identical fractional-area support. We freeze
-training (2020--2023), validation (2024), metrics, hyperparameters, and
-ablations before opening \,\TestCases{} common 2025 initializations. An
-XGBoost adaptation of PiggyCast raises mean case-level spatial ACC from
-\EqualACC{} for equal weighting to \FullACC{} (paired difference
-\FullEqualEffect{}, 95\% moving-block interval [\FullEqualLow{},
-\FullEqualHigh{}]) and reduces RMSE from \EqualRMSE{} to \FullRMSE{} mm
-day$^{-1}$. Forecast-conditioned features substantially outperform a
-location/calendar-only ablation. However, the ACC difference from the
-validation-selected individual system is \FullSelectedEffect{}
-[\FullSelectedLow{}, \FullSelectedHigh{}], failing our predeclared headline
-gate; ACC also deteriorates relative to equal weighting at Weeks 5--6 and in
-east/northeast India. Lightweight mixing is therefore promising but not
-uniformly superior. The case-level metrics, uncertainty intervals, frozen
-protocol, trained models, and hashes make this bounded result fully auditable.
+Weekly rainfall guidance at subseasonal leads could support climate-adaptation
+planning, but comparisons across forecasting systems are easily confounded by
+initialization calendars, valid dates, grids, and climatologies. We align seven
+physics, data-driven, and hybrid systems on one 1.5-degree India grid and
+evaluate JJAS initializations at lead Weeks 1--6 against India Meteorological
+Department (IMD) rainfall. Initial fitting uses 2020--2023; 2024 selects tree
+counts; final models refit through 2024; and no 2025 data enter fitting or
+selection. A compact
+XGBoost adaptation of PiggyCast raises mean case-level spatial anomaly
+correlation from \EqualACC{} for the equal-weight mean to \FullACC{}
+(paired difference \FullEqualEffect{}, 95\% moving-block interval
+[\FullEqualLow{}, \FullEqualHigh{}]) and reduces RMSE from \EqualRMSE{} to
+\FullRMSE{} mm day$^{-1}$. The result is deliberately bounded:
+the interval against a per-lead 2024-RMSE-selected individual baseline
+overlaps zero; ACC gains occur at Weeks 1--4 but not Weeks 5--6; and a
+positive national mean hides a clear loss in east/northeast India.
+Forecast-conditioned mixing therefore improves a simple ensemble baseline,
+but is not uniformly superior. We release case-level scores, coverage,
+trained post-processors, uncertainty intervals, and provenance hashes so every
+reported numerical claim is auditable.
 \end{abstract}
+
+\noindent\textbf{Keywords:} subseasonal forecasting; Indian monsoon;
+precipitation; multi-model ensemble; post-processing
 
 \section{Introduction}
 
-The two-to-six-week range bridges weather prediction and seasonal outlooks,
-with potential value for water management, agriculture, heat and flood
-preparedness, and other adaptation decisions. The WWRP/WCRP S2S database made
-multi-centre forecast comparison possible \citep{vitart2017s2s}, while recent
-AI systems such as FuXi-S2S \citep{chen2024fuxi}, NeuralGCM
-\citep{kochkov2024neuralgcm}, and DLESyM \citep{cresswellclay2024dlesym}
-expand the set of forecast architectures. Diversity alone does not guarantee
-that a multi-model mean is optimal, particularly for monsoon rainfall and
-spatially heterogeneous model biases.
+The two-to-six-week range sits between weather prediction and seasonal
+outlooks. Skillful weekly rainfall guidance could inform agricultural
+advisories, reservoir preparedness, and flood-readiness decisions, but those
+uses require evidence at the relevant lead, season, and region. The
+WWRP/WCRP S2S database enabled multi-centre comparison
+\citep{vitart2017s2s}; recent AI systems such as FuXi-S2S
+\citep{chen2024fuxi}, NeuralGCM \citep{kochkov2024neuralgcm}, and DLESyM
+\citep{cresswellclay2024dlesym} add architectural diversity. It remains
+unclear whether a small post-processor can exploit these heterogeneous
+forecasts for Indian monsoon rainfall without retraining the base systems.
 
-We ask a deliberately narrow question: can data-efficient post-processing
-improve weekly India rainfall forecasts without retraining the underlying
-systems? Our contributions are: (i) a seven-system benchmark with exact
-initialization and valid-date alignment; (ii) a regional adaptation of
-PiggyCast \citep{kimani2025piggycast} using forecast-conditioned gradient-
-boosted trees; and (iii) a confirmatory 2025 evaluation with predeclared claim
-gates and paired uncertainty. The outcome is useful precisely because it is
-not uniformly positive: adaptive mixing clears the equal-weight and feature-
-ablation gates but not the stronger validation-selected-model gate.
+Regional benchmark claims are fragile when forecasts do not share the same
+initializations, valid-day endpoints, spatial support, or anomaly reference.
+Test-year reuse can further turn an apparent gain into model selection. We
+therefore ask: \emph{When does lightweight mixing improve common-grid JJAS
+rainfall guidance over India?}
+
+We contribute: (1) a valid-date-aligned benchmark of seven systems for Weeks
+1--6 nationally and over four IMD monsoon regions; (2) forecast-only, full,
+and location/calendar-only adaptations of PiggyCast
+\citep{kimani2025piggycast}, alongside equal-weight, validation-weighted, and
+per-lead selected baselines; and (3) a 2025 evaluation with paired
+moving-block intervals and explicit claim gates. The useful result is not a
+claim of universal superiority: mixing improves equal weighting on average,
+while the lead-wise and regional failures identify where such a method should
+not be trusted without guardrails.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.96\textwidth]{../artifacts/confirmatory_2025/figures/pipeline.pdf}
-  \caption{Leakage-safe workflow. The 2025 forecast values were opened only
-  after the complete protocol and metadata-only coverage preflight were frozen.}
+  \includegraphics[width=0.94\textwidth]{figures/headline_pipeline.pdf}
+  \caption{Evaluation design. Season membership is set by initialization
+  month, so later lead windows may verify after September. Within the released
+  workflow, all fitting and selection precede the 2025 evaluation.}
   \label{fig:pipeline}
 \end{figure*}
 
-\section{Data and harmonization}
+\section{Benchmark and protocol}
 
-\paragraph{Forecasts.}
-We evaluate CMA, DLESyM v0, ECMWF, FuXi-S2S, NCEP, NeuralGCM, and UKMO weekly
-ensemble-mean precipitation. Table~\ref{tab:inventory} summarizes the products.
-Each case has 42 complete daily rates. Lead Week 1 averages intervals ending
-initialization+1 through +7 days; Week 6 averages +36 through +42. We retain
-small negative finite precipitation increments produced by differencing rather
-than silently clipping them. Five systems use immutable standardized 2025
-stores; DLESyM and NeuralGCM use native 2025 files whose units, coordinates,
-and period endpoints match the same archive contract.
+\paragraph{Forecast cohort and valid dates.}
+We evaluate weekly ensemble-mean precipitation from CMA, DLESyM v0, ECMWF,
+FuXi-S2S, NCEP, NeuralGCM, and UKMO. Each retained initialization has 42
+complete daily rates. Week 1 averages accumulation intervals ending at
+initialization+1 through +7 days; Week 6 averages +36 through +42. We use the
+common initialization intersection: 140 cases from 2020--2023 for fitting, 30
+cases in 2024 for every choice, and \TestCases{} cases in 2025 for evaluation.
+The exact dates, ensemble sizes, and missing 2024 dates are reported in the
+appendix.
 
-\begin{table}[t]
-\centering\small
-\caption{Forecast inventory. The 2024 common validation intersection contains
-30 cases; 2020--2023 and 2025 contain 35 per year.}
-\label{tab:inventory}
-\resizebox{\columnwidth}{!}{\input{tables/inventory}}
-\end{table}
-
-\paragraph{Truth, grid, and anomalies.}
+\paragraph{Truth, grid, and regions.}
 IMD gauge-based daily rainfall \citep{pai2014imd} is conservatively aggregated
-to a 27$\times$27, 1.5-degree grid spanning 0--39$^\circ$N and
-60--99$^\circ$E. Grid-cell weights multiply spherical area, fractional India
-or regional overlap, and IMD observation fraction. A fixed 31-day-window IMD
-1991--2019 normal is averaged over each forecast's exact seven valid dates and
-subtracted from both forecast and observation. No model-specific climatology
-enters any ACC calculation.
+to a $27\times27$, 1.5-degree grid. Cell weights combine spherical area,
+fractional national or regional overlap, and the observed IMD fraction. We use
+India and the northwest, central, south-peninsula, and east/northeast IMD
+monsoon regions. A fixed 31-day-window IMD 1991--2019 normal is averaged over
+each forecast's exact seven valid dates and subtracted from both forecast and
+observation. Thus no model-specific climatology enters ACC. Finite negative
+precipitation increments from accumulated-field differencing are retained
+rather than selectively clipped.
 
-\paragraph{Splits and coverage.}
-We train with 140 JJAS cases from 2020--2023, use the 30-case common 2024
-intersection for all selection, and test once on 35 common 2025 cases. The five
-missing 2024 initializations are June 6, 10, 13, 17 and August 5. Later lead
-windows may verify after September because season membership is defined by the
-initialization date.
+\paragraph{Pre-specified split.}
+Figure~\ref{fig:pipeline} summarizes the workflow. Model and feature sets,
+hyperparameters, anomaly construction, metrics, and uncertainty procedure
+were recorded before scoring 2025 within this workflow. The 2025 values are
+not used for normalization, calibration, fitting, early stopping, threshold
+choice, feature choice, or retry selection. This is an auditable workflow
+property, not a claim that the underlying source archives have never been
+viewed for other projects.
 
 \section{Methods}
 
 \paragraph{Baselines.}
-We retain all seven individual ensemble means. The equal-weight baseline is the
-arithmetic multi-model mean. A validation-weighted mean uses non-negative,
-per-week inverse 2024 RMSE weights. A validation-selected baseline takes the
-lowest-2024-RMSE individual model separately at each lead: FuXi-S2S at Week 1
-and ECMWF at Weeks 2--6.
+The equal-weight mean averages the seven systems. A validation-weighted mean
+uses non-negative inverse-2024-RMSE weights separately by lead. A stronger
+pre-specified comparator selects the lowest-2024-RMSE individual system at
+each lead: FuXi-S2S at Week 1 and ECMWF at Weeks 2--6. We call this the
+\emph{per-lead 2024-RMSE-selected baseline}; it is not one fixed model and was
+selected by RMSE even though ACC is our primary evaluation metric.
 
-\paragraph{Adaptive mixing.}
-Following PiggyCast, we fit one XGBoost regressor \citep{chen2016xgboost} per
-lead week. Forecast-only inputs comprise seven forecast anomalies and six real
-ensemble-spread fields (DLESyM is deterministic). The full variant adds
-latitude, longitude, and sine/cosine of verification-midpoint day of year. A
-location/calendar-only ablation removes all forecast information. Hyperparameters
-are fixed at maximum depth 4, learning rate 0.03, subsample 0.8, column
-subsample 0.9, and at most 600 trees. Early stopping on 2024 chooses the tree
-count; a fresh estimator with that count is refit on 2020--2024, then applied
-to 2025. Area weights are used during fitting and validation.
+\paragraph{Forecast-conditioned mixing.}
+Following PiggyCast, we fit one XGBoost regressor
+\citep{chen2016xgboost} per lead. The forecast-only variant uses seven forecast
+anomalies and the six available ensemble-spread fields (DLESyM is
+deterministic). The full variant adds latitude, longitude, and sine/cosine of
+verification-midpoint day of year. A location/calendar-only ablation removes
+all forecast inputs. Early stopping on 2024 selects the tree count; a fresh
+model with that count is refit using 2020--2024 and applied once to 2025.
+Area weights are used in fitting and validation. \emph{Lightweight} here means
+six compact tree models and no retraining of any forecasting system; we do not
+make an unmeasured compute or data-efficiency claim.
 
-\paragraph{Verification and uncertainty.}
-The primary score is case-level area-weighted spatial anomaly correlation
-(ACC), averaged equally across initialization--week cases. Secondary metrics
+\paragraph{Scores and uncertainty.}
+The primary score is case-level, area-weighted spatial anomaly correlation
+(ACC), averaged equally across initialization--week cases. Secondary scores
 are RMSE, MAE, signed bias, and wet-area fraction error at 1 mm day$^{-1}$.
-We report paired percentile intervals from 2,000 circular moving-block draws
-over ordered initialization dates, retaining all six leads together. The
-primary block length is four initializations; lengths 2 and 8 are sensitivities.
-Intervals are descriptive effect intervals rather than $p$-values.
+We form paired percentile intervals from 2,000 circular moving-block draws
+over ordered initialization dates, keeping all six leads from an
+initialization together. The primary block length is four initializations;
+lengths two and eight are sensitivity checks. These are descriptive effect
+intervals, not $p$-values.
 
-\section{Confirmatory 2025 results}
+\section{Results}
 
-\subsection{Overall and lead-dependent skill}
-
-Full PiggyCast attains ACC \FullACC{}, RMSE \FullRMSE{}, MAE 3.603, and bias
-\FullBias{} mm day$^{-1}$, compared with equal-weight ACC \EqualACC{}, RMSE
-\EqualRMSE{}, MAE 3.716, and bias \EqualBias{}. The paired ACC gain over equal
-weight is \FullEqualEffect{} [\FullEqualLow{}, \FullEqualHigh{}], and its RMSE
-difference is -0.186 [-0.290, -0.096] mm day$^{-1}$. Inverse-validation-RMSE
-weighting yields a smaller ACC improvement, 0.313 versus 0.307.
-
-Figure~\ref{fig:lead} shows strong lead dependence. Full PiggyCast improves ACC
-over equal weighting at Weeks 1--4 (by 0.057, 0.064, 0.070, and 0.099), is
-nearly tied at Week 5 (-0.001), and is worse at Week 6 (-0.047). Its RMSE is
-lower at every lead. This divergence reinforces the need to report both
-pattern and amplitude metrics.
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=0.95\textwidth]{../artifacts/confirmatory_2025/figures/skill_by_lead.pdf}
-  \caption{India-area-weighted case-mean spatial ACC and RMSE by lead.}
-  \label{fig:lead}
-\end{figure*}
+\subsection{National average}
 
 \begin{table*}[t]
 \centering\small
-\caption{Overall 2025 scores across 35 initializations and six lead weeks.
-Wet-area error is forecast minus observed weighted wet fraction.}
-\label{tab:overall}
-\input{tables/overall}
+\caption{Mean 2025 India scores over \TestCases{} JJAS initializations and six
+leads. RMSE, MAE, and bias are in mm day$^{-1}$. The table retains only
+claim-relevant comparators; all systems and wet-area error are in the
+appendix.}
+\label{tab:headline}
+\resizebox{0.83\textwidth}{!}{\input{tables/headline}}
 \end{table*}
 
-\subsection{Gates, ablations, and regional behavior}
+Full PiggyCast has the highest mean ACC (\FullACC{}) and lowest RMSE
+(\FullRMSE{}) among the evaluated methods (Table~\ref{tab:headline}). Relative
+to equal weighting, its paired ACC difference is \FullEqualEffect{}
+[\FullEqualLow{}, \FullEqualHigh{}], while RMSE changes by
+\FullEqualRMSEEffect{} [\FullEqualRMSELow{}, \FullEqualRMSEHigh{}] mm
+day$^{-1}$. MAE falls from \EqualMAE{} to \FullMAE{}, and signed bias changes
+from \EqualBias{} to \FullBias{} mm day$^{-1}$. These jointly rule out an
+ACC-only improvement accompanied by worse rainfall-amplitude error.
 
-The forecast-only variant exceeds the location/calendar-only ablation by
-\ForecastLocationEffect{} ACC [\ForecastLocationLow{},
-\ForecastLocationHigh{}], showing that the gain cannot be attributed to a
-learned seasonal spatial normal alone. Adding calendar/location features to
-the forecast-only model raises overall ACC from 0.339 to 0.347 and reduces
-RMSE from 5.028 to 4.989.
+Simple inverse-validation-RMSE weighting provides only a small point gain
+(\WeightedACC{} versus \EqualACC{} ACC). The forecast-only mixer reaches
+\ForecastOnlyACC{} ACC and \ForecastOnlyRMSE{} mm day$^{-1}$ RMSE. Its ACC
+difference from the location/calendar-only ablation is
+\ForecastLocationEffect{} [\ForecastLocationLow{},
+\ForecastLocationHigh{}], establishing that forecast-state inputs carry
+useful information. This ablation does not, by itself, prove that every model
+contributes complementary information.
 
-The stronger comparison is inconclusive. Full PiggyCast exceeds the
-validation-selected model in mean ACC by \FullSelectedEffect{}, but its
-interval [\FullSelectedLow{}, \FullSelectedHigh{}] overlaps zero. Our frozen
-gate therefore prohibits the headline claim that adaptive mixing is robustly
-better than the selected individual system, despite favorable RMSE and bias
-guards.
+The stricter comparison remains uncertain. Full PiggyCast exceeds the
+per-lead 2024-RMSE-selected baseline by \FullSelectedEffect{} mean ACC, but the
+interval [\FullSelectedLow{}, \FullSelectedHigh{}] overlaps zero. Accordingly,
+the predeclared headline gate for robust superiority to that baseline is
+closed, even though its point ACC, RMSE, and MAE are favorable.
 
-Regional mean ACC differences relative to equal weighting are +0.128 in
-northwest India, +0.060 in the south peninsula, +0.011 in central India, and
--0.097 in east/northeast India. Figure~\ref{fig:paired} displays paired overall
-and regional intervals. The three-of-four positive-region gate passes, but the
-east/northeast failure precludes language implying geographically uniform
-benefit.
-
-\begin{table}[t]
-\centering\small
-\caption{Predeclared paired ACC comparisons with 95\% moving-block intervals.}
-\label{tab:ablations}
-\resizebox{\columnwidth}{!}{\input{tables/ablations}}
-\end{table}
+\subsection{Lead dependence}
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.48\textwidth]{../artifacts/confirmatory_2025/figures/paired_acc.pdf}
-  \includegraphics[width=0.48\textwidth]{../artifacts/confirmatory_2025/figures/regional_acc.pdf}
-  \caption{Paired 2025 ACC differences. Bars are 95\% circular moving-block
-  percentile intervals over initialization dates; all six leads remain grouped.}
-  \label{fig:paired}
+  \includegraphics[width=0.96\textwidth]{figures/headline_skill_by_lead.pdf}
+  \caption{IMD-referenced India skill by lead. Curves are limited to the
+  post-processing methods and pre-specified comparators needed to interpret
+  the claim; the complete seven-system comparison is in
+  Figure~\ref{fig:all-models}.}
+  \label{fig:lead}
 \end{figure*}
 
-\section{Discussion}
+The national mean masks a sharp horizon boundary
+(Figure~\ref{fig:lead}). Full PiggyCast changes ACC relative to equal weighting
+by \LeadOneAccDelta{}, \LeadTwoAccDelta{}, \LeadThreeAccDelta{}, and
+\LeadFourAccDelta{} at Weeks 1--4, but by \LeadFiveAccDelta{} and
+\LeadSixAccDelta{} at Weeks 5--6. Its RMSE is lower at every lead, including
+when its long-lead anomaly pattern is not better. Reporting only a
+six-week average would therefore conceal the main deployment limitation.
 
-The results support a bounded operational proposition: a compact post-processor
-can extract complementary information from heterogeneous forecast systems and
-outperform an uncalibrated equal-weight mean without changing the underlying
-models. The forecast-only ablation provides direct evidence that the method
-uses forecast state, while the lower RMSE and less negative bias argue against
-an ACC-only artifact.
+\subsection{Regional heterogeneity}
 
-The failed selected-model gate is equally important. First, 35 test
-initializations give limited precision under serial dependence. The comparison
-changes with bootstrap block length: its lower endpoint is +0.009 for length 2
-but -0.002 at lengths 4 and 8, whereas the equal-weight comparison remains
-positive at all three lengths. Second, selected tree counts collapse from
-hundreds at Weeks 1--3 to 8--12 at Weeks 5--6, consistent with weak conditional
-signal at long leads. Third, geographic transfer is uneven, with a clear
-east/northeast loss. A production system should therefore retain per-lead and
-regional guardrails rather than deploying one national aggregate decision.
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.76\textwidth]{figures/headline_effects.pdf}\\[-0.3em]
+  \includegraphics[width=0.72\textwidth]{figures/appendix_region_lead_delta.pdf}
+  \caption{Failure-aware regional evaluation. Top: paired 2025 ACC
+  differences with 95\% circular moving-block
+  percentile intervals. Blue intervals exclude zero positively, orange
+  excludes zero negatively, and grey overlaps zero. The first three rows are
+  pre-specified national contrasts; regional rows compare full PiggyCast with
+  equal weighting. Bottom: the same full-minus-equal comparison by region and
+  lead. Bottom-panel cells are descriptive point differences without per-cell
+  intervals.}
+  \label{fig:effects}
+\end{figure*}
 
-This study evaluates deterministic ensemble means and does not assess
-probabilistic calibration, extremes, onset timing, or decision value. Model
-versions and operational ensemble sizes differ, and the 2024 validation archive
-has a five-date gap. The fixed IMD normal avoids cross-method climatology
-leakage but a single 1991--2019 baseline cannot resolve nonstationarity. Finally,
-the compact FuXi neural correction planned as a complementary method is absent:
-its existing frozen evaluator uses initialization+0--6 day labels, inconsistent
-with the benchmark's +1--7 period endpoints. We report this as a negative
-workflow finding rather than compare misaligned scores.
+The full-minus-equal ACC difference is \NorthwestEffect{}
+[\NorthwestLow{}, \NorthwestHigh{}] in northwest India and \SouthEffect{}
+[\SouthLow{}, \SouthHigh{}] in the south peninsula. Central India is
+uncertain at \CentralEffect{} [\CentralLow{}, \CentralHigh{}], while
+east/northeast India shows a clear loss of \EastNortheastEffect{}
+[\EastNortheastLow{}, \EastNortheastHigh{}]
+(Figure~\ref{fig:effects}). Thus two regional intervals are positive, one is
+inconclusive, and one is negative. A national average cannot justify
+geographically uniform use.
+
+\section{Implications and limitations}
+
+The evidence supports a bounded forecast-quality conclusion: compact,
+forecast-conditioned mixing improves an uncalibrated equal-weight ensemble
+over India on average, with the clearest value at Weeks 1--4 and in northwest
+and south-peninsula regions. It does not establish uniformly better S2S
+prediction, operational value, or improved decisions. A cautious deployment
+would retain the original forecasts, monitor each lead and region, and abstain
+where validation does not support the mixer.
+
+The evaluation contains only \TestCases{} initializations from one year, and
+serial dependence limits precision. The full-versus-selected lower interval
+endpoint changes from \SelectedBlockTwoLow{} at block length two to
+\SelectedBlockFourLow{} and \SelectedBlockEightLow{} at lengths four and
+eight; the equal-weight conclusion remains positive at all three lengths.
+The benchmark evaluates deterministic ensemble means, not probabilistic
+calibration, extremes, monsoon onset, or decision value. Ensemble sizes and
+model versions differ, and five common 2024 dates are missing.
+
+IMD is the sole observational reference in the reported results, so gauge
+coverage, one 1991--2019 normal, and nonstationarity remain sources of
+uncertainty. Approximately \FullNegativePercent{}\% of full-PiggyCast's
+area-weighted national support is negative under the pre-specified no-clipping
+policy;
+physical non-negativity should be handled in a future calibration study, not
+silently repaired after seeing test scores. Finally, a planned FuXi neural
+correction is excluded because its saved evaluator defines Week 1 as
+initialization+0--6 rather than the benchmark's +1--7 endpoints. Comparing it
+would trade methodological variety for a one-day label error.
+
+\paragraph{Climate relevance and responsible use.}
+Rainfall guidance can affect risk-sensitive decisions and resource allocation.
+The regional failure is therefore not a cosmetic subgroup result: it argues
+against presenting one national skill number as readiness for use across
+India. This study supplies forecast-quality evidence only. Any downstream
+application requires locally relevant thresholds, probabilistic reliability,
+cost--loss or impact evaluation, and communication of uncertainty.
 
 \section{Conclusion}
 
-We provide a reproducible seven-system India S2S rainfall benchmark and a
-leakage-safe test of lightweight adaptive mixing. PiggyCast improves overall
-2025 ACC and RMSE relative to equal weighting and clearly outperforms a
-location/calendar-only ablation. It does not clear the predeclared uncertainty
-gate against the validation-selected individual system and loses ACC at the
-longest leads and in east/northeast India. The appropriate conclusion is not
-that post-processing is uniformly best, but that forecast-conditioned mixing
-has measurable, region- and lead-dependent value that warrants broader testing.
+On a common JJAS 2025 benchmark, lightweight PiggyCast mixing improves
+equal-weight multi-model rainfall forecasts in national ACC, RMSE, and MAE.
+The same experiment also supplies the boundary of that result: uncertainty
+against a per-lead selected baseline, no ACC gain at Weeks 5--6, and a clear
+east/northeast loss. The central lesson is therefore conditional rather than
+promotional: forecast-conditioned mixing can add value, but lead- and
+region-specific evaluation must determine where it is used.
 
-\section*{Reproducibility statement}
+\paragraph{Artifact availability.}
+The anonymized supplement contains the protocol, coverage, case metrics,
+intervals, serialized models, generation code, and hashes. Its audit
+regenerates every aggregate score; raw reproduction additionally requires
+access to provider and IMD source data.
 
-The supplementary bundle contains the frozen JSON protocol, exact coverage,
-case-level metrics, aggregate tables, paired intervals, bootstrap sensitivity,
-18 serialized XGBoost models, figures, source and artifact hashes, and an audit
-report. The audit independently regenerates every aggregate score from the
-case table. No 2025 fitting, threshold selection, feature selection, or retry
-selection is performed.
-
+% The official CCAI style must be downloaded and applied manually by an author.
+% Confirm that all content through this point fits the four-page paper-track
+% limit in that style; references are outside the content-page count.
+\clearpage
 \bibliographystyle{plainnat}
 \bibliography{references}
 

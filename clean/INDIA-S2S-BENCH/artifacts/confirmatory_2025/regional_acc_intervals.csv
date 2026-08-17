@@ -1,0 +1,6 @@
+region,method_a,method_b,metric,effect,ci_low,ci_high,draws,block_length,initializations
+india,piggycast_full,equal_weight,acc,0.0401167193,0.01122360244,0.06823555466,2000,4,35
+northwest_india,piggycast_full,equal_weight,acc,0.1279784056,0.08501160896,0.1770723817,2000,4,35
+central_india,piggycast_full,equal_weight,acc,0.0114387452,-0.03604284425,0.05812327263,2000,4,35
+south_peninsula,piggycast_full,equal_weight,acc,0.06024175833,0.01807456566,0.1029601693,2000,4,35
+east_northeast_india,piggycast_full,equal_weight,acc,-0.0969895107,-0.1746763668,-0.03668907703,2000,4,35

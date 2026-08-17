@@ -1,0 +1,60 @@
+\section{Supplementary protocol and diagnostics}
+
+\subsection{Complete coverage}
+
+The common initialization counts are 35 in each of 2020--2023, 30 in 2024,
+and 35 in 2025. Exact ISO dates are stored in
+\texttt{coverage.csv}; per-model availability and source metadata hashes are
+stored in \texttt{preflight/coverage\_preflight.csv} and
+\texttt{preflight/preflight.json}. The metadata-only preflight records
+\texttt{forecast\_values\_read=false}.
+
+\subsection{Claim gates}
+
+The headline requires positive lower 95\% ACC endpoints against both equal
+weighting and the validation-selected individual system, a positive
+forecast-only versus location-only endpoint, at most 5\% relative RMSE
+regression, at most 0.5 mm day$^{-1}$ absolute-bias regression, and positive
+regional ACC deltas in at least three of four IMD regions. All pass except the
+selected-model ACC endpoint, -0.002. The machine-readable decision is in
+\texttt{gate\_report.json}.
+
+\subsection{Regional intervals}
+
+\begin{table}[h]
+\centering\small
+\caption{Full PiggyCast minus equal-weight regional ACC.}
+\resizebox{\columnwidth}{!}{\input{tables/regions}}
+\end{table}
+
+\subsection{Hyperparameters and compute}
+
+XGBoost uses squared-error loss, histogram trees, CPU execution, maximum depth
+4, minimum child weight 5, learning rate 0.03, row subsampling 0.8, column
+subsampling 0.9, $L_2$ regularization 1, and seed 42. The maximum tree count is
+600 with patience 50. The exact selected count, feature names, and row counts
+for every lead/variant are in \texttt{fit\_metadata.json}. Runtime and energy
+were not instrumented reliably enough for a numerical emissions claim.
+
+\subsection{Neural correction exclusion}
+
+The available FuXi neural-correction control defines Week 1 as initialization
+through initialization+6 days, while every benchmark forecast defines daily
+lead 1 as the accumulation interval ending initialization+1 day. Applying its
+saved model or scores here would shift labels by one day. It is excluded from
+the common-date result and may only be revisited after training under the
+frozen +1--+42 endpoint contract.
+
+\subsection{Reproduction commands}
+
+\begin{verbatim}
+PYTHONPATH=src python run.py preflight
+PYTHONPATH=src python run.py run
+PYTHONPATH=src python run.py audit
+PYTHONPATH=src python make_paper.py
+\end{verbatim}
+
+The runner refuses an existing output directory. A repeated test must use a
+new path and is a distinct confirmatory run, never a replacement chosen by
+score. SHA256 values for every saved artifact appear in
+\texttt{manifest.json}.

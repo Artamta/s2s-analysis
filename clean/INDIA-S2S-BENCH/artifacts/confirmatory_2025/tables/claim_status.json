@@ -1,0 +1,43 @@
+{
+  "checks": {
+    "bias_guard": {
+      "absolute_bias_regression": -0.12537457078546882,
+      "passed": true
+    },
+    "forecast_acc_vs_location": {
+      "ci_high": 0.26639814486432356,
+      "ci_low": 0.20903641057803224,
+      "effect": 0.2377823205269948,
+      "passed": true
+    },
+    "full_acc_vs_equal": {
+      "ci_high": 0.06994895708519559,
+      "ci_low": 0.01110752861630424,
+      "effect": 0.04011671929549978,
+      "passed": true
+    },
+    "full_acc_vs_selected": {
+      "ci_high": 0.09332614520237881,
+      "ci_low": -0.0016648752443603739,
+      "effect": 0.05167649352926759,
+      "passed": false
+    },
+    "regional_guard": {
+      "deltas": {
+        "central_india": 0.01143874520070659,
+        "east_northeast_india": -0.09698951069617956,
+        "northwest_india": 0.12797840561541304,
+        "south_peninsula": 0.06024175833039
+      },
+      "passed": true,
+      "positive_regions": 3
+    },
+    "rmse_guard": {
+      "equal": 5.174191845068485,
+      "full": 4.988526668436809,
+      "passed": true
+    }
+  },
+  "headline_claim_allowed": false,
+  "required_wording": "mixed or negative confirmatory result"
+}

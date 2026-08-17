@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_2025_skill_scoring",
+  "frozen_utc": "2026-08-17T00:00:00+05:30",
+  "title": "Lightweight Post-processing of Multi-model Subseasonal Rainfall Forecasts over India",
+  "question": "Can lightweight, data-efficient post-processing improve multi-model subseasonal rainfall forecasts over India during JJAS?",
+  "variable": "tp",
+  "units": "mm day-1",
+  "models": ["cma", "dlesym_v0", "ecmwf", "fuxi_s2s", "ncep", "neuralgcm", "ukmo"],
+  "grid": {
+    "id": "india_1p5_27x27_v1",
+    "shape": [27, 27],
+    "latitude": [39.0, 0.0, -1.5],
+    "longitude": [60.0, 99.0, 1.5]
+  },
+  "season": {
+    "name": "JJAS initialization season",
+    "initialization_months": [6, 7, 8, 9],
+    "interpretation": "Initialization dates fall in June--September; later lead windows may verify after September."
+  },
+  "lead_weeks": [1, 2, 3, 4, 5, 6],
+  "valid_date_alignment": {
+    "period_role": "daily accumulation period end",
+    "week_1": "initialization + 1 through initialization + 7 days",
+    "week_6": "initialization + 36 through initialization + 42 days",
+    "weekly_statistic": "arithmetic mean of seven complete daily rates"
+  },
+  "splits": {
+    "train_years": [2020, 2021, 2022, 2023],
+    "validation_years": [2024],
+    "test_years": [2025],
+    "split_unit": "complete initialization with all six leads",
+    "test_policy": "no fitting, tuning, feature selection, normalization, calibration, retry selection, or threshold selection"
+  },
+  "truth": {
+    "dataset": "IMD gauge-based daily gridded rainfall",
+    "climatology": "IMD 1991-2019, stored 31-day calendar-window mean",
+    "anomaly_rule": "subtract the identical IMD climatology field from every forecast and observation",
+    "support": "stored IMD observation fraction multiplied by stored spherical India/region area"
+  },
+  "methods": [
+    "seven individual systems",
+    "equal_weight",
+    "validation_weighted",
+    "validation_selected_model",
+    "piggycast_forecast_only",
+    "piggycast_full",
+    "location_calendar_only"
+  ],
+  "validation_weighted": {
+    "formula": "per-lead inverse validation RMSE, normalized to sum to one",
+    "negative_weights": false
+  },
+  "xgboost": {
+    "objective": "reg:squarederror",
+    "eval_metric": "rmse",
+    "tree_method": "hist",
+    "device": "cpu",
+    "n_estimators": 600,
+    "learning_rate": 0.03,
+    "max_depth": 4,
+    "min_child_weight": 5.0,
+    "subsample": 0.8,
+    "colsample_bytree": 0.9,
+    "reg_lambda": 1.0,
+    "reg_alpha": 0.0,
+    "early_stopping_rounds": 50,
+    "seed": 42
+  },
+  "features": {
+    "piggycast_forecast_only": "seven forecast anomalies plus six real ensemble-spread fields",
+    "piggycast_full": "forecast-only features plus latitude, longitude, and sine/cosine of verification-midpoint day-of-year",
+    "location_calendar_only": "latitude, longitude, and sine/cosine of verification-midpoint day-of-year"
+  },
+  "metrics": {
+    "primary": "case-level India-area-weighted spatial anomaly correlation, averaged over cases",
+    "secondary": ["RMSE", "MAE", "signed bias", "wet-area fraction error"],
+    "wet_threshold_mm_day": 1.0
+  },
+  "uncertainty": {
+    "method": "paired circular moving-block bootstrap over ordered initialization dates",
+    "draws": 2000,
+    "primary_block_length_initializations": 4,
+    "sensitivity_block_lengths": [2, 4, 8],
+    "seed": 20250817,
+    "all_six_leads_kept_together": true,
+    "language": "percentile effect intervals; no p-values or multiplicity-adjusted significance claims"
+  },
+  "claim_gates": {
+    "piggycast_full_acc_vs_equal_weight_ci_low_gt": 0.0,
+    "piggycast_full_acc_vs_validation_selected_ci_low_gt": 0.0,
+    "forecast_only_acc_vs_location_only_ci_low_gt": 0.0,
+    "maximum_relative_rmse_regression": 0.05,
+    "maximum_absolute_bias_regression_mm_day": 0.5,
+    "minimum_regions_with_positive_acc_delta_vs_equal_weight": 3
+  },
+  "neural_correction": {
+    "role": "complementary alternative; never sequentially applied after PiggyCast",
+    "current_status": "excluded from common-date headline pending corrected +1...+7 retraining",
+    "reason": "the existing independent-2025 control is frozen to +0...+6 valid-day windows"
+  }
+}

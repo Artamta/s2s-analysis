@@ -1,0 +1,124 @@
+{
+  "files": [
+    {
+      "bytes": 4209,
+      "path": "protocol.json",
+      "sha256": "1a49bd4f8f63ff9cb84c1f48ecbfffe6806f265d885110a58ee0ecd30ce086fb"
+    },
+    {
+      "bytes": 4972,
+      "path": "Reserach.md",
+      "sha256": "05e35bda4c9d58698a46d2198e49aae18e11f139feadbea895dd61d690f9d2fc"
+    },
+    {
+      "bytes": 13241,
+      "path": "paper/main.tex",
+      "sha256": "569139249c7a585c0099996285a0769ee169d2feaa9ddcd9b5db4cba0ccf7caa"
+    },
+    {
+      "bytes": 2544,
+      "path": "paper/appendix.tex",
+      "sha256": "b014e4d586aa88bd83c4b854f40ef2e23b759a40fc7d29a3de4bb0c61b8c54de"
+    },
+    {
+      "bytes": 2815,
+      "path": "paper/references.bib",
+      "sha256": "8748ca1136a82ecb15a3db6a3246605aac820e9273bc664bf79efe188e570631"
+    },
+    {
+      "bytes": 593,
+      "path": "paper/generated_numbers.tex",
+      "sha256": "45822606cdb242d68de793ea97a8d787c11be5588ad642c3dfc7be583c4b1193"
+    },
+    {
+      "bytes": 126105,
+      "path": "paper/main.pdf",
+      "sha256": "590b0c7e3db2d761cab1d3ab1c4d8efcde7b28112178aa90f899fd162f9fa837"
+    },
+    {
+      "bytes": 126105,
+      "path": "paper/submission_draft.pdf",
+      "sha256": "590b0c7e3db2d761cab1d3ab1c4d8efcde7b28112178aa90f899fd162f9fa837"
+    },
+    {
+      "bytes": 8946,
+      "path": "artifacts/confirmatory_2025/manifest.json",
+      "sha256": "7b7076d93846a0bbcaf659a8def8cec1babf03101f59adffd3745694ac3f5ef3"
+    },
+    {
+      "bytes": 99,
+      "path": "artifacts/confirmatory_2025/audit_report.json",
+      "sha256": "28a6257a9e09b2601024613419762f13ec02d6c2020ecaf618de742045a96d02"
+    },
+    {
+      "bytes": 1152,
+      "path": "artifacts/confirmatory_2025/gate_report.json",
+      "sha256": "01a827123c79bbb485524d1043983b6a4c4fd35ff654ca93451f9a2c4d7d4d1e"
+    },
+    {
+      "bytes": 294,
+      "path": "paper/tables/ablations.tex",
+      "sha256": "89984cc449118c3890356f7baff396c5824bdbf176a2a0e1da63c17961d68950"
+    },
+    {
+      "bytes": 452,
+      "path": "paper/tables/inventory.tex",
+      "sha256": "c1330bd4858bcdb907f37685eb187fe9fda80d9e2f812b5d9d80e62a8495e779"
+    },
+    {
+      "bytes": 909,
+      "path": "paper/tables/overall.tex",
+      "sha256": "24c56b332ca7287a21f3fd9b2b03864bc868825b31440cfa4500207baa6f4544"
+    },
+    {
+      "bytes": 345,
+      "path": "paper/tables/regions.tex",
+      "sha256": "0dcb02d59e2ffd4b85a83dc82c37b7d1861251bd25091a5924d16244c16ae29f"
+    },
+    {
+      "bytes": 13854,
+      "path": "artifacts/confirmatory_2025/figures/paired_acc.pdf",
+      "sha256": "21893fb0b1bb8a28b6f05fcf50f1b4dd9a4d5050de826b4e59f50f501c1898bc"
+    },
+    {
+      "bytes": 51114,
+      "path": "artifacts/confirmatory_2025/figures/paired_acc.png",
+      "sha256": "5da59bc08437ce1616315d59948c0b02668d9b380cbf7e918799cf0b0632081e"
+    },
+    {
+      "bytes": 17379,
+      "path": "artifacts/confirmatory_2025/figures/pipeline.pdf",
+      "sha256": "a7273779907685d2d218fa744022f339444529df73b7419c954d8c6dc35b3cbe"
+    },
+    {
+      "bytes": 61014,
+      "path": "artifacts/confirmatory_2025/figures/pipeline.png",
+      "sha256": "351aed134df42c89cf90f295ab3d2ce7d5fef028ca6b57370ac43181c8de5cf8"
+    },
+    {
+      "bytes": 12816,
+      "path": "artifacts/confirmatory_2025/figures/regional_acc.pdf",
+      "sha256": "0fb24292edb3d3a1d506969665859f80a12a67d3331dabecc66dacac2ccd8f58"
+    },
+    {
+      "bytes": 45180,
+      "path": "artifacts/confirmatory_2025/figures/regional_acc.png",
+      "sha256": "a93a7181466ab4673299862c4d8a7e1dcf09d22f9bef50a9dbb89a9ac64ce5ec"
+    },
+    {
+      "bytes": 28944,
+      "path": "artifacts/confirmatory_2025/figures/skill_by_lead.pdf",
+      "sha256": "d4347d9a3ae487b39b395a16b3d2add0adc7ea252bb4d96a615d418eab3fec2c"
+    },
+    {
+      "bytes": 306492,
+      "path": "artifacts/confirmatory_2025/figures/skill_by_lead.png",
+      "sha256": "4756707146e86d3f2928a11620162fd0bce5626dc7f46c88be84f80860a44a82"
+    }
+  ],
+  "headline_claim_allowed": false,
+  "pdf_pages": 5,
+  "schema_version": 1,
+  "status": "draft_complete",
+  "template_status": "generic article; migrate to official workshop style before submission"
+}

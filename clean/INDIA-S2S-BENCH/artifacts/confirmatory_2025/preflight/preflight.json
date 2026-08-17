@@ -1,0 +1,4593 @@
+{
+  "forecast_values_read": false,
+  "protocol_sha256": "1a49bd4f8f63ff9cb84c1f48ecbfffe6806f265d885110a58ee0ecd30ce086fb",
+  "records": [
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          105,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/cma/physics__cma_operational_2020_2025/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "d8df4bfef68d2694db1417703527cff8e78b72453ce66b29a540c65d27f4cc8e"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/cma/physics__cma_operational_2020_2025/tp/common_1p5/2020.json",
+      "sha256": "6144b079ab8e1f9985a710b17c27b1b487935143e57e52a4a3c9997e781957ef"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          1,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          1,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          1,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          1
+        ],
+        "member_available": [
+          105,
+          1
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "3dfff81a291055873587a4b3162d78827153f23b0ef863fe8807d922b3e1766b"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2020.json",
+      "sha256": "629f01e38647a7425f46af59dd1f41104614a68482b91f688f02c23af1ac2eb8"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          51,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          51,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          51,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          51
+        ],
+        "member_available": [
+          105,
+          51
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "d467662245c08acd45b4612998758d2c61edb8bb5862127f62ed7b6b519baf1a"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2020.json",
+      "sha256": "687adc45b48ee7b06d47aab3cb1d89a55fa9068f53e09c37fbcccf422f01a837"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          50,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          50,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          50,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          50
+        ],
+        "member_available": [
+          105,
+          50
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "1d9ece180ca32dc93a0ad7c4715226a687586578da9135fff830a89f4b82bad4"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2020.json",
+      "sha256": "e654cb449d43a1b1f60ec67f3306ac66af1ff93fc1579fe510b39d11bb3f1034"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          16,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          16,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          16,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          16
+        ],
+        "member_available": [
+          105,
+          16
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "b0790c05d4452168d5b52b59934ffc156345eaf0006bd057d48a8a700843a99d"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2020.json",
+      "sha256": "d01d6e95cdb9861549848f0bbd6f37c77e7c490cde35e047dd7b0011b5dc1f57"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          10,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          10,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          10,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          10
+        ],
+        "member_available": [
+          105,
+          10
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "13ae1af0a4fb90df9a177b932511644734dca9568c08ab9e65e3228e940c785a"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2020.json",
+      "sha256": "729a98c45165d1735c28aadaeeabdb92eb713c65b23d425e85d92f69aa8a112c"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          105,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          105,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          105,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          105,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          105,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          105
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          105,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2020.zarr",
+      "zmetadata_sha256": "52bdb43aa2eb6141cff9ce4c1ec0bf5b8e5472f62886f00e0e0d26f4c853bdfc"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2020.json",
+      "sha256": "bd8fceb2d6ace3220bb430c309ffab9889599d13b30e5dae438e903b8e113318"
+    },
+    {
+      "arrays": {
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation": [
+          366,
+          27,
+          27
+        ],
+        "observation_fraction": [
+          27,
+          27
+        ],
+        "time": [
+          366
+        ]
+      },
+      "exists": true,
+      "kind": "imd_truth",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imd/tp/india_1p5_27x27_v1/2020.zarr",
+      "zmetadata_sha256": "2190138cfe7949b754eeda070e14b34a4f3b61250510a5c530020cb92d4d31b7"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/cma/physics__cma_operational_2020_2025/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "a09ce9943e146893e186453b71294f5c357595c1c0f118ffa8d06b1272098e99"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/cma/physics__cma_operational_2020_2025/tp/common_1p5/2021.json",
+      "sha256": "9ae7727555baa459fca8c3e01dd187d9b52b74758fae55ecafa5277247a1696a"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          1,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          1,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          1,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          1
+        ],
+        "member_available": [
+          104,
+          1
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "e3fbe5ee9b5080895bfc691c9ac67075cec970bc283b1107b87bdb0c393c79c8"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2021.json",
+      "sha256": "851c8a49687977f148be30b89c84037a23143b0c841ae7e9629754aec6bc91eb"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          51,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          51,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          51,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          51
+        ],
+        "member_available": [
+          104,
+          51
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "a42138124e7c74da4eebf211ed70f234d9a530edf2aa5547b6b452dba117605a"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2021.json",
+      "sha256": "1a141b6c408602afde1bd04e678b481721b38fad067907d90abc61971082265b"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          50,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          50
+        ],
+        "member_available": [
+          104,
+          50
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "39bc67e48fb77fec93c5efbbf793b5d881a6fe894d970dff3a7d6009633df88c"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2021.json",
+      "sha256": "f3e667098d68f334d21c2ba4bd0c108feb46b58ce02a40e508f50b8469acd9cb"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          16,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          16
+        ],
+        "member_available": [
+          104,
+          16
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "0a7abfa0999731a44cca884ccc99051371a47096ebdeb41f79371a0ec1a5e675"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2021.json",
+      "sha256": "a726074f5461213ef317a46a7dacb12e77105241d22d25e897783289a7399486"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          10,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          10,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          10,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          10
+        ],
+        "member_available": [
+          104,
+          10
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "0d101a730cf031af8c3c502f47374546989582d8caca77f755431b8cb722ece1"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2021.json",
+      "sha256": "ab4e3d06c1843b68226b22790c8d171239ceda8294160b764485bd20c7f6b9a4"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2021.zarr",
+      "zmetadata_sha256": "b0ede852dbf9869305fe598986c11c297486d45a749b451651ecc295f04a2e0f"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2021.json",
+      "sha256": "8740fd2d1b72c0aa1e71116d5dbfed4bb42baae5da0346adc1ee16bfc61b33ad"
+    },
+    {
+      "arrays": {
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation": [
+          365,
+          27,
+          27
+        ],
+        "observation_fraction": [
+          27,
+          27
+        ],
+        "time": [
+          365
+        ]
+      },
+      "exists": true,
+      "kind": "imd_truth",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imd/tp/india_1p5_27x27_v1/2021.zarr",
+      "zmetadata_sha256": "cf4e94dd523e0216f117107a9ef6778ea27d4a7f47e3d3a25bd3e521f72b1848"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/cma/physics__cma_operational_2020_2025/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "bf33632144a8c15eb4f528817702eb8b021a03f7c7b62ba2525095ffa09eed47"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/cma/physics__cma_operational_2020_2025/tp/common_1p5/2022.json",
+      "sha256": "19719fe563b20f67ea43dbee406a6a04fd41380cdb2d09b3b5dada9317ff3256"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          1,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          1,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          1,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          1
+        ],
+        "member_available": [
+          104,
+          1
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "536930f65ebc2ee810b56133dabf602dd23dcb6d4cd896a2399b410ccd1aee77"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2022.json",
+      "sha256": "117a3b24acd029d8f8c13c131644db65a4e5bd4d126cfe316f98f478fef283bf"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          51,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          51,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          51,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          51
+        ],
+        "member_available": [
+          104,
+          51
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "5e8ae5e3c871d639a171da3c70b815e35e0c42892a82321e6fbb919882bb7424"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2022.json",
+      "sha256": "19f8d2b9ebcb887ff35d917c14c3f64e6cb5f6d93f90bd96b6060a0260627f0d"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          50,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          50
+        ],
+        "member_available": [
+          104,
+          50
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "7efc8d3c049130ee45a3d7afd2ab4de14047f51501a579a3493f59d5a476f88e"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2022.json",
+      "sha256": "7a83d3d452af68175302e8a438a344e2ac5dbc8e1d7c1478f0c733f3cd6b9433"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          16,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          16
+        ],
+        "member_available": [
+          104,
+          16
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "26f2c1b34c5c3eb5f9c11c4265208f5ffc90cdaf7f2345b40b6d9c8257fc0e08"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2022.json",
+      "sha256": "9d93d23597612fb302799d386b3469d6e152d0e0288c6ac4fe0ea4093a181fc9"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          10,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          10,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          10,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          10
+        ],
+        "member_available": [
+          104,
+          10
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "3c99b56fe529ee302a13ffaed1f9f0e9555256ff6c5011a53c44f5b34589cf4e"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2022.json",
+      "sha256": "e8ce9fd075ca29f48b00ad2d04f67aea1b499211e6872e81883a28d4064f267b"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2022.zarr",
+      "zmetadata_sha256": "2cce1b9b698ddeb61f503ca487b997fceb029c1d48fba1bcd6977b00e31c4fd5"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2022.json",
+      "sha256": "816ef4579d3e01c343dedc63746a8aaa9b8388e378f068bf0260d37c64f79296"
+    },
+    {
+      "arrays": {
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation": [
+          365,
+          27,
+          27
+        ],
+        "observation_fraction": [
+          27,
+          27
+        ],
+        "time": [
+          365
+        ]
+      },
+      "exists": true,
+      "kind": "imd_truth",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imd/tp/india_1p5_27x27_v1/2022.zarr",
+      "zmetadata_sha256": "d622f5ba4f86262ad31d3aa447b1cb969ed7b2acabd1f9130f3b1d0309d9a175"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/cma/physics__cma_operational_2020_2025/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "fc62f4ce11b31fe105ec347a6bc4a788ec03eae85206b5c3636ea179189983c1"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/cma/physics__cma_operational_2020_2025/tp/common_1p5/2023.json",
+      "sha256": "44d36f37810a7d92aa4b4db59dc5c645e88c461e7d49923ce30604765280c875"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          1,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          1,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          1,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          1
+        ],
+        "member_available": [
+          104,
+          1
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "f5f6276a9890b3e35543b2e78dc0be33a0ada9f7baf6e20914ea7cefa133c828"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2023.json",
+      "sha256": "aac76361b0d27f0dbb3dca542005b93bf662d6228cb2ff6b90b13275933cde2e"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          101,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          101,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          101,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          101
+        ],
+        "member_available": [
+          104,
+          101
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "f264c362251b22001dc08e06b5ecb469f370900156d150a1a7b106a2e33d227e"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2023.json",
+      "sha256": "a0a8283c686bfb29b8c9f242a1ae87bbf38f54481bd47dca8d3c155d59390da7"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          50,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          50
+        ],
+        "member_available": [
+          104,
+          50
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "047815afff6e88619e8ba690508243e2f3b55fb1a4bc2638939d3e01825b0f6a"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2023.json",
+      "sha256": "9228203c48461c4eb9362ad4bd0a6e25b5ce87f00118b98e9b836b6d48339479"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          16,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          16
+        ],
+        "member_available": [
+          104,
+          16
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "0feae5aa369f276c060688137e7429b9275bc7a579548df7087cfc3201214abf"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2023.json",
+      "sha256": "f6e310f33364b222631667e14c2b253ee4ead801b8b485bc3ab04a8d2bb64072"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          10,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          10,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          10,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          10
+        ],
+        "member_available": [
+          104,
+          10
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "078f9ed522d2bc6284a683f665c01431617627ed5b96732304becb51689cfc20"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2023.json",
+      "sha256": "a433d3bfb5b326afde4f58cc990543b5b351cef32cd8a70280ccdf97ec1bcee3"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2023.zarr",
+      "zmetadata_sha256": "d77132badb72ca65a8bd23db9133e2c4035cf8234301ed11b5de64a89d72b4f3"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2023.json",
+      "sha256": "31c90f408737733d3d256db6ab51da4dc85be2fb2b9bf4cf2c2b6326f02abd79"
+    },
+    {
+      "arrays": {
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation": [
+          365,
+          27,
+          27
+        ],
+        "observation_fraction": [
+          365,
+          27,
+          27
+        ],
+        "time": [
+          365
+        ]
+      },
+      "exists": true,
+      "kind": "imd_truth",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imd/tp/india_1p5_27x27_v1/2023.zarr",
+      "zmetadata_sha256": "18c84da11b6fcb95ae225c17dc335b5cb4699cd97c10b81cb759a835fb2be473"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          100,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/cma/physics__cma_operational_2020_2025/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "fccb4714f5bd9cf24d7ed58a30924cfb04866d400f177a5ead3052f7e8b82ee3"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/cma/physics__cma_operational_2020_2025/tp/common_1p5/2024.json",
+      "sha256": "f4a6608a58cc7b251f9f3e9f28cac098750e813c4d5d5c74036c19effd90e529"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          1,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          1,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          1,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          1
+        ],
+        "member_available": [
+          100,
+          1
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "d8c72540852e1dea947d251d94501f4cf8380861971fcf2a90cc5a9fd74b9dc1"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/dlesym_v0/model-run__dlesym__dlesym_v0_isccp_era5_tpdiag_t2m_00z_2020_2024_ens1/tp/common_1p5/2024.json",
+      "sha256": "24c98b1a2f8d6a3132c19b990be385211ad27e2c4cfebbe84755bc739b2abb5f"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          101,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          101,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          101,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          101
+        ],
+        "member_available": [
+          100,
+          101
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "35d228108a4b1c1549c6bd972961e466f450c7d7e92882fba25ebfc26ebc60cb"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2024.json",
+      "sha256": "a71646f4e55bbfbbc32d83c6e74a6ddc970d013791d9cca903ac9f558414fd64"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          50,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          50,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          50,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          50
+        ],
+        "member_available": [
+          100,
+          50
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "534f8703724dfd4c3b88df0344d30855e13ca80e4525c77a0ba1af37e527cb80"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2024.json",
+      "sha256": "08ecc3d3342506812919c66ec89b7e95e510d888da806caba089d601fbac1395"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          16,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          16,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          16,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          16
+        ],
+        "member_available": [
+          100,
+          16
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "d78e3a44bef0a3a0bbf8c9c6a501ceccbb545343693162badd7a8fa5b592aec5"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2024.json",
+      "sha256": "1281fe45d8a7e529eb7ed21a91d22902fd172bd64d4097e1fbfffaddfe614e2f"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          10,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          10,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          10,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          10
+        ],
+        "member_available": [
+          100,
+          10
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "72bc1e3cfff32ff1438144bb40f5113c2e9c9e08bfe6d015007941aada42bad0"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/neuralgcm/model-run__neural-gcm__neuralgcm_v1_precip_2p8_era5_00z_2020_2024_ens10/tp/common_1p5/2024.json",
+      "sha256": "03cf17344361d04402ba7939eeef80a80bddb4750a6cbe0de87ead7870b40a35"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          100,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          100,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          100,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          100,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          100,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          100
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          100,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2024.zarr",
+      "zmetadata_sha256": "097124fd2aa52007940d189e39d5d64bb6cb2155509b34e6bd4ee086ccb6e32e"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2024.json",
+      "sha256": "c8262510847391c6aa39cbfcb67c349e6961cd52e3ece2878f6520c66be65935"
+    },
+    {
+      "arrays": {
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation": [
+          366,
+          27,
+          27
+        ],
+        "observation_fraction": [
+          27,
+          27
+        ],
+        "time": [
+          366
+        ]
+      },
+      "exists": true,
+      "kind": "imd_truth",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imd/tp/india_1p5_27x27_v1/2024.zarr",
+      "zmetadata_sha256": "451ee0a1a1755e3c829ac482cca990743b1eaf04f1ed79318968552f0ef550fb"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/cma/physics__cma_operational_2020_2025/tp/common_1p5/2025.zarr",
+      "zmetadata_sha256": "00d287674561b1984a6897cf6f41112ba808a7049bdf8a8ba05708ddc51a710a"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/cma/physics__cma_operational_2020_2025/tp/common_1p5/2025.json",
+      "sha256": "5105cbd732fbc17187123d2eb736e39309630eae341bd163d4cc4e551ef17caa"
+    },
+    {
+      "exists": true,
+      "files": 104,
+      "kind": "native_forecast_directory",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/dlesym/dlesym_v0_isccp_era5_tpdiag_t2m_00z_2025_ens1/forecasts/2025"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          101,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          101,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          101,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          101
+        ],
+        "member_available": [
+          104,
+          101
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2025.zarr",
+      "zmetadata_sha256": "b0aa4a0fb3e69e4de5c580ec93522c5c3feab8a0b84863b8a1eb84bd99d25650"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ecmwf/physics__ecmwf_operational_2020_2025/tp/common_1p5/2025.json",
+      "sha256": "4914365a84e7b345e4ccdf49ecdd747a9611b52513d4c5155a1e48831f367937"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          50,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          50,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          50
+        ],
+        "member_available": [
+          104,
+          50
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2025.zarr",
+      "zmetadata_sha256": "9faba5d4854fa3b2a35b8d6104d9a477455c5488f6fa31577170caafed4f8d14"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/fuxi_s2s/model-run__fuxi__fuxi_s2s_strict00z_twice_weekly_2020_2025_ens50/tp/common_1p5/2025.json",
+      "sha256": "a54639a1feedda319ab5a153a95d8851c461adf0bb6f666e531345df15553484"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          16,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          16,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          16
+        ],
+        "member_available": [
+          104,
+          16
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2025.zarr",
+      "zmetadata_sha256": "11ace545bf080cee8267efde5caf5dd4eb9fd255b10f176a7d3659f38c9eb9e2"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ncep/physics__ncep_operational_2020_2025/tp/common_1p5/2025.json",
+      "sha256": "fb3c15fbfec9638ef5f86e1502e00f01471a535757b6b40f7df3ae5afc5b01d5"
+    },
+    {
+      "exists": true,
+      "files": 104,
+      "kind": "native_forecast_directory",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/neural-gcm/neuralgcm_v1_precip_2p8_era5_00z_2025_ens10/forecasts/2025"
+    },
+    {
+      "arrays": {
+        "ensemble_mean": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_mean_weekly_total": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_member_count": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_member_count_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "ensemble_std": [
+          104,
+          42,
+          27,
+          27
+        ],
+        "ensemble_std_weekly": [
+          104,
+          6,
+          27,
+          27
+        ],
+        "forecast": [
+          104,
+          4,
+          42,
+          27,
+          27
+        ],
+        "forecast_period_end": [
+          42
+        ],
+        "forecast_period_start": [
+          42
+        ],
+        "forecast_weekly_mean": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "forecast_weekly_total": [
+          104,
+          4,
+          6,
+          27,
+          27
+        ],
+        "init": [
+          104
+        ],
+        "latitude": [
+          27
+        ],
+        "lead_day": [
+          42
+        ],
+        "lead_week": [
+          6
+        ],
+        "longitude": [
+          27
+        ],
+        "member": [
+          4
+        ],
+        "member_available": [
+          104,
+          4
+        ],
+        "valid_time": [
+          42
+        ]
+      },
+      "exists": true,
+      "kind": "standardized_forecast",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/forecasts/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2025.zarr",
+      "zmetadata_sha256": "a11ef15f26eba3985f8c3b5e6277e4f191e40ff11afcf4b008b84a9b1cbd57ed"
+    },
+    {
+      "exists": true,
+      "kind": "standardized_manifest",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/manifests/ukmo/physics__ukmo_operational_2020_2025/tp/common_1p5/2025.json",
+      "sha256": "edde2ae2d382f0d4e7ccc868cecc1459162df3d244fcb159cbc3653e0791a636"
+    },
+    {
+      "arrays": {
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation": [
+          365,
+          27,
+          27
+        ],
+        "observation_fraction": [
+          27,
+          27
+        ],
+        "time": [
+          365
+        ]
+      },
+      "exists": true,
+      "kind": "imd_truth",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imd/tp/india_1p5_27x27_v1/2025.zarr",
+      "zmetadata_sha256": "dd94e7bddfba8457322c3c841e4906d49b7f87f517092a7e6d288fc281f9766a"
+    },
+    {
+      "arrays": {
+        "baseline_year": [
+          29
+        ],
+        "climatology_date": [
+          366
+        ],
+        "climatology_day": [
+          366
+        ],
+        "climatology_interannual_std": [
+          366,
+          27,
+          27
+        ],
+        "climatology_mean": [
+          366,
+          27,
+          27
+        ],
+        "climatology_mean_by_year": [
+          29,
+          366,
+          27,
+          27
+        ],
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "observation_fraction": [
+          27,
+          27
+        ],
+        "sample_count": [
+          29,
+          366,
+          27,
+          27
+        ],
+        "sample_weight_sum": [
+          29,
+          366,
+          27,
+          27
+        ]
+      },
+      "exists": true,
+      "kind": "imd_climatology",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/climatologies/imd_1991_2019.zarr",
+      "zmetadata_sha256": "b942292806b52e3bb8180ebc1cbcc54bdfeb98b10a8e918d671732fc2eb00228"
+    },
+    {
+      "arrays": {
+        "cell_area_km2": [
+          27,
+          27
+        ],
+        "central_india_fraction": [
+          27,
+          27
+        ],
+        "east_northeast_india_fraction": [
+          27,
+          27
+        ],
+        "india_area_weight_km2": [
+          27,
+          27
+        ],
+        "india_fraction": [
+          27,
+          27
+        ],
+        "latitude": [
+          27
+        ],
+        "longitude": [
+          27
+        ],
+        "northwest_india_fraction": [
+          27,
+          27
+        ],
+        "south_peninsula_fraction": [
+          27,
+          27
+        ]
+      },
+      "exists": true,
+      "kind": "spatial_support",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/spatial/spatial_support.zarr",
+      "zmetadata_sha256": "07bb0e60a396a6056df0cea9c3b96861aeb5fe0f1db9640173b9e166306cfbe4"
+    }
+  ],
+  "status": "passed"
+}

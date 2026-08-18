@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "title": "Five-case FuXi-S2S current operational IFS initial-condition pilot",
+  "purpose": "Fast matched comparison of ERA5-, GFS-, and native operational IFS-initialized FuXi-S2S rainfall forecasts against IMERG Final V07B.",
+  "members_per_source": 5,
+  "case_count_range": [5, 5],
+  "lead_weeks": [1, 2, 3, 4, 5, 6],
+  "sources": ["era5", "gfs", "ifs"],
+  "source_labels": {"era5": "ERA5", "gfs": "GFS", "ifs": "IFS operational"},
+  "source_notes": {
+    "ifs": "Native operational IFS Open Data at 0.25 degrees with all required pressure and surface fields; IFS skin temperature over ocean is the disclosed SST proxy."
+  },
+  "cases": [
+    {"issue_date": "2024-06-24", "season_stage": "onset"},
+    {"issue_date": "2024-07-22", "season_stage": "early monsoon"},
+    {"issue_date": "2024-08-12", "season_stage": "peak monsoon"},
+    {"issue_date": "2024-09-02", "season_stage": "late monsoon"},
+    {"issue_date": "2024-09-23", "season_stage": "withdrawal"}
+  ],
+  "forecast_paths": {
+    "era5": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/era5/{yyyymmdd}/ens5/forecasts/annual{year}/{yyyymmdd}.nc",
+    "gfs": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/{yyyymmdd}/ens5/forecasts/annual{year}/{yyyymmdd}.nc",
+    "ifs": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/ifs/native-0p25-aws/ens5/forecasts/annual{year}/{yyyymmdd}.nc"
+  },
+  "fuxi_climatology": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/native_reforecast_jjas_2002_2021/fuxi_s2s_jjas_model_climatology_2002_2021_loyo.nc",
+  "imerg_daily_template": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/daily/imerg/tp/india_1p5_27x27_v1/{year}.zarr",
+  "imerg_climatology": "/storage/raj.ayush/s2s_final_data/final_iteration/standardized/india_s2s_benchmark_v1/observations/ground_truth_v1/climatologies/imerg_2001_2019.zarr",
+  "map_case": "2024-07-22",
+  "map_week": 1,
+  "metric_contract": {
+    "primary": "case-wise cosine-latitude and IMERG-support weighted spatial anomaly correlation (ACC)",
+    "secondary": ["RMSE", "MAE", "bias"],
+    "case_aggregation": "arithmetic mean with case-bootstrap 95% interval",
+    "interpretation": "Fast five-case native-operational-IFS pilot. Use as presentation evidence with wide uncertainty, not an operational ranking."
+  }
+}

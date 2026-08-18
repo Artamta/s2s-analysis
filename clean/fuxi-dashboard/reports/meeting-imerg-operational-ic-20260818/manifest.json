@@ -1,0 +1,185 @@
+{
+  "anomaly_contract": "Every field is raw weekly-mean rainfall minus the same fixed IMERG Final V07B 2001-2022 calendar-day climatology",
+  "case_ids": [
+    "paired_20240626",
+    "paired_20240724",
+    "paired_20240814",
+    "paired_20240904",
+    "paired_20240925"
+  ],
+  "checks": {
+    "all_acc_finite_and_bounded": true,
+    "all_composites_finite_on_support": true,
+    "exactly_five_matched_cases": true,
+    "five_members_for_each_fuxi_source": true,
+    "fixed_169_cell_support": true,
+    "identical_valid_periods_checked": true,
+    "imerg_2001_2022_climatology": true,
+    "verification_years_excluded": true
+  },
+  "common_color_levels_mm_day": [
+    -12.0,
+    -8.0,
+    -5.0,
+    -3.0,
+    -1.0,
+    1.0,
+    3.0,
+    5.0,
+    8.0,
+    12.0
+  ],
+  "created_utc": "2026-08-18T13:20:17.331462+00:00",
+  "displayed_weeks": [
+    1,
+    3
+  ],
+  "inputs": [
+    {
+      "name": "review_fields",
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/processed/review_fields_2023_2024.nc",
+      "sha256": "8a4d4d778a12e5fc4a836f53697ae461a636feabb7ae427705bd99409cc1c72d",
+      "size_bytes": 548528
+    },
+    {
+      "name": "imerg_climatology",
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/deliverables/fuxi_erpas_imd_imerg_review_2023_2024/data/imerg_climatology/imerg_final_v07b_climatology_2001_2022_1p5_daily.nc",
+      "sha256": "38e066a3d0efccb38977e9d2a6f243d94e548a6a7d5dd33f67592efc2d7247b8",
+      "size_bytes": 133954
+    },
+    {
+      "name": "era5_20240624",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/era5/20240624/ens5/forecasts/annual2024/20240624.nc",
+      "sha256": "b1f31e1610b3e2e024addc70a79aa03bea214d7c32df278c7d4ffea106489f7c",
+      "size_bytes": 869845
+    },
+    {
+      "name": "gfs_20240624",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20240624/ens5/forecasts/annual2024/20240624.nc",
+      "sha256": "f605e97b88ac4018e1822823abea089157c7fead795b1454f1cd1248c077d73a",
+      "size_bytes": 869886
+    },
+    {
+      "name": "ifs_20240624",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/ifs/native-0p25-aws/ens5/forecasts/annual2024/20240624.nc",
+      "sha256": "4e7dcd5c13bd21f123a1a4f4746499c65e5539b24472daf9eaf2a0b6175831d1",
+      "size_bytes": 871532
+    },
+    {
+      "name": "era5_20240722",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/era5/20240722/ens5/forecasts/annual2024/20240722.nc",
+      "sha256": "de653ef1171ac440ffead70c380e772d56c6e6a9bab2929de64cb08e854c168f",
+      "size_bytes": 867528
+    },
+    {
+      "name": "gfs_20240722",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20240722/ens5/forecasts/annual2024/20240722.nc",
+      "sha256": "2c8187546122889d78de7358173474b7ce767ce22ed61bcc5486e7bcb917498f",
+      "size_bytes": 865314
+    },
+    {
+      "name": "ifs_20240722",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/ifs/native-0p25-aws/ens5/forecasts/annual2024/20240722.nc",
+      "sha256": "de70f8a7085ad5f4cf699397b302fd9f296eaee0780fed7f5b9b8c34a1ac3e7b",
+      "size_bytes": 867718
+    },
+    {
+      "name": "era5_20240812",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/era5/20240812/ens5/forecasts/annual2024/20240812.nc",
+      "sha256": "957962a1e71b828a77521dea822504e72c70ae62d4942a17c6ac179376740dc7",
+      "size_bytes": 866937
+    },
+    {
+      "name": "gfs_20240812",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20240812/ens5/forecasts/annual2024/20240812.nc",
+      "sha256": "f7c3a173514b5a76aa1ce15d7b1ab53f7189e72717bf7247b0fd332317ef7bf2",
+      "size_bytes": 863525
+    },
+    {
+      "name": "ifs_20240812",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/ifs/native-0p25-aws/ens5/forecasts/annual2024/20240812.nc",
+      "sha256": "3af073e6dfb42310b52ffcefc9816f839b38d7c964b9184e9035563bc2426f00",
+      "size_bytes": 867380
+    },
+    {
+      "name": "era5_20240902",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/era5/20240902/ens5/forecasts/annual2024/20240902.nc",
+      "sha256": "4ee23aef04cb4073440f44a7a74c38633cc8f76914012c2319df19144632a317",
+      "size_bytes": 850105
+    },
+    {
+      "name": "gfs_20240902",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20240902/ens5/forecasts/annual2024/20240902.nc",
+      "sha256": "e295d66394e7beb88e1c3b7f4c9cde0403fcfee7cd1afaa3a50b913519fcfdb3",
+      "size_bytes": 860008
+    },
+    {
+      "name": "ifs_20240902",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/ifs/native-0p25-aws/ens5/forecasts/annual2024/20240902.nc",
+      "sha256": "d602fb2aa5ea0273910298c4c5215ac0cf6a74ebec6f146a14d23e13d13acdc8",
+      "size_bytes": 854477
+    },
+    {
+      "name": "era5_20240923",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/era5/20240923/ens5/forecasts/annual2024/20240923.nc",
+      "sha256": "3cb5fe6d734277caa6e58001b433158cb3234bd2bdd2c7f732b5f4aab7bd93dd",
+      "size_bytes": 841081
+    },
+    {
+      "name": "gfs_20240923",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/gfs/20240923/ens5/forecasts/annual2024/20240923.nc",
+      "sha256": "ea6883d95ea962a976bab87f467cc82a9ac96ddd0a0681356581794d8e4e5c03",
+      "size_bytes": 852413
+    },
+    {
+      "name": "ifs_20240923",
+      "path": "/storage/raj.ayush/s2s_final_data/final_iteration/model-runs/fuxi/operational/ifs/native-0p25-aws/ens5/forecasts/annual2024/20240923.nc",
+      "sha256": "e610fbb9fb9a7f033786afe982d6b21afaa430d02c53032c1c13f6ff597f9ebb",
+      "size_bytes": 843938
+    }
+  ],
+  "interpretation": "Exploratory five-case pilot only; panel ACC badges are descriptive mean case-wise scores and do not establish a general IC ranking.",
+  "mean_case_acc_against_imerg": {
+    "era5": {
+      "W1": 0.5050020141786817,
+      "W2": 0.40094373247842385,
+      "W3": 0.15519534722011272,
+      "W4": 0.2136050360148735
+    },
+    "erpas": {
+      "W1": 0.4470970268541132,
+      "W2": 0.19118679657730894,
+      "W3": 0.0704236858265019,
+      "W4": -0.008233893296599482
+    },
+    "gfs": {
+      "W1": 0.38125832836801865,
+      "W2": 0.2749698377263695,
+      "W3": 0.15596140304276246,
+      "W4": 0.22330342647520224
+    },
+    "ifs": {
+      "W1": 0.5056474173022615,
+      "W2": 0.40931939565071734,
+      "W3": 0.028896470540672133,
+      "W4": 0.08466945364958267
+    }
+  },
+  "members_per_fuxi_source": 5,
+  "outputs": [
+    {
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard/reports/meeting-imerg-operational-ic-20260818/01_imerg_operational_ic_composite_anomalies_w1_w3.png",
+      "sha256": "392e72b3b4f1425eaedfe3609393103ca5fbadb163ecc139759482a7db55332e",
+      "size_bytes": 1099972
+    },
+    {
+      "path": "/home/raj.ayush/s2s/s2s_anlysis/clean/fuxi-dashboard/reports/meeting-imerg-operational-ic-20260818/per_case_acc_against_imerg.csv",
+      "sha256": "519f9ac21f1f4b54a425d441f89856a9b3b79b983b64d5c7836cc9af8cd5bca5",
+      "size_bytes": 5229
+    }
+  ],
+  "schema_version": 1,
+  "scope": "Five matched ERPAS/FuXi ERA5/GFS/native-operational-IFS cases verified against IMERG Final V07B",
+  "status": "PASSED",
+  "valid_week_alignment": "FuXi Monday leads 4-31 and ERPAS Wednesday Weeks 1-4 share Thursday-Wednesday valid periods"
+}

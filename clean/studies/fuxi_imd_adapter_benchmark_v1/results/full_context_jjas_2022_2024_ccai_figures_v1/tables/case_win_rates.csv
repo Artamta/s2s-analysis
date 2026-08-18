@@ -1,0 +1,22 @@
+lead_week,metric,metric_label,wins,ties,total,win_fraction_pct,mean_effect
+ALL,rmse_improvement_mm_day,RMSE,480,0,600,80.0,0.4476561072047582
+ALL,acc_improvement,ACC,439,0,600,73.16666666666667,0.08241317448771163
+ALL,abs_bias_improvement_mm_day,absolute bias,241,0,600,40.166666666666664,-0.20185062540558188
+1,rmse_improvement_mm_day,RMSE,95,0,100,95.0,0.6749131794388116
+1,acc_improvement,ACC,91,0,100,91.0,0.09917198588741158
+1,abs_bias_improvement_mm_day,absolute bias,49,0,100,49.0,-0.037789052894062314
+2,rmse_improvement_mm_day,RMSE,92,0,100,92.0,0.6161625677976802
+2,acc_improvement,ACC,85,0,100,85.0,0.08072292629609999
+2,abs_bias_improvement_mm_day,absolute bias,39,0,100,39.0,-0.11479029494591429
+3,rmse_improvement_mm_day,RMSE,80,0,100,80.0,0.5058304944740838
+3,acc_improvement,ACC,72,0,100,72.0,0.07724820369673094
+3,abs_bias_improvement_mm_day,absolute bias,40,0,100,40.0,-0.12236966534952531
+4,rmse_improvement_mm_day,RMSE,73,0,100,73.0,0.37793137665717885
+4,acc_improvement,ACC,68,0,100,68.0,0.05689249653222359
+4,abs_bias_improvement_mm_day,absolute bias,42,0,100,42.0,-0.21681037515924984
+5,rmse_improvement_mm_day,RMSE,70,0,100,70.0,0.26878027869393273
+5,acc_improvement,ACC,62,0,100,62.0,0.07166868559724604
+5,abs_bias_improvement_mm_day,absolute bias,30,0,100,30.0,-0.4178548291703329
+6,rmse_improvement_mm_day,RMSE,70,0,100,70.0,0.24231874616686216
+6,acc_improvement,ACC,61,0,100,61.0,0.10877474891655758
+6,abs_bias_improvement_mm_day,absolute bias,41,0,100,41.0,-0.30148953491440644

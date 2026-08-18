@@ -1,0 +1,244 @@
+{
+  "created_utc": "2026-08-18T01:45:30.289717+00:00",
+  "evaluation_contract": {
+    "acc_reference": "one common fixed training-only 2002-2017 IMD climatology",
+    "audit_counts": {
+      "2022": 35,
+      "2023": 35,
+      "2024": 30
+    },
+    "audit_starts": 100,
+    "audit_years": [
+      2022,
+      2023,
+      2024
+    ],
+    "grid": "native 1.5-degree; no interpolation",
+    "independent_2025_claim": false,
+    "leads": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "selection_years": [
+      2018,
+      2019
+    ],
+    "support_cells": 171,
+    "target": "IMD weekly rainfall",
+    "training_years": [
+      2002,
+      2017
+    ],
+    "weekly_alignment": "W1 init+0..6 through W6 init+35..41"
+  },
+  "figure_count": 5,
+  "figure_stems": [
+    "01_lead_skill_and_correction_decomposition",
+    "02_year_region_robustness",
+    "03_paired_case_gains_and_failures",
+    "04_native_grid_spatial_footprint",
+    "05_intensity_and_extremes_stress_test"
+  ],
+  "headline": {
+    "abs_bias_case_lead_win_fraction_pct": 40.166666666666664,
+    "acc_case_lead_win_fraction_pct": 73.16666666666667,
+    "adapter_acc": 0.3579613096402882,
+    "adapter_acc_delta_vs_raw": 0.08241317448771163,
+    "adapter_acc_delta_vs_raw_ci95": [
+      0.05399400526697257,
+      0.1085173132534606
+    ],
+    "adapter_bias_mm_day": -0.8418089256460356,
+    "adapter_rmse_mm_day": 5.274947867479156,
+    "adapter_rmse_skill_vs_raw_ci95": [
+      6.421588066505529,
+      9.204564289794472
+    ],
+    "adapter_rmse_skill_vs_raw_pct": 7.822594559839069,
+    "extreme_ge20_bias_adapter_mm_day": -14.38805524248896,
+    "raw_acc": 0.2755481351525766,
+    "raw_bias_mm_day": -0.22497444705570635,
+    "raw_rmse_mm_day": 5.7226039746839135,
+    "rmse_case_lead_win_fraction_pct": 80.0,
+    "threshold_20_ets_adapter": 0.16678881566901543,
+    "threshold_20_ets_raw": 0.1690947747213639
+  },
+  "model": {
+    "anchor": "training-only 2002-2017 log-bias correction",
+    "label": "anchored neural postprocessor",
+    "parameters": 144689,
+    "seed_ensemble": [
+      42,
+      43,
+      44
+    ],
+    "selected_model": "normal_climo_model"
+  },
+  "new_diagnostics": {
+    "bootstrap": {
+      "block_length_starts": 13,
+      "draws": 2000,
+      "interpretation": "descriptive sensitivity; not a p-value",
+      "interval": "percentile 95%",
+      "pooled_lead_region_sampling": "paired two-stage: resample three audit-year slots, then circular moving blocks within selected years; all leads retained",
+      "seed": 20260818,
+      "year_row_sampling": "paired circular moving blocks within the named audit year; all leads retained"
+    },
+    "intensity_strata": [
+      {
+        "key": "dry_lt1",
+        "label": "<1",
+        "lower_mm_day": 0.0,
+        "upper_mm_day": 1.0
+      },
+      {
+        "key": "light_1_5",
+        "label": "1\u20135",
+        "lower_mm_day": 1.0,
+        "upper_mm_day": 5.0
+      },
+      {
+        "key": "moderate_5_10",
+        "label": "5\u201310",
+        "lower_mm_day": 5.0,
+        "upper_mm_day": 10.0
+      },
+      {
+        "key": "heavy_10_20",
+        "label": "10\u201320",
+        "lower_mm_day": 10.0,
+        "upper_mm_day": 20.0
+      },
+      {
+        "key": "extreme_ge20",
+        "label": "\u226520",
+        "lower_mm_day": 20.0,
+        "upper_mm_day": null
+      }
+    ],
+    "posthoc_weighting": {
+      "audit_weight_definition": "region area x saved-at-scoring-time fractional weekly coverage",
+      "case_leads_with_difference": 8,
+      "definition": "frozen cell-area x IMD-support weights with common finite truth/forecast mask",
+      "reason": "fractional weekly_coverage was not saved in the frozen prediction cube",
+      "static_relative_excess_pct": 0.004852501690699284,
+      "total_case_leads": 600
+    },
+    "spatial_inference": "descriptive; no pixel-wise significance claim",
+    "status": "post-hoc descriptive additions; not model-selection criteria",
+    "threshold_time_aggregation": "weekly-mean rainfall rates at cell-lead scale; not daily extreme-event verification",
+    "thresholds_mm_day": [
+      1.0,
+      5.0,
+      10.0,
+      20.0
+    ]
+  },
+  "output_files": {
+    "01_lead_skill_and_correction_decomposition.pdf": "4b87f6362e99c95331195e6158788d07b49dc3b41cf4ff9043fe16c22d91d8c0",
+    "01_lead_skill_and_correction_decomposition.png": "f9bcb0ce99def48af3fe885e2c8dd21496ffdbbb5bd0af62e6c75990b81748b2",
+    "02_year_region_robustness.pdf": "1218b5bb5bffc83a5474c8d4d8ad93b27cea0885bafb66e3d1319a0ea55ae32a",
+    "02_year_region_robustness.png": "c631dbcda5c6f55ba547f3d88a82108884aaf0c82aaf4a14b6e99fe5e7f1fc67",
+    "03_paired_case_gains_and_failures.pdf": "398473663d103995c0a08590d457c6e204c754bc71ddfe49c8cb37b1c87c6dbf",
+    "03_paired_case_gains_and_failures.png": "c0b31e62fb89f7430bccc268fbdd84d00c26a6a41bedb67959273d16985967ac",
+    "04_native_grid_spatial_footprint.pdf": "9df80f404093364e5471deed8f6da9e29a013639361a536b0715be9aba31ffb6",
+    "04_native_grid_spatial_footprint.png": "dea80af64f1b26feccfb4c61a9712d27d97a9bf7324fa497374d4d2e11b55133",
+    "05_intensity_and_extremes_stress_test.pdf": "b27fa6ddc2d7e09364a8f8bb3dcda061d6fe5a7a0d1a7792daa37d259fc59674",
+    "05_intensity_and_extremes_stress_test.png": "2e5b6e8190ff7207f732f010a29a6874e5614dee9f18a170d46f65cac5e3921b",
+    "CAPTIONS.md": "16c92fe14e050ddc806aa0185bd6b09d7c848959bbeeee12b4bc87d3393f3adc",
+    "README.md": "90f8cb8faea83eb5279ae5be7e5f270fe2ab91719044cbb2f99dc5ce2fbff4e8",
+    "tables/bootstrap_indices_two_stage.npy": "c0de2c1468bb4771ac4a735625ee2e5f27d4cb7eeeb9d0e92a5a3531c950d4e9",
+    "tables/bootstrap_indices_within_year.npy": "0d86166ec29b89276e5fa27e1ef6c6da4223efa51b56996f8e40d8db41376869",
+    "tables/case_win_rates.csv": "3daf43025cbb3b4e3f1191c5d4411b9e52ad67242fcf9e8d839e8bbc12db9219",
+    "tables/intensity_strata_metrics.csv": "342644a10246f59d45280fc41a39c4ce07155f455601d6db60a0c474495540d9",
+    "tables/lead_summary.csv": "438cf791de0a8640274941393498700a8225d8342cb8d7975bbf3780836aa5b6",
+    "tables/paired_block_bootstrap_effects.csv": "14e46ae738d77d8e89ca68c7a4249099895f4d0f081ac041e8c26441e86a9139",
+    "tables/paired_case_effects.csv": "36cfd55a94dfdef3c438f8afbdc6f45a8547c7c5d16a7a5c0496f8706b7d8147",
+    "tables/spatial_diagnostics.nc": "c682c1dad07a1f894ab1a25af1864de95f81b7f4834b7b214fab8f80fecf60e3",
+    "tables/spatial_improvement_summary.csv": "2af9ba0225fa7a0c288df45314c7d6d3f3fffa8548bfa80eeb82bbdd27264192",
+    "tables/threshold_metrics.csv": "bab786336c7fe4acb039bffd1ff7e199943f1404cf3f4bf31b9cf25a8cef12a1",
+    "tables/weighting_diagnostic.csv": "02edba171814c2f93ad3cc09b4ec4b29dce347705018c95f8e3adc8757345870"
+  },
+  "schema_name": "fuxi_imd_ccai_neural_adapter_figures",
+  "schema_version": 1,
+  "scientific_status": "2022-2024 development generalization audit; not untouched independent confirmation",
+  "software": {
+    "matplotlib": "3.9.2",
+    "numpy": "1.26.4",
+    "pandas": "2.3.1",
+    "python": "3.9.23 (main, Jun  5 2025, 13:40:20) \n[GCC 11.2.0]",
+    "xarray": "2023.6.0"
+  },
+  "source_files": {
+    "audit_case_metrics": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/case_metrics.csv",
+      "sha256": "6a90ca167c5cde46cc82bbdf7b92b4c076b4c1cb5566e491f9968ee9c8a355ba"
+    },
+    "audit_generalization_guards": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/generalization_guards.json",
+      "sha256": "778e1fa18d9a3279018491156f39ee15885b4aa1d40df9055dcdd8263abde9c6"
+    },
+    "audit_manifest": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/manifest.json",
+      "sha256": "260fd5e344dead5359c482e74479ccbe1e3775fc5f0d040a4bbffdd412ac83e9"
+    },
+    "audit_predictions": {
+      "hash_kind": "sha256_tree",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/predictions.zarr",
+      "sha256": "109ffe000bb2a4e68c60ee9dc3b4dc50af9285ebc554f2b1dd23400b6186271a"
+    },
+    "audit_summary_by_lead_region": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/summary_by_lead_region.csv",
+      "sha256": "8919da798b8fedb773957d8157e2017108de4d8db0bfe8d8a63ba4a314524ee1"
+    },
+    "audit_summary_by_region": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/summary_by_region.csv",
+      "sha256": "2946f245c7dcf078fbdbe01ca69fd93816f59b0900af395d046bf76db8e93f9d"
+    },
+    "audit_summary_by_year_lead_region": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/results/full_context_jjas_2022_2024_job91439/summary_by_year_lead_region.csv",
+      "sha256": "a9ca9a7e200dab15ec5f20542e358bb9f66959ecd0757169af019e420ed958bd"
+    },
+    "boundary_loader": {
+      "hash_kind": "sha256_file",
+      "path": "bias-correction/plot_physical_validation_results.py",
+      "sha256": "7cdc0b6cc40f56d1e1f8ebae2073d1170dc0d8e5bdbf11d0dfa2990e5898b836"
+    },
+    "frozen_selection": {
+      "hash_kind": "sha256_file",
+      "path": "bias-correction/results/fuxi_imd_full_context_compact_allweeks/full_20260811T152024Z/selection.json",
+      "sha256": "d579aad90822ff504881f8334f18bd3962fd2c4a9bc75fb25e43455e9bbe0978"
+    },
+    "india_boundary": {
+      "hash_kind": "sha256_file",
+      "path": "fuxi-dashboard/public/data/india-admin.json",
+      "sha256": "39e157a2e21953426efe3e9ab54c45a97f197b0bd7209952ec3df6ecd2b4b6f8"
+    },
+    "renderer": {
+      "hash_kind": "sha256_file",
+      "path": "studies/fuxi_imd_adapter_benchmark_v1/make_ccai_neural_adapter_figures.py",
+      "sha256": "3f79532a2113eae656d6645c2c8e199fb8bea42471342891a9947852cdd25c66"
+    },
+    "run_manifest": {
+      "hash_kind": "sha256_file",
+      "path": "bias-correction/results/fuxi_imd_full_context_compact_allweeks/full_20260811T152024Z/manifest.json",
+      "sha256": "cb5b2b6fa43f76e7d4e8eba22a185ee4084a9b4964b2de5978b3a527505566fa"
+    },
+    "run_predictions_area_weights": {
+      "hash_kind": "sha256_tree",
+      "path": "bias-correction/results/fuxi_imd_full_context_compact_allweeks/full_20260811T152024Z/predictions.zarr",
+      "sha256": "ab853786bf52d5412d78570911cc4488de07b1b4d1f12659f28eda7b37c784ca"
+    }
+  },
+  "status": "complete"
+}

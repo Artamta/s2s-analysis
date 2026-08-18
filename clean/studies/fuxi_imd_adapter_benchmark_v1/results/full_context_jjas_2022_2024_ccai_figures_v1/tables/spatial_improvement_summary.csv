@@ -1,0 +1,15 @@
+baseline,scope,lead_week,area_fraction_lower_rmse_pct,spatial_significance
+raw_fuxi,pooled_W1-W6,ALL,73.8056467743153,not assessed
+raw_fuxi,W1,1,81.03851528129172,not assessed
+raw_fuxi,W2,2,85.44600607979568,not assessed
+raw_fuxi,W3,3,79.27911782330717,not assessed
+raw_fuxi,W4,4,60.081875921707514,not assessed
+raw_fuxi,W5,5,52.6398690091265,not assessed
+raw_fuxi,W6,6,51.250196076629535,not assessed
+log_bias,pooled_W1-W6,ALL,80.67226320612058,not assessed
+log_bias,W1,1,70.01865866140413,not assessed
+log_bias,W2,2,78.85616661483397,not assessed
+log_bias,W3,3,73.80347847469737,not assessed
+log_bias,W4,4,63.027468704124516,not assessed
+log_bias,W5,5,72.62382239228522,not assessed
+log_bias,W6,6,53.43610078246777,not assessed

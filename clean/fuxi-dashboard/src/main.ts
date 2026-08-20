@@ -241,7 +241,7 @@ function shell(): string {
             <path d="M7 2.75h6.6L18.25 7.4V21.25H7z" />
             <path d="M13.5 2.75V7.5h4.75M9.75 12h5.5M9.75 15.5h5.5" />
           </svg>
-          <span>Briefing</span>
+          <span>Forecast Briefing</span>
         </a>
       </nav>
       <div class="header-partner">

@@ -5,7 +5,7 @@
   "definitions": {
     "rain_mm_day": {
       "expression": "tp_mm_hour \u00d7 24",
-      "description": "FuXi 24-hour mean precipitation rate converted to daily rainfall."
+      "description": "AI Ensemble Model 24-hour mean precipitation rate converted to daily rainfall."
     },
     "weekly_total_mm": {
       "expression": "sum(seven daily rain_mm_day values)",
@@ -41,7 +41,7 @@
     },
     "model_anomaly": {
       "expression": "forecast weekly mean \u2212 matched model-climatology weekly mean",
-      "description": "FuXi model anomaly; not an IMD or IMERG anomaly."
+      "description": "AI Ensemble Model anomaly; not an IMD or IMERG anomaly."
     },
     "imd_anomaly": {
       "expression": "IMD observation \u2212 IMD 1991\u20132020 calendar-day climatology",

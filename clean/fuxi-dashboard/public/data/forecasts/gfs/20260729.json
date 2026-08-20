@@ -9,7 +9,7 @@
       "2026-07-27",
       "2026-07-28"
     ],
-    "input_source": "NCEP operational GFS 1.0-degree analyses and 0-6 hour forecasts for 2026-07-27 and 2026-07-28; experimental proxy for ERA5-initialized FuXi-S2S",
+    "input_source": "NCEP operational GFS 1.0-degree analyses and 0-6 hour forecasts for 2026-07-27 and 2026-07-28; experimental proxy for ERA5-initialized AI Ensemble Model",
     "members": 100,
     "lead_days": 42,
     "status": "warning",
@@ -897,9 +897,9 @@
     "rainfall_anomaly": {
       "label": "Rainfall anomaly",
       "short_label": "Rain anomaly",
-      "description": "Weekly-mean forecast minus lead-matched FuXi model climatology",
+      "description": "Weekly-mean forecast minus lead-matched AI ensemble-model climatology",
       "units": "mm / day",
-      "baseline": "FuXi-S2S native reforecasts, 2002\u20132021",
+      "baseline": "AI Ensemble Model native reforecasts, 2002\u20132021",
       "legend": {
         "boundaries": [
           -20,
@@ -973,9 +973,9 @@
     "temperature_anomaly": {
       "label": "Temperature anomaly",
       "short_label": "Temp anomaly",
-      "description": "Weekly-mean forecast minus lead-matched FuXi model climatology",
+      "description": "Weekly-mean forecast minus lead-matched AI ensemble-model climatology",
       "units": "\u00b0C",
-      "baseline": "FuXi-S2S native reforecasts, 2002\u20132021",
+      "baseline": "AI Ensemble Model native reforecasts, 2002\u20132021",
       "legend": {
         "boundaries": [
           -6,

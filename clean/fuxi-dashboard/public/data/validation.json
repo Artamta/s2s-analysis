@@ -6,7 +6,7 @@
   "checks": [
     {
       "id": "fuxi_forecast",
-      "label": "FuXi forecast",
+      "label": "AI Ensemble Model forecast",
       "group": "source",
       "status": "green",
       "summary": "100 members, 42 lead days, timing, units, grid, physics, and spread validated.",
@@ -32,10 +32,10 @@
     },
     {
       "id": "fuxi_climatology",
-      "label": "FuXi climatology",
+      "label": "AI Ensemble Model climatology",
       "group": "source",
       "status": "warning",
-      "summary": "Validated for this JJAS issue; full-year FuXi climatology is not yet available.",
+      "summary": "Validated for this JJAS issue; full-year AI Ensemble Model climatology is not yet available.",
       "details": {
         "size_bytes": 251633007,
         "sha256": "e0bc3c4faf44a8f9d47b8dfc22cf3640cf7018dbacf9b9c876c1dd8cb8b93f2d",
@@ -174,7 +174,7 @@
     }
   ],
   "warnings": [
-    "Validated for this JJAS issue; full-year FuXi climatology is not yet available.",
+    "Validated for this JJAS issue; full-year AI Ensemble Model climatology is not yet available.",
     "Final V07B 2001\u20132022 baseline is validated for all 42 valid days; the audited file is seasonal."
   ],
   "verification_metrics": {

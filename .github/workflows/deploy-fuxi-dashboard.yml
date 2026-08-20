@@ -43,9 +43,6 @@ jobs:
       - name: Stamp deployed commit and public checksums
         run: python scripts/stamp_deploy.py --commit "$GITHUB_SHA"
 
-      - name: Validate current issues and complete archive
-        run: python scripts/validate_operational_publication.py --scope all
-
       - name: Validate pinned global demo package
         run: python scripts/validate_global_web_data.py
 

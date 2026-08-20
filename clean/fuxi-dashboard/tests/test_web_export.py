@@ -63,7 +63,7 @@ def test_public_baselines_are_never_conflated() -> None:
     }
     forecast = load(PUBLIC_DATA / "forecasts/20260728.json")
     for product in ("rainfall_anomaly", "temperature_anomaly"):
-        assert forecast["products"][product]["baseline"].startswith("AI Ensemble Model")
+        assert forecast["products"][product]["baseline"].startswith("FuXi-S2S")
 
 
 def test_failed_validation_would_block_presentation() -> None:

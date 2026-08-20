@@ -3,8 +3,8 @@
   "sources": [
     {
       "id": "fuxi_forecast_20260728",
-      "name": "AI Ensemble Model 100-member GFS-proxy forecast",
-      "product": "AI Ensemble Model experimental forecast",
+      "name": "FuXi-S2S 100-member GFS-proxy forecast",
+      "product": "FuXi-S2S experimental forecast",
       "period": "2026-07-28 through 2026-09-07",
       "grid": "27 \u00d7 27, 1.5\u00b0, 39\u00b0N\u20130\u00b0, 60\u00b0E\u201399\u00b0E",
       "units": {
@@ -16,7 +16,7 @@
     },
     {
       "id": "fuxi_climatology_2002_2021",
-      "name": "AI Ensemble Model native reforecast model climatology",
+      "name": "FuXi-S2S native reforecast model climatology",
       "product": "20 equally weighted yearly ensemble means",
       "period": "2002\u20132021; JJAS native initialization slots",
       "grid": "27 \u00d7 27, 1.5\u00b0, forecast grid",

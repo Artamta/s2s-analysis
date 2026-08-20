@@ -20,14 +20,14 @@ import {
   issueHasRegionalOutlook,
 } from "./lib/catalog";
 
-type Route = "forecast" | "india" | "outlook" | "archive" | "briefing";
+type Route = "forecast" | "india" | "outlook" | "archive" | "models";
 
 const ROUTES = new Set<Route>([
   "forecast",
   "india",
   "outlook",
   "archive",
-  "briefing",
+  "models",
 ]);
 let routeCleanup: (() => void) | undefined;
 
@@ -169,7 +169,7 @@ async function fetchGlobalData(
 
 async function loadData(): Promise<AppData> {
   const route = currentRoute();
-  if (route === "briefing") return {};
+  if (route === "models") return {};
 
   if (route === "archive") {
     return {
@@ -236,13 +236,7 @@ function shell(): string {
         <a href="./#outlook" data-route="outlook">Regional</a>
         <a href="./?view=global#forecast" data-route="forecast">Global Demo</a>
         <a href="./#archive" data-route="archive">Archive</a>
-        <a class="briefing-nav-link" href="./#briefing" data-route="briefing">
-          <svg class="briefing-nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 2.75h6.6L18.25 7.4V21.25H7z" />
-            <path d="M13.5 2.75V7.5h4.75M9.75 12h5.5M9.75 15.5h5.5" />
-          </svg>
-          <span>Briefing</span>
-        </a>
+        <a href="./#models" data-route="models">Models <small>S2S Lab</small></a>
       </nav>
       <div class="header-partner">
         <a
@@ -279,7 +273,7 @@ function shell(): string {
       </div>
       <div class="site-footer__section" id="about">
         <strong>About & methods</strong>
-        <p>AI Ensemble Model output is summarized as weekly India fields. Anomalies and raw tercile probabilities appear only when a seasonally matched model climatology is available.</p>
+        <p>FuXi-S2S ensemble output is summarized as weekly India fields. Anomalies and raw tercile probabilities appear only when a seasonally matched model climatology is available.</p>
       </div>
       <div class="site-footer__section" id="schedule">
         <strong>Update schedule</strong>
@@ -310,7 +304,7 @@ async function renderRoute(data: AppData): Promise<void> {
   document.body.classList.toggle("india-route", route === "india");
   document.body.classList.toggle("outlook-route", route === "outlook");
   document.body.classList.toggle("archive-route", route === "archive");
-  document.body.classList.toggle("briefing-route", route === "briefing");
+  document.body.classList.toggle("models-route", route === "models");
   const statusDate = route === "forecast"
     ? data.global!.metadata.issue.initialization
     : data.forecast?.issue.initialization ??
@@ -319,7 +313,7 @@ async function renderRoute(data: AppData): Promise<void> {
     ? new Intl.DateTimeFormat("en-IN", {
       day: "2-digit", month: "short", year: "numeric", timeZone: "UTC",
     }).format(new Date(statusDate))
-    : route === "briefing" ? "Latest Thursday briefing" : "Forecast archive";
+    : route === "archive" ? "Forecast archive" : "Research models";
   document.querySelector<HTMLElement>(".header-status__label")!.textContent = statusLabel;
   const regionalLink = document.querySelector<HTMLAnchorElement>(
     '.site-nav a[data-route="outlook"]',
@@ -364,9 +358,9 @@ async function renderRoute(data: AppData): Promise<void> {
     const { renderArchivePage } = await import("./pages/archive");
     renderArchivePage(content, data);
   }
-  if (route === "briefing") {
-    const { renderBriefingPage } = await import("./pages/briefing");
-    renderBriefingPage(content);
+  if (route === "models") {
+    const { renderModelsPage } = await import("./pages/models");
+    renderModelsPage(content);
   }
   window.scrollTo({ top: 0, behavior: "instant" });
 }

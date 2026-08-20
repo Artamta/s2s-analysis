@@ -1,5 +1,43 @@
 import { FEATURED_REPORT } from "../lib/reports";
 
+const TEAM_MEMBERS = [
+  {
+    name: "Sandeep Juneja",
+    role: "Professor of Computer Science · Director, SCDLDS",
+    affiliation: "SCDLDS · Ashoka University",
+    image: "./team/sandeep-juneja.jpg",
+    profile: "https://www.ashoka.edu.in/profile/sandeep-juneja/",
+  },
+  {
+    name: "Parthasarathi Mukhopadhyay",
+    role: "Academic Visitor, SCDLDS · Visiting Faculty",
+    affiliation: "SCDLDS · Ashoka University · IISER Berhampur",
+    image: "./team/parthasarathi-mukhopadhyay.jpg",
+    profile: "https://www.ashoka.edu.in/profile/parthasarathi-mukhopadhyay/",
+  },
+  {
+    name: "Manmeet Singh",
+    role: "Project Lead · Academic Visitor, SCDLDS",
+    affiliation: "SCDLDS · Ashoka University · The University of Texas at Austin",
+    image: "./team/manmeet-singh.jpg",
+    profile: "https://www.ashoka.edu.in/profile/manmeet-singh/",
+  },
+  {
+    name: "Ayush Raj",
+    role: "BS–MS Student",
+    affiliation: "SCDLDS · IISER Pune",
+    image: "./team/ayush-raj.jpg",
+    profile: "https://github.com/Artamta",
+  },
+  {
+    name: "Saptarishi Dhanuka",
+    role: "Pre-doctoral Fellow, SCDLDS",
+    affiliation: "SCDLDS · Ashoka University",
+    image: "./team/saptarishi-dhanuka.jpg",
+    profile: "https://www.ashoka.edu.in/profile/saptarishi-dhanuka/",
+  },
+] as const;
+
 export function renderBriefingPage(container: HTMLElement): void {
   container.innerHTML = `
     <section class="briefing-page">
@@ -63,14 +101,41 @@ export function renderBriefingPage(container: HTMLElement): void {
         </div>
       </article>
 
-      <aside class="briefing-team-link" aria-label="Forecast team">
-        <div>
-          <span>Forecast team</span>
-          <h2>People behind the forecast</h2>
-          <p>Meet the collaborators responsible for scientific review, interpretation, and publication.</p>
+      <section class="briefing-team" aria-labelledby="briefing-team-title">
+        <header class="briefing-section-heading">
+          <div>
+            <span>Forecast team</span>
+            <h2 id="briefing-team-title">People behind the forecast</h2>
+          </div>
+          <p>Contributors to the scientific review, interpretation, and publication workflow.</p>
+        </header>
+
+        <div class="briefing-member-grid">
+          ${TEAM_MEMBERS.map((member) => `
+            <article class="briefing-member-card">
+              <div class="briefing-member-card__portrait">
+                <img
+                  src="${member.image}"
+                  alt="Portrait of ${member.name}"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="briefing-member-card__body">
+                <h3>${member.name}</h3>
+                <p class="briefing-member-card__role">${member.role}</p>
+                <p class="briefing-member-card__affiliation">${member.affiliation}</p>
+                <a
+                  href="${member.profile}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open ${member.name}'s public profile in a new tab"
+                >Public profile <span aria-hidden="true">↗</span></a>
+              </div>
+            </article>
+          `).join("")}
         </div>
-        <a href="./#team">Meet the team <span aria-hidden="true">→</span></a>
-      </aside>
+      </section>
 
       <aside class="briefing-context">
         <span>Research context</span>

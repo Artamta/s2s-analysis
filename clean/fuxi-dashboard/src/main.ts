@@ -20,7 +20,7 @@ import {
   issueHasRegionalOutlook,
 } from "./lib/catalog";
 
-type Route = "forecast" | "india" | "outlook" | "archive" | "briefing" | "team";
+type Route = "forecast" | "india" | "outlook" | "archive" | "briefing";
 
 const ROUTES = new Set<Route>([
   "forecast",
@@ -28,7 +28,6 @@ const ROUTES = new Set<Route>([
   "outlook",
   "archive",
   "briefing",
-  "team",
 ]);
 let routeCleanup: (() => void) | undefined;
 
@@ -170,7 +169,7 @@ async function fetchGlobalData(
 
 async function loadData(): Promise<AppData> {
   const route = currentRoute();
-  if (route === "briefing" || route === "team") return {};
+  if (route === "briefing") return {};
 
   if (route === "archive") {
     return {
@@ -234,6 +233,9 @@ function shell(): string {
       </a>
       <nav class="site-nav" aria-label="Primary">
         <a href="./#india" data-route="india">Forecast</a>
+        <a href="./#outlook" data-route="outlook">Regional</a>
+        <a href="./?view=global#forecast" data-route="forecast">Global Demo</a>
+        <a href="./#archive" data-route="archive">Archive</a>
         <a class="briefing-nav-link" href="./#briefing" data-route="briefing">
           <svg class="briefing-nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M7 2.75h6.6L18.25 7.4V21.25H7z" />
@@ -241,10 +243,6 @@ function shell(): string {
           </svg>
           <span>Forecast Briefing</span>
         </a>
-        <a href="./#outlook" data-route="outlook">Regional</a>
-        <a href="./?view=global#forecast" data-route="forecast">Global Demo</a>
-        <a href="./#archive" data-route="archive">Archive</a>
-        <a href="./#team" data-route="team">Team</a>
       </nav>
       <div class="header-partner">
         <a
@@ -313,7 +311,6 @@ async function renderRoute(data: AppData): Promise<void> {
   document.body.classList.toggle("outlook-route", route === "outlook");
   document.body.classList.toggle("archive-route", route === "archive");
   document.body.classList.toggle("briefing-route", route === "briefing");
-  document.body.classList.toggle("team-route", route === "team");
   const statusDate = route === "forecast"
     ? data.global!.metadata.issue.initialization
     : data.forecast?.issue.initialization ??
@@ -322,8 +319,7 @@ async function renderRoute(data: AppData): Promise<void> {
     ? new Intl.DateTimeFormat("en-IN", {
       day: "2-digit", month: "short", year: "numeric", timeZone: "UTC",
     }).format(new Date(statusDate))
-    : route === "briefing" ? "Latest Thursday briefing"
-    : route === "team" ? "Forecast team" : "Forecast archive";
+    : route === "briefing" ? "Latest Thursday briefing" : "Forecast archive";
   document.querySelector<HTMLElement>(".header-status__label")!.textContent = statusLabel;
   const regionalLink = document.querySelector<HTMLAnchorElement>(
     '.site-nav a[data-route="outlook"]',
@@ -371,10 +367,6 @@ async function renderRoute(data: AppData): Promise<void> {
   if (route === "briefing") {
     const { renderBriefingPage } = await import("./pages/briefing");
     renderBriefingPage(content);
-  }
-  if (route === "team") {
-    const { renderTeamPage } = await import("./pages/team");
-    renderTeamPage(content);
   }
   window.scrollTo({ top: 0, behavior: "instant" });
 }

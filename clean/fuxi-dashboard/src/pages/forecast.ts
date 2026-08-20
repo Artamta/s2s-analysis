@@ -319,6 +319,7 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
           ${pdfReady
             ? `<a class="india-pdf-download" href="${pdfUrl}" download type="application/pdf">Download PDF</a>`
             : `<button class="india-pdf-download" type="button" disabled>PDF preparing · refresh shortly</button>`}
+          <a href="./#briefing">Forecast Briefing →</a>
           <a href="./#archive">Browse archive</a>
         </div>
         ${matchedSource ? `<a class="india-matched-run" href="${sourceLink(matchedSource.id, currentIssueId)}">Same ${friendlyDate(forecast.issue.initialization.slice(0, 10), true)} issue is available with ${matchedSource.short_label} initial conditions →</a>` : ""}

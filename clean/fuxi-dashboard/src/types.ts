@@ -1,11 +1,16 @@
 export type ValidationStatus = "green" | "warning" | "failure";
-export type InitialConditionSourceId = "gfs" | "era5";
+export type InitialConditionSourceId = "gfs" | "era5" | "ifs";
+export type InitialConditionCategory =
+  | "operational_proxy"
+  | "operational_initialization"
+  | "reanalysis_reference";
 
 export type ProductKey =
   | "rainfall_total"
   | "rainfall_anomaly"
   | "temperature_mean"
-  | "temperature_anomaly";
+  | "temperature_anomaly"
+  | "wind850_anomaly";
 
 export type AvailableProductKey =
   | ProductKey
@@ -15,6 +20,7 @@ export type AvailableProductKey =
 export interface IssueCapabilities {
   raw_fields?: boolean;
   anomalies?: boolean;
+  wind850_anomaly?: boolean;
   regional_probabilities?: boolean;
   regional_probabilities_eligible?: boolean;
   pdf?: boolean;
@@ -77,11 +83,20 @@ export interface ForecastWeek {
   valid_end: string;
   fields: Partial<Record<ProductKey, number[]>>;
   summary: Partial<Record<ProductKey, FieldSummary>>;
+  vectors?: Partial<
+    Record<"wind850_anomaly", { u: number[]; v: number[] }>
+  >;
 }
 
 export interface ForecastData {
   schema_version: number;
   generated_at: string;
+  domain?: {
+    id: string;
+    label: string;
+    kind: "india" | "configured_bbox";
+    bounds: { north: number; south: number; west: number; east: number };
+  };
   issue: {
     initialization: string;
     information_cutoff: string;
@@ -96,7 +111,7 @@ export interface ForecastData {
       id: InitialConditionSourceId;
       label: string;
       short_label: string;
-      category: "operational_proxy" | "reanalysis_reference";
+      category: InitialConditionCategory;
       availability: "near_real_time" | "delayed_reference";
       description: string;
     };
@@ -106,10 +121,15 @@ export interface ForecastData {
       compact_json?: string;
       india_pdf?: string;
       india_pdf_sha256?: string;
+      domain_pdf?: string;
+      domain_pdf_sha256?: string;
     };
     climatology_alignment?: {
       status?: "available" | "unavailable_outside_jjas";
-      target_model_state_calendar_day: string;
+      target_initialization_calendar_day?: string;
+      model_state_calendar_day?: string;
+      /** Legacy exports before initialization-slot alignment was corrected. */
+      target_model_state_calendar_day?: string;
       left_slot?: string;
       right_slot?: string;
       right_weight?: number;
@@ -125,10 +145,8 @@ export interface ForecastData {
     };
     initialization_comparison?: {
       status: "initialization_sensitivity_only";
-      counterpart_source_id: InitialConditionSourceId;
       comparison: string;
-      week1_rainfall_gfs_minus_era5_mm_day: number;
-      week1_temperature_gfs_minus_era5_deg_c: number;
+      compared_source_ids: InitialConditionSourceId[];
       message: string;
     };
   };
@@ -137,7 +155,8 @@ export interface ForecastData {
     spacing_degrees: number;
     latitude: number[];
     longitude: number[];
-    india_mask: boolean[];
+    india_mask?: boolean[];
+    support_mask?: boolean[];
     supported_cell_count: number;
     value_order: string;
   };
@@ -147,6 +166,47 @@ export interface ForecastData {
     temperature_weekly_mean_max_deg_c: number;
   };
   weeks: ForecastWeek[];
+}
+
+export interface InitializationComparisonMetrics {
+  difference_field: number[];
+  area_weighted_mean_difference: number;
+  mean_absolute_difference: number;
+  ensemble_mean_pattern_correlation: number;
+  left_mean_spread: number;
+  right_mean_spread: number;
+}
+
+export interface InitializationComparisonData {
+  schema_version: 2;
+  generated_at: string;
+  issue_date: string;
+  comparison_type: "matched_initialization_source_sensitivity";
+  skill_status: "not_yet_verifiable";
+  interpretation: string;
+  grid: {
+    shape: [number, number];
+    latitude: number[];
+    longitude: number[];
+    value_order: string;
+  };
+  sources: Partial<Record<
+    InitialConditionSourceId,
+    { members: number; forecast_sha256: string; public_forecast: string }
+  >>;
+  pairs: Array<{
+    id: string;
+    left_source_id: InitialConditionSourceId;
+    right_source_id: InitialConditionSourceId;
+    label: string;
+    weeks: Array<{
+      week: number;
+      valid_start: string;
+      valid_end: string;
+      rainfall: InitializationComparisonMetrics;
+      temperature: InitializationComparisonMetrics;
+    }>;
+  }>;
 }
 
 export type TercileCategory =
@@ -474,9 +534,25 @@ export interface IndiaMapGeographyData {
   };
 }
 
+export interface ForecastDomainDefinition {
+  id: string;
+  label: string;
+  kind: "india" | "configured_bbox";
+  catalog: string;
+  geography: string;
+  products: Array<"rainfall_total" | "temperature_mean"> | ProductKey[];
+  pdf: boolean;
+}
+
+export interface ForecastDomainCatalog {
+  schema_version: 1;
+  default_domain: string;
+  domains: ForecastDomainDefinition[];
+}
+
 export interface IssueIndexData {
   schema_version: number;
-  default_view: "india";
+  default_view: "india" | "domain";
   default_source: InitialConditionSourceId;
   latest_successful_issue: string;
   current?: IssuePointer;
@@ -515,7 +591,7 @@ export interface IssueIndexData {
     id: InitialConditionSourceId;
     label: string;
     short_label: string;
-    category: "operational_proxy" | "reanalysis_reference";
+    category: InitialConditionCategory;
     status: "experimental" | "reference";
     description: string;
     default_issue: string;
@@ -583,5 +659,9 @@ export interface AppData {
   regionalOutlook?: RegionalOutlookData;
   global?: GlobalForecastData;
   world?: WorldCountriesData;
+  initializationComparison?: InitializationComparisonData;
+  comparisonForecasts?: Partial<Record<InitialConditionSourceId, ForecastData>>;
+  domainCatalog?: ForecastDomainCatalog;
+  activeDomain?: ForecastDomainDefinition;
   indiaAdmin?: IndiaAdminData;
 }

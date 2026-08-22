@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "default_domain": "india",
+  "domains": [
+    {
+      "id": "india",
+      "label": "India",
+      "kind": "india",
+      "catalog": "index.json",
+      "geography": "india-map-geography.json",
+      "products": [
+        "rainfall_total",
+        "rainfall_anomaly",
+        "temperature_mean",
+        "temperature_anomaly",
+        "wind850_anomaly"
+      ],
+      "pdf": true
+    }
+  ]
+}

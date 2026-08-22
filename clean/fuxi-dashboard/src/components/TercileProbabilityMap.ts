@@ -273,7 +273,9 @@ export class TercileProbabilityMap {
       const category = dominantCategory(probabilities);
       const lat = latitude[latIndex];
       const lon = longitude[lonIndex];
-      const supported = this.forecast.grid.india_mask[index];
+      const supported = (
+        this.forecast.grid.india_mask ?? this.forecast.grid.support_mask ?? []
+      )[index] ?? false;
       this.tooltip.innerHTML = supported
         ? `
           <strong>${CATEGORY_LABELS[variable][category]} · ${probabilities[category]}%</strong>

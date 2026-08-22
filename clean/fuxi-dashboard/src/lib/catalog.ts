@@ -14,6 +14,7 @@ const PRODUCT_KEYS: ProductKey[] = [
   "rainfall_anomaly",
   "temperature_mean",
   "temperature_anomaly",
+  "wind850_anomaly",
 ];
 
 function newest(issues: CatalogIssue[]): CatalogIssue | undefined {

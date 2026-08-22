@@ -12,7 +12,7 @@ import pytest
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
-    / "presentation"
+    / "evaluate"
     / "plot_jjas_average_acc_curve.py"
 )
 SPEC = importlib.util.spec_from_file_location("plot_jjas_average_acc_curve", SCRIPT)

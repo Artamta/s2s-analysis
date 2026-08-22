@@ -14,7 +14,9 @@ import pytest
 
 
 MODULE_PATH = (
-    Path(__file__).resolve().parents[1] / "evaluate_locked_physical_hindcast.py"
+    Path(__file__).resolve().parents[1]
+    / "evaluate"
+    / "evaluate_locked_physical_hindcast.py"
 )
 SPEC = importlib.util.spec_from_file_location(
     "evaluate_locked_physical_hindcast", MODULE_PATH

@@ -8,7 +8,7 @@ from pathlib import Path
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
-    / "presentation"
+    / "evaluate"
     / "package_corrected_forecast_figures.py"
 )
 SPEC = importlib.util.spec_from_file_location("package_corrected_forecast_figures", SCRIPT)

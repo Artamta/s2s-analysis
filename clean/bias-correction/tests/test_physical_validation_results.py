@@ -9,7 +9,11 @@ import pandas as pd
 import pytest
 
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "plot_physical_validation_results.py"
+MODULE_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "evaluate"
+    / "plot_physical_validation_results.py"
+)
 SPEC = importlib.util.spec_from_file_location("plot_physical_validation_results", MODULE_PATH)
 assert SPEC is not None and SPEC.loader is not None
 plots = importlib.util.module_from_spec(SPEC)

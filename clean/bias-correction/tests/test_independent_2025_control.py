@@ -650,7 +650,7 @@ def test_spatial_2x3_figure_renders_from_synthetic_fields(tmp_path: Path) -> Non
 
 def test_slurm_wrapper_enforces_cuda_and_known_node_exclusions() -> None:
     script = (
-        Path(evaluation.__file__).resolve().parent
+        Path(evaluation.__file__).resolve().parents[1]
         / "slurm"
         / "evaluate_independent_2025_control.sbatch"
     ).read_text(encoding="utf-8")

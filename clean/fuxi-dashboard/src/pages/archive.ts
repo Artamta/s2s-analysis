@@ -7,6 +7,7 @@ import {
   issueIsCurrent,
   issuePdfAvailable,
   productsForIssue,
+  sourcesForDisplay,
   type CatalogIssue,
   type CatalogSource,
 } from "../lib/catalog";
@@ -95,7 +96,7 @@ export function renderArchivePage(container: HTMLElement, data: AppData): void {
           <span>Source</span>
           <select id="archive-source-filter">
             <option value="all">All sources</option>
-            ${activeIndex.initial_condition_sources.map((source) => `<option value="${source.id}">${source.label}</option>`).join("")}
+            ${sourcesForDisplay(activeIndex).map((source) => `<option value="${source.id}">${source.label}</option>`).join("")}
           </select>
         </label>
         <label>

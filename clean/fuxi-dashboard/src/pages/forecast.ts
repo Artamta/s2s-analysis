@@ -5,8 +5,10 @@ import {
 import { createLegend } from "../components/Legend";
 import {
   defaultIssueForSource,
+  INITIAL_CONDITION_SOURCE_DISPLAY_ORDER,
   issueIsCurrent,
   productKeysForForecast,
+  sourcesForDisplay,
 } from "../lib/catalog";
 import type {
   AppData,
@@ -211,7 +213,7 @@ function renderInitializationComparison(
   geography: AppData["indiaGeography"],
 ): void {
   if (!geography || !comparison.pairs.length) return;
-  const sourceOrder = (["gfs", "ifs", "era5"] as InitialConditionSourceId[]).filter(
+  const sourceOrder = INITIAL_CONDITION_SOURCE_DISPLAY_ORDER.filter(
     (source) => source in comparison.sources && forecasts[source],
   );
   if (sourceOrder.length < 2) return;
@@ -460,7 +462,7 @@ export function renderForecastPage(container: HTMLElement, data: AppData): void 
           </div>
         </div>
         <div class="india-source-tabs" role="navigation" aria-label="Initial-condition source">
-          ${index.initial_condition_sources.map((candidate) => {
+          ${sourcesForDisplay(index).map((candidate) => {
             const preferred = defaultIssueForSource(index, candidate);
             if (!preferred) return `<span class="is-pending" aria-disabled="true"><span>${candidate.short_label}</span><small>Pilot pending</small></span>`;
             return `

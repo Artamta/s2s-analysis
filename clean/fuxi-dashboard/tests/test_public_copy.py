@@ -92,8 +92,8 @@ def test_featured_report_link_targets_a_valid_public_pdf() -> None:
     shell = read("src/main.ts")
     briefing = read("src/pages/briefing.ts")
     report_metadata = read("src/lib/reports.ts")
-    report_path = "reports/s2s-summary-india-2026-08-19.pdf"
-    cover_path = "reports/s2s-summary-india-2026-08-19-cover.png"
+    report_path = "reports/s2s-summary-india-2026-08-26.pdf"
+    cover_path = "reports/s2s-summary-india-2026-08-26-cover.png"
     report = ROOT / "public" / report_path
     cover = ROOT / "public" / cover_path
     assert f'href: "./{report_path}"' in report_metadata
@@ -103,7 +103,7 @@ def test_featured_report_link_targets_a_valid_public_pdf() -> None:
     assert 'type="application/pdf"' in briefing
     assert 'href="${FEATURED_REPORT.href}" download type="application/pdf"' in briefing
     assert 'aria-describedby="briefing-report-fallback"' in briefing
-    assert "19 August 2026 (PDF, 2.1 MB)" in report_metadata
+    assert "26 August 2026 (PDF, 2.0 MB)" in report_metadata
     assert report.read_bytes().startswith(b"%PDF-")
     assert cover.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 

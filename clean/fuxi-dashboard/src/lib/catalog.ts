@@ -9,6 +9,12 @@ import type {
 export type CatalogSource = IssueIndexData["initial_condition_sources"][number];
 export type CatalogIssue = CatalogSource["issues"][number];
 
+export const INITIAL_CONDITION_SOURCE_DISPLAY_ORDER = [
+  "ifs",
+  "era5",
+  "gfs",
+] as const satisfies readonly InitialConditionSourceId[];
+
 const PRODUCT_KEYS: ProductKey[] = [
   "rainfall_total",
   "rainfall_anomaly",
@@ -28,6 +34,14 @@ export function sourceById(
   id: InitialConditionSourceId,
 ): CatalogSource | undefined {
   return index.initial_condition_sources.find((source) => source.id === id);
+}
+
+export function sourcesForDisplay(index: IssueIndexData): CatalogSource[] {
+  return [...index.initial_condition_sources].sort(
+    (left, right) =>
+      INITIAL_CONDITION_SOURCE_DISPLAY_ORDER.indexOf(left.id) -
+      INITIAL_CONDITION_SOURCE_DISPLAY_ORDER.indexOf(right.id),
+  );
 }
 
 export function currentGfsIssue(index: IssueIndexData): CatalogIssue | undefined {

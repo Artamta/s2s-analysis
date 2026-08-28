@@ -2,7 +2,6 @@ import { TercileProbabilityMap } from "../components/TercileProbabilityMap";
 import {
   defaultIssueForSource,
   issueIsCurrent,
-  sourcesForDisplay,
 } from "../lib/catalog";
 import type {
   AppData,
@@ -203,7 +202,7 @@ export function renderOutlookPage(container: HTMLElement, data: AppData): void {
 
       <section class="outlook-runbar" aria-label="Regional outlook run selection">
         <div class="outlook-source-tabs">
-          ${sourcesForDisplay(index).map((candidate) => {
+          ${index.initial_condition_sources.map((candidate) => {
             const preferred = defaultIssueForSource(index, candidate);
             if (!preferred) return "";
             return `

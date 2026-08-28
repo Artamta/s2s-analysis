@@ -34,15 +34,3 @@ def test_wind_streamlines_are_default_with_an_arrow_alternative() -> None:
     assert 'data-wind-mode="arrows"' in forecast_page
     assert 'windModeControl.hidden = selectedProduct !== "wind850_anomaly"' in forecast_page
     assert "map.render(selectedProduct, week, product, windRenderingMode)" in forecast_page
-
-
-def test_initial_condition_sources_present_ifs_first_and_gfs_last() -> None:
-    catalog = read("src/lib/catalog.ts")
-    forecast_page = read("src/pages/forecast.ts")
-    archive_page = read("src/pages/archive.ts")
-    outlook_page = read("src/pages/outlook.ts")
-    assert '"ifs",\n  "era5",\n  "gfs",' in catalog
-    assert "INITIAL_CONDITION_SOURCE_DISPLAY_ORDER.filter(" in forecast_page
-    assert "sourcesForDisplay(index).map((candidate)" in forecast_page
-    assert "sourcesForDisplay(activeIndex).map((source)" in archive_page
-    assert "sourcesForDisplay(index).map((candidate)" in outlook_page

@@ -7,8 +7,9 @@
 
 % ---------------- Cover-page fields (edit these) ---------------------
 \newcommand{\StudentName}{Ayush Raj}
-\newcommand{\RegNo}{\placeholder{Registration No.}}
-\newcommand{\Programme}{BS-MS Dual Degree Programme}  % CONFIRM
+\newcommand{\RegNo}{20221068}
+\newcommand{\Programme}{BS-MS Dual Degree Programme}
+\newcommand{\Department}{Department of Data Science}
 \newcommand{\SupName}{Prof.\ Sandeep Kumar Juneja}
 \newcommand{\SupAffilA}{Director, Safexpress Centre for Data, Learning}
 \newcommand{\SupAffilB}{and Decision Sciences, Ashoka University}
@@ -20,10 +21,12 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{newpxtext,newpxmath}
 \usepackage{microtype}
-\usepackage[margin=1.9cm,top=1.8cm,bottom=1.9cm]{geometry}
-\usepackage{amsmath,amssymb}
+\usepackage{soul}
+\sodef\spaced{}{0.14em}{0.5em}{0em}   % letter-spaced small caps (works in pdfLaTeX and XeLaTeX)
+\usepackage[margin=1.9cm,top=1.9cm,bottom=1.9cm,headsep=0.45cm]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs,tabularx,multirow,multicol,array}
 \usepackage[table]{xcolor}
@@ -36,7 +39,8 @@
 \usepackage{wrapfig}
 \usepackage{fancyhdr}
 \usepackage[numbers,sort&compress]{natbib}
-\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=accent]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+\urlstyle{same}
 
 \definecolor{accent}{HTML}{0F3A63}
 \definecolor{accentmid}{HTML}{2A6496}
@@ -50,17 +54,17 @@
 \setlength{\parskip}{2pt}
 \setlength{\parindent}{1.2em}
 \setlist{nosep,leftmargin=1.2em}
-\captionsetup{font=small,labelfont=bf,skip=4pt}
-\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
-\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
-\titlespacing*{\section}{0pt}{7pt}{2pt}
-\titlespacing*{\subsection}{0pt}{4pt}{1pt}
+\captionsetup{font=small,labelfont=sc,labelsep=period,skip=4pt}
+\titleformat{\section}{\normalfont\large\scshape}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\itshape}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+\titlespacing*{\subsection}{0pt}{5pt}{1pt}
 
 \pagestyle{fancy}
 \fancyhf{}
-\renewcommand{\headrulewidth}{0.3pt}
-\fancyhead[L]{\small\itshape Improving Regional Subseasonal-to-Seasonal Forecasting}
-\fancyhead[R]{\small\itshape Mid-Term Thesis Report, \StudentName}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\footnotesize\scshape Improving Regional S2S Forecasting}
+\fancyhead[R]{\footnotesize\scshape \StudentName\ \textperiodcentered\ Mid-Term Thesis Report}
 \fancyfoot[C]{\small\thepage}
 
 
@@ -69,75 +73,78 @@
 % ============================ COVER =================================
 \begin{titlepage}
 \thispagestyle{empty}
-\newgeometry{margin=2.3cm,top=1.8cm,bottom=1.8cm}
+\newgeometry{margin=2.4cm,top=2.0cm,bottom=2.0cm}
 \centering
 % --- institutional marks
-\begin{minipage}[c]{0.24\linewidth}\raggedright
-  \includegraphics[height=2.45cm]{logos/iiserpune.png}
+\begin{minipage}[c]{0.3\linewidth}\raggedright
+  \includegraphics[height=2.2cm]{logos/iiserpune.png}
 \end{minipage}\hfill
-\begin{minipage}[c]{0.70\linewidth}\raggedleft
-  \includegraphics[height=2.25cm]{logos/ashoka.png}\hspace{0.22cm}%
-  \raisebox{0.33cm}{\includegraphics[height=1.55cm]{logos/scdlds.png}}
+\begin{minipage}[c]{0.66\linewidth}\raggedleft
+  \includegraphics[height=2.05cm]{logos/ashoka.png}\hspace{0.2cm}%
+  \raisebox{0.3cm}{\includegraphics[height=1.42cm]{logos/scdlds.png}}
 \end{minipage}
 
-\vspace{0.45cm}
-\rule{\linewidth}{1.2pt}\\[-0.32cm]
-\rule{\linewidth}{0.4pt}
+\vspace{0.5cm}
+\rule{\linewidth}{0.5pt}
 
-\vspace{1.5cm}
-{\fontsize{25}{31}\selectfont\bfseries
-Improving Regional\\[4pt] Subseasonal-to-Seasonal Forecasting\par}
+\vspace{1.0cm}
+{\small\scshape\spaced{Mid-Term Thesis Report}\par}
+\vspace{0.7cm}
+{\fontsize{26}{33}\selectfont
+Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
+\vspace{0.6cm}
+{\color{black!45}\rule{0.18\linewidth}{0.5pt}\par}
+\vspace{0.5cm}
+{\large\itshape Benchmarking, calibration and deep-learning post-processing\\[1pt]
+of Weeks~1--6 rainfall and temperature forecasts over India\par}
 
-\vspace{0.55cm}
-{\large\itshape Benchmarking, calibration and deep-learning post-processing of\\[1pt]
-Weeks~1--6 rainfall and temperature forecasts over India\par}
+\vspace{1.0cm}
+{\normalsize\itshape submitted in partial fulfilment of the requirements of the\par}
+\vspace{2pt}
+{\normalsize \Programme\par}
 
-\vspace{1.2cm}
-{\Large\scshape Mid-Term Thesis Report\par}
-\vspace{0.35cm}
-{\normalsize submitted in partial fulfilment of the requirements of the\\[1pt] \Programme\par}
-
-\vspace{0.9cm}
-{\normalsize by\par}
-\vspace{0.25cm}
-{\LARGE\bfseries \StudentName\par}
+\vspace{0.8cm}
+{\normalsize\itshape by\par}
+\vspace{0.3cm}
+{\Large\scshape \StudentName\par}
 \vspace{0.15cm}
-{\normalsize Registration No.\ \RegNo\par}
+{\small Registration No.\ \RegNo\par}
+{\small \Department, IISER Pune\par}
 
-\vspace{1.2cm}
-\renewcommand{\arraystretch}{1.15}
+\vspace{1.0cm}
+\renewcommand{\arraystretch}{1.2}
 \begin{tabular}{@{}>{\centering\arraybackslash}p{0.47\linewidth}>{\centering\arraybackslash}p{0.47\linewidth}@{}}
-{\small\scshape Thesis Supervisor} & {\small\scshape Expert} \\[2pt]
-\textbf{\SupName} & \textbf{\ExpName} \\
-{\small \SupAffilA} & {\small \ExpAffilA} \\
-{\small \SupAffilB} & {\small \ExpAffilB} \\
+{\footnotesize\scshape\spaced{Thesis Supervisor}} & {\footnotesize\scshape\spaced{Expert}} \\[1pt]
+\SupName & \ExpName \\
+{\footnotesize\itshape \SupAffilA} & {\footnotesize\itshape \ExpAffilA} \\
+{\footnotesize\itshape \SupAffilB} & {\footnotesize\itshape \ExpAffilB} \\
 \end{tabular}
 
-\vspace{0.55cm}
-{\small\scshape Collaborators\par}
-\vspace{2pt}
+\vspace{0.45cm}
+{\footnotesize\scshape\spaced{Collaborators}\par}
+\vspace{1pt}
 \begin{tabular}{@{}>{\centering\arraybackslash}p{0.47\linewidth}>{\centering\arraybackslash}p{0.47\linewidth}@{}}
-\textbf{Dr.\ Manmeet Singh} & \textbf{Dr.\ Parthasarathi Mukhopadhyay} \\
-{\small Western Kentucky University, USA} & {\small Ashoka University, Sonipat} \\
+Dr.\ Manmeet Singh & Dr.\ Parthasarathi Mukhopadhyay \\
+{\footnotesize\itshape Western Kentucky University, USA} & {\footnotesize\itshape Ashoka University, Sonipat} \\
 \end{tabular}
 
 \vfill
-\rule{\linewidth}{0.4pt}\\[-0.32cm]
-\rule{\linewidth}{1.2pt}
+\rule{\linewidth}{0.5pt}
 
-\vspace{0.3cm}
-{\large Indian Institute of Science Education and Research Pune\par}
-{\small Dr.\ Homi Bhabha Road, Pashan, Pune 411008, India\par}
+\vspace{0.25cm}
+{\normalsize \Department\par}
+{\normalsize Indian Institute of Science Education and Research Pune\par}
+{\footnotesize Dr.\ Homi Bhabha Road, Pashan, Pune 411008, India\par}
 \vspace{0.2cm}
-{\small Research carried out at the Safexpress Centre for Data, Learning and Decision Sciences, Ashoka University\par}
+{\footnotesize\itshape Research carried out at the Safexpress Centre for Data, Learning and Decision Sciences, Ashoka University, Sonipat\par}
 \vspace{0.3cm}
-{\normalsize \ReportDate\par}
+{\small\scshape\expandafter\spaced\expandafter{\ReportDate}\par}
 \restoregeometry
 \end{titlepage}
 
 % ============================ SUMMARY ===============================
 \setcounter{page}{1}
-\begin{center}{\large\bfseries Abstract}\end{center}
+\begin{center}{\normalsize\scshape\spaced{Abstract}}\end{center}
 \vspace{-6pt}
 \begin{quote}\small\noindent
 India has no common yardstick for Weeks~1--6 forecasts, although rain-fed agriculture, reservoir operation and disaster preparedness
@@ -163,14 +170,14 @@ FourCastNet~3, DLESyM)~\cite{bi2023pangu,lam2023graphcast,price2025gencast,chen2
 alongside the operational NWP systems of ECMWF, NCEP, UKMO, CMA and IMD's extended-range ERPAS~\cite{vitart2017s2s,abhilash2014erpas}.
 Global benchmarks (WeatherBench~2, ChaosBench) rank them on global averages~\cite{rasp2024wb2,nathaniel2024chaosbench}, but none answers:
 \emph{how do these models behave over India, region by region and season by season?}~\cite{malik2024s2s} The thesis asks three questions:
-\begin{enumerate}[label=\textbf{RQ\arabic*.},leftmargin=2.6em]
+\begin{enumerate}[label={\scshape rq\arabic*.},leftmargin=2.8em]
 \item Which forecast system should be trusted for a given target, lead, region and season over India?
 \item Can a small regional model correct a fixed global AI ensemble so that its uncertainty becomes reliable?
 \item Can deep generative models learn the joint distribution of weekly rainfall and temperature well enough to serve operational,
       probabilistic S2S forecasts?
 \end{enumerate}
 
-\textbf{Scientific challenges.}
+\textit{Scientific challenges.}
 \textit{Rainfall} is intermittent, zero-inflated and skewed, produced by convection far below grid scale, and organised over India by the
 monsoon intraseasonal oscillation (active/break spells, BSISO and MJO)~\cite{lee2013bsiso,goswami2005} and by orography; daily grid-scale
 rainfall is predictable for only one to two weeks. We therefore forecast \textit{weekly means}, which filter day-to-day noise and keep the
@@ -201,15 +208,15 @@ the archive. (c) Underdispersion of raw FuXi-S2S monsoon rainfall and its correc
 \label{fig:skill}
 \end{figure}
 
-\textbf{Key findings.}
+\textit{Key findings.}
 \begin{itemize}
-\item \textbf{Combining models wins early.} An equal-weight six-system mean (MME$_6$) has the highest Week-1 ACC for rainfall (0.622) and
+\item \textit{Combining models wins early.} An equal-weight six-system mean (MME$_6$) has the highest Week-1 ACC for rainfall (0.622) and
 temperature (0.596) (Fig.~\ref{fig:skill}a,b), and the lowest RMSE in 11 of 12 target--lead cells~\cite{raj2026bench}.
-\item \textbf{FuXi-S2S wins the monsoon at long leads.} For JJAS rainfall at Weeks~3--6 it has the highest ACC in 19/20 region--lead cells
+\item \textit{FuXi-S2S wins the monsoon at long leads.} For JJAS rainfall at Weeks~3--6 it has the highest ACC in 19/20 region--lead cells
 against IMERG and 18/20 against IMD gauges, and the highest All-India rainfall ACC at Week~6 (0.109 vs 0.057 for the MME). ECMWF is the
 strongest single system for long-lead temperature.
-\item \textbf{Long-lead rainfall is still hard.} Beyond Week~2 the MME no longer beats observed climatology on RMSE ($-7.8$\% at Week~6).
-\item \textbf{Metrics disagree.} Fair CRPS favours other ensembles (NeuralGCM for rainfall Weeks~1--3, ECMWF thereafter, DLESyM-v1 for
+\item \textit{Long-lead rainfall is still hard.} Beyond Week~2 the MME no longer beats observed climatology on RMSE ($-7.8$\% at Week~6).
+\item \textit{Metrics disagree.} Fair CRPS favours other ensembles (NeuralGCM for rainfall Weeks~1--3, ECMWF thereafter, DLESyM-v1 for
 temperature), so the benchmark is a \emph{selection map}, not a leaderboard. Against IMD's operational ERPAS on 101 matched 2023--2024
 windows, raw FuXi-S2S has higher ACC at Weeks~1--4 and lower RMSE at three of four, though ERPAS is better in OND.
 \end{itemize}
@@ -217,7 +224,7 @@ windows, raw FuXi-S2S has higher ACC at Weeks~1--4 and lower RMSE at three of fo
 \subsection{Calibrating FuXi-S2S with a lightweight regional adapter (RQ2)}
 The benchmark points to FuXi-S2S as the best base for monsoon rainfall, so we refine it rather than replace it. Its raw 50-member
 ensemble is strongly underdispersed over India: the central 90\% member range contains only 15.6\% of observed Week-1 values
-(Fig.~\ref{fig:skill}c). Our \textbf{permutation-equivariant probabilistic adapter} (42,434 parameters) post-processes the fixed ensemble
+(Fig.~\ref{fig:skill}c). Our permutation-equivariant probabilistic adapter (42,434 parameters) post-processes the fixed ensemble
 without retraining the global model~\cite{raj2026adapter}. A shared member encoder and symmetric pooling feed a regional 3-D CNN that
 predicts a shift $\delta$ and spread factor $s$ for every grid cell and lead, applied to each log-rainfall member $u_m=\log(1+x_m)$:
 \begin{equation}
@@ -282,9 +289,9 @@ half is that every learned model is accepted only if it beats the strongest \emp
 \begin{figure}[!htb]
 \centering
 \begin{tikzpicture}[
-  rung/.style={draw=black,fill=gray!8,align=left,font=\scriptsize,text width=3.75cm,minimum height=1.55cm,anchor=south west},
+  rung/.style={draw=black!70,line width=0.5pt,align=left,font=\scriptsize,text width=3.75cm,minimum height=1.55cm,anchor=south west},
   rungnow/.style={rung,dashed,fill=white},
-  arr/.style={-{Stealth[length=2mm]},thick}]
+  arr/.style={-{Stealth[length=1.8mm]},line width=0.6pt}]
 \node[rung] (a) at (0,0)      {\textbf{0. Raw ensemble}\\FuXi-S2S, ECMWF, \dots\\as archived\\\textit{under-dispersed}};
 \node[rung] (b) at (4.2,0.35) {\textbf{1. Statistical}\\additive bias, moment\\calibration, EMOS, CSGD,\\XGBoost stacking \checkmark};
 \node[rung] (c) at (8.4,0.7)  {\textbf{2. Light neural}\\42k regional adapter \checkmark\\U-Net + transformer \checkmark\\global quintile adapter};
@@ -340,12 +347,12 @@ Mar--Apr 2027 & Sealed 2025 prospective test; transfer to other systems; calibra
 
 \section{Contributions and Outlook}
 \begin{itemize}
-\item \textbf{Paper 1:} IndiaS2S-Bench~\cite{raj2026bench}, accepted at \emph{Tackling Climate Change with Machine Learning}, NeurIPS~2026.
-\item \textbf{Paper 2:} regional adapter calibration of FuXi-S2S~\cite{raj2026adapter}, accepted at the same workshop.
-\item \textbf{Manuscript in preparation:} lightweight multi-model post-processing with a frozen 2025 test~\cite{raj2026piggy}, manuscript in preparation.
-\item \textbf{Forecast service:} the experimental Weeks~1--6 outlook at \url{https://s2s.scdlds.com}.
+\item \textit{Paper 1:} IndiaS2S-Bench~\cite{raj2026bench}, accepted at \emph{Tackling Climate Change with Machine Learning}, NeurIPS~2026.
+\item \textit{Paper 2:} regional adapter calibration of FuXi-S2S~\cite{raj2026adapter}, accepted at the same workshop.
+\item \textit{Manuscript in preparation:} lightweight multi-model post-processing with a frozen 2025 test~\cite{raj2026piggy}, manuscript in preparation.
+\item \textit{Forecast service:} the experimental Weeks~1--6 outlook at \url{https://s2s.scdlds.com}.
 \end{itemize}
-The goal of this thesis is to give India \textbf{reliable, operational S2S forecasts} of rainfall and temperature: probabilities that can
+The goal of this thesis is to give India \emph{reliable, operational S2S forecasts} of rainfall and temperature: probabilities that can
 be trusted region by region, verified against more than one observational truth, and delivered to the people who plan around the monsoon.
 
 % ============================ REFERENCES ============================

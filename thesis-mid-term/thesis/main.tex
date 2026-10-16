@@ -50,6 +50,8 @@
 \definecolor{ok}{HTML}{1E7D4F}
 \definecolor{inkgrey}{HTML}{55606B}
 \newcommand{\placeholder}[1]{\colorbox{yellow!45}{\textit{[#1]}}}
+\definecolor{ink}{HTML}{1B2A41}  % single muted accent for the title page
+\newcommand{\ornament}{{\color{ink}\rule[0.5ex]{1.6cm}{0.4pt}\hspace{0.35cm}\raisebox{0.15ex}{\scriptsize$\blacklozenge$}\hspace{0.35cm}\rule[0.5ex]{1.6cm}{0.4pt}}\par}
 
 \setlength{\parskip}{2pt}
 \setlength{\parindent}{1.2em}
@@ -73,72 +75,71 @@
 % ============================ COVER =================================
 \begin{titlepage}
 \thispagestyle{empty}
-\newgeometry{margin=2.4cm,top=2.0cm,bottom=2.0cm}
+\newgeometry{margin=2.6cm,top=2.3cm,bottom=2.3cm}
+% --- frame: thick outer line, hairline inner line
+\begin{tikzpicture}[remember picture,overlay]
+  \draw[color=ink,line width=1.1pt]
+    ([xshift=1.2cm,yshift=-1.2cm]current page.north west) rectangle ([xshift=-1.2cm,yshift=1.2cm]current page.south east);
+  \draw[color=ink,line width=0.3pt]
+    ([xshift=1.38cm,yshift=-1.38cm]current page.north west) rectangle ([xshift=-1.38cm,yshift=1.38cm]current page.south east);
+\end{tikzpicture}
 \centering
 % --- institutional marks
 \begin{minipage}[c]{0.3\linewidth}\raggedright
-  \includegraphics[height=2.2cm]{logos/iiserpune.png}
+  \includegraphics[height=2.0cm]{logos/iiserpune.png}
 \end{minipage}\hfill
 \begin{minipage}[c]{0.66\linewidth}\raggedleft
-  \includegraphics[height=2.05cm]{logos/ashoka.png}\hspace{0.2cm}%
-  \raisebox{0.3cm}{\includegraphics[height=1.42cm]{logos/scdlds.png}}
+  \includegraphics[height=1.9cm]{logos/ashoka.png}\hspace{0.18cm}%
+  \raisebox{0.28cm}{\includegraphics[height=1.32cm]{logos/scdlds.png}}
 \end{minipage}
 
-\vspace{0.5cm}
-\rule{\linewidth}{0.5pt}
+\vspace{0.35cm}
+{\color{ink}\rule{\linewidth}{0.4pt}}
 
-\vspace{1.0cm}
-{\small\scshape\spaced{Mid-Term Thesis Report}\par}
-\vspace{0.7cm}
-{\fontsize{26}{33}\selectfont
-Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
+\vspace{2.3cm}
+{\small\color{ink}\scshape\spaced{Mid-Term Thesis Report}\par}
 \vspace{0.6cm}
-{\color{black!45}\rule{0.18\linewidth}{0.5pt}\par}
+{\fontsize{26}{33}\selectfont\color{ink}
+Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
+\vspace{0.55cm}
+\ornament
 \vspace{0.5cm}
+
 {\large\itshape Benchmarking, calibration and deep-learning post-processing\\[1pt]
 of Weeks~1--6 rainfall and temperature forecasts over India\par}
 
-\vspace{1.0cm}
-{\normalsize\itshape submitted in partial fulfilment of the requirements of the\par}
-\vspace{2pt}
-{\normalsize \Programme\par}
+\vspace{1.6cm}
+{\normalsize\itshape A report submitted in partial fulfilment of the requirements\\ of the \Programme\par}
 
-\vspace{0.8cm}
-{\normalsize\itshape by\par}
-\vspace{0.3cm}
+\vspace{1.0cm}
 {\Large\scshape \StudentName\par}
-\vspace{0.15cm}
-{\small Registration No.\ \RegNo\par}
-{\small \Department, IISER Pune\par}
+\vspace{0.12cm}
+{\small Registration No.\ \RegNo\ \textperiodcentered\ \Department\par}
 
-\vspace{1.0cm}
+\vspace{1.6cm}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\centering\arraybackslash}p{0.47\linewidth}>{\centering\arraybackslash}p{0.47\linewidth}@{}}
-{\footnotesize\scshape\spaced{Thesis Supervisor}} & {\footnotesize\scshape\spaced{Expert}} \\[1pt]
+\begin{tabular}{@{}>{\centering\arraybackslash}p{0.45\linewidth}!{\color{black!35}\vrule width 0.4pt}>{\centering\arraybackslash}p{0.45\linewidth}@{}}
+{\footnotesize\color{ink}\scshape\spaced{Supervisor}} & {\footnotesize\color{ink}\scshape\spaced{Expert}} \\[1pt]
 \SupName & \ExpName \\
 {\footnotesize\itshape \SupAffilA} & {\footnotesize\itshape \ExpAffilA} \\
 {\footnotesize\itshape \SupAffilB} & {\footnotesize\itshape \ExpAffilB} \\
 \end{tabular}
 
-\vspace{0.45cm}
-{\footnotesize\scshape\spaced{Collaborators}\par}
-\vspace{1pt}
-\begin{tabular}{@{}>{\centering\arraybackslash}p{0.47\linewidth}>{\centering\arraybackslash}p{0.47\linewidth}@{}}
+\vspace{0.55cm}
+{\footnotesize\color{ink}\scshape\spaced{In collaboration with}\par}
+\vspace{2pt}
+\begin{tabular}{@{}>{\centering\arraybackslash}p{0.45\linewidth}!{\color{black!35}\vrule width 0.4pt}>{\centering\arraybackslash}p{0.45\linewidth}@{}}
 Dr.\ Manmeet Singh & Dr.\ Parthasarathi Mukhopadhyay \\
-{\footnotesize\itshape Western Kentucky University, USA} & {\footnotesize\itshape Ashoka University, Sonipat} \\
+{\footnotesize\itshape Western Kentucky University, USA} & {\footnotesize\itshape Ashoka University} \\
 \end{tabular}
 
 \vfill
-\rule{\linewidth}{0.5pt}
+{\color{ink}\rule{\linewidth}{0.4pt}}
 
-\vspace{0.25cm}
-{\normalsize \Department\par}
-{\normalsize Indian Institute of Science Education and Research Pune\par}
-{\footnotesize Dr.\ Homi Bhabha Road, Pashan, Pune 411008, India\par}
-\vspace{0.2cm}
-{\footnotesize\itshape Research carried out at the Safexpress Centre for Data, Learning and Decision Sciences, Ashoka University, Sonipat\par}
 \vspace{0.3cm}
-{\small\scshape\expandafter\spaced\expandafter{\ReportDate}\par}
+{\normalsize Indian Institute of Science Education and Research Pune\par}
+\vspace{0.12cm}
+{\small\color{ink}\scshape\expandafter\spaced\expandafter{\ReportDate}\par}
 \restoregeometry
 \end{titlepage}
 

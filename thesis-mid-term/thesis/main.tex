@@ -65,7 +65,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
-\fancyhead[L]{\footnotesize Mid-Term Thesis Report}
+\fancyhead[L]{\footnotesize Mid-Year Project Report}
 \fancyhead[R]{\footnotesize \StudentName}
 \fancyfoot[C]{\small\thepage}
 
@@ -97,7 +97,7 @@
 {\color{ink}\rule{\linewidth}{0.4pt}}
 
 \vspace{2.3cm}
-{\small\color{ink}\scshape\spaced{Mid-Term Thesis Report}\par}
+{\small\color{ink}\scshape\spaced{Mid-Year Project Report}\par}
 \vspace{0.6cm}
 {\fontsize{26}{33}\selectfont\color{ink}
 Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
@@ -125,13 +125,7 @@ of Weeks~1--6 rainfall and temperature forecasts over India\par}
 {\footnotesize\itshape \SupAffilB} & {\footnotesize\itshape \ExpAffilB} \\
 \end{tabular}
 
-\vspace{0.55cm}
-{\footnotesize\color{ink}\scshape\spaced{In collaboration with}\par}
-\vspace{2pt}
-\begin{tabular}{@{}>{\centering\arraybackslash}p{0.45\linewidth}!{\color{black!35}\vrule width 0.4pt}>{\centering\arraybackslash}p{0.45\linewidth}@{}}
-Dr.\ Manmeet Singh & Dr.\ Parthasarathi Mukhopadhyay \\
-{\footnotesize\itshape Western Kentucky University, USA} & {\footnotesize\itshape Ashoka University} \\
-\end{tabular}
+
 
 \vfill
 {\color{ink}\rule{\linewidth}{0.4pt}}
@@ -145,29 +139,18 @@ Dr.\ Manmeet Singh & Dr.\ Parthasarathi Mukhopadhyay \\
 
 % ============================ ABSTRACT ===============================
 \setcounter{page}{1}
-\begin{center}\textbf{Abstract}\end{center}
-\vspace{-4pt}
-\begin{quote}\small
-Weekly forecasts of rainfall and temperature two to six weeks ahead are useful for agriculture, water management and disaster
-planning in India, but it is not clear which forecast system works best over the country. In the first part of this thesis we compared
-nine physics-based and AI-based forecast systems over India using the same dates, regions and scores (IndiaS2S-Bench). The AI model
-FuXi-S2S gave the best monsoon rainfall forecasts at long lead times, but its ensemble spread was too small. We trained a small neural
-network that corrects the FuXi-S2S ensemble, which reduced the rainfall CRPS by 16.2\%. Both studies have been accepted at the
-\textit{Tackling Climate Change with Machine Learning} workshop at NeurIPS 2026. We also tested statistical methods for combining
-several models, and set up an experimental forecast website (s2s.scdlds.com). In the remaining period we plan to use deep learning,
-in particular generative models, to produce calibrated forecasts of rainfall and temperature together.
-\end{quote}
+
 
 % ============================ 1. INTRODUCTION ========================
 \section{Introduction}
-Subseasonal-to-seasonal (S2S) forecasts cover the period from about two weeks to two months ahead~\cite{vitart2017s2s,white2017apps}.
+Subseasonal-to-seasonal (S2S) forecasts cover the period from about two weeks to two months ahead~\cite{vitart2017s2s}.
 This range lies between weather forecasts and seasonal outlooks. It is important for India because most of the annual rainfall comes
 during the southwest monsoon (June--September, JJAS), and a dry or wet spell of a few weeks can affect sowing, reservoir operation
 and flood preparation~\cite{imd2022lpa}.
 
-In the last few years several AI weather models have been released, for example Pangu, GraphCast, FuXi-S2S, NeuralGCM and
-FourCastNet~3~\cite{bi2023pangu,lam2023graphcast,chen2024fuxis2s,kochkov2024neuralgcm,bonev2025fcn3}. Most of them are evaluated on
-global averages~\cite{rasp2024wb2,nathaniel2024chaosbench}. A model that does well globally may not do well over India, and its skill
+In the last few years several AI weather models have been released, for example GraphCast, FuXi-S2S and
+NeuralGCM~\cite{lam2023graphcast,chen2024fuxis2s,kochkov2024neuralgcm}. Most of them are evaluated on
+global averages~\cite{rasp2024wb2}. A model that does well globally may not do well over India, and its skill
 can also change with region and season~\cite{malik2024s2s}. Rainfall is the most difficult variable at these lead times, so we work
 with weekly means and with anomalies from climatology, and we use climatology as the basic reference forecast.
 
@@ -179,7 +162,7 @@ The main questions of this thesis are:
 \end{enumerate}
 
 % ============================ 2. WORK DONE ===========================
-\section{Work done so far}
+\section{Work done till now}
 
 \subsection{IndiaS2S-Bench: comparing forecast systems over India}
 We collected forecasts from four operational centres (ECMWF, NCEP, UKMO and CMA) from the S2S database, and ran five AI and hybrid
@@ -188,15 +171,6 @@ All models were evaluated only on dates after their training period. We used 517
 temperature) and converted forecast days 1--42 into six weekly means on a 1.5$^\circ$ grid. Rainfall was verified against IMERG and
 against IMD gauge data~\cite{huffman2023imerg,pai2014imd}, and 2\,m temperature against ERA5~\cite{hersbach2020era5}. Scores were
 computed for All-India, the four IMD homogeneous regions and four seasons.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{figures/skill_summary.pdf}
-\caption{(a, b) All-India anomaly correlation (ACC) by lead week for four of the systems in IndiaS2S-Bench~\cite{raj2026bench}. ECMWF
-rainfall for Week~3 is missing in the archive. (c) Fraction of observations inside the 90\% range of the FuXi-S2S ensemble for
-JJAS rainfall, before and after calibration~\cite{raj2026adapter} (2020--2024, 169 cases per lead).}
-\label{fig:skill}
-\end{figure}
 
 The main results are:
 \begin{itemize}
@@ -209,6 +183,15 @@ against IMD. For temperature at long leads, ECMWF is the best single model.
 \item Compared with IMD's operational ERPAS system on 101 matched cases from 2023--2024, FuXi-S2S has higher ACC in Weeks~1--4, while
 ERPAS is better in October--December.
 \end{itemize}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figures/skill_summary.pdf}
+\caption{(a, b) All-India anomaly correlation (ACC) by lead week for four of the systems in IndiaS2S-Bench~\cite{raj2026bench}. ECMWF
+rainfall for Week~3 is missing in the archive. (c) Fraction of observations inside the 90\% range of the FuXi-S2S ensemble for
+JJAS rainfall, before and after calibration~\cite{raj2026adapter} (2020--2024, 169 cases per lead).}
+\label{fig:skill}
+\end{figure}
 
 \subsection{Calibrating FuXi-S2S with a small regional model}
 Since FuXi-S2S was the best model for long-lead monsoon rainfall, we tried to improve it rather than build a new model. Its 50-member
@@ -225,7 +208,7 @@ CRPS by 16.2\% against IMD and by 12.2\% against IMERG, and the ACC also improve
 mean reduced the RMSE by 8.5\% and raised the ACC from 0.276 to 0.364. The coverage is still below 90\%, and so far the method has
 been tested for one model and one variable.
 
-\begin{table}[t]
+\begin{table}[htb]
 \centering\small
 \caption{Results of the regional adapter for JJAS 2022--2024 (600 case--leads)~\cite{raj2026adapter}. Moment calibration is a simple
 statistical baseline.}
@@ -248,9 +231,9 @@ the 2025 monsoon against IMD rainfall~\cite{raj2026piggy}. The ACC increased fro
 4.989\,mm\,day$^{-1}$. However, a simple bias correction gave a similar result (ACC 0.369), and the gain was only in Weeks~1--4. With
 only a few years of data, simple methods are hard to beat, so new methods should always be compared with them.
 
-\subsection{Choice of observations}
-We also found that the choice of observed data matters. IMD and IMERG rainfall differ, mostly in regions with heavy rain, and the
-improvement from the adapter changed from 16.2\% to 12.2\% between the two. For this reason we verify all results against both.
+\subsection{Papers}
+Two papers from this work have been accepted at the \textit{Tackling Climate Change with Machine Learning} workshop at NeurIPS
+2026~\cite{raj2026bench,raj2026adapter}. A third paper on combining models is in preparation~\cite{raj2026piggy}.
 
 \subsection{Forecast website}
 We have set up an experimental forecast website, \url{https://s2s.scdlds.com}, hosted at SCDLDS. It shows weekly rainfall and 2\,m
@@ -258,11 +241,10 @@ temperature forecasts and their anomalies for Weeks~1--6 from a 100-member FuXi-
 is meant for research and testing, not as an official forecast.
 
 % ============================ 3. PLAN ================================
-\section{Plan for the remaining period}
+\section{Work plan for the next 4--5 months}
 
 \subsection{Deep learning based post-processing}
-So far we have mostly used statistical methods and small neural networks. In the second part of the thesis we will use deep learning
-in two ways.
+So far we have mostly used statistical methods and small neural networks. In the next months we will use deep learning in two ways.
 
 \textit{Global probability model.} For the ECMWF AI Weather Quest~\cite{aiwq2025} we are building a model that converts the FuXi-S2S
 ensemble into probabilities of five rainfall categories for days 19--25 and 26--32 over the whole globe, and then corrects these
@@ -286,28 +268,23 @@ the planned timeline.
 
 \begin{table}[h]
 \centering\small
-\caption{Timeline for the remaining period.}
+\caption{Timeline for the next five months.}
 \label{tab:plan}
 \begin{tabularx}{\linewidth}{@{}l X@{}}
 \toprule
 Period & Work \\
 \midrule
-Nov--Dec 2026 & Finish the ERA5 evaluation of the global model; build the autoencoder and the first flow-matching model for rainfall \\
+Nov 2026      & Finish the ERA5 evaluation of the global model; build the autoencoder \\
+Dec 2026      & First flow-matching model for rainfall \\
 Jan--Feb 2027 & Joint rainfall and temperature model; comparison with the baselines; submit the multi-model paper \\
-Mar--Apr 2027 & Final test on the 2025 monsoon; add the calibrated forecasts to the website; write the thesis \\
+Mar 2027      & Final test on the 2025 monsoon; add the calibrated forecasts to the website; write the thesis \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-% ============================ 4. PUBLICATIONS ========================
-\section{Publications}
-\begin{enumerate}
-\item A.~Raj et al. IndiaS2S-Bench: A comprehensive benchmark of subseasonal to seasonal forecasting over India.
-Accepted, \textit{Tackling Climate Change with Machine Learning} workshop, NeurIPS 2026.
-\item A.~Raj et al. Calibrating AI subseasonal to seasonal (S2S) forecasts with lightweight regional adapters.
-Accepted, \textit{Tackling Climate Change with Machine Learning} workshop, NeurIPS 2026.
-\item A.~Raj et al. When does lightweight post-processing help? A seven-system JJAS rainfall benchmark over India. In preparation.
-\end{enumerate}
+\section*{Acknowledgements}
+I thank Dr.\ Manmeet Singh (Western Kentucky University) and Dr.\ Parthasarathi Mukhopadhyay (Ashoka University) for their guidance
+and collaboration on this work.
 
 % ============================ REFERENCES ============================
 \renewcommand{\refname}{References}
@@ -320,15 +297,11 @@ Accepted, \textit{Tackling Climate Change with Machine Learning} workshop, NeurI
 \bibitem{raj2026adapter} A.~Raj, M.~Singh, S.~Dhanuka, B.~Goswami, P.~Mukhopadhyay, S.~K.~Juneja, M.~Mohapatra. Calibrating AI subseasonal to seasonal (S2S) forecasts with lightweight regional adapters. \emph{Tackling Climate Change with ML workshop, NeurIPS}, 2026.
 \bibitem{raj2026piggy} A.~Raj et al. When does lightweight post-processing help? A seven-system JJAS rainfall benchmark over India. Manuscript in preparation, 2026.
 \bibitem{vitart2017s2s} F.~Vitart et al. The subseasonal to seasonal (S2S) prediction project database. \emph{Bull. Amer. Meteor. Soc.}, 98(1):163--173, 2017.
-\bibitem{white2017apps} C.~J.~White et al. Potential applications of subseasonal-to-seasonal (S2S) predictions. \emph{Meteorol. Appl.}, 24:315--325, 2017.
 \bibitem{imd2022lpa} India Meteorological Department. Long range forecast for the 2022 southwest monsoon season rainfall (LPA 1971--2020 of 87~cm), 2022.
-\bibitem{bi2023pangu} K.~Bi et al. Accurate medium-range global weather forecasting with 3D neural networks. \emph{Nature}, 619:533--538, 2023.
 \bibitem{lam2023graphcast} R.~Lam et al. Learning skillful medium-range global weather forecasting. \emph{Science}, 382:1416--1421, 2023.
 \bibitem{chen2024fuxis2s} L.~Chen et al. A machine learning model that outperforms conventional global subseasonal forecast models. \emph{Nat. Commun.}, 15:6425, 2024.
 \bibitem{kochkov2024neuralgcm} D.~Kochkov et al. Neural general circulation models for weather and climate. \emph{Nature}, 632:1060--1066, 2024.
-\bibitem{bonev2025fcn3} B.~Bonev et al. FourCastNet 3: A geometric approach to probabilistic machine-learning weather forecasting at scale. arXiv:2507.12144, 2025.
 \bibitem{rasp2024wb2} S.~Rasp et al. WeatherBench 2: A benchmark for the next generation of data-driven global weather models. \emph{J. Adv. Model. Earth Syst.}, 16:e2023MS004019, 2024.
-\bibitem{nathaniel2024chaosbench} J.~Nathaniel et al. ChaosBench: A multi-channel, physics-based benchmark for subseasonal-to-seasonal climate prediction. \emph{NeurIPS}, 2024.
 \bibitem{malik2024s2s} I.~Malik, V.~Mishra. Sub-seasonal to seasonal (S2S) prediction of dry and wet extremes for climate adaptation in India. \emph{Clim. Serv.}, 34:100457, 2024.
 \bibitem{huffman2023imerg} G.~J.~Huffman et al. GPM IMERG Final precipitation L3 1 day 0.1$^\circ$ V07. NASA GES DISC, 2023.
 \bibitem{pai2014imd} D.~S.~Pai et al. Development of a new high spatial resolution (0.25$^\circ$) long period (1901--2010) daily gridded rainfall data set over India. \emph{Mausam}, 65(1):1--18, 2014.

@@ -21,7 +21,6 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage[scaled=0.92]{helvet}
 \usepackage{microtype}
 \usepackage[margin=1.9cm,top=1.8cm,bottom=1.9cm]{geometry}
 \usepackage{amsmath,amssymb}
@@ -37,7 +36,7 @@
 \usepackage{wrapfig}
 \usepackage{fancyhdr}
 \usepackage[numbers,sort&compress]{natbib}
-\usepackage[colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=accent]{hyperref}
 
 \definecolor{accent}{HTML}{0F3A63}
 \definecolor{accentmid}{HTML}{2A6496}
@@ -47,26 +46,23 @@
 \definecolor{ok}{HTML}{1E7D4F}
 \definecolor{inkgrey}{HTML}{55606B}
 \newcommand{\placeholder}[1]{\colorbox{yellow!45}{\textit{[#1]}}}
-\newcommand{\sffam}{\fontfamily{phv}\selectfont}
 
-\setlength{\parskip}{3pt}
-\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{1.2em}
 \setlist{nosep,leftmargin=1.2em}
-\captionsetup{font=small,labelfont={bf,color=accent},skip=4pt}
-\titleformat{\section}{\sffam\large\bfseries\color{accent}}{\thesection}{0.6em}{}
-\titleformat{\subsection}{\sffam\normalsize\bfseries\color{accent}}{\thesubsection}{0.5em}{}
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
 \titlespacing*{\section}{0pt}{7pt}{2pt}
 \titlespacing*{\subsection}{0pt}{4pt}{1pt}
 
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.3pt}
-\fancyhead[L]{\sffam\small\color{accent}Improving Regional S2S Forecasting}
-\fancyhead[R]{\sffam\small\color{accent}Midterm Thesis Report \textbullet\ \StudentName}
-\fancyfoot[C]{\sffam\small\thepage}
+\fancyhead[L]{\small\itshape Improving Regional Subseasonal-to-Seasonal Forecasting}
+\fancyhead[R]{\small\itshape Mid-Term Thesis Report, \StudentName}
+\fancyfoot[C]{\small\thepage}
 
-\newcommand{\keybox}[1]{%
-  \par\smallskip\noindent\fcolorbox{accent}{accentlight}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\small #1}}\par\smallskip}
 
 \begin{document}
 
@@ -85,11 +81,11 @@
 \end{minipage}
 
 \vspace{0.45cm}
-{\color{accent}\rule{\linewidth}{1.2pt}}\\[-0.32cm]
-{\color{accent}\rule{\linewidth}{0.4pt}}
+\rule{\linewidth}{1.2pt}\\[-0.32cm]
+\rule{\linewidth}{0.4pt}
 
 \vspace{1.5cm}
-{\fontsize{25}{31}\selectfont\bfseries\color{accent}
+{\fontsize{25}{31}\selectfont\bfseries
 Improving Regional\\[4pt] Subseasonal-to-Seasonal Forecasting\par}
 
 \vspace{0.55cm}
@@ -126,8 +122,8 @@ Weeks~1--6 rainfall and temperature forecasts over India\par}
 \end{tabular}
 
 \vfill
-{\color{accent}\rule{\linewidth}{0.4pt}}\\[-0.32cm]
-{\color{accent}\rule{\linewidth}{1.2pt}}
+\rule{\linewidth}{0.4pt}\\[-0.32cm]
+\rule{\linewidth}{1.2pt}
 
 \vspace{0.3cm}
 {\large Indian Institute of Science Education and Research Pune\par}
@@ -141,18 +137,22 @@ Weeks~1--6 rainfall and temperature forecasts over India\par}
 
 % ============================ SUMMARY ===============================
 \setcounter{page}{1}
-\keybox{\textbf{Summary.} India has no common yardstick for Weeks~1--6 forecasts, although $\sim$1.4~billion people, rain-fed
-agriculture and reservoirs depend on how the monsoon behaves a few weeks ahead. In the first half of this thesis we
-(i)~built \textbf{IndiaS2S-Bench}~\cite{raj2026bench}, a regional benchmark that scores nine operational NWP and AI/hybrid S2S systems
-on shared dates, regions, seasons, metrics and two rainfall references; (ii)~showed that the strongest long-lead monsoon model,
-FuXi-S2S, is strongly \emph{underdispersed} over India and corrected it with a 42k-parameter \textbf{regional probabilistic adapter}
-that lowers rainfall CRPS by 16.2\%~\cite{raj2026adapter}; (iii)~tested classical multi-model post-processing in a frozen 2025 monsoon
-test and found that \emph{simple calibration is a hard baseline to beat}~\cite{raj2026piggy}; and (iv)~turned the pipeline into an experimental
-forecast product, \textbf{\href{https://s2s.scdlds.com}{s2s.scdlds.com}}. The second half moves from statistical to \textbf{deep-learning
-post-processing}: a global neural probability adapter, and a \textbf{latent flow-matching generator} of joint rainfall--temperature ensembles.}
+\begin{center}{\large\bfseries Abstract}\end{center}
+\vspace{-6pt}
+\begin{quote}\small\noindent
+India has no common yardstick for Weeks~1--6 forecasts, although rain-fed agriculture, reservoir operation and disaster preparedness
+depend on how the monsoon behaves a few weeks ahead. In the first half of this thesis we (i)~built IndiaS2S-Bench~\cite{raj2026bench},
+a regional benchmark that scores nine operational NWP and AI/hybrid S2S systems on shared dates, regions, seasons, metrics and two
+rainfall references; (ii)~showed that FuXi-S2S, the strongest long-lead monsoon model, is strongly underdispersed over India and
+corrected it with a 42k-parameter regional probabilistic adapter that lowers rainfall CRPS by 16.2\%~\cite{raj2026adapter};
+(iii)~tested classical multi-model post-processing on a frozen 2025 monsoon test, finding that simple calibration is a hard baseline to
+beat~\cite{raj2026piggy}; and (iv)~deployed the pipeline as an experimental forecast service (\url{https://s2s.scdlds.com}). The second
+half moves from statistical to deep-learning post-processing: a global neural probability adapter and a latent flow-matching generator
+of joint rainfall--temperature ensembles.
+\end{quote}
 
 % ============================ 1. MOTIVATION ==========================
-\section{Motivation: why regional S2S, and why India}
+\section{Introduction}
 Subseasonal-to-seasonal (S2S) prediction, two weeks to two months ahead, fills the gap between weather forecasts and seasonal
 outlooks~\cite{vitart2017s2s,white2017apps}. It is when a farmer decides when to sow and a reservoir operator how much to release. In India the southwest monsoon (June--September, JJAS) delivers about three
 quarters of the annual rainfall and the northeast monsoon (October--December) much of the rain of Tamil Nadu and coastal Andhra
@@ -170,7 +170,7 @@ Global benchmarks (WeatherBench~2, ChaosBench) rank them on global averages~\cit
       probabilistic S2S forecasts?
 \end{enumerate}
 
-\textbf{What makes the problem hard.}
+\textbf{Scientific challenges.}
 \textit{Rainfall} is intermittent, zero-inflated and skewed, produced by convection far below grid scale, and organised over India by the
 monsoon intraseasonal oscillation (active/break spells, BSISO and MJO)~\cite{lee2013bsiso,goswami2005} and by orography; daily grid-scale
 rainfall is predictable for only one to two weeks. We therefore forecast \textit{weekly means}, which filter day-to-day noise and keep the
@@ -178,13 +178,13 @@ slow MJO/BSISO, ENSO, IOD and land-surface signal. We score \textit{anomalies} f
 climatology, because the seasonal cycle is trivially predictable and removing it also removes each model's drift; ACC measures pattern
 skill, RMSE, MAE and the fair CRPS~\cite{ferro2014fair} measure amount and probabilistic quality, and climatology is the baseline every
 forecast must beat. Finally, \textit{rainfall and temperature are coupled}: over Indian land in summer wet weeks are cool and dry spells
-hot~\cite{trenberth2005}, and both are tied to the 850~hPa monsoon low-level jet~\cite{wang1999index}, which is why our product shows rainfall
-with 850~hPa winds and why our generative model treats the two variables jointly.
+hot~\cite{trenberth2005}, and both are tied to the 850~hPa monsoon low-level jet~\cite{wang1999index}, which motivates treating the two
+variables jointly.
 
 % ============================ 2. WORK DONE ============================
-\section{Work completed in the first half}
+\section{Work Completed}
 
-\subsection{Paper 1 --- IndiaS2S-Bench: a regional benchmark (RQ1)}
+\subsection{IndiaS2S-Bench: a regional benchmark (RQ1)}
 We assembled archived real-time operational forecasts (CMA, ECMWF, NCEP, UKMO) from the S2S database and ran the AI and hybrid models
 ourselves from ERA5 initial states (FuXi-S2S, NeuralGCM, FourCastNet~3, DLESyM-v0/v1), each evaluated after its documented training
 cut-off~\cite{raj2026bench}. On 517 rainfall and 516 temperature common Monday/Thursday starts in 2020--2024, forecast days 1--42 become six
@@ -214,7 +214,7 @@ temperature), so the benchmark is a \emph{selection map}, not a leaderboard. Aga
 windows, raw FuXi-S2S has higher ACC at Weeks~1--4 and lower RMSE at three of four, though ERPAS is better in OND.
 \end{itemize}
 
-\subsection{Paper 2 --- Calibrating FuXi-S2S with a lightweight regional adapter (RQ2)}
+\subsection{Calibrating FuXi-S2S with a lightweight regional adapter (RQ2)}
 The benchmark points to FuXi-S2S as the best base for monsoon rainfall, so we refine it rather than replace it. Its raw 50-member
 ensemble is strongly underdispersed over India: the central 90\% member range contains only 15.6\% of observed Week-1 values
 (Fig.~\ref{fig:skill}c). Our \textbf{permutation-equivariant probabilistic adapter} (42,434 parameters) post-processes the fixed ensemble
@@ -246,68 +246,58 @@ all four shared leads on 26 matched cases (with a 24-hour newer start)~\cite{raj
 Northeast India. The limits are equally clear: coverage stays below the nominal 0.90, signed bias is unresolved, and the evidence covers
 one model, one variable and three evaluation years; the 2025 season is kept sealed as the first prospective test.
 
-\subsection{Study 3 --- When does classical multi-model post-processing help?}
-If no single model wins everywhere, can we learn \emph{how to combine} them? We aligned seven physics, data-driven and hybrid systems on
+\subsection{Statistical multi-model post-processing}
+\label{sec:mm}
+Since no single model is best everywhere, we asked whether a learned combination can do better. We aligned seven physics, data-driven and hybrid systems on
 one India grid and adapted PiggyCast~\cite{kimani2025piggycast}, a stacking approach with XGBoost~\cite{chen2016xgboost}, to learn
 forecast-conditioned weights from JJAS hindcasts, verified against IMD rainfall~\cite{raj2026piggy}. The protocol was \emph{frozen before}
 the 2025 monsoon was opened: fitting on 2020--2023, selection on 2024, one confirmatory run on 2025.
 The stacker raised mean spatial ACC from 0.307 (equal weights) to 0.347 ($+0.040$, 95\% interval $[0.011, 0.070]$) and lowered RMSE from
 5.174 to 4.989~mm\,d$^{-1}$. But the gain is confined to Weeks~1--4, hides a loss in East/Northeast India, does not clear the pre-declared gate
-against the best single system, and an exploratory per-lead, per-grid \emph{additive bias correction} alone reaches ACC 0.369. \textbf{Lesson:}
-with only a few years of common hindcasts, simple calibration is a strong baseline; learned methods must beat it, not just the raw ensemble.
-This result directly shapes the deep-learning plan in \S\ref{sec:dl}.
+against the best single system, and an exploratory per-lead, per-grid \emph{additive bias correction} alone reaches ACC 0.369. With only a few
+years of common hindcasts, simple calibration is therefore a strong baseline, and learned methods must be shown to beat it, not just the
+raw ensemble (\S\ref{sec:dl}).
 
-\subsection{From research to product: s2s.scdlds.com}
-We deployed the pipeline as an experimental forecast service, \href{https://s2s.scdlds.com}{\texttt{s2s.scdlds.com}}, hosted by SCDLDS
-(Fig.~\ref{fig:product}). It publishes a 100-member FuXi-S2S ensemble twice weekly as Weeks~1--6 maps of weekly rainfall and 2-m
+\subsection{Experimental forecast service}
+The pipeline is deployed as an experimental forecast service, \url{https://s2s.scdlds.com}, hosted by SCDLDS. It publishes a 100-member FuXi-S2S ensemble twice weekly as Weeks~1--6 maps of weekly rainfall and 2-m
 temperature and their anomalies from a lead-matched 2002--2021 reforecast climatology, together with 850~hPa wind anomalies and a
 downloadable weekly guidance report. Every issue labels its initialisation source (near-real-time GFS proxy, delayed ERA5 reference, or
 an IFS-initialised pilot), and the site is clearly marked as experimental research guidance, not an operational warning. It is the vehicle
 through which calibrated and generative forecasts will be tested with users.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{figures/product_panels_w12.jpg}
-\caption{Weekly guidance from \href{https://s2s.scdlds.com}{s2s.scdlds.com} for the 9~September~2026 issue (IFS-initialised pilot, 100-member
-ensemble mean), Weeks~1--2: (left) rainfall anomaly, mm\,d$^{-1}$; (centre) 850~hPa wind anomaly, m\,s$^{-1}$, with anomaly streamlines;
-(right) 2-m temperature anomaly, $^\circ$C. Suppressed rainfall over central and peninsular India coincides with weakened
-low-level westerlies and warm anomalies, the coupling discussed in \S1.}
-\label{fig:product}
-\end{figure}
-
-\subsection{What surprised us: which observation is the truth?}
-\emph{The data are a source of uncertainty in their own right.} India's rainfall ``truths'' (IMD gauges~\cite{pai2014imd},
+\subsection{Observational uncertainty}
+The observational reference is itself a source of uncertainty. India's rainfall ``truths'' (IMD gauges~\cite{pai2014imd},
 satellite--gauge IMERG~\cite{huffman2023imerg}, CPC, CHIRPS, and ERA5~\cite{hersbach2020era5}, whose rainfall is a model output) differ in gauge
 density, retrieval error and day boundaries, most where rain is heaviest~\cite{prakash2018,sun2018review}. In our own work the reference changed the adapter's skill
-from 16.2\% (IMD) to 12.2\% (IMERG), changed the long-lead ranking in the benchmark, and in Study~3 even flipped the sign of the
+from 16.2\% (IMD) to 12.2\% (IMERG), changed the long-lead ranking in the benchmark, and in the multi-model study (\S\ref{sec:mm}) even flipped the sign of the
 stacker's ACC gain on a matched early-2025 subset. We therefore verify against at least two independent references and treat their spread
 as a floor on what can honestly be claimed.
 
 % ============================ 3. ONGOING ============================
-\section{Ongoing work: from statistical to deep-learning post-processing}
+\section{Ongoing and Planned Work}
 \label{sec:dl}
-The first half used a ladder of increasingly flexible correctors (Fig.~\ref{fig:ladder}). The lesson of Study~3 sets the rule for the second
-half: every learned model is accepted only if it beats the strongest \emph{statistical} baseline on a sealed test, against two references.
+The first half used a ladder of increasingly flexible correctors (Fig.~\ref{fig:ladder}). Following \S\ref{sec:mm}, the rule for the second
+half is that every learned model is accepted only if it beats the strongest \emph{statistical} baseline on a sealed test, against two references.
 
 \begin{figure}[!htb]
 \centering
 \begin{tikzpicture}[
-  rung/.style={draw=accent,fill=accentlight,rounded corners=2pt,align=left,font=\sffam\scriptsize,text width=3.75cm,minimum height=1.55cm,anchor=south west},
-  rungnow/.style={rung,draw=warm,fill=warmlight},
-  arr/.style={-{Stealth[length=2mm]},thick,color=accent!70}]
-\node[rung] (a) at (0,0)      {\textbf{0. Raw ensemble}\\FuXi-S2S, ECMWF, \dots\\as archived\\\textcolor{inkgrey}{under-dispersed}};
-\node[rung] (b) at (4.2,0.35) {\textbf{1. Statistical}\\additive bias, moment\\calibration, EMOS, CSGD,\\XGBoost stacking \textcolor{ok}{\checkmark}};
-\node[rung] (c) at (8.4,0.7)  {\textbf{2. Light neural}\\42k regional adapter \textcolor{ok}{\checkmark}\\U-Net + transformer \textcolor{ok}{\checkmark}\\global quintile adapter};
+  rung/.style={draw=black,fill=gray!8,align=left,font=\scriptsize,text width=3.75cm,minimum height=1.55cm,anchor=south west},
+  rungnow/.style={rung,dashed,fill=white},
+  arr/.style={-{Stealth[length=2mm]},thick}]
+\node[rung] (a) at (0,0)      {\textbf{0. Raw ensemble}\\FuXi-S2S, ECMWF, \dots\\as archived\\\textit{under-dispersed}};
+\node[rung] (b) at (4.2,0.35) {\textbf{1. Statistical}\\additive bias, moment\\calibration, EMOS, CSGD,\\XGBoost stacking \checkmark};
+\node[rung] (c) at (8.4,0.7)  {\textbf{2. Light neural}\\42k regional adapter \checkmark\\U-Net + transformer \checkmark\\global quintile adapter};
 \node[rungnow] (d) at (12.6,1.05) {\textbf{3. Deep generative}\\latent flow matching:\\joint rain + T2M\\ensembles (RQ3)};
 \draw[arr] (a.east) -- (b.west|-a.east); \draw[arr] (b.east) -- (c.west|-b.east); \draw[arr] (c.east) -- (d.west|-c.east);
-\draw[-{Stealth[length=2.5mm]},line width=1pt,color=inkgrey] (0,-0.25) -- (16.35,-0.25) node[pos=0.5,below,font=\sffam\scriptsize,text=inkgrey]
+\draw[-{Stealth[length=2.5mm]},line width=0.8pt] (0,-0.25) -- (16.35,-0.25) node[pos=0.5,below,font=\scriptsize]
      {more flexible: shift $\rightarrow$ spread $\rightarrow$ spatial pattern $\rightarrow$ full joint distribution (but more data-hungry)};
 \end{tikzpicture}
-\caption{Ladder of post-processing methods. \textcolor{ok}{\checkmark}: completed and evaluated; red: second half.}
+\caption{Post-processing methods in order of flexibility. \checkmark: completed and evaluated; dashed box: planned for the second half.}
 \label{fig:ladder}
 \end{figure}
 
-\subsection{A global neural probability adapter (ECMWF AI Weather Quest)}
+\subsection{A global neural probability adapter}
 To test whether a neural corrector generalises beyond India, we built a global adapter for the ECMWF AI Weather Quest~\cite{aiwq2025}:
 FuXi-S2S's 51 members are converted into five ERA5 rainfall-quintile probabilities for days 19--25 and 26--32 on the global 1.5$^\circ$
 grid, and a compact U-Net/Transformer (151,573 parameters) that sees six forecast weeks of rainfall, moisture and temperature predicts
@@ -318,7 +308,7 @@ These are engineering evidence only; the full ERA5 evaluation is in progress.
 
 \subsection{Generative calibration with latent flow matching (RQ3)}
 The adapter only shifts and stretches members; it cannot reshape the rainfall distribution, represent dry--wet extremes or couple
-variables. We will build a \textbf{conditional generative calibrator} based on flow matching~\cite{lipman2023flow,liu2023rectified}.
+variables. We will build a conditional generative calibrator based on flow matching~\cite{lipman2023flow,liu2023rectified}.
 An autoencoder compresses weekly observed rainfall and temperature fields into a latent $z$~\cite{rombach2022ldm}; a network $v_\theta$ learns
 a velocity field that carries Gaussian noise $z_0$ to the observed latent $z_1$, conditioned on the FuXi-S2S ensemble, lead, season and
 static context $c$:
@@ -342,24 +332,24 @@ baselines and the adapter (CRPS, reliability, wet/dry-week Brier scores, coverag
 Period & Work & Output \\
 \midrule
 Nov--Dec 2026 & Full ERA5 evaluation of the global adapter; latent autoencoder; flow-matching calibrator for rainfall; EMOS/CSGD baselines & Prototype + scores \\
-Jan--Feb 2027 & Joint rainfall + T2M generation; reliability and threshold scores; Study~3 submission & Journal paper draft \\
+Jan--Feb 2027 & Joint rainfall + T2M generation; reliability and threshold scores; multi-model study submission & Journal paper draft \\
 Mar--Apr 2027 & Sealed 2025 prospective test; transfer to other systems; calibrated forecasts live on s2s.scdlds.com & Thesis, release \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{Outputs so far and outlook}
+\section{Contributions and Outlook}
 \begin{itemize}
 \item \textbf{Paper 1:} IndiaS2S-Bench~\cite{raj2026bench}, accepted at \emph{Tackling Climate Change with Machine Learning}, NeurIPS~2026.
 \item \textbf{Paper 2:} regional adapter calibration of FuXi-S2S~\cite{raj2026adapter}, accepted at the same workshop.
-\item \textbf{Study 3:} lightweight multi-model post-processing with a frozen 2025 test~\cite{raj2026piggy}, manuscript in preparation.
-\item \textbf{Product:} the experimental Weeks~1--6 outlook at \href{https://s2s.scdlds.com}{s2s.scdlds.com}.
+\item \textbf{Manuscript in preparation:} lightweight multi-model post-processing with a frozen 2025 test~\cite{raj2026piggy}, manuscript in preparation.
+\item \textbf{Forecast service:} the experimental Weeks~1--6 outlook at \url{https://s2s.scdlds.com}.
 \end{itemize}
 The goal of this thesis is to give India \textbf{reliable, operational S2S forecasts} of rainfall and temperature: probabilities that can
 be trusted region by region, verified against more than one observational truth, and delivered to the people who plan around the monsoon.
 
 % ============================ REFERENCES ============================
-\renewcommand{\refname}{\sffam\large\color{accent}References}
+\renewcommand{\refname}{References}
 \footnotesize
 \setlength{\bibsep}{0.5pt}
 \begin{multicols}{2}

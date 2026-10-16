@@ -11,11 +11,13 @@
 \newcommand{\Programme}{BS-MS Dual Degree Programme}
 \newcommand{\Department}{Department of Data Science}
 \newcommand{\SupName}{Prof.\ Sandeep Kumar Juneja}
-\newcommand{\SupAffilA}{Director, Safexpress Centre for Data, Learning}
-\newcommand{\SupAffilB}{and Decision Sciences, Ashoka University}
+\newcommand{\SupAffilA}{Director, Safexpress Centre for Data,}
+\newcommand{\SupAffilB}{Learning and Decision Sciences}
+\newcommand{\SupAffilC}{Ashoka University}
 \newcommand{\ExpName}{Dr.\ Bedartha Goswami}  % CONFIRM: expert at IISER Pune
-\newcommand{\ExpAffilA}{Indian Institute of Science Education}
-\newcommand{\ExpAffilB}{and Research (IISER) Pune}
+\newcommand{\ExpAffilA}{Assistant Professor}
+\newcommand{\ExpAffilB}{Department of Data Science}
+\newcommand{\ExpAffilC}{IISER Pune}
 \newcommand{\ReportDate}{October 2026}
 % ---------------------------------------------------------------------
 
@@ -76,13 +78,6 @@
 \begin{titlepage}
 \thispagestyle{empty}
 \newgeometry{margin=2.6cm,top=2.3cm,bottom=2.3cm}
-% --- frame: thick outer line, hairline inner line
-\begin{tikzpicture}[remember picture,overlay]
-  \draw[color=ink,line width=1.1pt]
-    ([xshift=1.2cm,yshift=-1.2cm]current page.north west) rectangle ([xshift=-1.2cm,yshift=1.2cm]current page.south east);
-  \draw[color=ink,line width=0.3pt]
-    ([xshift=1.38cm,yshift=-1.38cm]current page.north west) rectangle ([xshift=-1.38cm,yshift=1.38cm]current page.south east);
-\end{tikzpicture}
 \centering
 % --- institutional marks
 \begin{minipage}[c]{0.3\linewidth}\raggedright
@@ -96,33 +91,29 @@
 \vspace{0.35cm}
 {\color{ink}\rule{\linewidth}{0.4pt}}
 
-\vspace{2.3cm}
+\vspace{3.2cm}
 {\small\color{ink}\scshape\spaced{Mid-Year Project Report}\par}
 \vspace{0.6cm}
 {\fontsize{26}{33}\selectfont\color{ink}
 Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
 \vspace{0.55cm}
 \ornament
-\vspace{0.5cm}
 
-{\large\itshape Benchmarking, calibration and deep-learning post-processing\\[1pt]
-of Weeks~1--6 rainfall and temperature forecasts over India\par}
-
-\vspace{1.6cm}
-{\normalsize\itshape A report submitted in partial fulfilment of the requirements\\ of the \Programme\par}
-
-\vspace{1.0cm}
+\vspace{2.4cm}
 {\Large\scshape \StudentName\par}
-\vspace{0.12cm}
-{\small Registration No.\ \RegNo\ \textperiodcentered\ \Department\par}
+\vspace{0.2cm}
+{\small Registration No.\ \RegNo\par}
+{\small \Department, IISER Pune\par}
+{\small Safexpress Centre for Data, Learning and Decision Sciences, Ashoka University\par}
 
-\vspace{1.6cm}
+\vspace{2.4cm}
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{@{}>{\centering\arraybackslash}p{0.45\linewidth}!{\color{black!35}\vrule width 0.4pt}>{\centering\arraybackslash}p{0.45\linewidth}@{}}
 {\footnotesize\color{ink}\scshape\spaced{Supervisor}} & {\footnotesize\color{ink}\scshape\spaced{Expert}} \\[1pt]
 \SupName & \ExpName \\
 {\footnotesize\itshape \SupAffilA} & {\footnotesize\itshape \ExpAffilA} \\
 {\footnotesize\itshape \SupAffilB} & {\footnotesize\itshape \ExpAffilB} \\
+{\footnotesize\itshape \SupAffilC} & {\footnotesize\itshape \ExpAffilC} \\
 \end{tabular}
 
 

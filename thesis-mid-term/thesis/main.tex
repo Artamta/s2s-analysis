@@ -62,6 +62,7 @@
 \renewcommand{\topfraction}{0.92}
 \renewcommand{\textfraction}{0.06}
 \renewcommand{\floatpagefraction}{0.85}
+\makeatletter\setlength{\@fptop}{0pt}\setlength{\@fpsep}{10pt plus 2fil}\makeatother  % float pages start at the top
 \setlength{\parindent}{1.2em}
 \setlist{nosep,leftmargin=1.6em}
 \captionsetup{font=small,labelfont=bf,skip=4pt}
@@ -154,7 +155,8 @@ further. The questions are:
 \begin{enumerate}
 \item Which forecast system is best over India, and does this change with variable, lead time, region and season?
 \item What is the main problem with the best AI model over India, and can a small regional network fix it?
-\item Can a generative model improve the forecast further by giving rainfall and temperature together?
+\item Can the correction be improved further by predicting the forecast error and uncertainty better, and by adding
+meteorological and physical knowledge?
 \end{enumerate}
 Questions 1 and 2 are mostly done and are covered in this report. Question 3 is the plan for the rest of the thesis.
 
@@ -277,35 +279,41 @@ I also run FuXi-S2S forecasts (100 members, Weeks~1--6) in real time twice a wee
 \FloatBarrier
 % ============================ 4. PLAN ===============================
 \section{Plan for the rest of the thesis}
-So far I found that FuXi-S2S is the best model to work with over India, found that its ensemble is too narrow, and fixed a large
-part of this with the calibration network. The network has limits, though. It only shifts and stretches the members at each grid
-point, so it cannot create new spatial patterns, and it works on rainfall alone.
+The calibration network fixed a large part of the spread problem, but the results show three gaps:
+\begin{itemize}
+\item Coverage is still below 0.90 at every lead, so the forecast is still overconfident.
+\item The network only sees the FuXi-S2S rainfall itself. It does not know the weather situation, for example whether the monsoon
+is in an active or a break spell, although the forecast error is likely to depend on it.
+\item It works on rainfall alone and corrects each grid point separately, so the output is not guaranteed to be physically
+consistent.
+\end{itemize}
+In the second half of the thesis I will work on these gaps in three directions (Table~\ref{tab:tasks}): (i) an ML model that
+predicts the size of the forecast error and so gives better uncertainty, (ii) a correction that uses meteorological information
+and physical constraints, and (iii) a generative model for rainfall and temperature together. Each new method will be tested on
+the 2025 monsoon, which was not used to build the calibration network, against the calibration network, simple bias correction and
+EMOS~\cite{gneiting2005emos}. The goal is a lower CRPS and a coverage closer to 0.90, without losing ACC.
 
-For the second half I want to train a generative model. It would take a FuXi-S2S forecast and produce many possible weekly maps of
-rainfall and temperature together, so that the two variables stay consistent. I plan to use flow
-matching~\cite{lipman2023flow,liu2023rectified} on a compressed form of the maps~\cite{rombach2022ldm}, similar to a recent study
-on S2S rainfall~\cite{shi2026generative}.
-
-I will call it a success if, on the 2025 monsoon, it has a lower CRPS than the calibration network and a coverage closer to 0.90.
-If it does not, extending the calibration network to temperature (Task~3) will be the main result of this part.
-
-\begin{table}[H]
+\begin{table}[tb]
 \centering\small
 \caption{Tasks for the rest of the thesis.}
 \label{tab:tasks}
 \renewcommand{\arraystretch}{1.1}
-\begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{0.22\linewidth} >{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{0.21\linewidth} >{\raggedright\arraybackslash}X@{}}
 \toprule
 & Task & What I will do \\
 \midrule
-1 & Compress the maps & Train an autoencoder that stores weekly rainfall and temperature maps of India in a compact form. \\
-2 & Generative model & Train the flow-matching model on rainfall first, then on rainfall and temperature together. \\
-3 & Extend calibration & Apply the calibration network to temperature and to other models. \\
-4 & Global forecast & Finish the global Week~3--4 rainfall forecast for the AI Weather Quest~\cite{aiwq2025} and check it against
-ERA5. This tests whether the calibration idea also works outside India. \\
-5 & Compare & Compare all methods with simple bias correction and EMOS~\cite{gneiting2005emos}, with the 2025 monsoon as the
-final test. \\
-6 & Write & Write the thesis. \\
+1 & Predict errors and uncertainty & Train an ML model that predicts how large the FuXi-S2S error will be at each grid point and lead
+week, and use this to set the width of the ensemble. Target: coverage close to 0.90 at every lead. \\
+2 & Meteorology-aware correction & Give the correction the large-scale state that controls monsoon rainfall: the MJO and BSISO
+phase~\cite{wheeler2004mjo}, ENSO and IOD indices, and low-level winds and moisture. This lets the correction differ between
+active and break spells. \\
+3 & Physics-informed training & Add physical constraints to the loss~\cite{kashinath2021piml}: rainfall must be non-negative,
+heavy rainfall should come with moisture convergence, and rainfall and temperature should agree (wet weeks are cooler). \\
+4 & Generative model & Train a flow-matching model~\cite{lipman2023flow,liu2023rectified} on compressed maps~\cite{rombach2022ldm}
+that produces many possible rainfall and temperature maps together from a FuXi-S2S forecast~\cite{shi2026generative}. \\
+5 & Extend & Apply the best method to temperature, to other models, and to the global Week~3--4 forecast for the AI Weather
+Quest~\cite{aiwq2025}. \\
+6 & Compare and write & Compare all methods on the 2025 monsoon and write the thesis. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -345,6 +353,8 @@ and Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions.
 \bibitem{rombach2022ldm} R.~Rombach et al. High-resolution image synthesis with latent diffusion models. \emph{CVPR}, 2022.
 \bibitem{shi2026generative} W.~Shi et al. Distribution-guided ensemble postprocessing for S2S precipitation forecasts: a seamless pathway using deep generative models. \emph{JGR: Mach. Learn. Comput.}, 3:e2025JH000993, 2026.
 \bibitem{ferro2014fair} C.~A.~T.~Ferro. Fair scores for ensemble forecasts. \emph{Q. J. R. Meteorol. Soc.}, 140:1917--1923, 2014.
+\bibitem{wheeler2004mjo} M.~C.~Wheeler, H.~H.~Hendon. An all-season real-time multivariate MJO index: development of an index for monitoring and prediction. \emph{Mon. Wea. Rev.}, 132:1917--1932, 2004.
+\bibitem{kashinath2021piml} K.~Kashinath et al. Physics-informed machine learning: case studies for weather and climate modelling. \emph{Phil. Trans. R. Soc. A}, 379:20200093, 2021.
 \bibitem{gneiting2005emos} T.~Gneiting, A.~E.~Raftery, A.~H.~Westveld, T.~Goldman. Calibrated probabilistic forecasting using ensemble model output statistics and minimum CRPS estimation. \emph{Mon. Wea. Rev.}, 133:1098--1118, 2005.
 \end{thebibliography}
 \end{multicols}

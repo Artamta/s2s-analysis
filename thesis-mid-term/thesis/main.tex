@@ -266,14 +266,11 @@ The FuXi-S2S forecasts (100 members, Weeks~1--6) are also run in real time twice
 
 % ============================ 4. PLAN ===============================
 \section{Plan for the remaining work}
-The method in Section~3.2 can only shift and stretch the ensemble that FuXi-S2S gives. Next, I want to train a generative model that
-creates new rainfall and temperature fields together, given the FuXi-S2S forecast $c$. The plan is to first compress the fields with
-an autoencoder~\cite{rombach2022ldm} and then train a network $v_\theta$ with flow matching~\cite{lipman2023flow,liu2023rectified}.
-The network learns to move random noise $z_0$ towards the observed field $z_1$:
-\begin{equation}
-\mathcal{L}(\theta)=\mathbb{E}_{t,z_0,z_1}\big\|\,v_\theta\big((1-t)z_0+t z_1,\,t,\,c\big)-(z_1-z_0)\big\|^2 .
-\end{equation}
-A similar idea was recently used for S2S rainfall~\cite{shi2026generative}. The main tasks are listed in Table~\ref{tab:tasks}.
+The calibration in Section~3.2 can only shift and stretch the ensemble that FuXi-S2S already gives. In the remaining months I want
+to go one step further and train a generative model. Given a FuXi-S2S forecast, this model will produce many possible rainfall and
+temperature maps at the same time, so that the two variables stay consistent with each other. I plan to use flow
+matching~\cite{lipman2023flow,liu2023rectified} on a compressed version of the maps~\cite{rombach2022ldm}, as was recently done for
+S2S rainfall~\cite{shi2026generative}. The tasks are listed below.
 
 \begin{table}[htb]
 \centering\small
@@ -282,16 +279,16 @@ A similar idea was recently used for S2S rainfall~\cite{shi2026generative}. The 
 \renewcommand{\arraystretch}{1.1}
 \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{0.22\linewidth} >{\raggedright\arraybackslash}X@{}}
 \toprule
-& Task & Details \\
+& Task & What I will do \\
 \midrule
-T1 & Autoencoder & Train an autoencoder for weekly rainfall and temperature over India that keeps the heavy-rain patterns. \\
-T2 & Generative model & Train the flow-matching model, first for rainfall only and then for rainfall and temperature together. \\
-T3 & Extend calibration & Try the calibration network on temperature and on other models. \\
-T4 & Global forecast & Finish the global model for Week~3 and Week~4 rainfall categories (AI Weather Quest~\cite{aiwq2025}) and
-check it against ERA5. \\
-T5 & Evaluation & Compare all methods with bias correction, EMOS~\cite{gneiting2005emos} and the calibration network using CRPS,
-reliability and coverage against IMD and IMERG. Keep the 2025 monsoon for the final test. \\
-T6 & Thesis & Write the thesis. \\
+1 & Compress the maps & Train an autoencoder that stores weekly rainfall and temperature maps of India in a small form. \\
+2 & Generative model & Train the flow-matching model, first for rainfall and then for rainfall and temperature together. \\
+3 & Extend calibration & Use the calibration network from Section~3.2 for temperature and for other models. \\
+4 & Global forecast & Finish the global rainfall forecast for Weeks~3 and~4 (AI Weather Quest~\cite{aiwq2025}) and test it
+against ERA5. \\
+5 & Compare & Compare all methods with simple bias correction and EMOS~\cite{gneiting2005emos}, using the 2025 monsoon as the
+final test. \\
+6 & Write & Write the thesis. \\
 \bottomrule
 \end{tabularx}
 \end{table}

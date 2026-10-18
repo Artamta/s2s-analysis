@@ -35,6 +35,8 @@
 \usepackage{enumitem}
 \usepackage{titlesec}
 \usepackage{needspace}
+\usepackage{placeins}
+\usepackage{float}
 \usepackage{caption}
 \usepackage{fancyhdr}
 \usepackage[numbers,sort&compress]{natbib}
@@ -55,6 +57,11 @@
 \setlength{\parskip}{2pt}
 \setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
 \setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.85}
 \setlength{\parindent}{1.2em}
 \setlist{nosep,leftmargin=1.6em}
 \captionsetup{font=small,labelfont=bf,skip=4pt}
@@ -161,8 +168,10 @@ of each forecast were averaged into six weekly means on a common 1.5$^\circ$ gri
 For rainfall I used two references, the IMERG satellite product and the IMD gridded gauge data~\cite{huffman2023imerg,pai2014imd},
 because they do not always agree over India. Temperature at 2\,m was checked against ERA5~\cite{hersbach2020era5}. I used four
 scores. The anomaly correlation coefficient (ACC) and the RMSE are computed on the ensemble mean, and for the ACC the anomalies are
-taken from each model's own climatology at the same lead time. The CRPS and the 90\% coverage (how often the observation falls
-inside the 90\% range of the ensemble) are computed on the full ensemble. Everything is reported for All-India and for the four
+taken from each model's own climatology at the same lead time. The CRPS and the coverage are computed on the full ensemble. Coverage is simple: if the
+ensemble says the weekly rainfall will lie between two values with 90\% probability, then for an honest forecast the observed value
+should fall inside that range about 90\% of the time. Coverage is the fraction of cases where it actually does. A value well
+below 0.90 means the ensemble spread is too narrow, i.e.\ the forecast is overconfident (Figure~\ref{fig:coverage}a). Everything is reported for All-India and for the four
 IMD homogeneous regions.
 
 The data processing, model runs, evaluation and calibration work below were done by me, with guidance from my supervisor and
@@ -215,8 +224,8 @@ for the best model.}
 \end{figure}
 
 \subsection{Calibrating FuXi-S2S}
-The main weakness of FuXi-S2S over India is that its ensemble is far too narrow. In Week~1 only 15.6\% of the observed weekly
-rainfall values fall inside the 90\% range of the ensemble. To correct this I trained a small neural network with 42,434
+The main weakness of FuXi-S2S over India is that its ensemble is far too narrow. In Week~1 its coverage is only 0.156: the observed weekly rainfall
+falls inside the 90\% range in about one case out of six, instead of nine out of ten. To correct this I trained a small neural network with 42,434
 parameters~\cite{raj2026adapter}. For every grid point and lead it outputs a shift $\delta$ and a spread factor $s$, which are
 applied to each member after the transform $u_m=\log(1+x_m)$:
 \begin{equation}
@@ -225,45 +234,23 @@ q_m = u_m + \delta + (s-1)\,(u_m-\bar u),
 where $\bar u$ is the ensemble mean. The network was trained on FuXi-S2S reforecasts for 2002--2017 against IMD rainfall, with the
 CRPS as the loss function, and 2018--2019 was kept aside for choosing the final model.
 
-On the 2022--2024 monsoons, which were not used in training or model selection, the CRPS drops by 16.2\% against IMD and by 12.2\%
-against IMERG (Table~\ref{tab:adapter}a). The ACC also goes up slightly, from 0.296 to 0.322. Coverage improves at every lead but is
-still short of 90\%. Table~\ref{tab:adapter}b and Figure~\ref{fig:adapter} use all five monsoons from 2020 to 2024 to get more
+On the 2022--2024 monsoons, which were not used in training or model selection, the CRPS drops by 16.2\% against IMD (from 3.16 to
+2.65\,mm\,day$^{-1}$) and by 12.2\% against IMERG. A simple statistical correction of the ensemble mean and spread gives a
+smaller gain of 12.5\% against IMD. The ACC also goes up slightly, from 0.296 to 0.322. Coverage improves at every lead, most of all
+in Week~1 where it goes from 0.16 to 0.69, but it is still below 0.90 (Figure~\ref{fig:coverage}b). Figures~\ref{fig:coverage}b
+and~\ref{fig:adapter} use all five monsoons from 2020 to 2024 to get more
 cases. Since 2020 and 2021 were looked at during development, these should be read as showing where the method helps, not as an
 independent test. The biggest gains are over the Western Ghats and the Northeast, which are also the wettest parts of the country.
 So far I have only tried this with one model and one variable.
 
-\begin{table}[htb]
-\centering\small
-\caption{Results of the calibration for JJAS rainfall. (a) Scores for 2022--2024; ``Moment'' is a simple statistical correction used
-for comparison. (b) Fraction of observations inside the 90\% ensemble range, 2020--2024, including the development years (the ideal value is
-0.90).}
-\label{tab:adapter}
-\begin{minipage}[t]{0.55\linewidth}\centering
-\textit{(a) Scores}\par\vspace{3pt}
-\begin{tabular}{@{}lccc@{}}
-\toprule
- & Raw & Moment & Network \\
-\midrule
-CRPS vs IMD (mm\,day$^{-1}$)   & 3.157 & 2.763 & \textbf{2.645} \\
-CRPS vs IMERG (mm\,day$^{-1}$) & 3.152 & 2.826 & \textbf{2.767} \\
-ACC vs IMD                     & 0.296 & --    & \textbf{0.322} \\
-\bottomrule
-\end{tabular}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.42\linewidth}\centering
-\textit{(b) 90\% coverage}\par\vspace{3pt}
-\begin{tabular}{@{}lccc@{}}
-\toprule
-Week & Raw & Moment & Network \\
-\midrule
-1 & 0.156 & 0.566 & \textbf{0.686} \\
-2 & 0.331 & 0.690 & \textbf{0.761} \\
-4 & 0.657 & 0.785 & \textbf{0.816} \\
-6 & 0.741 & 0.821 & \textbf{0.841} \\
-\bottomrule
-\end{tabular}
-\end{minipage}
-\end{table}
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.94\linewidth]{figures/coverage.pdf}
+\caption{(a) Sketch of coverage: each bar is the 90\% range of one forecast and each dot is what was observed. A range that is too
+narrow misses most observations. (b) Coverage of FuXi-S2S JJAS rainfall before and after calibration, 2020--2024 (including the
+development years). An honest forecast would reach the dashed line.}
+\label{fig:coverage}
+\end{figure}
 
 \begin{figure}[htb]
 \centering
@@ -282,6 +269,7 @@ training data, simple corrections are hard to beat, and I now compare every new 
 Alongside this, the FuXi-S2S forecasts (100 members, Weeks~1--6) are run in real time twice a week and shown on an experimental
 website, \url{https://s2s.scdlds.com}.
 
+\FloatBarrier
 % ============================ 4. PLAN ===============================
 \section{Plan for the remaining work}
 The calibration network only shifts and scales the members at each grid point. It cannot create new spatial patterns, and it
@@ -290,10 +278,10 @@ forecast, it should produce many possible weekly rainfall and temperature maps t
 with each other. I plan to use flow matching~\cite{lipman2023flow,liu2023rectified} on a compressed version of the
 maps~\cite{rombach2022ldm}, following a similar recent study on S2S rainfall~\cite{shi2026generative}.
 
-I will count this as a success if, on the 2025 monsoon, it gives a lower CRPS and a coverage closer to 90\% than the calibration
+I will count this as a success if, on the 2025 monsoon, it gives a lower CRPS and a coverage closer to 0.90 than the calibration
 network. If it does not, extending the calibration network to temperature (Task~3) will be the main result of this part.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering\small
 \caption{Tasks for the rest of the thesis.}
 \label{tab:tasks}

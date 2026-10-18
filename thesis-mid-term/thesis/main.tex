@@ -148,14 +148,17 @@ also the range where forecasts have the least skill.
 Over the last two or three years several AI weather models have been released, such as GraphCast, FuXi-S2S and
 NeuralGCM~\cite{lam2023graphcast,chen2024fuxis2s,kochkov2024neuralgcm}. Most of them are judged on global
 scores~\cite{rasp2024wb2}. Skill over India can be quite different from the global picture, and it also changes from region to
-region and season to season~\cite{malik2024s2s}, so a global ranking does not say much about which model to use here. My thesis
-is built around three questions:
+region and season to season~\cite{malik2024s2s}, so a global ranking does not say much about which model to use here.
+
+My thesis follows one line of work. I first find out which forecast system is most skilful over India. I then look at where the
+best AI model goes wrong and correct it with a small regional model, and finally I try to improve it further. This gives three
+questions:
 \begin{enumerate}
-\item Which forecast system works best over India, and does the answer change with variable, lead time, region and season?
-\item Can a small regional model correct the bias and the spread of a global AI forecast?
-\item Can a generative deep learning model give useful probabilistic forecasts of rainfall and temperature together?
+\item Which forecast system is most skilful over India, and does the answer depend on the variable, lead time, region and season?
+\item What is the main weakness of the best AI model over India, and can a small regional network correct it?
+\item Can the forecast be improved further by a generative model that produces rainfall and temperature together?
 \end{enumerate}
-The first two are mostly done and are described in this report. The third is what I will work on next.
+The first two are largely complete and are described in this report. The third is the plan for the second half of the thesis.
 
 % ============================ 2. DATA AND METHODS ===================
 \section{Data and methods}
@@ -168,11 +171,12 @@ of each forecast were averaged into six weekly means on a common 1.5$^\circ$ gri
 For rainfall I used two references, the IMERG satellite product and the IMD gridded gauge data~\cite{huffman2023imerg,pai2014imd},
 because they do not always agree over India. Temperature at 2\,m was checked against ERA5~\cite{hersbach2020era5}. I used four
 scores. The anomaly correlation coefficient (ACC) and the RMSE are computed on the ensemble mean, and for the ACC the anomalies are
-taken from each model's own climatology at the same lead time. The CRPS and the coverage are computed on the full ensemble. Coverage is simple: if the
-ensemble says the weekly rainfall will lie between two values with 90\% probability, then for an honest forecast the observed value
-should fall inside that range about 90\% of the time. Coverage is the fraction of cases where it actually does. A value well
-below 0.90 means the ensemble spread is too narrow, i.e.\ the forecast is overconfident (Figure~\ref{fig:coverage}a). Everything is reported for All-India and for the four
-IMD homogeneous regions.
+taken from each model's own climatology at the same lead time. The CRPS and the coverage are computed on the full ensemble.
+Coverage checks whether the ensemble spread can be trusted. If the ensemble places the weekly rainfall between two values with
+90\% probability, the observed value should fall inside that range in about 90\% of cases, and coverage is the fraction of cases in
+which it does. A value well below 0.90 means that the spread is too narrow and the forecast is overconfident
+(Figure~\ref{fig:coverage}a). All scores are reported for All-India and for the four IMD homogeneous regions. The systems are listed
+in Appendix~\ref{app:systems} and the scores are defined in Appendix~\ref{app:scores}.
 
 The data processing, model runs, evaluation and calibration work below were done by me, with guidance from my supervisor and
 collaborators. Parts of it are written up in two workshop papers~\cite{raj2026bench,raj2026adapter}.
@@ -180,19 +184,19 @@ collaborators. Parts of it are written up in two workshop papers~\cite{raj2026be
 % ============================ 3. WORK DONE ==========================
 \section{Work done so far}
 
-\subsection{Which model works best over India}
+\subsection{Which model is best over India}
 The MME in Table~\ref{tab:acc} is a plain average of six models in which every model gets the same weight, whatever its ensemble
 size.\footnote{Rainfall: CMA, DLESyM-v0, FuXi-S2S, NCEP, NeuralGCM and UKMO. Temperature: CMA, DLESyM-v1, ECMWF, FourCastNet~3,
 FuXi-S2S and UKMO.} In Week~1 it has the highest ACC for both variables and the lowest RMSE in 11 of the 12 variable--lead
 combinations~\cite{raj2026bench}. The margin over the best single model is small, with 95\% bootstrap intervals of $+0.015$ to
 $+0.045$ for rainfall and $+0.001$ to $+0.022$ for temperature, and by Week~3 it is no longer significant. Rainfall skill also falls
-off quickly. After Week~2 the MME has a higher RMSE than simply forecasting climatology. ECMWF Week-3 rainfall is missing because the
-archived fields change resolution at day~15, in the middle of that week, and I chose not to fill the gap with a different product.
+off quickly. After Week~2 the MME has a higher RMSE than simply forecasting climatology. Scores for all nine systems are given in
+Appendix~\ref{app:results}.
 
 \begin{table}[htb]
 \centering\small
-\caption{All-India ACC for each lead week, 2020--2024. Rainfall is compared with IMERG and temperature with ERA5. The best value in
-each column is in bold. ECMWF Week-3 rainfall is missing (see text).}
+\caption{All-India ACC for each lead week, all seasons 2020--2024. Rainfall is compared with IMERG and temperature with ERA5. The best value in
+each column is in bold. ECMWF Week-3 rainfall is missing (Appendix~\ref{app:systems}).}
 \label{tab:acc}
 \setlength{\tabcolsep}{5.2pt}
 \begin{tabular}{@{}l cccccc c cccccc@{}}
@@ -213,7 +217,8 @@ Looking region by region gives a different picture (Figure~\ref{fig:selection}).
 FuXi-S2S is the best model in 19 of the 20 region--lead combinations against IMERG and in 18 of 20 against IMD. For All-India
 temperature, ECMWF is the best single model from Week~3 onwards. I also compared FuXi-S2S with ERPAS, the extended-range system that
 IMD runs operationally, on 101 start dates in 2023 and 2024. FuXi-S2S had the higher ACC up to Week~4, but ERPAS was better in
-October--December, so the AI model is not better everywhere.
+October--December, so the AI model is not better everywhere. Since FuXi-S2S was the strongest single model for monsoon rainfall
+beyond Week~2, and since it is openly available and can be run locally, I chose it as the model to improve.
 
 \begin{figure}[htb]
 \centering
@@ -223,10 +228,10 @@ for the best model.}
 \label{fig:selection}
 \end{figure}
 
-\subsection{Calibrating FuXi-S2S}
+\subsection{Correcting the spread of FuXi-S2S}
 The main weakness of FuXi-S2S over India is that its ensemble is far too narrow. In Week~1 its coverage is only 0.156: the observed weekly rainfall
-falls inside the 90\% range in about one case out of six, instead of nine out of ten. To correct this I trained a small neural network with 42,434
-parameters~\cite{raj2026adapter}. For every grid point and lead it outputs a shift $\delta$ and a spread factor $s$, which are
+falls inside the 90\% range in about one case out of six, instead of nine out of ten. To correct this I trained a small convolutional network with 42,434
+parameters~\cite{raj2026adapter} (Appendix~\ref{app:adapter}). For every grid point and lead it outputs a shift $\delta$ and a spread factor $s$, which are
 applied to each member after the transform $u_m=\log(1+x_m)$:
 \begin{equation}
 q_m = u_m + \delta + (s-1)\,(u_m-\bar u),
@@ -271,8 +276,9 @@ website, \url{https://s2s.scdlds.com}.
 
 \FloatBarrier
 % ============================ 4. PLAN ===============================
-\section{Plan for the remaining work}
-The calibration network only shifts and scales the members at each grid point. It cannot create new spatial patterns, and it
+\section{Plan: improving the forecast further}
+In short, the comparison identified FuXi-S2S as the model to work with, the verification showed that its main problem over India is
+an ensemble that is too narrow, and the calibration network removed a large part of this problem. The calibration network, however, only shifts and scales the members at each grid point. It cannot create new spatial patterns, and it
 handles rainfall on its own. For the second half of the thesis I want to train a generative model instead. Given a FuXi-S2S
 forecast, it should produce many possible weekly rainfall and temperature maps together, so that the two variables stay consistent
 with each other. I plan to use flow matching~\cite{lipman2023flow,liu2023rectified} on a compressed version of the
@@ -334,8 +340,151 @@ Dr.\ Manmeet Singh and Dr.\ Parthasarathi Mukhopadhyay for many useful discussio
 \bibitem{liu2023rectified} X.~Liu, C.~Gong, Q.~Liu. Flow straight and fast: learning to generate and transfer data with rectified flow. \emph{ICLR}, 2023.
 \bibitem{rombach2022ldm} R.~Rombach et al. High-resolution image synthesis with latent diffusion models. \emph{CVPR}, 2022.
 \bibitem{shi2026generative} W.~Shi et al. Distribution-guided ensemble postprocessing for S2S precipitation forecasts: a seamless pathway using deep generative models. \emph{JGR: Mach. Learn. Comput.}, 3:e2025JH000993, 2026.
+\bibitem{ferro2014fair} C.~A.~T.~Ferro. Fair scores for ensemble forecasts. \emph{Q. J. R. Meteorol. Soc.}, 140:1917--1923, 2014.
 \bibitem{gneiting2005emos} T.~Gneiting, A.~E.~Raftery, A.~H.~Westveld, T.~Goldman. Calibrated probabilistic forecasting using ensemble model output statistics and minimum CRPS estimation. \emph{Mon. Wea. Rev.}, 133:1098--1118, 2005.
 \end{thebibliography}
 \end{multicols}
+
+% ============================ APPENDIX ==============================
+\clearpage
+\normalsize
+\appendix
+\counterwithin{table}{section}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\section{Forecast systems and data}
+\label{app:systems}
+Table~\ref{tab:systems} lists the nine systems. The four physics-based systems are real-time operational forecasts from the S2S
+Prediction Project archive~\cite{vitart2017s2s}, initialised at 00\,UTC; reforecasts are not mixed in. The AI and hybrid systems were
+run from ERA5 initial conditions with fixed public model versions. None of their documented training periods extends into
+2020--2024, but FuXi-S2S and FourCastNet~3 used parts of 2017--2021 for validation during their development, so 2020 and 2021 are
+not entirely unseen for these two models.
+
+All fields are placed on one $27\times27$ grid with 1.5$^\circ$ spacing (0--39$^\circ$N, 60--99$^\circ$E). Week~$w$ is the mean
+of lead days $7(w-1)+1$ to $7w$, and rainfall is expressed in mm\,day$^{-1}$. The ECMWF archive changes resolution at day~15, which
+falls inside Week~3, so ECMWF Week-3 rainfall is left out rather than filled from a different product. The four regions are the IMD
+homogeneous regions: Northwest, Central, South Peninsula and East--Northeast.
+
+\begin{table}[h]
+\centering\small
+\caption{Forecast systems used in the comparison. R is rainfall and T is 2\,m temperature. Training periods are those stated by the
+model developers.}
+\label{tab:systems}
+\begin{tabular}{@{}l l c c l@{}}
+\toprule
+System & Type & Members & Variables & Training data \\
+\midrule
+CMA        & Physics-based & 4      & R, T & -- \\
+ECMWF      & Physics-based & 51--101 & R, T & -- \\
+NCEP       & Physics-based & 16     & R    & -- \\
+UKMO       & Physics-based & 4      & R, T & -- \\
+FuXi-S2S   & AI            & 50     & R, T & ERA5, 1950--2016 \\
+NeuralGCM  & Hybrid AI     & 10     & R    & ERA5 and IMERG, 2001--2018 \\
+FourCastNet~3 & AI         & 3      & T    & ERA5, 1980--2016 \\
+DLESyM-v0  & AI            & 1      & R, T & ERA5 and ISCCP, 1983--2016 \\
+DLESyM-v1  & AI            & 4      & T    & ERA5, 1980--2015 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Verification scores}
+\label{app:scores}
+Let $a_i$ be the area weight of grid cell $i$ inside the region, $f_i$ the ensemble-mean forecast and $o_i$ the observation. With
+anomalies $f'_i$ and $o'_i$ and area-weighted means $\langle\cdot\rangle$,
+\begin{equation*}
+\mathrm{ACC}=\frac{\sum_i a_i\,(f'_i-\langle f'\rangle)(o'_i-\langle o'\rangle)}
+{\sqrt{\sum_i a_i\,(f'_i-\langle f'\rangle)^2\,\sum_i a_i\,(o'_i-\langle o'\rangle)^2}},\qquad
+\mathrm{RMSE}=\sqrt{\frac{\sum_i a_i\,(f_i-o_i)^2}{\sum_i a_i}}.
+\end{equation*}
+For an ensemble $x_1,\dots,x_M$ and observation $y$ at one grid cell, the CRPS is
+\begin{equation*}
+\mathrm{CRPS}=\frac{1}{M}\sum_{m=1}^{M}|x_m-y|-\frac{1}{2M^2}\sum_{m=1}^{M}\sum_{n=1}^{M}|x_m-x_n|,
+\end{equation*}
+which is then area-weighted in the same way. It measures the distance between the forecast distribution and the observation, in
+the units of the variable, and lower is better. In the comparison of Section~3.1 I use the fair version of the
+CRPS~\cite{ferro2014fair}, which corrects for ensemble size so that systems with 4 and 50 members can be compared. The CRPS is not
+computed for DLESyM-v0, which has a single member. Coverage is the fraction of cases with
+$q_{0.05}\le y\le q_{0.95}$, where $q_{0.05}$ and $q_{0.95}$ are the 5th and 95th percentiles of the ensemble.
+
+Every score is computed for each start date and lead and then averaged over start dates. Each model's climatology is computed from
+its own ensemble mean, separately for every lead, with a 31-day window and leaving out one year at a time. The observed
+climatologies use only years before the test period: IMERG 2001--2019, IMD 1991--2019 and ERA5 1990--2017. The intervals in
+Section~3.1 come from a paired moving-block bootstrap over start dates (2,000 draws, blocks of 16 starts), which allows for the
+overlap between consecutive forecasts.
+
+\section{All-India results for every system}
+\label{app:results}
+Table~\ref{tab:accall} extends Table~\ref{tab:acc} to all systems. No single model is best at every lead. The MME leads at short
+leads. For rainfall, ECMWF and FuXi-S2S lead from Week~4 onwards; for temperature, the MME is best at most leads and ECMWF matches
+it from Week~4.
+
+\begin{table}[h]
+\centering\small
+\caption{All-India ACC for every system and lead week, all seasons 2020--2024. Rainfall is compared with IMERG and temperature with
+ERA5. The best value in each column is in bold, and a dash means the system does not provide that variable or week.}
+\label{tab:accall}
+\setlength{\tabcolsep}{4.6pt}
+\begin{tabular}{@{}l cccccc c cccccc@{}}
+\toprule
+ & \multicolumn{6}{c}{Rainfall} & & \multicolumn{6}{c}{2\,m temperature} \\
+\cmidrule(lr){2-7}\cmidrule(lr){9-14}
+Week & 1 & 2 & 3 & 4 & 5 & 6 & & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+MME           & \textbf{0.622} & \textbf{0.399} & \textbf{0.228} & 0.136 & 0.098 & 0.057 & & \textbf{0.596} & \textbf{0.471} & \textbf{0.329} & \textbf{0.224} & 0.168 & \textbf{0.142} \\
+\addlinespace[2pt]
+CMA           & 0.393 & 0.197 & 0.074 & 0.047 & 0.025 & 0.024 & & 0.442 & 0.280 & 0.129 & 0.071 & 0.046 & 0.040 \\
+ECMWF         & 0.569 & 0.382 & --    & \textbf{0.175} & 0.141 & 0.096 & & 0.512 & 0.393 & 0.311 & 0.223 & \textbf{0.168} & 0.142 \\
+NCEP          & 0.434 & 0.225 & 0.113 & 0.072 & 0.050 & 0.021 & & --    & --    & --    & --    & --    & --    \\
+UKMO          & 0.553 & 0.313 & 0.161 & 0.054 & 0.051 & 0.045 & & 0.437 & 0.310 & 0.177 & 0.108 & 0.080 & 0.072 \\
+\addlinespace[2pt]
+FuXi-S2S      & 0.586 & 0.354 & 0.213 & 0.151 & \textbf{0.153} & \textbf{0.109} & & 0.559 & 0.409 & 0.269 & 0.190 & 0.139 & 0.123 \\
+NeuralGCM     & 0.591 & 0.382 & 0.202 & 0.133 & 0.063 & 0.028 & & --    & --    & --    & --    & --    & --    \\
+FourCastNet~3 & --    & --    & --    & --    & --    & --    & & 0.577 & 0.406 & 0.241 & 0.105 & 0.076 & 0.053 \\
+DLESyM-v0     & 0.517 & 0.270 & 0.140 & 0.082 & 0.053 & 0.001 & & 0.574 & 0.357 & 0.190 & 0.094 & 0.059 & 0.034 \\
+DLESyM-v1     & --    & --    & --    & --    & --    & --    & & 0.586 & 0.399 & 0.229 & 0.130 & 0.085 & 0.073 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Calibration network}
+\label{app:adapter}
+For each member the network receives $u_m$ and $u_m-\bar u$. A small encoder with eight channels is applied to every member
+separately, and its outputs are sorted and averaged over the members, so the result does not depend on the order of the members.
+This summary, together with the ensemble mean, the ensemble spread and seven fields describing location and season, is passed to a
+residual three-dimensional convolutional network with 24 channels. Two output layers give $\delta$ and $\log s = 2\tanh(a)$, which
+keeps the spread factor $s$ between $e^{-2}$ and $e^{2}$.
+
+The network was trained on the 51-member FuXi-S2S reforecasts, with 1,652 start dates from 2002--2017 for training and 196 from
+2018--2019 for choosing the checkpoint. Each mini-batch uses 16 members drawn at random. I used AdamW with a learning rate of
+$2\times10^{-4}$, weight decay of $10^{-4}$, batch size 8, gradient clipping at 5 and early stopping. Three runs with different
+random seeds were trained and the one with the lowest validation CRPS was kept; no averaging over runs was done. One run takes
+between one and one and a half minutes on a single NVIDIA A30 GPU, not counting data preparation. For evaluation, 50 members were
+generated with the public FuXi-S2S model from ERA5 initial conditions.
+
+The moment correction used for comparison is fitted on 2002--2017 only. For each lead, month and grid cell it shifts the mean of
+the log rainfall, with the shift pulled towards the regional mean, and it rescales the spread by a regional factor limited to the
+range 0.25--4. Table~\ref{tab:leadwise} gives the values behind Figure~\ref{fig:coverage}b. The network has the lowest CRPS at
+every lead, but its coverage stays below 0.90 throughout.
+
+\begin{table}[h]
+\centering\small
+\caption{CRPS (mm\,day$^{-1}$) and coverage of the central 90\% range for FuXi-S2S JJAS rainfall against IMD, before and after
+calibration. 2020--2024, 169 start dates per lead; 2020 and 2021 were seen during development.}
+\label{tab:leadwise}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}c ccc c ccc@{}}
+\toprule
+ & \multicolumn{3}{c}{CRPS (lower is better)} & & \multicolumn{3}{c}{Coverage (ideal 0.90)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){6-8}
+Week & Raw & Moment & Network & & Raw & Moment & Network \\
+\midrule
+1 & 2.848 & 2.174 & \textbf{2.016} & & 0.156 & 0.566 & \textbf{0.686} \\
+2 & 3.250 & 2.721 & \textbf{2.521} & & 0.331 & 0.690 & \textbf{0.761} \\
+3 & 3.189 & 2.854 & \textbf{2.706} & & 0.543 & 0.738 & \textbf{0.797} \\
+4 & 3.176 & 2.915 & \textbf{2.791} & & 0.657 & 0.785 & \textbf{0.816} \\
+5 & 3.163 & 2.918 & \textbf{2.840} & & 0.726 & 0.817 & \textbf{0.838} \\
+6 & 3.096 & 2.900 & \textbf{2.815} & & 0.741 & 0.821 & \textbf{0.841} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}

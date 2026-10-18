@@ -34,7 +34,6 @@
 \usepackage[table]{xcolor}
 \usepackage{enumitem}
 \usepackage{titlesec}
-\usepackage{tocloft}
 \usepackage{needspace}
 \usepackage{placeins}
 \usepackage{float}
@@ -137,18 +136,6 @@ Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
 \end{titlepage}
 
 % ============================ BODY ==================================
-% ============================ CONTENTS ==============================
-\pagenumbering{roman}
-\setcounter{tocdepth}{2}
-\renewcommand{\cfttoctitlefont}{\normalfont\Large\bfseries}
-\renewcommand{\cftaftertoctitle}{\vspace{-4pt}}
-\renewcommand{\cftsecfont}{\normalfont\bfseries}
-\renewcommand{\cftsecpagefont}{\normalfont\bfseries}
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
-\setlength{\cftbeforesecskip}{5pt}
-\tableofcontents
-\clearpage
-\pagenumbering{arabic}
 \setcounter{page}{1}
 
 % ============================ 1. INTRODUCTION ========================
@@ -191,7 +178,7 @@ they do not always agree over India. Temperature at 2\,m is checked against ERA5
 land in that range about 90\% of the time. Coverage is how often it really does. A value much lower than 0.90 means the forecast
 is overconfident (Figure~\ref{fig:coverage}a).
 \end{itemize}
-All scores are given for All-India and for the four IMD homogeneous regions (Appendix~\ref{app:regions}).
+All scores are given for All-India and for the four IMD homogeneous regions.
 
 I did the data processing, model runs, evaluation and calibration myself, with guidance from my supervisor and collaborators.
 Parts of this work are written up in two workshop papers~\cite{raj2026bench,raj2026adapter}.
@@ -228,21 +215,13 @@ UKMO     & 0.553 & 0.313 & 0.161 & 0.054 & 0.051 & 0.045 & & 0.437 & 0.310 & 0.1
 \end{tabular}
 \end{table}
 
-Region by region, the answer changes (Figure~\ref{fig:selection}). For monsoon rainfall in Weeks~3--6, FuXi-S2S is the best model
+Region by region, the answer changes. For monsoon rainfall in Weeks~3--6, FuXi-S2S is the best model
 in 19 of the 20 region--week cases against IMERG and in 18 of 20 against IMD. For All-India temperature, ECMWF is the best single
 model from Week~3. I also compared FuXi-S2S with ERPAS, the extended-range system that IMD runs, on 101 start dates in 2023 and
 2024. FuXi-S2S had the higher ACC up to Week~4, but ERPAS did better in October--December.
 
 So for monsoon rainfall beyond Week~2, FuXi-S2S is the strongest single model. It is also open and I can run it myself. For these
 two reasons I picked it as the model to improve.
-
-\begin{figure}[htb]
-\centering
-\includegraphics[width=0.94\linewidth]{figures/map_selection.pdf}
-\caption{Best model (highest ACC) in each IMD region for JJAS and OND, 2020--2024. Hatched regions have an ACC below 0.10 even for
-the best model.}
-\label{fig:selection}
-\end{figure}
 
 \subsection{Fixing the spread of FuXi-S2S}
 The main problem with FuXi-S2S over India is that its ensemble is much too narrow. In Week~1 its coverage is only 0.156: the
@@ -331,13 +310,11 @@ final test. \\
 \end{table}
 
 \section*{Acknowledgements}
-\addcontentsline{toc}{section}{Acknowledgements}
 I thank my supervisor Prof.\ Sandeep Kumar Juneja and my expert Dr.\ Bedartha Goswami for their guidance, and Dr.\ Manmeet Singh
 and Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions.
 
 % ============================ REFERENCES ============================
 \clearpage
-\phantomsection\addcontentsline{toc}{section}{References}
 \renewcommand{\refname}{References}
 \footnotesize
 \setlength{\bibsep}{0.5pt}
@@ -374,12 +351,9 @@ and Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions.
 % ============================ APPENDIX ==============================
 \clearpage
 \normalsize
-\addtocontents{toc}{\protect\vspace{8pt}\protect\noindent{\protect\bfseries Appendix}\protect\par\protect\vspace{2pt}}
 \appendix
 \counterwithin{table}{section}
-\counterwithin{figure}{section}
 \renewcommand{\thetable}{\thesection\arabic{table}}
-\renewcommand{\thefigure}{\thesection\arabic{figure}}
 \section{Models}
 \label{app:systems}
 Table~\ref{tab:systems} lists the models. The four physics-based models are real-time forecasts from the S2S
@@ -388,10 +362,10 @@ None of them was trained on 2020--2024. FuXi-S2S and FourCastNet~3 did use parts
 built.
 
 \begin{table}[H]
-\centering\small
+\centering\footnotesize
 \caption{Forecast models. Var.\ is the variable used: R for rainfall, T for 2\,m temperature.}
 \label{tab:systems}
-\renewcommand{\arraystretch}{1.05}
+\renewcommand{\arraystretch}{1.0}
 \begin{tabularx}{\linewidth}{@{}l l c c >{\raggedright\arraybackslash}X@{}}
 \toprule
 Model & Type & Members & Var. & Description \\
@@ -417,10 +391,10 @@ MME          & Average & 6 systems & R, T & Simple average of six models (footno
 \section{Data}
 \label{app:data}
 \begin{table}[H]
-\centering\small
+\centering\footnotesize
 \caption{Data sets used.}
 \label{tab:data}
-\renewcommand{\arraystretch}{1.05}
+\renewcommand{\arraystretch}{1.0}
 \begin{tabularx}{\linewidth}{@{}l l l >{\raggedright\arraybackslash}X@{}}
 \toprule
 Data set & Variable & Original grid & What I used it for \\
@@ -440,35 +414,6 @@ the final model (2018--2019) \\
 Everything is put on one 1.5$^\circ$ grid (0--39$^\circ$N, 60--99$^\circ$E). Rainfall is regridded by area-weighted averaging so
 that totals are kept. Week~1 is the mean of days 1--7, Week~2 of days 8--14, and so on up to Week~6. Rainfall is in
 mm\,day$^{-1}$. The ECMWF archive changes resolution at day~15, in the middle of Week~3, so I left ECMWF Week-3 rainfall out.
-
-\section{IMD homogeneous regions}
-\label{app:regions}
-IMD splits India into four regions with similar rainfall behaviour, called homogeneous regions (Figure~\ref{fig:regions}). Each
-region is a group of whole states. I use the IMD region masks~\cite{pai2014imd} drawn on the Survey of India state boundaries.
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[c]{0.30\linewidth}
-\centering\includegraphics[width=\linewidth]{figures/map_regions.pdf}
-\end{minipage}\hfill
-\begin{minipage}[c]{0.66\linewidth}\small
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}X@{}}
-\toprule
-Region & States and union territories \\
-\midrule
-Northwest & Jammu and Kashmir, Ladakh, Himachal Pradesh, Uttarakhand, Punjab, Haryana, Chandigarh, Delhi, Rajasthan,
-Uttar Pradesh \\
-Central & Gujarat, Madhya Pradesh, Maharashtra, Goa, Chhattisgarh, Odisha, Dadra and Nagar Haveli and Daman and Diu \\
-South Peninsula & Andhra Pradesh, Telangana, Karnataka, Tamil Nadu, Kerala, Puducherry \\
-East \& Northeast & Bihar, Jharkhand, West Bengal, Sikkim, Assam, Meghalaya, Arunachal Pradesh, Nagaland, Manipur, Mizoram,
-Tripura, Andaman and Nicobar Islands \\
-\bottomrule
-\end{tabularx}
-\end{minipage}
-\caption{The four IMD homogeneous regions used for the regional scores.}
-\label{fig:regions}
-\end{figure}
 
 \section{Formulas}
 \label{app:scores}
@@ -500,12 +445,11 @@ over start dates (2,000 resamples, blocks of 16), which keeps nearby forecasts t
 
 \section{All-India results}
 \label{app:results}
-Table~\ref{tab:accall} is Table~\ref{tab:acc} for all models. No model is best at every lead. The MME is best in the first weeks.
-For rainfall, ECMWF and FuXi-S2S are best from Week~4. For temperature, the MME is best at most leads and ECMWF catches up from
-Week~4.
+Table~\ref{tab:accall} is Table~\ref{tab:acc} for all models. No model is best at every lead: the MME is best in the first
+weeks, and from Week~4 ECMWF and FuXi-S2S lead for rainfall while ECMWF catches up with the MME for temperature.
 
 \begin{table}[H]
-\centering\small
+\centering\footnotesize
 \caption{All-India ACC for every model and lead week (all seasons, 2020--2024). Rainfall is checked against IMERG and
 temperature against ERA5. Bold marks the best value in each column. A dash means the model has no data for that variable or week.}
 \label{tab:accall}
@@ -534,30 +478,24 @@ DLESyM-v1     & --    & --    & --    & --    & --    & --    & & 0.586 & 0.399 
 
 \section{Calibration network}
 \label{app:adapter}
-\textit{How it works.} Each member ($u_m$ and $u_m-\bar u$) goes through the same small encoder with 8 channels. The results are
-sorted and averaged over members, so the order of the members does not matter. This summary, the ensemble mean and spread, and
-seven fields that describe location and season go into a 3-D convolutional network with 24 channels. The network outputs $\delta$
-and $\log s=2\tanh(a)$, which keeps $s$ between $e^{-2}$ and $e^{2}$. The calibrated member is $x'_m=\exp(q_m)-1$, with $q_m$ from
-Eq.~(1).
+\textit{How it works.} Each member ($u_m$ and $u_m-\bar u$) goes through the same small encoder, and the results are averaged over
+members, so member order does not matter. This summary, the ensemble mean and spread, and seven location and season fields go into
+a 3-D convolutional network (24 channels) that outputs $\delta$ and $\log s=2\tanh(a)$, so $e^{-2}\le s\le e^{2}$. The calibrated
+member is $x'_m=\exp(q_m)-1$, with $q_m$ from Eq.~(1).
 
-\textit{Training.} I used the 51-member FuXi-S2S reforecasts with IMD rainfall as the truth: 1,652 start dates from 2002--2017 for
-training and 196 from 2018--2019 for picking the final model. Each batch uses 16 random members. The loss is the CRPS, the
-optimiser is AdamW (learning rate $2\times10^{-4}$, weight decay $10^{-4}$), the batch size is 8, gradients are clipped at 5 and
-training stops early when the validation score stops improving. I trained three runs with different random seeds and kept the
-one with the lowest validation CRPS. One run takes about one minute (52--83\,s) on an NVIDIA A30 GPU. For testing I generated 50
-members with the public FuXi-S2S model.
+\textit{Training.} 51-member FuXi-S2S reforecasts with IMD as the truth: 1,652 start dates (2002--2017) for training and 196
+(2018--2019) for picking the model. CRPS loss, AdamW (learning rate $2\times10^{-4}$, weight decay $10^{-4}$), batch size 8, 16
+random members per batch, early stopping; best of three random seeds. One run takes about a minute on an NVIDIA A30 GPU. Testing
+uses 50 members from the public FuXi-S2S model.
 
-\textit{Simple correction used for comparison.} This is the ``moment'' correction. It is fitted on 2002--2017 only. For each
-lead, month and grid cell it shifts the mean of the log rainfall (pulled towards the regional mean), and it stretches or shrinks
-the spread by one factor per region, kept between 0.25 and 4.
-
-Table~\ref{tab:leadwise} gives the numbers behind Figure~\ref{fig:coverage}b. The network has the lowest CRPS at every lead,
-but its coverage is still below 0.90.
+\textit{Simple correction (for comparison).} Fitted on 2002--2017 only. For each lead, month and grid cell it shifts the mean of the
+log rainfall and rescales the spread by a regional factor between 0.25 and 4.
 
 \begin{table}[H]
-\centering\small
+\centering\footnotesize
 \caption{CRPS (mm\,day$^{-1}$) and coverage of the 90\% range for FuXi-S2S monsoon rainfall against IMD, before and after
-calibration. 2020--2024, 169 start dates per lead week. 2020 and 2021 were already seen during development.}
+calibration (numbers behind Figure~\ref{fig:coverage}b). 2020--2024, 169 start dates per lead week; 2020 and 2021 were
+already seen during development.}
 \label{tab:leadwise}
 \setlength{\tabcolsep}{6pt}
 \begin{tabular}{@{}c ccc c ccc@{}}

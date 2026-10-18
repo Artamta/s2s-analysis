@@ -113,7 +113,7 @@ def map_adapter() -> None:
         axis.text(0.03, 0.03, f"{100 * share:.0f}% of cells\nimproved", transform=axis.transAxes,
                   ha="left", va="bottom", fontsize=6.3, color="#3A4651")
         bare(axis)
-    colorbar(figure, image, axes, r"CRPS improvement, raw $-$ adapter (mm day$^{-1}$; positive is better)",
+    colorbar(figure, image, axes, r"CRPS improvement, raw $-$ calibrated (mm day$^{-1}$; positive is better)",
              extend="both")
     save(figure, "map_adapter")
 

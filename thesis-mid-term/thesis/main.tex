@@ -34,6 +34,7 @@
 \usepackage[table]{xcolor}
 \usepackage{enumitem}
 \usepackage{titlesec}
+\usepackage{tocloft}
 \usepackage{needspace}
 \usepackage{placeins}
 \usepackage{float}
@@ -136,6 +137,18 @@ Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
 \end{titlepage}
 
 % ============================ BODY ==================================
+% ============================ CONTENTS ==============================
+\pagenumbering{roman}
+\setcounter{tocdepth}{2}
+\renewcommand{\cfttoctitlefont}{\normalfont\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\vspace{-4pt}}
+\renewcommand{\cftsecfont}{\normalfont\bfseries}
+\renewcommand{\cftsecpagefont}{\normalfont\bfseries}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforesecskip}{5pt}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
 \setcounter{page}{1}
 
 % ============================ 1. INTRODUCTION ========================
@@ -309,11 +322,13 @@ final test. \\
 \end{table}
 
 \section*{Acknowledgements}
+\addcontentsline{toc}{section}{Acknowledgements}
 I thank my supervisor Prof.\ Sandeep Kumar Juneja and my expert Dr.\ Bedartha Goswami for their guidance and feedback, and
 Dr.\ Manmeet Singh and Dr.\ Parthasarathi Mukhopadhyay for many useful discussions.
 
 % ============================ REFERENCES ============================
 \clearpage
+\phantomsection\addcontentsline{toc}{section}{References}
 \renewcommand{\refname}{References}
 \footnotesize
 \setlength{\bibsep}{0.5pt}
@@ -350,6 +365,7 @@ Dr.\ Manmeet Singh and Dr.\ Parthasarathi Mukhopadhyay for many useful discussio
 % ============================ APPENDIX ==============================
 \clearpage
 \normalsize
+\addtocontents{toc}{\protect\vspace{8pt}\protect\noindent{\protect\bfseries Appendix}\protect\par\protect\vspace{2pt}}
 \appendix
 \counterwithin{table}{section}
 \counterwithin{figure}{section}

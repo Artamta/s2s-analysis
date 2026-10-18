@@ -247,8 +247,7 @@ every lead, most of all in Week~1 (from 0.16 to 0.69), but it is still below 0.9
 Figure~\ref{fig:coverage} shows the same three scores week by week. It and Figure~\ref{fig:adapter} use all five monsoons
 from 2020 to 2024 to have more cases. The network beats raw FuXi-S2S on all three scores at every lead week. I had already looked
 at 2020 and 2021 while developing the method, so these figures show where it helps but are not a fully independent test. The
-largest gains are over the Western Ghats and the Northeast, the wettest parts of India. So far I have tried this on one model and
-one variable only.
+largest gains are over the Western Ghats and the Northeast, the wettest parts of India.
 
 \begin{figure}[htb]
 \centering
@@ -261,7 +260,7 @@ simple correction was not computed.}
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=0.94\linewidth]{figures/map_adapter.pdf}
+\includegraphics[width=0.88\linewidth]{figures/map_adapter.pdf}
 \caption{How much the CRPS went down after calibration, JJAS rainfall 2020--2024 (includes the development years). Blue means the
 calibrated forecast is better.}
 \label{fig:adapter}
@@ -279,39 +278,31 @@ I also run FuXi-S2S forecasts (100 members, Weeks~1--6) in real time twice a wee
 \FloatBarrier
 % ============================ 4. PLAN ===============================
 \section{Plan for the rest of the thesis}
-The calibration network fixed a large part of the spread problem, but the results show three gaps:
-\begin{itemize}
-\item Coverage is still below 0.90 at every lead, so the forecast is still overconfident.
-\item The network only sees the FuXi-S2S rainfall itself. It does not know the weather situation, for example whether the monsoon
-is in an active or a break spell, although the forecast error is likely to depend on it.
-\item It works on rainfall alone and corrects each grid point separately, so the output is not guaranteed to be physically
-consistent.
-\end{itemize}
-In the second half of the thesis I will work on these gaps in three directions (Table~\ref{tab:tasks}): (i) an ML model that
-predicts the size of the forecast error and so gives better uncertainty, (ii) a correction that uses meteorological information
-and physical constraints, and (iii) a generative model for rainfall and temperature together. Each new method will be tested on
-the 2025 monsoon, which was not used to build the calibration network, against the calibration network, simple bias correction and
+The calibration network fixed a large part of the spread problem, but three gaps remain. Coverage is still below 0.90, so the
+forecast is still overconfident. The network does not know the weather situation, for example whether the monsoon is in an active
+or a break spell. And it works on rainfall alone, one grid point at a time, so its output is not guaranteed to be physically
+consistent. The tasks in Table~\ref{tab:tasks} address these gaps. Each new method will be tested on the 2025 monsoon, which was
+not used to build the calibration network, against the calibration network, simple bias correction and
 EMOS~\cite{gneiting2005emos}. The goal is a lower CRPS and a coverage closer to 0.90, without losing ACC.
 
-\begin{table}[tb]
-\centering\small
+\begin{table}[H]
+\centering\footnotesize
 \caption{Tasks for the rest of the thesis.}
 \label{tab:tasks}
-\renewcommand{\arraystretch}{1.1}
-\begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{0.21\linewidth} >{\raggedright\arraybackslash}X@{}}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{0.22\linewidth} >{\raggedright\arraybackslash}X@{}}
 \toprule
 & Task & What I will do \\
 \midrule
-1 & Predict errors and uncertainty & Train an ML model that predicts how large the FuXi-S2S error will be at each grid point and lead
-week, and use this to set the width of the ensemble. Target: coverage close to 0.90 at every lead. \\
-2 & Meteorology-aware correction & Give the correction the large-scale state that controls monsoon rainfall: the MJO and BSISO
-phase~\cite{wheeler2004mjo}, ENSO and IOD indices, and low-level winds and moisture. This lets the correction differ between
-active and break spells. \\
-3 & Physics-informed training & Add physical constraints to the loss~\cite{kashinath2021piml}: rainfall must be non-negative,
-heavy rainfall should come with moisture convergence, and rainfall and temperature should agree (wet weeks are cooler). \\
-4 & Generative model & Train a flow-matching model~\cite{lipman2023flow,liu2023rectified} on compressed maps~\cite{rombach2022ldm}
-that produces many possible rainfall and temperature maps together from a FuXi-S2S forecast~\cite{shi2026generative}. \\
-5 & Extend & Apply the best method to temperature, to other models, and to the global Week~3--4 forecast for the AI Weather
+1 & Predict errors and uncertainty & ML model that predicts how large the FuXi-S2S error will be at each grid point and lead week,
+used to set the ensemble width so that coverage gets close to 0.90. \\
+2 & Meteorology-aware correction & Add the large-scale monsoon state as input: MJO/BSISO phase~\cite{wheeler2004mjo}, ENSO and IOD
+indices, low-level winds and moisture, so the correction can differ between active and break spells. \\
+3 & Physics-informed training & Physical constraints in the loss~\cite{kashinath2021piml}: non-negative rainfall, heavy rain with
+moisture convergence, and rainfall consistent with temperature (wet weeks are cooler). \\
+4 & Generative model & Flow-matching model~\cite{lipman2023flow,liu2023rectified} on compressed maps~\cite{rombach2022ldm} that
+produces many rainfall and temperature maps together from a FuXi-S2S forecast~\cite{shi2026generative}. \\
+5 & Extend & Apply the best method to temperature, other models and the global Week~3--4 forecast for the AI Weather
 Quest~\cite{aiwq2025}. \\
 6 & Compare & Compare all methods on the 2025 monsoon using CRPS, ACC and coverage. \\
 \bottomrule
@@ -320,8 +311,8 @@ Quest~\cite{aiwq2025}. \\
 
 \section*{Acknowledgements}
 I thank my supervisor Prof.\ Sandeep Kumar Juneja and my expert Dr.\ Bedartha Goswami for their guidance, and Dr.\ Manmeet Singh
-and Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions. I also thank IISER Pune for the computing
-resources provided through its high-performance computing (HPC) facility.
+and Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions. I also thank IISER Pune for computing
+time on its HPC facility.
 
 % ============================ REFERENCES ============================
 \clearpage

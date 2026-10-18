@@ -2,7 +2,7 @@
 
 Usage: python make_thesis_figures.py [out_dir]   (default: ../figures)
 
-  map_selection.pdf   best system per IMD region, season and lead (#315 results cube)
+  map_selection.pdf   best system per IMD region, JJAS and OND, by lead (#315 results cube)
   map_adapter.pdf     cellwise CRPS improvement of the regional adapter (#297 reviewed fields)
   map_forecast.pdf    one real-time s2s.scdlds.com issue: rainfall and T2M anomaly, Weeks 1-4
 
@@ -64,12 +64,12 @@ def colorbar(figure: plt.Figure, image, axes, label: str, **kwargs) -> None:
 
 
 def map_selection() -> None:
-    """System with the highest regional ACC, by season and lead week (#315)."""
-    seasons, leads = ["JF", "MAM", "JJAS", "OND"], [1, 3, 6]
+    """System with the highest regional ACC in JJAS and OND, by lead week (#315)."""
+    seasons, leads = ["JJAS", "OND"], [1, 3, 6]
     tracks = [("tp_imerg", "Rainfall (vs IMERG)"), ("t2m_era5", "2 m temperature (vs ERA5)")]
     cube = sel.cube[sel.cube.region != "all_india"].dropna(subset=["acc"])
     best = cube.loc[cube.groupby(["track", "region", "season", "lead_week"]).acc.idxmax()]
-    figure = plt.figure(figsize=(WIDTH, 3.9), layout="constrained")
+    figure = plt.figure(figsize=(WIDTH, 2.25), layout="constrained")
     figure.get_layout_engine().set(w_pad=0.01, h_pad=0.01)
     used: set[str] = set()
     for (track, label), sub in zip(tracks, figure.subfigures(1, 2, wspace=0.04)):

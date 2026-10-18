@@ -14,9 +14,11 @@ Results are small booktabs tables, one coverage bar chart and two spatial figure
   (`clean/fuxi-dashboard/public/data/forecasts/ifs/20260927.json`).
 
 Table numbers come from the #315/#297 camera-ready sources and `clean/INDIA-S2S-BENCH/paper/tables/headline.tex`.
-A short appendix (after the references) holds: A systems and data (#315 `tables/model_contract.tex` and provenance table),
-B score definitions (#315 appendix), C all-system All-India ACC (#315 `tables/v21_overall_{tp,t2m}.tex`), and
-D calibration-network details plus lead-wise CRPS/coverage against IMD (#297 appendix and `generated_numbers.tex`).
+A short appendix (after the references): A models, B data sets, C IMD homogeneous regions (map + state list),
+D formulas, E all-system All-India ACC, F calibration network and lead-wise CRPS/coverage against IMD. Sources: #315
+`tables/model_contract.tex`, provenance table, `v21_overall_{tp,t2m}.tex` and appendix; #297 appendix and `generated_numbers.tex`.
+- `figures/map_regions.pdf`: the four IMD homogeneous regions from `masks/imd_region_masks_0.25deg.nc` (state lists checked by
+  overlaying the Survey of India state layer on the masks).
 The old `skill_summary.pdf` and product screenshots are no longer used.
 
 Logos in `logos/` are institutional marks (Ashoka, SCDLDS from the dashboard brand assets; IISER Pune with its baked-in checkerboard removed). Do not redistribute.

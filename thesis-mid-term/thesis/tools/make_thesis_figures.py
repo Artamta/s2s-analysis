@@ -197,10 +197,28 @@ def map_forecast() -> None:
     save(figure, "map_forecast")
 
 
+def map_regions() -> None:
+    """The four IMD homogeneous regions (0.25-degree masks) with state outlines."""
+    from matplotlib.collections import LineCollection
+
+    shades = {"northwest_india": "#E3C9A0", "central_india": "#B9D3A8",
+              "south_peninsula": "#A9C6DE", "east_northeast_india": "#D7B8CF"}
+    labels = {"northwest_india": ("Northwest", 73.5, 28.5), "central_india": ("Central", 77.5, 21.0),
+              "south_peninsula": ("South\nPeninsula", 77.8, 13.8), "east_northeast_india": ("East &\nNortheast", 91.5, 23.2)}
+    rings, _ = cr.load_outline()
+    figure, axis = plt.subplots(figsize=(2.35, 2.35), layout="constrained")
+    sel.draw_region_map(axis, shades, set())
+    axis.add_collection(LineCollection(rings, colors="#33424F", linewidths=0.2, alpha=0.55))
+    for text, x, y in labels.values():
+        axis.text(x, y, text, ha="center", va="center", fontsize=7, linespacing=1.0)
+    save(figure, "map_regions")
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     map_selection()
     map_adapter()
     coverage()
     map_forecast()
+    map_regions()
     print("wrote", *sorted(p.name for p in OUT.glob("map_*")))

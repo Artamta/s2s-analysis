@@ -124,7 +124,7 @@ def coverage() -> None:
     raw = [0.156, 0.331, 0.543, 0.657, 0.726, 0.741]
     moment = [0.566, 0.690, 0.738, 0.785, 0.817, 0.821]
     network = [0.686, 0.761, 0.797, 0.816, 0.838, 0.841]
-    colors = {"Raw FuXi-S2S": "#C8553D", "Moment correction": "#9DB4C9", "Calibration network": "#1F4E79"}
+    colors = {"Raw FuXi-S2S": "#C8553D", "Simple correction": "#9DB4C9", "Calibration network": "#1F4E79"}
     figure, (sketch, bars) = plt.subplots(1, 2, figsize=(WIDTH, 1.95), layout="constrained",
                                           gridspec_kw={"width_ratios": [1, 1.55]})
     # (a) schematic: invented values, only to show what the score means

@@ -119,53 +119,45 @@ def map_adapter() -> None:
     save(figure, "map_adapter")
 
 
-def coverage() -> None:
-    """Explain 90% coverage with a schematic, then show it by lead week (#297, 2020-2024 JJAS)."""
-    raw = [0.156, 0.331, 0.543, 0.657, 0.726, 0.741]
-    moment = [0.566, 0.690, 0.738, 0.785, 0.817, 0.821]
-    network = [0.686, 0.761, 0.797, 0.816, 0.838, 0.841]
+def improvement() -> None:
+    """CRPS, ACC and 90% coverage by lead week, before and after calibration (#297, 2020-2024 JJAS vs IMD)."""
     colors = {"Raw FuXi-S2S": "#C8553D", "Simple correction": "#9DB4C9", "Calibration network": "#1F4E79"}
-    figure, (sketch, bars) = plt.subplots(1, 2, figsize=(WIDTH, 1.95), layout="constrained",
-                                          gridspec_kw={"width_ratios": [1, 1.55]})
-    # (a) schematic: invented values, only to show what the score means
-    observed = np.array([4.0, 7.5, 2.0, 9.0, 5.5, 3.0])
-    centre = np.array([5.0, 5.2, 4.6, 5.8, 5.0, 4.4])
-    for offset, half, color, label in ((0, 0.9, colors["Raw FuXi-S2S"], "Too narrow"),
-                                       (7.5, 3.0, colors["Calibration network"], "Calibrated")):
-        x = np.arange(6) + offset
-        sketch.vlines(x, centre - half, centre + half, color=color, lw=5, alpha=0.55)
-        inside = np.abs(observed - centre) <= half
-        sketch.scatter(x[inside], observed[inside], s=16, color="black", zorder=3)
-        sketch.scatter(x[~inside], observed[~inside], s=18, facecolor="white", edgecolor="black", lw=0.8, zorder=3)
-        sketch.text(offset + 2.5, 11.2, f"{label}\n{inside.sum()} of 6 inside", ha="center", va="bottom", fontsize=7)
-    sketch.scatter([], [], s=16, color="black", label="observed, inside range")
-    sketch.scatter([], [], s=18, facecolor="white", edgecolor="black", lw=0.8, label="observed, outside range")
-    sketch.legend(frameon=False, fontsize=6.4, loc="lower center", ncol=2, bbox_to_anchor=(0.5, -0.02),
-                  handletextpad=0.2, columnspacing=0.8)
-    sketch.set_ylim(-2.2, 13.5)
-    sketch.set_xlim(-1, 14)
-    sketch.set_xticks(())
-    sketch.set_yticks(())
-    for side in ("top", "right", "left"):
-        sketch.spines[side].set_visible(False)
-    sketch.set_xlabel("forecast cases (illustration)", fontsize=7)
-    sketch.set_title("(a) What coverage measures", loc="left", fontsize=8)
-    # (b) real numbers by lead week
+    panels = [
+        ("(a) CRPS (mm day$^{-1}$), lower is better", (0, 3.6),
+         {"Raw FuXi-S2S": [2.848, 3.250, 3.189, 3.176, 3.163, 3.096],
+          "Simple correction": [2.174, 2.721, 2.854, 2.915, 2.918, 2.900],
+          "Calibration network": [2.016, 2.521, 2.706, 2.791, 2.840, 2.815]}),
+        ("(b) ACC, higher is better", (0, 0.75),
+         {"Raw FuXi-S2S": [0.618, 0.404, 0.306, 0.219, 0.174, 0.143],
+          "Calibration network": [0.658, 0.436, 0.334, 0.246, 0.177, 0.179]}),
+        ("(c) 90% coverage, ideal is 0.90", (0, 1.0),
+         {"Raw FuXi-S2S": [0.156, 0.331, 0.543, 0.657, 0.726, 0.741],
+          "Simple correction": [0.566, 0.690, 0.738, 0.785, 0.817, 0.821],
+          "Calibration network": [0.686, 0.761, 0.797, 0.816, 0.838, 0.841]}),
+    ]
     weeks = np.arange(1, 7)
-    width = 0.26
-    for k, (label, values) in enumerate(zip(colors, (raw, moment, network))):
-        bars.bar(weeks + (k - 1) * width, values, width, color=colors[label], label=label, edgecolor="white", lw=0.3)
-    bars.axhline(0.9, color="black", ls="--", lw=0.8)
-    bars.text(6.45, 0.915, "ideal 0.90", ha="right", va="bottom", fontsize=6.8)
-    bars.set_ylim(0, 1.0)
-    bars.set_xticks(weeks, [f"Week {w}" for w in weeks])
-    bars.set_ylabel("fraction inside 90% range")
-    bars.spines[["top", "right"]].set_visible(False)
-    bars.tick_params(length=2)
-    bars.legend(frameon=False, fontsize=6.6, loc="upper left", ncol=3, bbox_to_anchor=(0, 1.13), handlelength=1.0,
-                columnspacing=0.8)
-    bars.set_title("(b) FuXi-S2S JJAS rainfall, 2020–2024", loc="left", fontsize=8, pad=14)
-    save(figure, "coverage")
+    width = 0.27
+    figure, axes = plt.subplots(1, 3, figsize=(WIDTH, 2.0), layout="constrained")
+    figure.get_layout_engine().set(w_pad=0.04, wspace=0.06)
+    for axis, (title, ylim, series) in zip(axes, panels):
+        n = len(series)
+        for k, (label, values) in enumerate(series.items()):
+            axis.bar(weeks + (k - (n - 1) / 2) * width, values, width, color=colors[label], edgecolor="white", lw=0.4)
+        if title.startswith("(c)"):
+            axis.axhline(0.9, color="black", ls="--", lw=0.8)
+            axis.text(0.6, 0.92, "ideal", ha="left", va="bottom", fontsize=6.5)
+        axis.set_ylim(*ylim)
+        axis.set_xticks(weeks, [str(w) for w in weeks])
+        axis.set_xlabel("lead week", fontsize=7, labelpad=1)
+        axis.set_title(title, loc="left", fontsize=7.6)
+        axis.spines[["top", "right"]].set_visible(False)
+        axis.tick_params(length=2)
+        axis.yaxis.grid(True, lw=0.3, color="#D5DADF")
+        axis.set_axisbelow(True)
+    handles = [Patch(color=c, label=l) for l, c in colors.items()]
+    figure.legend(handles=handles, loc="outside upper center", ncol=3, frameon=False, fontsize=7,
+                  handlelength=1.1, columnspacing=1.4)
+    save(figure, "improvement")
 
 
 def map_forecast() -> None:
@@ -218,7 +210,7 @@ if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     map_selection()
     map_adapter()
-    coverage()
+    improvement()
     map_forecast()
     map_regions()
     print("wrote", *sorted(p.name for p in OUT.glob("map_*")))

@@ -176,7 +176,7 @@ they do not always agree over India. Temperature at 2\,m is checked against ERA5
 \item \textbf{CRPS}: the error of the whole ensemble, not only its mean. Lower is better.
 \item \textbf{Coverage}: if the ensemble says rainfall will be between two values with 90\% probability, the observed value should
 land in that range about 90\% of the time. Coverage is how often it really does. A value much lower than 0.90 means the forecast
-is overconfident (Figure~\ref{fig:coverage}a).
+is overconfident.
 \end{itemize}
 All scores are given for All-India and for the four IMD homogeneous regions.
 
@@ -240,19 +240,20 @@ pick the final model.
 I tested it on the 2022--2024 monsoons, which were not used for training or for picking the model. The CRPS goes down by 16.2\%
 against IMD (from 3.16 to 2.65\,mm\,day$^{-1}$) and by 12.2\% against IMERG. A simpler statistical correction of the mean and spread
 gives 12.5\% against IMD, so the network does better. The ACC also goes up a little, from 0.296 to 0.322. Coverage improves at
-every lead, most of all in Week~1 (from 0.16 to 0.69), but it is still below 0.90 (Figure~\ref{fig:coverage}b).
+every lead, most of all in Week~1 (from 0.16 to 0.69), but it is still below 0.90.
 
-Figures~\ref{fig:coverage}b and~\ref{fig:adapter} use all five monsoons from 2020 to 2024 to have more cases. I had already looked
+Figure~\ref{fig:coverage} shows the same three scores week by week. It and Figure~\ref{fig:adapter} use all five monsoons
+from 2020 to 2024 to have more cases. The network beats raw FuXi-S2S on all three scores at every lead week. I had already looked
 at 2020 and 2021 while developing the method, so these figures show where it helps but are not a fully independent test. The
 largest gains are over the Western Ghats and the Northeast, the wettest parts of India. So far I have tried this on one model and
 one variable only.
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=0.94\linewidth]{figures/coverage.pdf}
-\caption{(a) What coverage means: each bar is the 90\% range of one forecast and each dot is the observed value. If the range is too
-narrow, most dots fall outside it. (b) Coverage of FuXi-S2S monsoon rainfall before and after calibration, 2020--2024 (includes the
-development years). A well-calibrated forecast would reach the dashed line.}
+\includegraphics[width=\linewidth]{figures/improvement.pdf}
+\caption{FuXi-S2S monsoon rainfall against IMD, before and after calibration, by lead week (2020--2024, includes the development
+years). (a) CRPS, (b) ACC and (c) coverage of the 90\% range; the dashed line is the ideal value of 0.90. Per-week ACC for the
+simple correction was not computed.}
 \label{fig:coverage}
 \end{figure}
 
@@ -494,7 +495,7 @@ log rainfall and rescales the spread by a regional factor between 0.25 and 4.
 \begin{table}[H]
 \centering\footnotesize
 \caption{CRPS (mm\,day$^{-1}$) and coverage of the 90\% range for FuXi-S2S monsoon rainfall against IMD, before and after
-calibration (numbers behind Figure~\ref{fig:coverage}b). 2020--2024, 169 start dates per lead week; 2020 and 2021 were
+calibration (numbers behind Figure~\ref{fig:coverage}a and c). 2020--2024, 169 start dates per lead week; 2020 and 2021 were
 already seen during development.}
 \label{tab:leadwise}
 \setlength{\tabcolsep}{6pt}

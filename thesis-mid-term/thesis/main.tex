@@ -140,7 +140,7 @@ Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
 \setcounter{page}{1}
 
 % ============================ 1. INTRODUCTION ========================
-\section{Introduction}
+\section{Background and aim}
 Subseasonal-to-seasonal (S2S) forecasts look about two weeks to two months ahead~\cite{vitart2017s2s}. In India this matters most
 during the summer monsoon, from June to September (JJAS). Farmers, reservoir managers and disaster agencies want to know whether
 the coming weeks will be wetter or drier than usual~\cite{imd2022lpa}. This is also the range where forecasts are weakest.
@@ -150,18 +150,18 @@ NeuralGCM~\cite{lam2023graphcast,chen2024fuxis2s,kochkov2024neuralgcm}. They are
 scores~\cite{rasp2024wb2}. Over India the results can be different, and skill also changes between regions and
 seasons~\cite{malik2024s2s}. A global ranking therefore does not tell us which model to use here.
 
-My thesis has three steps: find the model that works best over India, find where it goes wrong and fix it, and then improve it
-further. The questions are:
+The aim of my thesis is to get the best possible S2S forecast for India. The work has three parts:
 \begin{enumerate}
-\item Which forecast system is best over India, and does this change with variable, lead time, region and season?
-\item What is the main problem with the best AI model over India, and can a small regional network fix it?
-\item Can the correction be improved further by predicting the forecast error and uncertainty better, and by adding
-meteorological and physical knowledge?
+\item \textbf{Find the best model for India}, and check how this changes with variable, lead time, region and season.
+\textit{(Done.)}
+\item \textbf{Find its main problem and fix it} with a small regional network. \textit{(Done for rainfall.)}
+\item \textbf{Improve it further} by predicting the forecast error and uncertainty better, and by adding meteorological and
+physical knowledge. \textit{(Plan for the second half.)}
 \end{enumerate}
-Questions 1 and 2 are mostly done and are covered in this report. Question 3 is the plan for the rest of the thesis.
+This report describes parts 1 and 2 and the plan for part 3.
 
 % ============================ 2. DATA AND METHODS ===================
-\section{Data and methods}
+\section{Data and setup}
 I compared nine forecast systems (Appendix~\ref{app:systems}). Four are operational models from the S2S database: ECMWF, NCEP,
 UKMO and CMA. Five are AI or hybrid models: FuXi-S2S, NeuralGCM, FourCastNet~3, DLESyM-v0 and DLESyM-v1. I ran these myself from
 ERA5 starting conditions, and only for dates after their training period, so no model is tested on data it was trained on. There
@@ -183,7 +183,7 @@ is overconfident.
 All scores are given for All-India and for the four IMD homogeneous regions.
 
 I did the data processing, model runs, evaluation and calibration myself, with guidance from my supervisor and collaborators.
-Parts of this work are written up in two workshop papers~\cite{raj2026bench,raj2026adapter}.
+Two workshop papers have come out of this work so far~\cite{raj2026bench,raj2026adapter}.
 
 % ============================ 3. WORK DONE ==========================
 \section{Work done so far}
@@ -192,9 +192,8 @@ Parts of this work are written up in two workshop papers~\cite{raj2026bench,raj2
 I first made a multi-model mean (MME) of six models, giving each model the same weight.\footnote{Rainfall: CMA, DLESyM-v0,
 FuXi-S2S, NCEP, NeuralGCM and UKMO. Temperature: CMA, DLESyM-v1, ECMWF, FourCastNet~3, FuXi-S2S and UKMO.} Table~\ref{tab:acc}
 compares it with three single models. In Week~1 the MME has the highest ACC for both rainfall and temperature, and it has the
-lowest RMSE in 11 of the 12 variable--week cases~\cite{raj2026bench}. Its lead over the best single model is small, though (95\%
-bootstrap intervals of $+0.015$ to $+0.045$ for rainfall and $+0.001$ to $+0.022$ for temperature), and from Week~3 it is no longer
-significant. Rainfall skill also drops quickly: after Week~2 the MME has a higher RMSE than simply forecasting the climatology.
+lowest RMSE in 11 of the 12 variable--week cases~\cite{raj2026bench}. Its lead over the best single model is small, though, and from Week~3 it is no
+longer statistically significant. Rainfall skill also drops quickly: after Week~2 the MME has a higher RMSE than simply forecasting the climatology.
 Results for all nine systems are in Appendix~\ref{app:results}.
 
 \begin{table}[htb]
@@ -443,7 +442,7 @@ where $q_{0.05,j}$ and $q_{0.95,j}$ are the 5th and 95th percentiles of the ense
 The fair CRPS (fCRPS)~\cite{ferro2014fair} removes the effect of ensemble size, so I use it to compare models with 4 and 50
 members (Section~3.1). For the calibration work I use the plain CRPS. Both are area-weighted like the RMSE. Each score is computed
 for every start date and lead week and then averaged over start dates. Each model's climatology comes from its own ensemble mean,
-for every lead, using a 31-day window and leaving one year out at a time. The intervals in Section~3.1 come from a block bootstrap
+for every lead, using a 31-day window and leaving one year out at a time. The significance test in Section~3.1 uses a block bootstrap
 over start dates (2,000 resamples, blocks of 16), which keeps nearby forecasts together because they are not independent.
 
 \section{All-India results}

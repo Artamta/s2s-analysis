@@ -182,7 +182,8 @@ is overconfident.
 \end{itemize}
 All scores are given for All-India and for the four IMD homogeneous regions.
 
-I did the data processing, model runs, evaluation and calibration myself, with guidance from my supervisor and collaborators.
+I did the data processing, model runs, evaluation and calibration myself, under the supervision of Prof.\ Sandeep Kumar Juneja
+and with close day-to-day guidance from Dr.\ Manmeet Singh.
 Two workshop papers have come out of this work so far~\cite{raj2026bench,raj2026adapter}.
 
 % ============================ 3. WORK DONE ==========================
@@ -309,9 +310,9 @@ Quest~\cite{aiwq2025}. \\
 \end{table}
 
 \section*{Acknowledgements}
-I thank my supervisor Prof.\ Sandeep Kumar Juneja and my expert Dr.\ Bedartha Goswami for their guidance, and Dr.\ Manmeet Singh
-and Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions. I also thank IISER Pune for computing
-time on its HPC facility.
+I thank my supervisor Prof.\ Sandeep Kumar Juneja for his support and guidance, and my expert Dr.\ Bedartha Goswami for his
+feedback. I am especially grateful to Dr.\ Manmeet Singh, who guided me closely throughout this work, and I thank
+Dr.\ Parthasarathi Mukhopadhyay for many helpful discussions. I also thank IISER Pune for computing time on its HPC facility.
 
 % ============================ REFERENCES ============================
 \clearpage
@@ -365,27 +366,27 @@ built.
 
 \begin{table}[H]
 \centering\footnotesize
-\caption{Forecast models. Var.\ is the variable used: R for rainfall, T for 2\,m temperature.}
+\caption{Forecast models. TP: total precipitation (rainfall); T2M: 2\,m temperature.}
 \label{tab:systems}
 \renewcommand{\arraystretch}{1.0}
 \begin{tabularx}{\linewidth}{@{}l l c c >{\raggedright\arraybackslash}X@{}}
 \toprule
-Model & Type & Members & Var. & Description \\
+Model & Type & Members & Variables & Description \\
 \midrule
-ECMWF        & Physics & 51--101 & R, T & Extended-range ensemble of the ECMWF IFS. \\
-NCEP         & Physics & 16  & R    & NCEP Climate Forecast System, version 2 (CFSv2). \\
-UKMO         & Physics & 4   & R, T & Met Office GloSea coupled ensemble. \\
-CMA          & Physics & 4   & R, T & BCC-CPS-S2S model of the China Meteorological Administration. \\
-FuXi-S2S     & AI      & 50  & R, T & Neural network trained on ERA5 (1950--2016). It makes its ensemble by adding learned random noise
+ECMWF        & Physics & 51--101 & TP, T2M & Extended-range ensemble of the ECMWF IFS. \\
+NCEP         & Physics & 16  & TP & NCEP Climate Forecast System, version 2 (CFSv2). \\
+UKMO         & Physics & 4   & TP, T2M & Met Office GloSea coupled ensemble. \\
+CMA          & Physics & 4   & TP, T2M & BCC-CPS-S2S model of the China Meteorological Administration. \\
+FuXi-S2S     & AI      & 50  & TP, T2M & Neural network trained on ERA5 (1950--2016). It makes its ensemble by adding learned random noise
 inside the network~\cite{chen2024fuxis2s}. \\
-NeuralGCM    & Hybrid  & 10  & R    & Physics-based dynamics with learned parts for the small-scale processes. Trained on ERA5 and IMERG
+NeuralGCM    & Hybrid  & 10  & TP & Physics-based dynamics with learned parts for the small-scale processes. Trained on ERA5 and IMERG
 (2001--2018)~\cite{kochkov2024neuralgcm}. \\
-FourCastNet~3 & AI     & 3   & T    & Neural network built to work on the sphere, with random noise for the ensemble. Trained on ERA5
+FourCastNet~3 & AI     & 3   & T2M & Neural network built to work on the sphere, with random noise for the ensemble. Trained on ERA5
 (1980--2016)~\cite{bonev2025fcn3}. \\
-DLESyM-v0    & AI      & 1   & R, T & Deep-learning model of the atmosphere and ocean together. Trained on ERA5 and ISCCP
+DLESyM-v0    & AI      & 1   & TP, T2M & Deep-learning model of the atmosphere and ocean together. Trained on ERA5 and ISCCP
 (1983--2016)~\cite{cresswellclay2024dlesym}. \\
-DLESyM-v1    & AI      & 4   & T    & Newer version of DLESyM. Trained on ERA5 (1980--2015). \\
-MME          & Average & 6 systems & R, T & Simple average of six models (footnote~1). ECMWF is not in the rainfall MME. \\
+DLESyM-v1    & AI      & 4   & T2M & Newer version of DLESyM. Trained on ERA5 (1980--2015). \\
+MME          & Average & 6 systems & TP, T2M & Simple average of six models (footnote~1). ECMWF is not in the rainfall MME. \\
 \bottomrule
 \end{tabularx}
 \end{table}

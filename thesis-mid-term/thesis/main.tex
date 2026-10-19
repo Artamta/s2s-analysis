@@ -141,14 +141,19 @@ Improving Regional\\[2pt] Subseasonal-to-Seasonal Forecasting\par}
 
 % ============================ 1. INTRODUCTION ========================
 \section{Background and aim}
-Subseasonal-to-seasonal (S2S) forecasts look about two weeks to two months ahead~\cite{vitart2017s2s}. In India this matters most
-during the summer monsoon, from June to September (JJAS). Farmers, reservoir managers and disaster agencies want to know whether
-the coming weeks will be wetter or drier than usual~\cite{imd2022lpa}. This is also the range where forecasts are weakest.
+Subseasonal-to-seasonal (S2S) forecasts look about two weeks to two months ahead~\cite{vitart2017s2s}. For India the most
+important variable in this range is rainfall. The summer monsoon, from June to September (JJAS), brings most of the country's
+annual rainfall~\cite{imd2022lpa}, and a large part of Indian farming depends on it. The rain does not fall evenly: it comes in
+active (wet) and break (dry) spells that last from days to weeks. A season with normal total rainfall can still have a long break
+at sowing time, or a very wet spell that causes floods. Farmers, reservoir managers and disaster agencies therefore want to know
+whether the next few weeks will be wetter or drier than usual, which is exactly the S2S range. It is also the range where
+forecasts are weakest, because it is too long for the starting conditions to help much and too short for the slowly changing
+ocean to dominate.
 
-In the last few years many AI weather models have come out, for example GraphCast, FuXi-S2S and
-NeuralGCM~\cite{lam2023graphcast,chen2024fuxis2s,kochkov2024neuralgcm}. They are mostly tested on global
-scores~\cite{rasp2024wb2}. Over India the results can be different, and skill also changes between regions and
-seasons~\cite{malik2024s2s}. A global ranking therefore does not tell us which model to use here.
+Many AI weather models have come out in the last few years, such as GraphCast, FuXi-S2S and
+NeuralGCM~\cite{lam2023graphcast,chen2024fuxis2s,kochkov2024neuralgcm}, but they are mostly tested on global
+scores~\cite{rasp2024wb2}. Skill over India can be different and changes between regions and seasons~\cite{malik2024s2s}, so a
+global ranking does not say which model to use.
 
 The aim of my thesis is to get the best possible S2S forecast for India. The work has three parts:
 \begin{enumerate}
@@ -159,8 +164,7 @@ Python library, so that anyone can check the accuracy of their S2S forecast over
 generative models (diffusion and flow matching) to learn the systematic errors and biases better.
 \item \textbf{Improve it further}, on two sides. On the ML side, better models that predict the forecast error and uncertainty,
 with meteorological and physical knowledge built in. On the climate side, checking that the forecasts get the monsoon circulation
-right, such as 850\,hPa wind anomalies and monsoon depressions, together with the rainfall events linked to them, so that they are
-useful for operational forecasting.
+right (850\,hPa wind anomalies, monsoon depressions) and the rainfall events linked to it, for operational use.
 \end{enumerate}
 This report describes the work done so far and the plan for the rest.
 
@@ -173,8 +177,8 @@ are 517 start dates between 2020 and 2024 (516 for temperature), all on Mondays 
 six weekly averages on a common 1.5$^\circ$ grid.
 
 Rainfall is checked against two data sets, IMERG (satellite) and IMD (rain gauges)~\cite{huffman2023imerg,pai2014imd}, because
-they do not always agree over India. Temperature at 2\,m is checked against ERA5~\cite{hersbach2020era5}. I use four scores
-(formulas in Appendix~\ref{app:scores}):
+they do not always agree over India, and 2\,m temperature against ERA5~\cite{hersbach2020era5}. Scores are computed for All-India
+and the four IMD homogeneous regions (formulas in Appendix~\ref{app:scores}):
 \begin{itemize}
 \item \textbf{ACC}: how well the forecast pattern of above- and below-normal values matches what was observed (1 is perfect,
 0 is no skill). Anomalies are taken from each model's own climatology.
@@ -184,7 +188,6 @@ they do not always agree over India. Temperature at 2\,m is checked against ERA5
 land in that range about 90\% of the time. Coverage is how often it really does. A value much lower than 0.90 means the forecast
 is overconfident.
 \end{itemize}
-All scores are given for All-India and for the four IMD homogeneous regions.
 
 I did the data processing, model runs, evaluation and calibration myself, under the guidance of my supervisor.
 Two workshop papers have come out of this work so far~\cite{raj2026bench,raj2026adapter}.
@@ -193,8 +196,8 @@ Two workshop papers have come out of this work so far~\cite{raj2026bench,raj2026
 \section{Work done so far}
 
 \subsection{Which model is best over India}
-I first made a multi-model mean (MME) of six models, giving each model the same weight.\footnote{Rainfall: CMA, DLESyM-v0,
-FuXi-S2S, NCEP, NeuralGCM and UKMO. Temperature: CMA, DLESyM-v1, ECMWF, FourCastNet~3, FuXi-S2S and UKMO.} Table~\ref{tab:acc}
+I first made a multi-model mean (MME) of six models, giving each model the same weight (members in
+Appendix~\ref{app:systems}). Table~\ref{tab:acc}
 compares it with three single models. In Week~1 the MME has the highest ACC for both rainfall and temperature, and it has the
 lowest RMSE in 11 of the 12 variable--week cases~\cite{raj2026bench}. Its lead over the best single model is small, though, and from Week~3 it is no
 longer statistically significant. Rainfall skill also drops quickly: after Week~2 the MME has a higher RMSE than simply forecasting the climatology.
@@ -243,12 +246,12 @@ network was trained on FuXi-S2S reforecasts for 2002--2017 against IMD rainfall,
 pick the final model.
 
 I tested it on the 2022--2024 monsoons, which were not used for training or for picking the model. The CRPS goes down by 16.2\%
-against IMD (from 3.16 to 2.65\,mm\,day$^{-1}$) and by 12.2\% against IMERG. A simpler statistical correction of the mean and spread
-gives 12.5\% against IMD, so the network does better. The ACC also goes up a little, from 0.296 to 0.322. Coverage improves at
-every lead, most of all in Week~1 (from 0.16 to 0.69), but it is still below 0.90.
+against IMD (from 3.16 to 2.65\,mm\,day$^{-1}$) and by 12.2\% against IMERG. The simple correction (a statistical fix of the mean and
+spread) gives 12.5\% against IMD, so the network does better. The ACC also goes up a little, from 0.296 to 0.322.
 
-Figure~\ref{fig:coverage} shows the same three scores week by week. It and Figure~\ref{fig:adapter} use all five monsoons
-from 2020 to 2024 to have more cases. The network beats raw FuXi-S2S on all three scores at every lead week. I had already looked
+Figure~\ref{fig:coverage} shows the three scores week by week: the network beats raw FuXi-S2S on all of them at every lead.
+Coverage improves most in Week~1 (from 0.16 to 0.69), but it is still below 0.90.
+Figures~\ref{fig:coverage} and~\ref{fig:adapter} use all five monsoons from 2020 to 2024 to have more cases. I had already looked
 at 2020 and 2021 while developing the method, so these figures show where it helps but are not a fully independent test. The
 largest gains are over the Western Ghats and the Northeast, the wettest parts of India.
 
@@ -263,17 +266,15 @@ simple correction was not computed.}
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=0.88\linewidth]{figures/map_adapter.pdf}
-\caption{How much the CRPS went down after calibration, JJAS rainfall 2020--2024 (includes the development years). Blue means the
-calibrated forecast is better.}
+\includegraphics[width=0.84\linewidth]{figures/map_adapter.pdf}
+\caption{Drop in CRPS after calibration, JJAS rainfall 2020--2024 (includes the development years). Blue is better.}
 \label{fig:adapter}
 \end{figure}
 
 \subsection{Combining models, and real-time forecasts}
 I also tried combining seven models with XGBoost~\cite{kimani2025piggycast,chen2016xgboost}, trained on 2020--2023 and tested on the
-2025 monsoon. It raised the ACC from 0.307 for the simple average to 0.347. But just removing the mean bias from the simple average
-gave 0.369, which is slightly better~\cite{raj2026piggy}. With only four or five years of training data, simple corrections are hard
-to beat, so I now compare every new method against them.
+2025 monsoon. It raised the ACC from 0.307 (simple average) to 0.347, but just removing the mean bias from the simple average gave
+0.369~\cite{raj2026piggy}. With so few training years, simple corrections are hard to beat, so I compare every new method with them.
 
 I also run FuXi-S2S forecasts (100 members, Weeks~1--6) in real time twice a week and show them on a test website,
 \url{https://s2s.scdlds.com}.
@@ -282,10 +283,10 @@ I also run FuXi-S2S forecasts (100 members, Weeks~1--6) in real time twice a wee
 % ============================ 4. PLAN ===============================
 \section{Plan for the rest of the thesis}
 The calibration network fixed a large part of the spread problem, but coverage is still below 0.90, the network does not know the
-weather situation (for example an active or a break spell of the monsoon), and it corrects rainfall alone, one grid point at a
-time. The tasks in Table~\ref{tab:tasks} address these gaps. Each new method will be tested on the 2025 monsoon against the
-calibration network, simple bias correction and EMOS~\cite{gneiting2005emos}, aiming for a lower CRPS and a coverage closer to 0.90
-without losing ACC.
+weather situation (such as monsoon active or break spells), and it only shifts and stretches rainfall at each grid
+point, so it cannot create new spatial patterns or correct temperature. The tasks in Table~\ref{tab:tasks} address these gaps. Each new method will be tested on the 2025 monsoon against the
+calibration network, simple bias correction and EMOS~\cite{gneiting2005emos}, aiming for a lower CRPS and coverage nearer 0.90 without
+losing ACC.
 
 \begin{table}[H]
 \centering\footnotesize
@@ -298,7 +299,7 @@ without losing ACC.
 \midrule
 1 & Benchmark and library & Add more models and release the evaluation as an open, reproducible Python library and benchmark for
 S2S forecasts over India and its regions. \\
-2 & Predict errors and uncertainty & ML model that predicts how large the FuXi-S2S error will be at each grid point and lead week,
+2 & Errors and uncertainty & ML model that predicts how large the FuXi-S2S error will be at each grid point and lead week,
 used to set the ensemble width so that coverage gets close to 0.90. \\
 3 & Meteorology and physics & Add the large-scale monsoon state as input (MJO/BSISO phase~\cite{wheeler2004mjo}, ENSO and IOD,
 low-level winds and moisture), and physical constraints in the loss~\cite{kashinath2021piml}, such as non-negative rainfall and
@@ -366,10 +367,9 @@ time on its HPC facility.
 \renewcommand{\thetable}{\thesection\arabic{table}}
 \section{Models}
 \label{app:systems}
-Table~\ref{tab:systems} lists the models. The four physics-based models are real-time forecasts from the S2S
-archive~\cite{vitart2017s2s}, started at 00\,UTC. I ran the AI and hybrid models myself from ERA5, using their public versions.
-None of them was trained on 2020--2024. FuXi-S2S and FourCastNet~3 did use parts of 2017--2021 for validation while they were being
-built.
+The physics-based models are real-time forecasts from the S2S archive~\cite{vitart2017s2s}, started at 00\,UTC. I ran the AI and
+hybrid models from ERA5 with their public versions. None was trained on 2020--2024, but FuXi-S2S and FourCastNet~3 used parts of
+2017--2021 for validation while being built.
 
 \begin{table}[H]
 \centering\footnotesize
@@ -393,7 +393,8 @@ FourCastNet~3 & AI     & 3   & T2M & Neural network built to work on the sphere,
 DLESyM-v0    & AI      & 1   & TP, T2M & Deep-learning model of the atmosphere and ocean together. Trained on ERA5 and ISCCP
 (1983--2016)~\cite{cresswellclay2024dlesym}. \\
 DLESyM-v1    & AI      & 4   & T2M & Newer version of DLESyM. Trained on ERA5 (1980--2015). \\
-MME          & Average & 6 systems & TP, T2M & Simple average of six models (footnote~1). ECMWF is not in the rainfall MME. \\
+MME          & Average & 6 systems & TP, T2M & Average of six. TP: CMA, DLESyM-v0, FuXi-S2S, NCEP, NeuralGCM, UKMO. T2M: CMA, DLESyM-v1, ECMWF, FourCastNet~3,
+FuXi-S2S, UKMO. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -447,11 +448,10 @@ For one grid cell with ensemble members $x_1,\dots,x_M$ (sorted: $x_{(1)}\le\dot
 \end{align*}
 where $q_{0.05,j}$ and $q_{0.95,j}$ are the 5th and 95th percentiles of the ensemble for case $j$.
 
-The fair CRPS (fCRPS)~\cite{ferro2014fair} removes the effect of ensemble size, so I use it to compare models with 4 and 50
-members (Section~3.1). For the calibration work I use the plain CRPS. Both are area-weighted like the RMSE. Each score is computed
-for every start date and lead week and then averaged over start dates. Each model's climatology comes from its own ensemble mean,
-for every lead, using a 31-day window and leaving one year out at a time. The significance test in Section~3.1 uses a block bootstrap
-over start dates (2,000 resamples, blocks of 16), which keeps nearby forecasts together because they are not independent.
+The fair CRPS (fCRPS)~\cite{ferro2014fair} removes the effect of ensemble size and is used when comparing models with
+different ensemble sizes~\cite{raj2026bench}; the plain CRPS is used for the calibration work. Scores are computed for every start date and lead week, area-weighted, and averaged over start
+dates. Model climatologies come from each model's own ensemble mean for every lead (31-day window, one year left out at a time).
+The significance test in Section~3.1 uses a block bootstrap over start dates (2,000 resamples, blocks of 16).
 
 \section{All-India results}
 \label{app:results}
@@ -488,15 +488,13 @@ DLESyM-v1     & --    & --    & --    & --    & --    & --    & & 0.586 & 0.399 
 
 \section{Calibration network}
 \label{app:adapter}
-\textit{How it works.} Each member ($u_m$ and $u_m-\bar u$) goes through the same small encoder, and the results are averaged over
-members, so member order does not matter. This summary, the ensemble mean and spread, and seven location and season fields go into
-a 3-D convolutional network (24 channels) that outputs $\delta$ and $\log s=2\tanh(a)$, so $e^{-2}\le s\le e^{2}$. The calibrated
-member is $x'_m=\exp(q_m)-1$, with $q_m$ from Eq.~(1).
+\textit{How it works.} Each member ($u_m$, $u_m-\bar u$) goes through a shared small encoder and the results are averaged over
+members. This summary, the ensemble mean and spread, and seven location and season fields go into a 3-D convolutional network
+(24 channels) that outputs $\delta$ and $\log s=2\tanh(a)$. The calibrated member is $x'_m=\exp(q_m)-1$, with $q_m$ from Eq.~(1).
 
 \textit{Training.} 51-member FuXi-S2S reforecasts with IMD as the truth: 1,652 start dates (2002--2017) for training and 196
 (2018--2019) for picking the model. CRPS loss, AdamW (learning rate $2\times10^{-4}$, weight decay $10^{-4}$), batch size 8, 16
-random members per batch, early stopping; best of three random seeds. One run takes about a minute on an NVIDIA A30 GPU. Testing
-uses 50 members from the public FuXi-S2S model.
+random members per batch, early stopping, best of three seeds; about a minute per run on an NVIDIA A30 GPU. Testing uses 50 members.
 
 \textit{Simple correction (for comparison).} Fitted on 2002--2017 only. For each lead, month and grid cell it shifts the mean of the
 log rainfall and rescales the spread by a regional factor between 0.25 and 4.

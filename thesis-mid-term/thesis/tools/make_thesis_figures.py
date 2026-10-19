@@ -111,8 +111,8 @@ def map_adapter() -> None:
         image = cr.draw_map(axis, grid, grid.smooth(field, support), rings, cmap="RdBu", norm=norm)
         share = float((field[support] > 0).mean())
         axis.set_title(f"Week {week}", fontsize=8, pad=2)
-        axis.text(0.03, 0.03, f"{100 * share:.0f}% of cells\nimproved", transform=axis.transAxes,
-                  ha="left", va="bottom", fontsize=6.3, color="#3A4651")
+        axis.text(0.02, 0.03, f"{100 * share:.0f}%\nof cells\nimproved", transform=axis.transAxes,
+                  ha="left", va="bottom", fontsize=6.3, color="#3A4651", linespacing=1.05)
         bare(axis)
     colorbar(figure, image, axes, r"CRPS improvement, raw $-$ calibrated (mm day$^{-1}$; positive is better)",
              extend="both")

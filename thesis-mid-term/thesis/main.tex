@@ -153,12 +153,16 @@ seasons~\cite{malik2024s2s}. A global ranking therefore does not tell us which m
 The aim of my thesis is to get the best possible S2S forecast for India. The work has three parts:
 \begin{enumerate}
 \item \textbf{Find the best model for India}, and check how this changes with variable, lead time, region and season.
-\textit{(Done.)}
-\item \textbf{Find its main problem and fix it} with a small regional network. \textit{(Done for rainfall.)}
-\item \textbf{Improve it further} by predicting the forecast error and uncertainty better, and by adding meteorological and
-physical knowledge. \textit{(Plan for the second half.)}
+\textit{Done for nine models.} Next, I will add more models and turn the evaluation into an open, reproducible benchmark and
+Python library, so that anyone can check the accuracy of their S2S forecast over India and its regions.
+\item \textbf{Find its main problem and fix it.} \textit{Done for rainfall with a simple regional network.} Next, I will use
+generative models (diffusion and flow matching) to learn the systematic errors and biases better.
+\item \textbf{Improve it further}, on two sides. On the ML side, better models that predict the forecast error and uncertainty,
+with meteorological and physical knowledge built in. On the climate side, checking that the forecasts get the monsoon circulation
+right, such as 850\,hPa wind anomalies and monsoon depressions, together with the rainfall events linked to them, so that they are
+useful for operational forecasting.
 \end{enumerate}
-This report describes parts 1 and 2 and the plan for part 3.
+This report describes the work done so far and the plan for the rest.
 
 % ============================ 2. DATA AND METHODS ===================
 \section{Data and setup}
@@ -277,41 +281,44 @@ I also run FuXi-S2S forecasts (100 members, Weeks~1--6) in real time twice a wee
 \FloatBarrier
 % ============================ 4. PLAN ===============================
 \section{Plan for the rest of the thesis}
-The calibration network fixed a large part of the spread problem, but three gaps remain. Coverage is still below 0.90, so the
-forecast is still overconfident. The network does not know the weather situation, for example whether the monsoon is in an active
-or a break spell. And it works on rainfall alone, one grid point at a time, so its output is not guaranteed to be physically
-consistent. The tasks in Table~\ref{tab:tasks} address these gaps. Each new method will be tested on the 2025 monsoon, which was
-not used to build the calibration network, against the calibration network, simple bias correction and
-EMOS~\cite{gneiting2005emos}. The goal is a lower CRPS and a coverage closer to 0.90, without losing ACC.
+The calibration network fixed a large part of the spread problem, but coverage is still below 0.90, the network does not know the
+weather situation (for example an active or a break spell of the monsoon), and it corrects rainfall alone, one grid point at a
+time. The tasks in Table~\ref{tab:tasks} address these gaps. Each new method will be tested on the 2025 monsoon against the
+calibration network, simple bias correction and EMOS~\cite{gneiting2005emos}, aiming for a lower CRPS and a coverage closer to 0.90
+without losing ACC.
 
 \begin{table}[H]
 \centering\footnotesize
 \caption{Tasks for the rest of the thesis.}
 \label{tab:tasks}
-\renewcommand{\arraystretch}{1.08}
+\renewcommand{\arraystretch}{1.0}
 \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{0.22\linewidth} >{\raggedright\arraybackslash}X@{}}
 \toprule
 & Task & What I will do \\
 \midrule
-1 & Predict errors and uncertainty & ML model that predicts how large the FuXi-S2S error will be at each grid point and lead week,
+1 & Benchmark and library & Add more models and release the evaluation as an open, reproducible Python library and benchmark for
+S2S forecasts over India and its regions. \\
+2 & Predict errors and uncertainty & ML model that predicts how large the FuXi-S2S error will be at each grid point and lead week,
 used to set the ensemble width so that coverage gets close to 0.90. \\
-2 & Meteorology-aware correction & Add the large-scale monsoon state as input: MJO/BSISO phase~\cite{wheeler2004mjo}, ENSO and IOD
-indices, low-level winds and moisture, so the correction can differ between active and break spells. \\
-3 & Physics-informed training & Physical constraints in the loss~\cite{kashinath2021piml}: non-negative rainfall, heavy rain with
-moisture convergence, and rainfall consistent with temperature (wet weeks are cooler). \\
-4 & Generative model & Flow-matching model~\cite{lipman2023flow,liu2023rectified} on compressed maps~\cite{rombach2022ldm} that
-produces many rainfall and temperature maps together from a FuXi-S2S forecast~\cite{shi2026generative}. \\
-5 & Extend & Apply the best method to temperature, other models and the global Week~3--4 forecast for the AI Weather
+3 & Meteorology and physics & Add the large-scale monsoon state as input (MJO/BSISO phase~\cite{wheeler2004mjo}, ENSO and IOD,
+low-level winds and moisture), and physical constraints in the loss~\cite{kashinath2021piml}, such as non-negative rainfall and
+rainfall consistent with moisture convergence and temperature. \\
+4 & Generative correction & Diffusion~\cite{ho2020ddpm} and flow-matching~\cite{lipman2023flow,liu2023rectified} models on
+compressed maps~\cite{rombach2022ldm} that learn the systematic errors and produce many rainfall and temperature maps together
+from a FuXi-S2S forecast~\cite{shi2026generative}. \\
+5 & Circulation and events & Check 850\,hPa wind anomalies and monsoon depressions in the forecasts, and how well the heavy
+rainfall events linked to them are predicted, for operational use. \\
+6 & Extend & Apply the best method to temperature, other models and the global Week~3--4 forecast for the AI Weather
 Quest~\cite{aiwq2025}. \\
-6 & Compare & Compare all methods on the 2025 monsoon using CRPS, ACC and coverage. \\
+7 & Compare & Compare all methods on the 2025 monsoon using CRPS, ACC and coverage. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section*{Acknowledgements}
-I thank my supervisor Prof.\ Sandeep Kumar Juneja and my expert Dr.\ Bedartha Goswami for their guidance and feedback. I also
-thank Dr.\ Manmeet Singh and Dr.\ Parthasarathi Mukhopadhyay for their guidance and helpful discussions, and IISER Pune for
-computing time on its HPC facility.
+I thank my supervisor Prof.\ Sandeep Kumar Juneja and my expert Dr.\ Bedartha Goswami for their guidance and feedback,
+Dr.\ Manmeet Singh and Dr.\ Parthasarathi Mukhopadhyay for their guidance and helpful discussions, and IISER Pune for computing
+time on its HPC facility.
 
 % ============================ REFERENCES ============================
 \clearpage
@@ -339,6 +346,7 @@ computing time on its HPC facility.
 \bibitem{kimani2025piggycast} J.~Kimani, O.~Ang\'elil, C.~Toumping, S.~Knoblauch. PiggyCast: improving weather prediction accuracy through a stacking-based ensemble AI approach. \emph{Tackling Climate Change with ML workshop, NeurIPS}, 2025.
 \bibitem{chen2016xgboost} T.~Chen, C.~Guestrin. XGBoost: A scalable tree boosting system. \emph{Proc. 22nd ACM SIGKDD}, 785--794, 2016.
 \bibitem{aiwq2025} ECMWF. AI Weather Quest: a real-time sub-seasonal forecasting competition. \url{https://aiweatherquest.ecmwf.int}, 2025.
+\bibitem{ho2020ddpm} J.~Ho, A.~Jain, P.~Abbeel. Denoising diffusion probabilistic models. \emph{NeurIPS}, 2020.
 \bibitem{lipman2023flow} Y.~Lipman, R.~T.~Q.~Chen, H.~Ben-Hamu, M.~Nickel, M.~Le. Flow matching for generative modeling. \emph{ICLR}, 2023.
 \bibitem{liu2023rectified} X.~Liu, C.~Gong, Q.~Liu. Flow straight and fast: learning to generate and transfer data with rectified flow. \emph{ICLR}, 2023.
 \bibitem{rombach2022ldm} R.~Rombach et al. High-resolution image synthesis with latent diffusion models. \emph{CVPR}, 2022.
